@@ -5,6 +5,7 @@
     <artifactId>lightvoting</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
+    <name>LightVoting</name>
 
     <prerequisites>
         <maven>3.0.1</maven>
