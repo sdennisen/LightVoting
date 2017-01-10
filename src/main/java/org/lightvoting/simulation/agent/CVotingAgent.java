@@ -54,7 +54,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "my/new-action" )
-    private void myaction()
+    protected void myaction()
     {
         System.out.println( MessageFormat.format( "inner action is called by agent {0}", this ) );
     }
