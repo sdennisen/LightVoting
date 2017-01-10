@@ -69,6 +69,7 @@ public class CVotingAgentGeneratorTest extends TestCase
             final InputStream l_aslstream = new ByteArrayInputStream(
                     "!main.\n+!main.".getBytes( "UTF-8" )
             );
+
             final Set<CVotingAgent> l_agents = new CVotingAgentGenerator( l_aslstream )
                     .generatemultiple( 23 )
                     .collect( Collectors.toSet() );
