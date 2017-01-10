@@ -65,8 +65,8 @@ public class CVotingAgentTest extends TestCase
     {
         try
         {
-            final IAgentConfiguration l_iagcfg = new CDefaultAgentConfiguration();
-            final CVotingAgent l_agent = new CVotingAgent( l_iagcfg );
+            final CVotingAgent l_agent = new CVotingAgent( new CDefaultAgentConfiguration() );
+
             final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
             System.setOut( new PrintStream( l_outContent ) );
 
