@@ -27,7 +27,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
-import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -36,7 +35,7 @@ import java.text.MessageFormat;
 /**
  * Unit test for CVotingAgent.
  */
-public class CVotingAgentTest extends TestCase
+public final class CVotingAgentTest extends TestCase
 {
     /**
      * Create the test case

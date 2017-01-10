@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 /**
  * Unit test for CMyId.
  */
-public class CMyIdTest extends TestCase
+public final class CMyIdTest extends TestCase
 {
     /**
      * Create the test case

@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple CMain.
  */
-public class CMainTest extends TestCase
+public final class CMainTest extends TestCase
 {
     /**
      * Create the test case

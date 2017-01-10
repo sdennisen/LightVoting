@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 /**
  * Unit test for CVotingAgentGenerator.
  */
-public class CVotingAgentGeneratorTest extends TestCase
+public final class CVotingAgentGeneratorTest extends TestCase
 {
     /**
      * Create the test case
