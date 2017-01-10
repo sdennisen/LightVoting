@@ -26,7 +26,19 @@ package org.lightvoting.simulation.action;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
+import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
+import org.lightjason.agentspeak.language.score.IAggregation;
+import org.lightvoting.simulation.agent.CVotingAgent;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 /**
  * Unit test for CMyId.
@@ -58,8 +70,67 @@ public class CMyIdTest extends TestCase
      */
     public void testMyId()
     {
+        // check for correct name and number of arguments
         final CMyId l_myid = new CMyId();
         assertEquals( CPath.from( "my/id" ), l_myid.name() );
         assertEquals( 0, l_myid.minimalArgumentNumber() );
+
+        // test execution of my/id
+        final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
+        System.setOut( new PrintStream( l_outContent ) );
+
+        try
+        {
+            final InputStream l_aslstream = new ByteArrayInputStream(
+                    "!main.\n+!main <- my/id.".getBytes( "UTF-8" )
+            );
+
+            final CVotingAgent l_agent = new CMyIdAgentGenerator( l_aslstream ).generatesingle();
+
+            l_agent.call();
+
+            // check for correct printout
+            assertTrue(
+                    l_outContent.toString().contains(
+                            "standalone action is called from agent"
+                    )
+            );
+        }
+        catch ( final Exception l_exception )
+        {
+            l_exception.printStackTrace();
+            // fail test if exception occurred
+            assertTrue( false );
+            return;
+        }
+
+        System.setOut( null );
+    }
+
+    private final class CMyIdAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
+    {
+
+        public CMyIdAgentGenerator( final InputStream p_stream ) throws Exception
+        {
+            super(
+                    p_stream,
+                    Stream.concat(
+                            CCommon.actionsFromPackage(),
+                            Stream.concat(
+                                    CCommon.actionsFromAgentClass( CVotingAgent.class ),
+                                    Stream.of(
+                                            new CMyId()
+                                    )
+                            )
+                    ).collect( Collectors.toSet() ),
+                    IAggregation.EMPTY
+            );
+        }
+
+        @Override
+        public final CVotingAgent generatesingle( final Object... p_data )
+        {
+            return new CVotingAgent( m_configuration );
+        }
     }
 }
