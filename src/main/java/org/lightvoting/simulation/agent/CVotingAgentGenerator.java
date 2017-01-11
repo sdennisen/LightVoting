@@ -23,20 +23,26 @@
 
 package org.lightvoting.simulation.agent;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.action.CMyId;
 
-import java.util.stream.Stream;
 import java.io.InputStream;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Code from https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
  */
 public final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 {
+
+    private int m_nextfreeid;
 
     /**
      * constructor of the generator
@@ -77,5 +83,26 @@ public final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgen
     public final CVotingAgent generatesingle( final Object... p_data )
     {
         return new CVotingAgent( m_configuration );
+    }
+
+    /**
+     * Generate a map of multiple CVotingAgents
+     * @param p_number amount of agents to create
+     * @param p_data data passed to the singleagent generator
+     * @return Synchronised BiMap with Id -> Agent mapping
+     */
+    public final BiMap<Integer, CVotingAgent> generatemultiplemap( final int p_number, final Object... p_data )
+    {
+        final int l_startid = this.m_nextfreeid;
+        this.m_nextfreeid += p_number;
+
+        return Maps.synchronizedBiMap(
+                HashBiMap.create(
+                        IntStream.range( l_startid, l_startid + p_number )
+                                .parallel()
+                                .boxed()
+                                .collect( Collectors.toMap( i -> i, i -> this.generatesingle( p_data ) ) )
+                )
+        );
     }
 }

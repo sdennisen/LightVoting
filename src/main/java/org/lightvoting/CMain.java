@@ -23,12 +23,11 @@
 
 package org.lightvoting;
 
+import com.google.common.collect.BiMap;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 
 import java.io.FileInputStream;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
@@ -58,15 +57,19 @@ public final class CMain
         // 1. ASL file
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
-        final Set<CVotingAgent> l_agents;
+        final BiMap<Integer, CVotingAgent> l_agentmap;
+        final CVotingAgentGenerator l_votingagentgenerator;
+
         try
                 (
                         final FileInputStream l_stream = new FileInputStream( p_args[0] );
                 )
         {
-            l_agents = new CVotingAgentGenerator( l_stream )
-                    .generatemultiple( Integer.parseInt( p_args[1] ) )
-                    .collect( Collectors.toSet() );
+
+            l_votingagentgenerator = new CVotingAgentGenerator( l_stream );
+            l_agentmap = l_votingagentgenerator
+                    .generatemultiplemap( Integer.parseInt( p_args[1] ) );
+
         } catch ( final Exception l_exception )
         {
             l_exception.printStackTrace();
@@ -82,11 +85,11 @@ public final class CMain
                                 ? Integer.MAX_VALUE
                                 : Integer.parseInt( p_args[2] )
                 )
-                .forEach( j -> l_agents.parallelStream().forEach( i -> {
+                .forEach( j -> l_agentmap.entrySet().parallelStream().forEach( i -> {
                     try
                     {
                         // call each agent, i.e. trigger a new agent cycle
-                        i.call();
+                        i.getValue().call();
                     }
                     catch ( final Exception l_exception )
                     {
