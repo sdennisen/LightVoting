@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 /**
  * Code from https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
  */
-public final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
+public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 {
 
     private int m_nextfreeid;
@@ -68,7 +68,7 @@ public final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgen
                         Stream.concat(
                                 // use the actions which are defined inside the agent class
                                 CCommon.actionsFromAgentClass( CVotingAgent.class ),
-                                // add an own external action
+                                // add VotingAgent related external action
                                 Stream.of(
                                         new CCommittee(),
                                         new CInitiate(),

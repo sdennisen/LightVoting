@@ -39,7 +39,7 @@ import java.util.List;
  * Provides my/id action: returns agents object id, i.e. hashCode.
  * Code from https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
  */
-public final class CMyId extends IBaseAction
+public class CMyId extends IBaseAction
 {
 
     @Override
