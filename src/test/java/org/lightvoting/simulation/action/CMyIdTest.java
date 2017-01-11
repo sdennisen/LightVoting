@@ -72,7 +72,7 @@ public final class CMyIdTest extends TestCase
     {
         // check for correct name and number of arguments
         final CMyId l_myid = new CMyId();
-        assertEquals( CPath.from( "my/id" ), l_myid.name() );
+        assertEquals( CPath.from( "voting/myid" ), l_myid.name() );
         assertEquals( 0, l_myid.minimalArgumentNumber() );
 
         // test execution of my/id
@@ -82,7 +82,7 @@ public final class CMyIdTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- my/id.".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/myid.".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CMyIdAgentGenerator( l_aslstream ).generatesingle();

@@ -26,7 +26,6 @@ package org.lightvoting;
 import com.google.common.collect.BiMap;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
-import org.lightjason.agentspeak.language.ITerm;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 
@@ -81,12 +80,14 @@ public final class CMain
 
         // add id as a belief myid to each agent
         l_agentmap.entrySet()
-                .parallelStream()
-                .forEach(
-                        i -> i.getValue().beliefbase().add(
-                                CLiteral.from( "myid", CRawTerm.from( i.getKey() ) )
-                        )
-                );
+            .parallelStream()
+            .forEach(
+                    i -> i.getValue().beliefbase().add(
+                            CLiteral.from(
+                                    "myid", CRawTerm.from( i.getKey() )
+                            )
+                    )
+            );
 
         // runtime call (with parallel execution)
         IntStream
