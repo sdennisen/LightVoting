@@ -29,7 +29,13 @@ import com.google.common.collect.Maps;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.CMyId;
+import org.lightvoting.simulation.action.send.chair.CDissatisfaction;
+import org.lightvoting.simulation.action.send.chair.CVote;
+import org.lightvoting.simulation.action.voting.group.CInitiate;
+import org.lightvoting.simulation.action.voting.group.CJoin;
+import org.lightvoting.simulation.action.voting.group.CLeave;
+import org.lightvoting.simulation.action.voting.group.CPreferred;
+import org.lightvoting.simulation.action.voting.minmaxapproval.CCommittee;
 
 import java.io.InputStream;
 import java.util.stream.Collectors;
@@ -64,7 +70,13 @@ public final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgen
                                 CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                 // add an own external action
                                 Stream.of(
-                                        new CMyId()
+                                        new CCommittee(),
+                                        new CInitiate(),
+                                        new CJoin(),
+                                        new CLeave(),
+                                        new CPreferred(),
+                                        new CDissatisfaction(),
+                                        new CVote()
                                 )
                         )
                         // build the set with a collector

@@ -21,12 +21,11 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action;
+package org.lightvoting.simulation.action.voting.group;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.common.IPath;
-import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
 import org.lightjason.agentspeak.language.execution.fuzzy.CFuzzyValue;
@@ -36,37 +35,36 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Provides my/id action: returns agents object id, i.e. hashCode.
- * Code from https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
+ * Action to join a group
  */
-public final class CMyId extends IBaseAction
+public class CJoin extends IBaseAction
 {
-
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/myid" );
+        return CPath.from( "voting/group/join" );
     }
 
     @Override
     public final int minimalArgumentNumber()
     {
-        return 0;
+        return 1;
     }
 
     @Override
-    public final IFuzzyValue<Boolean> execute( final IContext p_context, final boolean p_parallel,
-                                               final List<ITerm> p_argument, final List<ITerm> p_return,
-                                               final List<ITerm> p_annotation )
+    public final IFuzzyValue<Boolean> execute(final IContext p_context, final boolean p_parallel,
+                                              final List<ITerm> p_argument, final List<ITerm> p_return,
+                                              final List<ITerm> p_annotation )
     {
         System.out.println(
                 MessageFormat.format(
-                        "standalone action is called from agent {0}.", p_context.agent()
+                        "{0} action is called from agent {1}.", this.name(), p_context.agent()
                 )
         );
 
-        // the action should return a value, you can wrap each Java type into LightJason
-        p_return.add( CRawTerm.from( p_context.agent().hashCode() ) );
+        // the action should return a value, you can wrap any Java object into LightJason
+        //p_return.add( CRawTerm.from( p_context.agent().hashCode() ) );
+
 
         // the actions returns a fuzzy-boolean for successful or failing execution
         // the optional second parameter is a fuzzy-value in [0,1] on default it is 1

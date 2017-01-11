@@ -24,6 +24,9 @@
 package org.lightvoting;
 
 import com.google.common.collect.BiMap;
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightjason.agentspeak.language.ITerm;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 
@@ -76,6 +79,15 @@ public final class CMain
             return;
         }
 
+        // add id as a belief myid to each agent
+        l_agentmap.entrySet()
+                .parallelStream()
+                .forEach(
+                        i -> i.getValue().beliefbase().add(
+                                CLiteral.from( "myid", CRawTerm.from( i.getKey() ) )
+                        )
+                );
+
         // runtime call (with parallel execution)
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
@@ -85,7 +97,8 @@ public final class CMain
                                 ? Integer.MAX_VALUE
                                 : Integer.parseInt( p_args[2] )
                 )
-                .forEach( j -> l_agentmap.entrySet().parallelStream().forEach( i -> {
+                .forEach( j -> l_agentmap.entrySet().parallelStream().forEach( i ->
+                {
                     try
                     {
                         // call each agent, i.e. trigger a new agent cycle
