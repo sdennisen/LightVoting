@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.group;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -82,7 +82,7 @@ public final class CInitiateTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/group/initiate(\"group\").".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/group/initiate(\"chair\").".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();

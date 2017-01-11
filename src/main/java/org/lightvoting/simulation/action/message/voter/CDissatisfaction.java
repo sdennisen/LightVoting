@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.message.voter;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,20 +35,20 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to calculate the preferred of current available groups based on agent's preferences and POIs' attributes.
+ * Action to send the dissatisfaction about the committee from the voter to the chair.
  */
-public class CPreferred extends IBaseAction
+public class CDissatisfaction extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/group/find-preferred" );
+        return CPath.from( "voting/send/chair/dissatisfaction" );
     }
 
     @Override
     public final int minimalArgumentNumber()
     {
-        return 0;
+        return 1;
     }
 
     @Override

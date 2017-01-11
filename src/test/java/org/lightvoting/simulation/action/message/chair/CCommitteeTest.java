@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.message.chair;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -41,16 +41,16 @@ import java.util.stream.Stream;
 
 
 /**
- * Unit test for CPreferred action.
+ * Unit test for CCommittee action.
  */
-public final class CPreferredTest extends TestCase
+public final class CCommitteeTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CPreferredTest( final String p_testName )
+    public CCommitteeTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -62,18 +62,18 @@ public final class CPreferredTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CPreferredTest.class );
+        return new TestSuite( CCommitteeTest.class );
     }
 
     /**
-     * Testing CPreferred Class
+     * Testing CCommittee Class
      */
-    public void testCPreferred()
+    public void testCommittee()
     {
         // check for correct name and number of arguments
-        final CPreferred l_preferred = new CPreferred();
-        assertEquals( CPath.from( "voting/group/find-preferred" ), l_preferred.name() );
-        assertEquals( 0, l_preferred.minimalArgumentNumber() );
+        final CCommittee l_committee = new CCommittee();
+        assertEquals( CPath.from( "voting/send/voter/committee" ), l_committee.name() );
+        assertEquals( 1, l_committee.minimalArgumentNumber() );
 
         // test action execution
         final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
@@ -82,7 +82,7 @@ public final class CPreferredTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/group/find-preferred().".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/send/voter/committee(0).".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();
@@ -119,7 +119,7 @@ public final class CPreferredTest extends TestCase
                             Stream.concat(
                                     CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                     Stream.of(
-                                            new CPreferred()
+                                            new CCommittee()
                                     )
                             )
                     ).collect( Collectors.toSet() ),

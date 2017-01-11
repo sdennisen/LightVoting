@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.send.chair;
+package org.lightvoting.simulation.action.group;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -30,7 +30,6 @@ import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.send.group.CCommittee;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.io.ByteArrayInputStream;
@@ -42,16 +41,16 @@ import java.util.stream.Stream;
 
 
 /**
- * Unit test for CCommittee action.
+ * Unit test for CJoin action.
  */
-public final class CCommitteeTest extends TestCase
+public final class CJoinTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CCommitteeTest( final String p_testName )
+    public CJoinTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -63,18 +62,18 @@ public final class CCommitteeTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CCommitteeTest.class );
+        return new TestSuite( CJoinTest.class );
     }
 
     /**
-     * Testing CCommittee Class
+     * Testing CJoin Class
      */
-    public void testCommittee()
+    public void testCJoin()
     {
         // check for correct name and number of arguments
-        final CCommittee l_committee = new CCommittee();
-        assertEquals( CPath.from( "voting/send/group/committee" ), l_committee.name() );
-        assertEquals( 1, l_committee.minimalArgumentNumber() );
+        final CJoin l_join = new CJoin();
+        assertEquals( CPath.from( "voting/group/join" ), l_join.name() );
+        assertEquals( 1, l_join.minimalArgumentNumber() );
 
         // test action execution
         final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
@@ -83,7 +82,7 @@ public final class CCommitteeTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/send/group/committee(0).".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/group/join(\"group\").".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();
@@ -120,7 +119,7 @@ public final class CCommitteeTest extends TestCase
                             Stream.concat(
                                     CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                     Stream.of(
-                                            new CCommittee()
+                                            new CJoin()
                                     )
                             )
                     ).collect( Collectors.toSet() ),

@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.minmaxapproval;
+package org.lightvoting.simulation.action.message.voter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -41,16 +41,16 @@ import java.util.stream.Stream;
 
 
 /**
- * Unit test for CCommittee action.
+ * Unit test for CDissatisfaction action.
  */
-public final class CCommitteeTest extends TestCase
+public final class CDissatisfactionTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CCommitteeTest( final String p_testName )
+    public CDissatisfactionTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -62,19 +62,20 @@ public final class CCommitteeTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CCommitteeTest.class );
+        return new TestSuite( CDissatisfactionTest.class );
     }
 
     /**
-     * Testing CCommittee Class
+     * Testing CDissatisfaction Class
      */
-    public void testCCommittee()
+    public void testCDissatisfaction()
     {
         // check for correct name and number of arguments
-        final CCommittee l_committee = new CCommittee();
-        assertEquals( CPath.from( "voting/minmaxapproval/committee-from" ), l_committee.name() );
-        assertEquals( 3, l_committee.minimalArgumentNumber() );
+        final CDissatisfaction l_dissatisfaction = new CDissatisfaction();
+        assertEquals( CPath.from( "voting/send/chair/dissatisfaction" ), l_dissatisfaction.name() );
+        assertEquals( 1, l_dissatisfaction.minimalArgumentNumber() );
 
+        // test action execution
         // test action execution
         final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
         System.setOut( new PrintStream( l_outContent ) );
@@ -82,8 +83,7 @@ public final class CCommitteeTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/minmaxapproval/committee-from(\"foo\", \"bar\", \"baz\")."
-                            .getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/send/chair/dissatisfaction(1).".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();
@@ -120,7 +120,7 @@ public final class CCommitteeTest extends TestCase
                             Stream.concat(
                                     CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                     Stream.of(
-                                            new CCommittee()
+                                            new CDissatisfaction()
                                     )
                             )
                     ).collect( Collectors.toSet() ),

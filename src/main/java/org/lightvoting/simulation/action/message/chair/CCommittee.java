@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.message.chair;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,14 +35,14 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to initiate a group.
+ * Action to send from the chair the computed committee (set of POIs) to the voting agents.
  */
-public class CInitiate extends IBaseAction
+public class CCommittee extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/group/initiate" );
+        return CPath.from( "voting/send/voter/committee" );
     }
 
     @Override

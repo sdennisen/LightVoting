@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.group;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -41,16 +41,16 @@ import java.util.stream.Stream;
 
 
 /**
- * Unit test for CJoin action.
+ * Unit test for CLeave action.
  */
-public final class CJoinTest extends TestCase
+public final class CLeaveTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CJoinTest( final String p_testName )
+    public CLeaveTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -62,18 +62,18 @@ public final class CJoinTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CJoinTest.class );
+        return new TestSuite( CLeaveTest.class );
     }
 
     /**
-     * Testing CJoin Class
+     * Testing CLeave Class
      */
-    public void testCJoin()
+    public void testCLeave()
     {
         // check for correct name and number of arguments
-        final CJoin l_join = new CJoin();
-        assertEquals( CPath.from( "voting/group/join" ), l_join.name() );
-        assertEquals( 1, l_join.minimalArgumentNumber() );
+        final CLeave l_leave = new CLeave();
+        assertEquals( CPath.from( "voting/group/leave" ), l_leave.name() );
+        assertEquals( 1, l_leave.minimalArgumentNumber() );
 
         // test action execution
         final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
@@ -82,7 +82,7 @@ public final class CJoinTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/group/join(\"group\").".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/group/leave(\"group\").".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();
@@ -119,7 +119,7 @@ public final class CJoinTest extends TestCase
                             Stream.concat(
                                     CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                     Stream.of(
-                                            new CJoin()
+                                            new CLeave()
                                     )
                             )
                     ).collect( Collectors.toSet() ),

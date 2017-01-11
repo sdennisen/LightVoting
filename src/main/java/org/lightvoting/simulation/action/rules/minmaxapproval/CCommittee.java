@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.send.chair;
+package org.lightvoting.simulation.action.rules.minmaxapproval;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,20 +35,20 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to send the dissatisfaction about the committee to the chair of the group.
+ * Action to calculate the committee from a set of POIs, votes and upper size limit k for minmax approval voting.
  */
-public class CDissatisfaction extends IBaseAction
+public class CCommittee extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/send/chair/dissatisfaction" );
+        return CPath.from( "voting/rules/minmaxapproval/committee-from" );
     }
 
     @Override
     public final int minimalArgumentNumber()
     {
-        return 1;
+        return 3;
     }
 
     @Override

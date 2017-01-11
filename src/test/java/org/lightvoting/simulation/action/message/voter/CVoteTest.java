@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.message.voter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -41,16 +41,16 @@ import java.util.stream.Stream;
 
 
 /**
- * Unit test for CLeave action.
+ * Unit test for CVote action.
  */
-public final class CLeaveTest extends TestCase
+public final class CVoteTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CLeaveTest( final String p_testName )
+    public CVoteTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -62,18 +62,18 @@ public final class CLeaveTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CLeaveTest.class );
+        return new TestSuite( CVoteTest.class );
     }
 
     /**
-     * Testing CLeave Class
+     * Testing CVote Class
      */
-    public void testCLeave()
+    public void testCVote()
     {
         // check for correct name and number of arguments
-        final CLeave l_leave = new CLeave();
-        assertEquals( CPath.from( "voting/group/leave" ), l_leave.name() );
-        assertEquals( 1, l_leave.minimalArgumentNumber() );
+        final CVote l_vote = new CVote();
+        assertEquals( CPath.from( "voting/send/chair/vote" ), l_vote.name() );
+        assertEquals( 1, l_vote.minimalArgumentNumber() );
 
         // test action execution
         final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
@@ -82,7 +82,7 @@ public final class CLeaveTest extends TestCase
         try
         {
             final InputStream l_aslstream = new ByteArrayInputStream(
-                    "!main.\n+!main <- voting/group/leave(\"group\").".getBytes( "UTF-8" )
+                    "!main.\n+!main <- voting/send/chair/vote(0).".getBytes( "UTF-8" )
             );
 
             final CVotingAgent l_agent = new CTestAgentGenerator( l_aslstream ).generatesingle();
@@ -119,7 +119,7 @@ public final class CLeaveTest extends TestCase
                             Stream.concat(
                                     CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                     Stream.of(
-                                            new CLeave()
+                                            new CVote()
                                     )
                             )
                     ).collect( Collectors.toSet() ),

@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.message.voter;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,14 +35,14 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to leave a group.
+ * Action to send the vote to the chair of a group.
  */
-public class CLeave extends IBaseAction
+public class CVote extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/group/leave" );
+        return CPath.from( "voting/send/chair/vote" );
     }
 
     @Override

@@ -75,7 +75,7 @@ public final class CMain
         } catch ( final Exception l_exception )
         {
             l_exception.printStackTrace();
-            return;
+            throw new RuntimeException();
         }
 
         // add id as a belief myid to each agent
@@ -108,6 +108,7 @@ public final class CMain
                     catch ( final Exception l_exception )
                     {
                         l_exception.printStackTrace();
+                        throw new RuntimeException();
                     }
                 } ) );
     }

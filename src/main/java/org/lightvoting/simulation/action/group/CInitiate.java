@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.minmaxapproval;
+package org.lightvoting.simulation.action.group;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,20 +35,20 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to calculate the committee from a set of POIs, votes and upper size limit k for minmax approval voting.
+ * Action to initiate a group.
  */
-public class CCommittee extends IBaseAction
+public class CInitiate extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/minmaxapproval/committee-from" );
+        return CPath.from( "voting/group/initiate" );
     }
 
     @Override
     public final int minimalArgumentNumber()
     {
-        return 3;
+        return 1;
     }
 
     @Override

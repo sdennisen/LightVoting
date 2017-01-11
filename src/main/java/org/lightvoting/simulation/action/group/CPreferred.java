@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.voting.group;
+package org.lightvoting.simulation.action.group;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.common.CPath;
@@ -35,20 +35,20 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Action to join a group
+ * Action to calculate the preferred of current available groups based on agent's preferences and POIs' attributes.
  */
-public class CJoin extends IBaseAction
+public class CPreferred extends IBaseAction
 {
     @Override
     public final IPath name()
     {
-        return CPath.from( "voting/group/join" );
+        return CPath.from( "voting/group/find-preferred" );
     }
 
     @Override
     public final int minimalArgumentNumber()
     {
-        return 1;
+        return 0;
     }
 
     @Override

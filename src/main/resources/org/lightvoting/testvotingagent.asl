@@ -12,7 +12,7 @@
     : >>( myid(I), generic/type/isnumeric(I) ) <-
         generic/print("Testing voting agent", I, "actions in cycle", Cycle);
 
-        voting/minmaxapproval/committee-from("foo", "bar", "baz");
+        voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
         voting/group/initiate("pois");
         voting/group/join("group");
         voting/group/leave("group");
