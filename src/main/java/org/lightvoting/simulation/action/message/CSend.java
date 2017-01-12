@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Action to send messages for communication.
- * Based on https://lightjason.github.io/tutorials/communication/
+ * Based on/credits to https://lightjason.github.io/tutorials/communication/
  */
 public final class CSend extends IBaseAction
 {
@@ -88,10 +88,11 @@ public final class CSend extends IBaseAction
 
     @Override
     public final IFuzzyValue<Boolean> execute( final IContext p_context, final boolean p_parallel, final List<ITerm> p_argument,
-                                               final List<ITerm> p_return, final List<ITerm> p_annotation
-    )
+                                               final List<ITerm> p_return, final List<ITerm> p_annotation)
     {
-        // first parameter of the action is the name of the receiving agent
+        /**
+         * first parameter of the action is the name of the receiving agent
+         */
         final IAgent<?> l_receiver = m_agents.get( p_argument.get( 0 ).<String>raw() );
 
         // if the agent is it not found, action fails
