@@ -9,8 +9,8 @@
 
 
 +!test
-    : >>( myname(Name), generic/type/isstring(Name) ) <-
-        generic/print("Testing", Name, "actions in cycle", Cycle);
+    : >>( myname(MyName), generic/type/isstring(MyName) ) <-
+        generic/print("Testing", MyName, "actions in cycle", Cycle);
 
         voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
         voting/group/initiate("pois");
@@ -20,5 +20,11 @@
         voting/send/chair/dissatisfaction(0.1);
         voting/send/chair/vote(0);
 
-        !test
+        // send a message to myself
+        message/send(MyName, "foo")
+        .
+
++!message/receive(Message, AgentName)
+    : >>( myname(MyName), generic/type/isstring(MyName) ) <-
+        generic/print(MyName, "received", Message, AgentName)
         .
