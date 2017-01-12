@@ -130,7 +130,7 @@ public final class CPreferredTest extends TestCase
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            return new CVotingAgent( m_configuration );
+            return new CVotingAgent( "agent", m_configuration );
         }
     }
 }

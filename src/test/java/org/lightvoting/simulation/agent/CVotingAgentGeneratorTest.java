@@ -27,6 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.agent.IAgent;
+import org.lightvoting.simulation.action.message.CSend;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -70,7 +71,9 @@ public final class CVotingAgentGeneratorTest extends TestCase
                     "!main.\n+!main.".getBytes( "UTF-8" )
             );
 
-            final Set<CVotingAgent> l_agents = new CVotingAgentGenerator( l_aslstream )
+            final CSend l_sendaction = new CSend();
+
+            final Set<CVotingAgent> l_agents = new CVotingAgentGenerator( l_sendaction, l_aslstream )
                     .generatemultiple( 23 )
                     .collect( Collectors.toSet() );
 

@@ -23,12 +23,10 @@
 
 package org.lightvoting.simulation.agent;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
+import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.action.message.voter.CDissatisfaction;
 import org.lightvoting.simulation.action.message.voter.CVote;
 import org.lightvoting.simulation.action.group.CInitiate;
@@ -38,8 +36,9 @@ import org.lightvoting.simulation.action.group.CPreferred;
 import org.lightvoting.simulation.action.rules.minmaxapproval.CCommittee;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -48,14 +47,22 @@ import java.util.stream.Stream;
 public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 {
 
-    private int m_nextfreeid;
+    /**
+     * Store reference to send action to registered agents upon creation.
+     */
+    private final CSend m_send;
+
+    /**
+     * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
+     */
+    private final AtomicLong m_agentcounter = new AtomicLong();
 
     /**
      * constructor of the generator
      * @param p_stream ASL code as any stream e.g. FileInputStream
      * @throws Exception Thrown if something goes wrong while generating agents.
      */
-    public CVotingAgentGenerator( final InputStream p_stream ) throws Exception
+    public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream ) throws Exception
     {
         super(
                 // input ASL stream
@@ -68,8 +75,9 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                         Stream.concat(
                                 // use the actions which are defined inside the agent class
                                 CCommon.actionsFromAgentClass( CVotingAgent.class ),
-                                // add VotingAgent related external action
+                                // add VotingAgent related external actions
                                 Stream.of(
+                                        p_send,
                                         new CCommittee(),
                                         new CInitiate(),
                                         new CJoin(),
@@ -86,6 +94,15 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                 // we use an empty function
                 IAggregation.EMPTY
         );
+
+        m_send = p_send;
+    }
+
+    // unregister an agent
+    // @param p_agent agent object
+    public final void unregister( final CVotingAgent p_agent )
+    {
+        m_send.unregister( p_agent );
     }
 
     // generator method of the agent
@@ -94,26 +111,18 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
     @Override
     public final CVotingAgent generatesingle( final Object... p_data )
     {
-        return new CVotingAgent( m_configuration );
-    }
+        // register a new agent object at the send action and the register
+        // method retruns the object reference
+        return m_send.register(
+                new CVotingAgent(
 
-    /**
-     * Generate a map of multiple CVotingAgents
-     * @param p_number amount of agents to create
-     * @param p_data data passed to the singleagent generator
-     * @return Synchronised BiMap with Id -> Agent mapping
-     */
-    public final BiMap<Integer, CVotingAgent> generatemultiplemap( final int p_number, final Object... p_data )
-    {
-        final int l_startid = this.m_nextfreeid;
-        this.m_nextfreeid += p_number;
+                        // create a string with the agent name "agent <number>"
+                        // get the value of the counter first and increment, build the agent
+                        // name with message format (see Java documentation)
+                        MessageFormat.format( "agent {0}", m_agentcounter.getAndIncrement() ),
 
-        return Maps.synchronizedBiMap(
-                HashBiMap.create(
-                        IntStream.range( l_startid, l_startid + p_number )
-                                .parallel()
-                                .boxed()
-                                .collect( Collectors.toMap( i -> i, i -> this.generatesingle( p_data ) ) )
+                        // add the agent configuration
+                        m_configuration
                 )
         );
     }

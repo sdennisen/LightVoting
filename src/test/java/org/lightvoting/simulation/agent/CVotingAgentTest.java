@@ -28,9 +28,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.text.MessageFormat;
 
 /**
  * Unit test for CVotingAgent.
@@ -64,25 +61,12 @@ public final class CVotingAgentTest extends TestCase
     {
         try
         {
-            final CVotingAgent l_agent = new CVotingAgent( new CDefaultAgentConfiguration() );
-
-            final ByteArrayOutputStream l_outContent = new ByteArrayOutputStream();
-            System.setOut( new PrintStream( l_outContent ) );
-
-            l_agent.myaction();
-
-            assertTrue(
-                    l_outContent.toString().contains(
-                            MessageFormat.format( "inner action is called by agent {0}", l_agent )
-                    )
-            );
-
-            System.setOut( null );
+            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>() );
+            l_agent.call();
         }
         catch ( final Exception l_exception )
         {
             l_exception.printStackTrace();
-            return;
         }
     }
 }
