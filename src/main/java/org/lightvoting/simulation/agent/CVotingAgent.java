@@ -46,16 +46,4 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         super( p_configuration );
     }
-
-    /**
-     * an inner action inside the agent class,
-     * with the annotation the method is marked as action
-     * and the action-name for the ASL script is set
-     */
-    @IAgentActionFilter
-    @IAgentActionName( name = "my/new-action" )
-    protected void myaction()
-    {
-        System.out.println( MessageFormat.format( "inner action is called by agent {0}", this ) );
-    }
 }
