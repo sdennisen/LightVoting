@@ -9,8 +9,8 @@
 
 
 +!test
-    : >>( myid(I), generic/type/isnumeric(I) ) <-
-        generic/print("Testing voting agent", I, "actions in cycle", Cycle);
+    : >>( myname(Name), generic/type/isstring(Name) ) <-
+        generic/print("Testing", Name, "actions in cycle", Cycle);
 
         voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
         voting/group/initiate("pois");

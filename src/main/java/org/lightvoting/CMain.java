@@ -63,6 +63,8 @@ public final class CMain
         // 3. number of iterations (if not set maximum)
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
+
+        // we need to use a single send action instance to (un)register, i.e. keeping track of, agents.
         final CSend l_sendaction = new CSend();
 
         try
@@ -82,13 +84,13 @@ public final class CMain
             throw new RuntimeException();
         }
 
-        // add id as a belief name to each agent
+        // add name as a belief to each agent
         l_agents
             .parallelStream()
             .forEach(
                     i -> i.beliefbase().add(
                             CLiteral.from(
-                                    "name", CRawTerm.from( i.name() )
+                                    "myname", CRawTerm.from( i.name() )
                             )
                     )
             );
