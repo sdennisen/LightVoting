@@ -17,8 +17,9 @@ def committee(p_candidates, p_committee_size):
     for i_maxv in xrange(p_candidates.max(), 0, -1):
         if (p_candidates == i_maxv).any():
             for i_idx, i_v in enumerate((p_candidates == i_maxv).astype(bool)):
+                # return result if committee is full
                 if ret.sum() == p_committee_size:
-                    break
+                    return ret
                 if i_v:
                     ret[i_idx] = 1
 
