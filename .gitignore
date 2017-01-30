@@ -4,6 +4,7 @@
 !circle.yml
 !pom.xml
 !*.java
+!*.py
 !*.asl
 !*.md
 !*.yaml
