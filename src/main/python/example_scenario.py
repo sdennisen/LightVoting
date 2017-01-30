@@ -16,10 +16,11 @@ def committee(p_candidates, p_committee_size):
     ret = numpy.zeros_like(p_candidates)
     for i_maxv in xrange(p_candidates.max(), 0, -1):
         if (p_candidates == i_maxv).any():
-            for i_idx, i_v in enumerate((p_candidates == i_maxv).astype(int)):
+            for i_idx, i_v in enumerate((p_candidates == i_maxv).astype(bool)):
                 if ret.sum() == p_committee_size:
                     break
-                ret[i_idx] = i_v
+                if i_v:
+                    ret[i_idx] = 1
 
     return ret
 
