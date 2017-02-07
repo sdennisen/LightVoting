@@ -24,7 +24,7 @@
 package org.lightvoting.simulation.rule;
 
 
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -65,59 +65,65 @@ public class CMinisumApproval
 
     public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
     {
-        m_alternatives = p_alternatives;
-        m_votes = p_votes;
-        m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
-
-        final int[] l_valuesVect = new int[m_alternatives.size()];
-
-        Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
-
-        for ( int i = 0; i < m_alternatives.size(); i++ )
+        try
         {
-            for ( int j = 0; j < m_votes.size(); j++ )
+            m_alternatives = p_alternatives;
+            m_votes = p_votes;
+            m_comSize = p_comSize;
+            m_comVect = new int[m_alternatives.size()];
+
+            final int[] l_valuesVect = new int[m_alternatives.size()];
+
+            Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
+            for ( int i = 0; i < m_alternatives.size(); i++ )
             {
-                if ( ( m_votes.get( j ) )[i] == 1 )
+                for ( int j = 0; j < m_votes.size(); j++ )
                 {
-                    l_valuesVect[i]++;
+                    if ( ( m_votes.get( j ) )[i] == 1 )
+                    {
+                        l_valuesVect[i]++;
+                    }
                 }
+
+                // create HashMap with index of alternative as key and score of alternative as value
+
+                l_valuesMap.put( i, l_valuesVect[i] );
             }
+            // test print of HashMap
 
-            // create HashMap with index of alternative as key and score of alternative as value
-
-            l_valuesMap.put( i, l_valuesVect[i] );
-        }
-        // test print of HashMap
-
-        for ( int index : l_valuesMap.keySet() )
-        {
-            final int l_key = index;
-            final String l_value = l_valuesMap.get( index ).toString();
-            System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
-        }
-
-        // sort the HashMap in descending order according to values
-
-        l_valuesMap = this.sortMap( l_valuesMap );
-
-
-        // create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.
-
-        int l_occupied = 0;
-
-        for ( final Entry<Integer, Integer> l_entry : l_valuesMap.entrySet() )
-        {
-            if ( l_occupied < m_comSize )
+            for ( int index : l_valuesMap.keySet() )
             {
-                m_comVect[l_entry.getKey()] = 1;
-                l_occupied++;
+                final int l_key = index;
+                final String l_value = l_valuesMap.get( index ).toString();
+                //System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
             }
-            else
-                break;
-        }
 
-        System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
+            // sort the HashMap in descending order according to values
+
+            l_valuesMap = this.sortMap( l_valuesMap );
+
+
+            // create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.
+
+            int l_occupied = 0;
+
+            for ( final Entry<Integer, Integer> l_entry : l_valuesMap.entrySet() )
+            {
+                if ( l_occupied < m_comSize )
+                {
+                    m_comVect[l_entry.getKey()] = 1;
+                    l_occupied++;
+                }
+                else
+                    break;
+            }
+
+            //System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
+        }
+        catch ( final Exception l_exep )
+        {
+            l_exep.printStackTrace();
+        }
 
         return m_comVect;
     }
@@ -130,10 +136,10 @@ public class CMinisumApproval
     public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
 
     {
-        System.out.println( "Before sorting......" );
+        //System.out.println( "Before sorting......" );
         this.printMap( p_valuesMap );
 
-        System.out.println( "After sorting in descending order......" );
+        //System.out.println( "After sorting in descending order......" );
         final boolean l_DESC = false;
         final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
         this.printMap( l_sortedMapDesc );
@@ -149,10 +155,10 @@ public class CMinisumApproval
 
     public void printMap( final Map<Integer, Integer> p_map )
     {
-        for ( final Entry<Integer, Integer> l_entry : p_map.entrySet() )
-        {
-            System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
-        }
+//        for ( final Entry<Integer, Integer> l_entry : p_map.entrySet() )
+//        {
+//            //System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
+//        }
     }
 
             /* TODO include lexicographic tie-breaking */
