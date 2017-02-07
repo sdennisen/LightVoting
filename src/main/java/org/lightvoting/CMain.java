@@ -28,11 +28,8 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
-import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -120,28 +117,5 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } ) );
-
-        /* TODO remove test code */
-
-        final CMinisumApproval l_tester = new CMinisumApproval();
-
-        List<String> l_testAlternatives;
-        l_testAlternatives = new ArrayList<String>();
-        l_testAlternatives.add( "POI1" );
-        l_testAlternatives.add( "POI2" );
-        l_testAlternatives.add( "POI3" );
-
-        List<int[]> l_testVotes;
-        l_testVotes = new ArrayList<int[]>( );
-        final int[] l_vote1 = {1, 0, 1};
-        final int[] l_vote2 = {0, 1, 1};
-        final int[] l_vote3 = {0, 1, 1};
-        l_testVotes.add( l_vote1 );
-        l_testVotes.add( l_vote2 );
-        l_testVotes.add( l_vote3 );
-
-        final int l_testComSize = 2;
-
-        l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize );
     }
 }

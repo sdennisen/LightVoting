@@ -31,6 +31,8 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 
 
+/* TODO add test cases for lexicographic tie-breaking */
+
 /**
  * Created by sophie on 01.02.17.
  */
@@ -39,7 +41,7 @@ public class CMinisumApprovalTest extends TestCase
     /**
      * test MinisumApproval
      */
-    public void testCMinisumApproval()
+    public void testCMinisumApproval1()
     {
 
         final CMinisumApproval l_tester = new CMinisumApproval();
@@ -64,6 +66,38 @@ public class CMinisumApprovalTest extends TestCase
         assertArrayEquals( new int[]{0, 1, 1}, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
 
     }
+
+    /**
+     * test MinisumApproval including tie-break for small instance
+     */
+
+    public void testCMinisumApproval2()
+    {
+
+        final CMinisumApproval l_tester = new CMinisumApproval();
+
+        List<String> l_testAlternatives;
+        l_testAlternatives = new ArrayList<String>();
+        l_testAlternatives.add( "POI1" );
+        l_testAlternatives.add( "POI2" );
+        l_testAlternatives.add( "POI3" );
+
+        List<int[]> l_testVotes;
+        l_testVotes = new ArrayList<int[]>( );
+        final int[] l_vote1 = {1, 0, 1};
+        final int[] l_vote2 = {0, 1, 0};
+        final int[] l_vote3 = {1, 1, 1};
+        l_testVotes.add( l_vote1 );
+        l_testVotes.add( l_vote2 );
+        l_testVotes.add( l_vote3 );
+
+        final int l_testComSize = 2;
+
+        assertArrayEquals( new int[]{1, 1, 0}, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
+
+    }
+
+
 
 }
 
