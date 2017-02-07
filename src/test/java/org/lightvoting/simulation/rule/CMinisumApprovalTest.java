@@ -63,7 +63,13 @@ public class CMinisumApprovalTest extends TestCase
 
         final int l_testComSize = 2;
 
-        assertArrayEquals( new int[]{0, 1, 1}, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
+        final int[] l_testArray1 = new int[l_testAlternatives.size()];
+
+        l_testArray1[0] = 0;
+        l_testArray1[1] = 1;
+        l_testArray1[2] = 1;
+
+        assertArrayEquals( l_testArray1, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
 
     }
 
