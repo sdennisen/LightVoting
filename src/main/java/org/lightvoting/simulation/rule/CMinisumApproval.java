@@ -24,6 +24,17 @@
 package org.lightvoting.simulation.rule;
 
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+
+
 /**
  * Created by sophie on 10.01.17.
  * Computes result of election according to Minisum Approval voting rule.
@@ -31,6 +42,152 @@ package org.lightvoting.simulation.rule;
 
 public class CMinisumApproval
 {
+
+    /* m_alternatives list */
+    private List<String> m_alternatives;
+    /* list of values*/
+    private List<int[]> m_votes;
+    /* committee size */
+    private int m_comSize;
+    /* committee */
+    private int[] m_comVect;
+
+
+    /**
+     * compute the winning committee according to Minisum Approval
+     *
+     * @param p_alternatives available alternatives
+     * @param p_votes submitted votes
+     * @param p_comSize size of committee to be elected
+     * @return elected committee
+     * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
+     */
+
+    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    {
+        m_alternatives = p_alternatives;
+        m_votes = p_votes;
+        m_comSize = p_comSize;
+        m_comVect = new int[m_alternatives.size()];
+
+        final int[] l_valuesVect = new int[m_alternatives.size()];
+
+        Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
+
+        for ( int i = 0; i < m_alternatives.size(); i++ )
+        {
+            for ( int j = 0; j < m_votes.size(); j++ )
+            {
+                if ( ( m_votes.get( j ) )[i] == 1 )
+                {
+                    l_valuesVect[i]++;
+                }
+            }
+
+            // create HashMap with index of alternative as key and score of alternative as value
+
+            l_valuesMap.put( i, l_valuesVect[i] );
+        }
+        // test print of HashMap
+
+        for ( int index : l_valuesMap.keySet() )
+        {
+            final int l_key = index;
+            final String l_value = l_valuesMap.get( index ).toString();
+            System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
+        }
+
+        // sort the HashMap in descending order according to values
+
+        l_valuesMap = this.sortMap( l_valuesMap );
+
+
+        // create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.
+
+        int l_occupied = 0;
+
+        for ( final Entry<Integer, Integer> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_occupied < m_comSize )
+            {
+                m_comVect[l_entry.getKey()] = 1;
+                l_occupied++;
+            }
+            else
+                break;
+        }
+
+        System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
+
+        return m_comVect;
+    }
+
+    /**
+     * sort HashMap according to its values in descending order
+     * @param p_valuesMap HashMap with Approval scores
+     * @return sorted HashMap
+     */
+    public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
+
+    {
+        System.out.println( "Before sorting......" );
+        this.printMap( p_valuesMap );
+
+        System.out.println( "After sorting in descending order......" );
+        final boolean l_DESC = false;
+        final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
+        this.printMap( l_sortedMapDesc );
+
+        return l_sortedMapDesc;
+
+    }
+
+    /**
+     * print out map
+     * @param p_map map to be printed
+     */
+
+    public void printMap( final Map<Integer, Integer> p_map )
+    {
+        for ( final Entry<Integer, Integer> l_entry : p_map.entrySet() )
+        {
+            System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
+        }
+    }
+
+            /* TODO include lexicographic tie-breaking */
+
+    private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
+    {
+
+        final List<Entry<Integer, Integer>> l_list = new LinkedList<>( p_unsortMap.entrySet() );
+
+        // Sorting the list based on values
+        Collections.sort( l_list, ( p_first, p_second ) ->
+        {
+            if ( p_order )
+            {
+                return p_first.getValue().compareTo( p_second.getValue() );
+            }
+            else
+            {
+                return p_second.getValue().compareTo( p_first.getValue() );
+
+            }
+        } );
+
+        // Maintaining insertion order with the help of LinkedList
+        final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();
+        for ( final Entry<Integer, Integer> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
+    }
+}
+
+/* TODO: Re-use old code? */
 
 //    /* m_alternatives list */
 //    private List<String> m_alternatives;
@@ -327,5 +484,5 @@ public class CMinisumApproval
 //        return (double) m_max;
 //    }
 
-}
+
 
