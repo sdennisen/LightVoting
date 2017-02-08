@@ -70,7 +70,7 @@ public class CMinisumApprovalTest extends TestCase
         l_testAlternatives.add( "POI2" );
         l_testAlternatives.add( "POI3" );
 
-        final List<int[]> l_testVotes = new ArrayList<>( );
+        final List<int[]> l_testVotes = new ArrayList<>();
         final int[] l_vote1 = {1, 0, 1};
         final int[] l_vote2 = {0, 1, 1};
         final int[] l_vote3 = {0, 1, 1};
@@ -83,62 +83,77 @@ public class CMinisumApprovalTest extends TestCase
         assertEquals( l_result[0], 0 );
         assertEquals( l_result[1], 1 );
         assertEquals( l_result[2], 1 );
+    }
 
-//        l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize );
-//        l_testAlternatives = new ArrayList<String>();
-//        l_testAlternatives.add( "POI1" );
-//        l_testAlternatives.add( "POI2" );
-//        l_testAlternatives.add( "POI3" );
-//
-//        l_testVotes = new ArrayList<int[]>( );
-//        final int[] l_vote4 = {1, 0, 1};
-//        final int[] l_vote5 = {0, 1, 0};
-//        final int[] l_vote6 = {1, 1, 1};
-//        l_testVotes.add( l_vote4 );
-//        l_testVotes.add( l_vote5 );
-//        l_testVotes.add( l_vote6 );
-//
-//        // assertArrayEquals( new int[]{1, 1, 0}, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
+    /**
+     * test MinisumApproval with tie-breaking for small instance
+     */
+
+    public void testCMinisumApproval1()
+    {
+
+        final CMinisumApproval l_tester = new CMinisumApproval();
+
+        final List<String> l_testAlternatives = new ArrayList<>();
+        l_testAlternatives.add( "POI1" );
+        l_testAlternatives.add( "POI2" );
+        l_testAlternatives.add( "POI3" );
+
+        final List<int[]> l_testVotes = new ArrayList<>();
+        final int[] l_vote1 = {1, 0, 1};
+        final int[] l_vote2 = {0, 1, 0};
+        final int[] l_vote3 = {1, 1, 1};
+        l_testVotes.add( l_vote1 );
+        l_testVotes.add( l_vote2 );
+        l_testVotes.add( l_vote3 );
+
+        final int l_testComSize = 2;
+        final int[] l_result = l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize );
+        assertEquals( l_result[0], 1 );
+        assertEquals( l_result[1], 1 );
+        assertEquals( l_result[2], 0 );
 
     }
 
-//    /**
-//     * test MinisumApproval including tie-break for larger instance
-//     */
-//
-//    public void testCMinisumApproval3()
-//    {
-//
-//        final CMinisumApproval l_tester = new CMinisumApproval();
-//
-//        List<String> l_testAlternatives;
-//        l_testAlternatives = new ArrayList<String>();
-//        l_testAlternatives.add( "POI1" );
-//        l_testAlternatives.add( "POI2" );
-//        l_testAlternatives.add( "POI3" );
-//        l_testAlternatives.add( "POI4" );
-//        l_testAlternatives.add( "POI5" );
-//        l_testAlternatives.add( "POI6" );
-//
-//        List<int[]> l_testVotes;
-//        l_testVotes = new ArrayList<int[]>( );
-//        final int[] l_vote1 = {1, 0, 1, 1, 0, 1};
-//        final int[] l_vote2 = {1, 0, 1, 1, 0, 1};
-//        final int[] l_vote3 = {1, 0, 1, 1, 0, 1};
-//        final int[] l_vote4 = {0, 0, 1, 0, 0, 0};
-//
-//        l_testVotes.add( l_vote1 );
-//        l_testVotes.add( l_vote2 );
-//        l_testVotes.add( l_vote3 );
-//        l_testVotes.add( l_vote4 );
-//
-//        final int l_testComSize = 3;
-//
-//        assertArrayEquals( new int[]{1, 0, 1, 1, 0, 0}, l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize ) );
-//
-//    }
+    /**
+     * test MinisumApproval including tie-break for larger instance
+     */
 
+    public void testCMinisumApproval3()
+    {
 
+        final CMinisumApproval l_tester = new CMinisumApproval();
+
+        List<String> l_testAlternatives;
+        l_testAlternatives = new ArrayList<String>();
+        l_testAlternatives.add( "POI1" );
+        l_testAlternatives.add( "POI2" );
+        l_testAlternatives.add( "POI3" );
+        l_testAlternatives.add( "POI4" );
+        l_testAlternatives.add( "POI5" );
+        l_testAlternatives.add( "POI6" );
+
+        List<int[]> l_testVotes;
+        l_testVotes = new ArrayList<int[]>( );
+        final int[] l_vote1 = {1, 0, 1, 1, 0, 1};
+        final int[] l_vote2 = {1, 0, 1, 1, 0, 1};
+        final int[] l_vote3 = {1, 0, 1, 1, 0, 1};
+        final int[] l_vote4 = {0, 0, 1, 0, 0, 0};
+
+        l_testVotes.add( l_vote1 );
+        l_testVotes.add( l_vote2 );
+        l_testVotes.add( l_vote3 );
+        l_testVotes.add( l_vote4 );
+
+        final int l_testComSize = 3;
+        final int[] l_result = l_tester.applyRule( l_testAlternatives, l_testVotes, l_testComSize );
+        assertEquals( l_result[0], 1 );
+        assertEquals( l_result[1], 0 );
+        assertEquals( l_result[2], 1 );
+        assertEquals( l_result[3], 1 );
+        assertEquals( l_result[4], 0 );
+        assertEquals( l_result[5], 0 );
+    }
 
 }
 
