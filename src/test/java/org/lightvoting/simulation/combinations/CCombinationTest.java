@@ -21,63 +21,50 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.rule;
+package org.lightvoting.simulation.combinations;
 
-import java.util.List;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.lightvoting.simulation.rule.CMinisumApprovalTest;
 
-/* TODO later, compute possible committees independently from used voting rule */
+/* TODO move test code from CMain */
 
 /**
- * Created by sophie on 10.01.17.
+ * Created by sophie on 08.02.17.
  */
-public class CMinimaxApproval
+
+public class CCombinationTest extends TestCase
 {
 
-    /* m_alternatives list */
-    private List<String> m_alternatives;
-    /* list of values*/
-    private List<int[]> m_votes;
-    /* committee size */
-    private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
-
-
     /**
-     * compute the winning committee according to Minimax Approval
+     * Create the test case
      *
-     * @param p_alternatives available alternatives
-     * @param p_votes submitted votes
-     * @param p_comSize size of committee to be elected
-     * @return elected committee
-     *
+     * @param p_testName name of the test case
      */
-
-    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    public CCombinationTest( final String p_testName )
     {
-        m_alternatives = p_alternatives;
-        m_votes = p_votes;
-        m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
-
-        // compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones
-        final int[][] l_committees = this.computeComittees( m_votes.size(), m_alternatives.size(), m_comSize );
-
-        return new int[0];
+        super( p_testName );
     }
 
     /**
-     * compute all possible committees for given number of alternatives and committee size
-     * @param p_votNum number of votes
-     * @param p_altNum number of alternatives
-     * @param p_comSize size of committee to be elected
-     * @return all possible committees
-     * TODO use CCombination
+     * Testsuite
+     *
+     * @return the suite of tests being tested
      */
-
-    private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
+    public static Test suite()
     {
-        return new int[0][0];
+        return new TestSuite( CMinisumApprovalTest.class );
+    }
+
+    public void testCombinations2()
+    {
+
     }
 
 }
+
+
+
+
+

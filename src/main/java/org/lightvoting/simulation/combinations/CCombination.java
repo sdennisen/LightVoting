@@ -21,63 +21,64 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.rule;
+package org.lightvoting.simulation.combinations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-/* TODO later, compute possible committees independently from used voting rule */
+/* TODO method for computing the committee vectors */
 
 /**
- * Created by sophie on 10.01.17.
+ * Created by sophie on 08.02.17.
+ * uses http://stackoverflow.com/questions/127704/algorithm-to-return-all-combinations-of-k-elements-from-n
+ *
  */
-public class CMinimaxApproval
+
+public class CCombination
 {
 
-    /* m_alternatives list */
-    private List<String> m_alternatives;
-    /* list of values*/
-    private List<int[]> m_votes;
-    /* committee size */
-    private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
+    private List<int[]> m_resultList = new ArrayList<int[]>();
 
-
-    /**
-     * compute the winning committee according to Minimax Approval
-     *
-     * @param p_alternatives available alternatives
-     * @param p_votes submitted votes
-     * @param p_comSize size of committee to be elected
-     * @return elected committee
-     *
-     */
-
-    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    public List<int[]> getResultList()
     {
-        m_alternatives = p_alternatives;
-        m_votes = p_votes;
-        m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
-
-        // compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones
-        final int[][] l_committees = this.computeComittees( m_votes.size(), m_alternatives.size(), m_comSize );
-
-        return new int[0];
+        return m_resultList;
     }
 
     /**
-     * compute all possible committees for given number of alternatives and committee size
-     * @param p_votNum number of votes
-     * @param p_altNum number of alternatives
-     * @param p_comSize size of committee to be elected
-     * @return all possible committees
-     * TODO use CCombination
+     * reset List
      */
 
-    private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
+    public void clearList()
     {
-        return new int[0][0];
+        m_resultList = new ArrayList<>();
     }
 
+    /**
+     * compute possible positions of the ones in the committee
+     * @param p_arr int[] array
+     * @param p_len number of ones
+     * @param p_startPosition start position for searching combinations
+     * @param p_result position array
+     */
+
+    public void combinations( final int[] p_arr, final int p_len, final int p_startPosition, final int[] p_result )
+    {
+        if ( p_len == 0 )
+        {
+           // System.out.println( Arrays.toString( p_result ) );
+            final int[] l_tempResult = Arrays.copyOf( p_result, p_result.length );
+            m_resultList.add( l_tempResult );
+            return;
+        }
+
+        for ( int i = p_startPosition; i <= p_arr.length - p_len; i++ )
+        {
+            p_result[p_result.length - p_len] = p_arr[i];
+            this.combinations( p_arr, p_len - 1, i + 1, p_result );
+
+        }
+
+
+    }
 }

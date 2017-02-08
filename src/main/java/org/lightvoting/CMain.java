@@ -28,8 +28,11 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
+import org.lightvoting.simulation.combinations.CCombination;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -117,5 +120,20 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } ) );
+
+        /* TODO move call to CMinimaxApproval.java */
+
+        final CCombination l_tester = new CCombination();
+        final int[] l_arr = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        l_tester.combinations( l_arr, 3, 0, new int[3] );
+
+        final  List<int[]> l_resultList = l_tester.getResultList();
+        l_tester.clearList();
+
+        for ( int i = 0; i < l_resultList.size(); i++ )
+        {
+            System.out.println( Arrays.toString( l_resultList.get( i ) ) );
+        }
+
     }
 }
