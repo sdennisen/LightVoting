@@ -135,5 +135,20 @@ public final class CMain
             System.out.println( Arrays.toString( l_resultList.get( i ) ) );
         }
 
+        System.out.println( "Number of committees: " + l_resultList.size() );
+
+        final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
+
+        for ( int i = 0; i < l_resultList.size(); i++ )
+        {
+
+            for ( int j = 0; j < 3; j++ )
+            {
+                //System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
+                l_comVects[i][l_resultList.get( i )[j]] = 1;
+            }
+            System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
+        }
+
     }
 }
