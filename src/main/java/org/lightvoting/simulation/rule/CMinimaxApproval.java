@@ -23,9 +23,42 @@
 
 package org.lightvoting.simulation.rule;
 
+import java.util.List;
+
+
 /**
  * Created by sophie on 10.01.17.
  */
 public class CMinimaxApproval
 {
+
+    /* m_alternatives list */
+    private List<String> m_alternatives;
+    /* list of values*/
+    private List<int[]> m_votes;
+    /* committee size */
+    private int m_comSize;
+    /* committee */
+    private int[] m_comVect;
+
+
+    /**
+     * compute the winning committee according to Minimax Approval
+     *
+     * @param p_alternatives available alternatives
+     * @param p_votes submitted votes
+     * @param p_comSize size of committee to be elected
+     * @return elected committee
+     *
+     */
+
+    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    {
+        m_alternatives = p_alternatives;
+        m_votes = p_votes;
+        m_comSize = p_comSize;
+        m_comVect = new int[m_alternatives.size()];
+
+        return new int[0];
+    }
 }
