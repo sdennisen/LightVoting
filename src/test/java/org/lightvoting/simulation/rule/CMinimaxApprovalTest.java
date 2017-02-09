@@ -21,20 +21,20 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.combinations;
+package org.lightvoting.simulation.rule;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.lightvoting.simulation.rule.CMinisumApprovalTest;
 
-/* TODO write small test */
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- * Created by sophie on 08.02.17.
+ * Created by sophie on 09.02.17.
  */
-
-public class CCombinationTest extends TestCase
+public class CMinimaxApprovalTest extends TestCase
 {
 
     /**
@@ -42,7 +42,7 @@ public class CCombinationTest extends TestCase
      *
      * @param p_testName name of the test case
      */
-    public CCombinationTest( final String p_testName )
+    public CMinimaxApprovalTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -58,22 +58,30 @@ public class CCombinationTest extends TestCase
     }
 
     /**
-     * test combinations function
+     * test application of voting rule
      */
-    public void testCombinations2()
-    {
-   /*     final CCombination l_tester = new CCombination();
-        final int[] l_arr = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        l_tester.combinations( l_arr, 3, 0, new int[3] );
 
-        final List<int[]> l_resultList = l_tester.getResultList();
-        l_tester.clearList();*/
+    public void testApplyRule()
+    {
+        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
+
+        final List<String> l_alternatives = new ArrayList<String>();
+
+        l_alternatives.add( "POI1" );
+        l_alternatives.add( "POI2" );
+        l_alternatives.add( "POI3" );
+        l_alternatives.add( "POI4" );
+        l_alternatives.add( "POI5" );
+        l_alternatives.add( "POI6" );
+
+        final List<int[]> l_votes = new ArrayList<int[]>();
+
+        /* TODO create votes */
+
+        final int l_comSize = 3;
+
+        l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
 
     }
 
 }
-
-
-
-
-

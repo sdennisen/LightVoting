@@ -23,6 +23,9 @@
 
 package org.lightvoting.simulation.rule;
 
+import org.lightvoting.simulation.combinations.CCombination;
+
+import java.util.Arrays;
 import java.util.List;
 
 /* TODO later, compute possible committees independently from used voting rule */
@@ -72,11 +75,41 @@ public class CMinimaxApproval
      * @param p_altNum number of alternatives
      * @param p_comSize size of committee to be elected
      * @return all possible committees
-     * TODO use CCombination
+     *
      */
 
     private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
     {
+        final CCombination l_combination = new CCombination();
+        final int[] l_arr = new int[p_altNum];
+
+        for ( int i = 0;  i < p_altNum; i++ )
+            l_arr[i] = i;
+
+        l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
+
+        final List<int[]> l_resultList = l_combination.getResultList();
+        l_combination.clearList();
+
+        for ( int i = 0; i < l_resultList.size(); i++ )
+        {
+            System.out.println( Arrays.toString( l_resultList.get( i ) ) );
+        }
+
+        System.out.println( "Number of committees: " + l_resultList.size() );
+
+        final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
+
+        for ( int i = 0; i < l_resultList.size(); i++ )
+        {
+
+            for ( int j = 0; j < 3; j++ )
+            {
+                //System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
+                l_comVects[i][l_resultList.get( i )[j]] = 1;
+            }
+            System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
+        }
         return new int[0][0];
     }
 
