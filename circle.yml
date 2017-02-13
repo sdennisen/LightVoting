@@ -69,7 +69,9 @@ test:
         - mv -f /tmp/circle.yml .
         - mv -f /tmp/site/* .
         # build latex
+        - ls -la latex
         - cd latex
+        - ls -la
         - latexmk -f refman.tex
         - cd ..
         - mv latex/refman.pdf $DOCUMENT.pdf
