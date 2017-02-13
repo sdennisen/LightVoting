@@ -76,7 +76,19 @@ public class CMinimaxApprovalTest extends TestCase
 
         final List<int[]> l_votes = new ArrayList<int[]>();
 
-        /* TODO create votes */
+        final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote4 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote5 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote6 = {0, 0, 0, 1, 1, 1};
+
+        l_votes.add( l_vote1 );
+        l_votes.add( l_vote2 );
+        l_votes.add( l_vote3 );
+        l_votes.add( l_vote4 );
+        l_votes.add( l_vote5 );
+        l_votes.add( l_vote6 );
 
         final int l_comSize = 3;
 
