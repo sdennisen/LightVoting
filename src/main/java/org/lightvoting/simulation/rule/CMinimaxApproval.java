@@ -27,15 +27,20 @@ import cern.colt.bitvector.BitVector;
 import org.lightvoting.simulation.combinations.CCombination;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /* TODO later, compute possible committees independently from used voting rule */
 /* TODO compute Hamming distance without BitVectorUtils */
+/* TODO put sorting function for Map in own class, with boolean parameter for ascending/descending*/
 
 /**
  * Created by sophie on 10.01.17.
+ * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
  */
 public class CMinimaxApproval
 {
@@ -69,7 +74,30 @@ public class CMinimaxApproval
         // compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones
         final int[][] l_committees = this.computeComittees( m_votes.size(), m_alternatives.size(), m_comSize );
 
-        return new int[0];
+        /* Hashmap for storing the maximal hamming distance to any vote for all committees */
+
+        Map<Integer, Integer> l_maxMap = new HashMap<Integer, Integer>();
+
+        for ( int i = 0; i < l_committees.length; i++ )
+        {
+            final int l_maxHD = this.determineMaxHD( m_votes, l_committees[i] );
+            System.out.println( "Maximal Hamming distance for committee " + i + ": " + l_maxHD );
+
+            /* Key: Committee ID, Value: maximal Hamming distance to any voter */
+            l_maxMap.put( i, l_maxHD );
+
+        }
+
+        l_maxMap = this.sortMap( l_maxMap );
+
+        final Map.Entry<Integer, Integer> l_entry = l_maxMap.entrySet().iterator().next();
+
+        final int l_winnerIndex = l_entry.getKey();
+
+        System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
+
+        return l_committees[l_winnerIndex];
+
     }
 
     /**
@@ -114,24 +142,14 @@ public class CMinimaxApproval
             System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
         }
 
-        /* Hashmap for storing the maximal hamming distance to any vote for all committees */
-
-        final Map<int[], Integer> l_maxMap = new HashMap<int[], Integer>();
-        for ( int i = 0; i < l_comVects.length; i++ )
-        {
-            final int l_maxHD = this.determineMaxHD( m_votes, l_comVects[i] );
-        }
-
-
-        return new int[0][0];
+        return l_comVects;
     }
 
-    /* TO DO write toBitString */
+    /* TO DO refactor code, write methods for recurring parts */
 
     private int determineMaxHD( final List<int[]> p_votes, final int[] p_comVect )
     {
-
-        /* hamming(cern.colt.bitvector.BitVector vector1, cern.colt.bitvector.BitVector vector2) */
+        /* determine BitVector for committee */
 
         final Boolean[] l_booleanCom = new Boolean[m_alternatives.size()];
 
@@ -148,6 +166,10 @@ public class CMinimaxApproval
         }
 
         System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
+
+        /* compute Hamming distances to all votes and determine the maximum */
+
+        int l_maxHD = -1;
 
         for ( int i = 0; i < p_votes.size(); i++ )
         {
@@ -169,12 +191,23 @@ public class CMinimaxApproval
 
             l_curBitCom.xor( l_bitVote );
 
+            final int l_curHD = l_curBitCom.cardinality();
+
             System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
+
+            if ( l_curHD > l_maxHD )
+                l_maxHD = l_curHD;
 
         }
 
-        return -1;
+        return l_maxHD;
     }
+
+    /**
+     * convert BitVector to (0,1) vector as String
+     * @param p_bitVector input BitVector
+     * @return (0,1) vector representation as String
+     */
 
     private String toBitString( final BitVector p_bitVector )
     {
@@ -186,6 +219,76 @@ public class CMinimaxApproval
         }
 
         return Arrays.toString( l_bitInt );
+    }
+
+
+    /**
+     * sort HashMap according to its values in ascending order
+     *
+     * @param p_valuesMap HashMap with Approval scores
+     * @return sorted HashMap
+     */
+
+
+    public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
+
+    {
+        System.out.println( "Before sorting......" );
+        this.printMap( p_valuesMap );
+
+        System.out.println( "After sorting in ascending order......" );
+        final boolean l_DESC = true;
+        final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
+        this.printMap( l_sortedMapDesc );
+
+        return l_sortedMapDesc;
+
+    }
+
+    /**
+     * print out map
+     *
+     * @param p_map map to be printed
+     */
+
+    public void printMap( final Map<Integer, Integer> p_map )
+    {
+        for ( final Map.Entry<Integer, Integer> l_entry : p_map.entrySet() )
+        {
+            System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
+
+        }
+    }
+
+
+
+    private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
+    {
+
+        final List<Map.Entry<Integer, Integer>> l_list = new LinkedList<>( p_unsortMap.entrySet() );
+
+        // Sorting the list based on values
+        Collections.sort( l_list, ( p_first, p_second ) ->
+        {
+            if ( p_order )
+            {
+                return p_first.getValue().compareTo( p_second.getValue() );
+            }
+            else
+            {
+                return p_second.getValue().compareTo( p_first.getValue() );
+
+            }
+        } );
+
+        // Maintaining insertion order with the help of LinkedList
+        final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();
+        for ( final Map.Entry<Integer, Integer> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
     }
 
 }
