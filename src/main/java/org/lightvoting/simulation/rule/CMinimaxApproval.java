@@ -24,7 +24,6 @@
 package org.lightvoting.simulation.rule;
 
 import cern.colt.bitvector.BitVector;
-import edu.memphis.ccrg.lida.episodicmemory.sdm.BitVectorUtils;
 import org.lightvoting.simulation.combinations.CCombination;
 
 import java.util.Arrays;
@@ -166,7 +165,11 @@ public class CMinimaxApproval
                 l_bitVote.put( j, l_booleanVote[j] );
             }
 
-            System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " + BitVectorUtils.hamming( l_bitCom, l_bitVote ) );
+            final BitVector l_curBitCom = l_bitCom.copy();
+
+            l_curBitCom.xor( l_bitVote );
+
+            System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
 
         }
 
