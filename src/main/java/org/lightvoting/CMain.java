@@ -28,8 +28,11 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
+import org.lightvoting.simulation.rule.CMinimaxApproval;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -117,5 +120,36 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } ) );
+
+        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
+
+        final List<String> l_alternatives = new ArrayList<String>();
+
+        l_alternatives.add( "POI1" );
+        l_alternatives.add( "POI2" );
+        l_alternatives.add( "POI3" );
+        l_alternatives.add( "POI4" );
+        l_alternatives.add( "POI5" );
+        l_alternatives.add( "POI6" );
+
+        final List<int[]> l_votes = new ArrayList<int[]>();
+
+        final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote4 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote5 = {1, 1, 1, 1, 1, 0};
+        final int[] l_vote6 = {0, 0, 0, 1, 1, 1};
+
+        l_votes.add( l_vote1 );
+        l_votes.add( l_vote2 );
+        l_votes.add( l_vote3 );
+        l_votes.add( l_vote4 );
+        l_votes.add( l_vote5 );
+        l_votes.add( l_vote6 );
+
+        final int l_comSize = 3;
+
+        l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
     }
 }
