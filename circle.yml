@@ -69,7 +69,7 @@ test:
         - mv -f /tmp/circle.yml .
         - mv -f /tmp/site/* .
         # build latex
-        - cd latex/ && latexmk -f refman.tex && cd ..
+        - cd latex/ && make && cd ..
         - mv latex/refman.pdf $DOCUMENT.pdf
         - rm -Rf latex
         - git add --all .
