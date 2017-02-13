@@ -21,7 +21,8 @@ machine:
         GIT_COMMITTER_NAME: CircleCI
         GIT_COMMITTER_EMAIL: sophie.dennisen@tu-clausthal.de
         JAR: lightvoting-0.1-SNAPSHOT.jar
-        TEXINSTALL: small
+        TEXINSTALL: minimal
+        DOCUMENT: LightVoting-doc
 
     java:
         version: oraclejdk8
@@ -69,9 +70,9 @@ test:
         - mv -f /tmp/site/* .
         # build latex
         - cd latex
-        - make || true
+        - latexmk -f refman.tex
         - cd ..
-        - mv latex/refman.pdf LightVoting-doc.pdf
+        - mv latex/refman.pdf $DOCUMENT.pdf
         - rm -Rf latex
         - git add --all .
         - git commit -m "current documentation"
