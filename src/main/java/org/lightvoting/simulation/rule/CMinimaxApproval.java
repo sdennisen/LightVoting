@@ -23,12 +23,17 @@
 
 package org.lightvoting.simulation.rule;
 
+import cern.colt.bitvector.BitVector;
+import edu.memphis.ccrg.lida.episodicmemory.sdm.BitVectorUtils;
 import org.lightvoting.simulation.combinations.CCombination;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /* TODO later, compute possible committees independently from used voting rule */
+/* TODO compute Hamming distance without BitVectorUtils */
 
 /**
  * Created by sophie on 10.01.17.
@@ -53,7 +58,6 @@ public class CMinimaxApproval
      * @param p_votes submitted votes
      * @param p_comSize size of committee to be elected
      * @return elected committee
-     *
      */
 
     public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
@@ -71,11 +75,11 @@ public class CMinimaxApproval
 
     /**
      * compute all possible committees for given number of alternatives and committee size
+     *
      * @param p_votNum number of votes
      * @param p_altNum number of alternatives
      * @param p_comSize size of committee to be elected
      * @return all possible committees
-     *
      */
 
     private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
@@ -83,7 +87,7 @@ public class CMinimaxApproval
         final CCombination l_combination = new CCombination();
         final int[] l_arr = new int[p_altNum];
 
-        for ( int i = 0;  i < p_altNum; i++ )
+        for ( int i = 0; i < p_altNum; i++ )
             l_arr[i] = i;
 
         l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
@@ -110,7 +114,79 @@ public class CMinimaxApproval
             }
             System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
         }
+
+        /* Hashmap for storing the maximal hamming distance to any vote for all committees */
+
+        final Map<int[], Integer> l_maxMap = new HashMap<int[], Integer>();
+        for ( int i = 0; i < l_comVects.length; i++ )
+        {
+            final int l_maxHD = this.determineMaxHD( m_votes, l_comVects[i] );
+        }
+
+
         return new int[0][0];
     }
 
+    /* TO DO write toBitString */
+
+    private int determineMaxHD( final List<int[]> p_votes, final int[] p_comVect )
+    {
+
+        /* hamming(cern.colt.bitvector.BitVector vector1, cern.colt.bitvector.BitVector vector2) */
+
+        final Boolean[] l_booleanCom = new Boolean[m_alternatives.size()];
+
+        for (  int i = 0; i < m_alternatives.size(); i++ )
+            if ( p_comVect[i] == 1 )
+                l_booleanCom[i] = true;
+            else l_booleanCom[i] = false;
+
+        final BitVector l_bitCom = new BitVector( m_alternatives.size() );
+
+        for ( int i = 0;  i < m_alternatives.size(); i++ )
+        {
+            l_bitCom.put( i, l_booleanCom[i] );
+        }
+
+        System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
+
+        for ( int i = 0; i < p_votes.size(); i++ )
+        {
+            final Boolean[] l_booleanVote = new Boolean[m_alternatives.size()];
+
+            for (  int j = 0; j < m_alternatives.size(); j++ )
+                if ( p_votes.get( i )[j] == 1 )
+                    l_booleanVote[j] = true;
+                else l_booleanVote[j] = false;
+
+            final BitVector l_bitVote = new BitVector( m_alternatives.size() );
+
+            for ( int j = 0;  j < m_alternatives.size(); j++ )
+            {
+                l_bitVote.put( j, l_booleanVote[j] );
+            }
+
+            System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " + BitVectorUtils.hamming( l_bitCom, l_bitVote ) );
+
+        }
+
+        return -1;
+    }
+
+    private String toBitString( final BitVector p_bitVector )
+    {
+        final int[] l_bitInt = new int[p_bitVector.size()];
+        for ( int i = 0; i < p_bitVector.size(); i++ )
+        {
+            if ( p_bitVector.get( i ) )
+                l_bitInt[i] = 1;
+        }
+
+        return Arrays.toString( l_bitInt );
+    }
+
 }
+
+
+
+
