@@ -21,16 +21,16 @@ machine:
         GIT_COMMITTER_NAME: CircleCI
         GIT_COMMITTER_EMAIL: sophie.dennisen@tu-clausthal.de
         JAR: lightvoting-0.1-SNAPSHOT.jar
-        TEXINSTALL: minimal
-        DOCUMENT: LightVoting-doc
+        #TEXINSTALL: minimal
+        #DOCUMENT: LightVoting-doc
 
     java:
         version: oraclejdk8
 
 dependencies:
-    cache_directories:
-        - "~/texmf"
-        - "/usr/local/texlive/"
+    #cache_directories:
+    #    - "~/texmf"
+    #    - "/usr/local/texlive/"
 
     pre:
         # thanks to @flashpixx for tex install steps
