@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
 /**
  * Main, providing runtime of LightVoting.
@@ -80,6 +81,7 @@ public final class CMain
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[1] ) )
                     .collect( Collectors.toSet() );
+            System.out.println( " Numbers of agents: " + l_agents.size() );
 
         } catch ( final Exception l_exception )
         {
@@ -98,6 +100,39 @@ public final class CMain
                     )
             );
 
+        // generate empty set of active agents
+
+        final Set<CVotingAgent> l_activeAgents = l_votingagentgenerator
+            .generatemultiple( 0 )
+            .collect( Collectors.toSet() );
+
+        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+
+
+        // runtime call (with parallel execution)
+        IntStream
+            // define cycle range, i.e. number of cycles to run sequentially
+            .range(
+                0,
+                p_args.length < 3
+                ? Integer.MAX_VALUE
+                : Integer.parseInt( p_args[2] )
+            )
+            .forEach( j -> l_activeAgents.parallelStream().forEach( i ->
+            {
+                try
+                {
+                   // call each agent, i.e. trigger a new agent cycle
+                    i.call();
+                }
+                catch ( final Exception l_exception )
+                {
+                    l_exception.printStackTrace();
+                    throw new RuntimeException();
+                }
+            } ) );
+
+        /*
         // runtime call (with parallel execution)
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
@@ -120,6 +155,9 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } ) );
+          */
+
+
 
         final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
 

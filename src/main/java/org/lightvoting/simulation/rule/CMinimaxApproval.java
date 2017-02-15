@@ -81,7 +81,7 @@ public class CMinimaxApproval
         for ( int i = 0; i < l_committees.length; i++ )
         {
             final int l_maxHD = this.determineMaxHD( m_votes, l_committees[i] );
-            System.out.println( "Maximal Hamming distance for committee " + i + ": " + l_maxHD );
+            // System.out.println( "Maximal Hamming distance for committee " + i + ": " + l_maxHD );
 
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
             l_maxMap.put( i, l_maxHD );
@@ -94,7 +94,7 @@ public class CMinimaxApproval
 
         final int l_winnerIndex = l_entry.getKey();
 
-        System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
+        // System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
 
         return l_committees[l_winnerIndex];
 
@@ -122,12 +122,12 @@ public class CMinimaxApproval
         final List<int[]> l_resultList = l_combination.getResultList();
         l_combination.clearList();
 
-        for ( int i = 0; i < l_resultList.size(); i++ )
-        {
-            System.out.println( Arrays.toString( l_resultList.get( i ) ) );
-        }
+//        for ( int i = 0; i < l_resultList.size(); i++ )
+//        {
+//            // System.out.println( Arrays.toString( l_resultList.get( i ) ) );
+//        }
 
-        System.out.println( "Number of committees: " + l_resultList.size() );
+        // System.out.println( "Number of committees: " + l_resultList.size() );
 
         final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
 
@@ -136,10 +136,10 @@ public class CMinimaxApproval
 
             for ( int j = 0; j < 3; j++ )
             {
-                //System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
+                //// System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
                 l_comVects[i][l_resultList.get( i )[j]] = 1;
             }
-            System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
+            // System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
         }
 
         return l_comVects;
@@ -165,7 +165,7 @@ public class CMinimaxApproval
             l_bitCom.put( i, l_booleanCom[i] );
         }
 
-        System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
+        // System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
 
         /* compute Hamming distances to all votes and determine the maximum */
 
@@ -193,7 +193,7 @@ public class CMinimaxApproval
 
             final int l_curHD = l_curBitCom.cardinality();
 
-            System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
+            // System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
 
             if ( l_curHD > l_maxHD )
                 l_maxHD = l_curHD;
@@ -233,32 +233,34 @@ public class CMinimaxApproval
     public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
 
     {
-        System.out.println( "Before sorting......" );
-        this.printMap( p_valuesMap );
+        // System.out.println( "Before sorting......" );
+   //     this.printMap( p_valuesMap );
 
-        System.out.println( "After sorting in ascending order......" );
+        // System.out.println( "After sorting in ascending order......" );
         final boolean l_DESC = true;
         final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
-        this.printMap( l_sortedMapDesc );
+     //   this.printMap( l_sortedMapDesc );
 
         return l_sortedMapDesc;
 
     }
 
-    /**
-     * print out map
-     *
-     * @param p_map map to be printed
-     */
+//    /**
+//     * print out map
+//     *
+//     * @param p_map map to be printed
+//     */
+//
+//
+//    public void printMap( final Map<Integer, Integer> p_map )
+//    {
+//        for ( final Map.Entry<Integer, Integer> l_entry : p_map.entrySet() )
+//        {
+//            // System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
+//
+//        }
+//    }
 
-    public void printMap( final Map<Integer, Integer> p_map )
-    {
-        for ( final Map.Entry<Integer, Integer> l_entry : p_map.entrySet() )
-        {
-            System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
-
-        }
-    }
 
 
 
