@@ -32,6 +32,7 @@ import org.lightvoting.simulation.rule.CMinimaxApproval;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -108,6 +109,15 @@ public final class CMain
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
+        final Iterator<CVotingAgent>  l_agentIterator = l_agents.iterator();
+
+        /* TODO reproduce example: draw three agents in each cycle */
+
+        addAgents( 3, l_agentIterator, l_activeAgents );
+
+        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+
+        /* TODO use IntStream.range(int inclusiveStartIndex, int exclEndIndex) to define behaviour for the corresponding cycles */
 
         // runtime call (with parallel execution)
         IntStream
@@ -122,8 +132,9 @@ public final class CMain
             {
                 try
                 {
-                   // call each agent, i.e. trigger a new agent cycle
+                    // call each agent, i.e. trigger a new agent cycle
                     i.call();
+
                 }
                 catch ( final Exception l_exception )
                 {
@@ -189,5 +200,20 @@ public final class CMain
         final int l_comSize = 3;
 
         l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
+    }
+
+    private static void addAgents( final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator, final Set<CVotingAgent> p_activeAgents )
+    {
+
+        for ( int i = 0; i < 3; i++ )
+        {
+            if ( p_agentIterator.hasNext() )
+            {
+                final CVotingAgent l_curAg = p_agentIterator.next();
+                p_activeAgents.add( l_curAg );
+            }
+
+        }
+
     }
 }
