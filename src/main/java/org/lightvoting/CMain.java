@@ -32,6 +32,7 @@ import org.lightvoting.simulation.rule.CMinimaxApproval;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -120,6 +121,9 @@ public final class CMain
         /* TODO use IntStream.range(int inclusiveStartIndex, int exclEndIndex) to define behaviour for the corresponding cycles */
 
         // runtime call (with parallel execution)
+
+        intstream( l_activeAgents );
+
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range(
@@ -200,6 +204,31 @@ public final class CMain
         final int l_comSize = 3;
 
         l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
+    }
+
+    private static void intstream( final Collection<CVotingAgent> p_activeAgents )
+    {
+        IntStream
+            // define cycle range, i.e. number of cycles to run sequentially
+            .range( 0, 1 )
+            .forEach( j ->
+            {
+                /* TODO if you want to do something in cycle 0, put it here - in this case, activate three new agents */
+                System.out.println( "Test" );
+                p_activeAgents.parallelStream().forEach( i ->
+                {
+                    try
+                    {
+                        // call each agent, i.e. trigger a new agent cycle
+                        i.call();
+                    }
+                    catch ( final Exception l_exception )
+                    {
+                        l_exception.printStackTrace();
+                        throw new RuntimeException();
+                    }
+                } );
+            } );
     }
 
     private static void addAgents( final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator, final Set<CVotingAgent> p_activeAgents )
