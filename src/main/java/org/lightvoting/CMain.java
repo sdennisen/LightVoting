@@ -114,7 +114,7 @@ public final class CMain
 
         /* TODO reproduce example: draw three agents in each cycle */
 
-        addAgents( 3, l_agentIterator, l_activeAgents );
+
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
@@ -122,7 +122,7 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
-        intstream( l_activeAgents, p_args );
+        intstream( l_activeAgents, p_args, l_agentIterator );
 
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
@@ -146,33 +146,6 @@ public final class CMain
                     throw new RuntimeException();
                 }
             } ) );
-
-        /*
-        // runtime call (with parallel execution)
-        IntStream
-            // define cycle range, i.e. number of cycles to run sequentially
-                .range(
-                        0,
-                        p_args.length < 3
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[2] )
-                )
-                .forEach( j -> l_agents.parallelStream().forEach( i ->
-                {
-                    try
-                    {
-                        // call each agent, i.e. trigger a new agent cycle
-                        i.call();
-                    }
-                    catch ( final Exception l_exception )
-                    {
-                        l_exception.printStackTrace();
-                        throw new RuntimeException();
-                    }
-                } ) );
-          */
-
-
 
         final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
 
@@ -208,7 +181,7 @@ public final class CMain
         l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
     }
 
-    private static void intstream( final Collection<CVotingAgent> p_activeAgents, final String[] p_args )
+    private static void intstream( final Collection<CVotingAgent> p_activeAgents, final String[] p_args, final Iterator<CVotingAgent> p_agentIterator )
     {
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
@@ -218,8 +191,10 @@ public final class CMain
                    : Integer.parseInt( p_args[2] ) )
             .forEach( j ->
             {
-                /* TODO if you want to do something in cycle 0, put it here - in this case, activate three new agents */
-                System.out.println( "Test" + " j: " + j );
+                // if you want to do something in cycle j, put it here - in this case, activate three new agents
+
+                addAgents( p_activeAgents, 3, p_agentIterator );
+                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + p_activeAgents.size() );
                 p_activeAgents.parallelStream().forEach( i ->
                 {
                     try
@@ -236,7 +211,7 @@ public final class CMain
             } );
     }
 
-    private static void addAgents( final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator, final Set<CVotingAgent> p_activeAgents )
+    private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
     {
 
         for ( int i = 0; i < 3; i++ )
