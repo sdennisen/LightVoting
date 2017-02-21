@@ -7,8 +7,6 @@
     !!test
     .
 
-/* TODO ensure that all messages are received */
-
 +!test
     : >>( myname(MyName), generic/type/isstring(MyName) ) <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
