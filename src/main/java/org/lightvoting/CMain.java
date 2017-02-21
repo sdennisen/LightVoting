@@ -122,7 +122,7 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
-        intstream( l_activeAgents );
+        intstream( l_activeAgents, p_args );
 
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
@@ -187,6 +187,8 @@ public final class CMain
 
         final List<int[]> l_votes = new ArrayList<int[]>();
 
+        /* TODO use atomic arrays */
+
         final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
         final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
         final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
@@ -206,15 +208,18 @@ public final class CMain
         l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
     }
 
-    private static void intstream( final Collection<CVotingAgent> p_activeAgents )
+    private static void intstream( final Collection<CVotingAgent> p_activeAgents, final String[] p_args )
     {
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
-            .range( 0, 1 )
+            .range( 0,
+                   p_args.length < 3
+                   ? Integer.MAX_VALUE
+                   : Integer.parseInt( p_args[2] ) )
             .forEach( j ->
             {
                 /* TODO if you want to do something in cycle 0, put it here - in this case, activate three new agents */
-                System.out.println( "Test" );
+                System.out.println( "Test" + " j: " + j );
                 p_activeAgents.parallelStream().forEach( i ->
                 {
                     try
