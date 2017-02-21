@@ -7,6 +7,7 @@
     !!test
     .
 
+/* TODO ensure that all messages are received */
 
 +!test
     : >>( myname(MyName), generic/type/isstring(MyName) ) <-
@@ -21,10 +22,13 @@
         voting/send/chair/vote(0);
 
         // send a message to myself
-        message/send(MyName, "foo")
+        // message/send(MyName, "foo")
+
+        R = generic/string/random( 12, "abcdefghijklmnopqrstuvwxyz");
+        message/send("agent 0", R)
         .
 
 +!message/receive(Message, AgentName)
     : >>( myname(MyName), generic/type/isstring(MyName) ) <-
-        generic/print(MyName, "received", Message, AgentName)
+        generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
         .
