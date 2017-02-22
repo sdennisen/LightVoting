@@ -30,9 +30,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
+import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.agent.CChairAgentGenerator;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
 
@@ -137,7 +138,8 @@ public final class CPreferredTest extends TestCase
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            return new CVotingAgent( "agent", m_configuration, ( (CChairAgentGenerator) p_data[0] ).generatesingle(), new CEnvironment( 23 ) );
+            final CChairAgent l_chairAgent = new CChairAgent( new CDefaultAgentConfiguration<>() );
+            return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23 ) );
         }
     }
 }
