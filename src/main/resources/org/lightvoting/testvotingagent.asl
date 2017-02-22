@@ -4,7 +4,20 @@
 // initial plan (triggered by the initial goal)
 +!main <-
     generic/print("Testing Voting Agent");
-    !!test
+    !!test;
+
+    generic/print("Hello World!");
+    >>chair(Chair);
+    generic/print("MyChair:", Chair);
+//  open/new/group(Chair);
+    !nextcycle
+
+
+    .
+
++!nextcycle <-
+    >>chair(Chair);
+    generic/print("MyChair:", Chair)
     .
 
 +!test
