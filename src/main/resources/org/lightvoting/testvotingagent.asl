@@ -19,8 +19,7 @@
     generic/print("MyChair:", Chair)
     .
 
-+!test
-    : >>( myname(MyName), generic/type/isstring(MyName) ) <-
++!test <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
 
         voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
@@ -38,7 +37,10 @@
         message/send("agent 0", R)
         .
 
-+!message/receive(Message, AgentName)
-    : >>( myname(MyName), generic/type/isstring(MyName) ) <-
++!new/group/opened(Traveller, Chair) <-
+     generic/print("traveller: " , Traveller, " chair: " , Chair).
+
+
++!message/receive(Message, AgentName) <-
         generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
         .

@@ -21,6 +21,7 @@
  * @endcond
  */
 
+
 package org.lightvoting.simulation.action.group;
 
 import junit.framework.Test;
@@ -30,7 +31,9 @@ import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
+import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,31 +46,38 @@ import java.util.stream.Stream;
 /**
  * Unit test for CInitiate action.
  */
+
 public final class CInitiateTest extends TestCase
 {
-    /**
+
+/**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
+
     public CInitiateTest( final String p_testName )
     {
         super( p_testName );
     }
 
-    /**
+
+/**
      * Testsuite
      *
      * @return the suite of tests being tested
      */
+
     public static Test suite()
     {
         return new TestSuite( CInitiateTest.class );
     }
 
-    /**
+
+/**
      * Testing CInitiate Class
      */
+
     public void testCInitiate()
     {
         // check for correct name and number of arguments
@@ -127,10 +137,14 @@ public final class CInitiateTest extends TestCase
             );
         }
 
+
+/* TODO fix test */
+
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            return new CVotingAgent( "agent", m_configuration );
+            return new CVotingAgent( "agent", m_configuration, ( (CChairAgentGenerator) p_data[0] ).generatesingle(), new CEnvironment( 23 ) );
         }
     }
 }
+

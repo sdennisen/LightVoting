@@ -23,13 +23,12 @@
 
 package org.lightvoting;
 
-import org.lightjason.agentspeak.language.CLiteral;
-import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
+import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.rule.CMinimaxApproval;
 
 import java.io.FileInputStream;
@@ -81,8 +80,9 @@ public final class CMain
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
+            final int l_agentnumber = Integer.parseInt( p_args[2] );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( l_sendaction, l_stream );
+            l_votingagentgenerator = new CVotingAgentGenerator( l_sendaction, l_stream, new CEnvironment( l_agentnumber ) );
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
                     .collect( Collectors.toSet() );
@@ -94,17 +94,6 @@ public final class CMain
             l_exception.printStackTrace();
             throw new RuntimeException();
         }
-
-        // add name as a belief to each agent
-        l_agents
-            .parallelStream()
-            .forEach(
-                    i -> i.beliefbase().add(
-                            CLiteral.from(
-                                    "myname", CRawTerm.from( i.name() )
-                            )
-                    )
-            );
 
         // generate empty set of active agents
 

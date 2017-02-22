@@ -24,11 +24,14 @@
 package org.lightvoting.simulation.environment;
 
 import org.lightjason.agentspeak.language.CLiteral;
-import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
 /**
@@ -38,6 +41,54 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 public final class CEnvironment
 {
     /**
+     * thread-safe structure for group-to-agent mapping
+     */
+    private final AtomicReferenceArray<CVotingAgent> m_group;
+
+    /**
+     * map with agent-to-group mapping
+     */
+    private final Map<CVotingAgent, Integer> m_agentgroup = new ConcurrentHashMap<>();
+
+    /**
+     * maximum size
+     */
+
+    /**
+     * maximum size
+     */
+    private final int m_size;
+
+    /**
+     *constructor
+     * @param p_size number of agents
+     */
+    public CEnvironment( final int p_size )
+    {
+        m_size = p_size;
+        m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
+    }
+
+    /**
+     * initialize agents
+     *
+     * @param p_votingAgent agent
+     * @return boolean value
+     */
+    public final boolean initialset( final CVotingAgent p_votingAgent, final int p_group )
+    {
+        if ( m_group.compareAndSet( p_group, null, p_votingAgent ) )
+        {
+            m_agentgroup.put( p_votingAgent, p_group );
+            System.out.println( " Agent " + p_votingAgent.name() + " group id " + p_group );
+            return true;
+        }
+
+        return false;
+
+    }
+
+    /**
      * open a new group
      * @param p_votingAgent voting opening the group
      * @param p_chairAgent corresponding chair
@@ -45,16 +96,26 @@ public final class CEnvironment
 
     public final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
     {
-
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "new/group/opened",
-                CLiteral.from( "traveller", CRawTerm.from( p_votingAgent ) ),
-                CLiteral.from( "chair", CRawTerm.from( p_chairAgent ) )
+                CLiteral.from( p_votingAgent.name() ),
+                CLiteral.from( p_chairAgent.toString() )
             )
         );
 
+           // trigger all agents and tell them that the group was opened
+        m_agentgroup
+            .keySet()
+            .parallelStream()
+            .forEach( i -> i.trigger( l_trigger ) );
+
+    }
+
+    public final int size()
+    {
+        return m_size;
     }
 
 }

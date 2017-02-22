@@ -30,7 +30,9 @@ import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
+import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -127,10 +129,11 @@ public final class CVoteTest extends TestCase
             );
         }
 
+        /* TODO fix test */
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            return new CVotingAgent( "agent", m_configuration );
+            return new CVotingAgent( "agent", m_configuration, ( (CChairAgentGenerator) p_data[0] ).generatesingle(), new CEnvironment( 23 ) );
         }
     }
 }

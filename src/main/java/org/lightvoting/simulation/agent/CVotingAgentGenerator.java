@@ -26,14 +26,16 @@ package org.lightvoting.simulation.agent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.action.message.voter.CDissatisfaction;
-import org.lightvoting.simulation.action.message.voter.CVote;
 import org.lightvoting.simulation.action.group.CInitiate;
 import org.lightvoting.simulation.action.group.CJoin;
 import org.lightvoting.simulation.action.group.CLeave;
 import org.lightvoting.simulation.action.group.CPreferred;
+import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.action.message.voter.CDissatisfaction;
+import org.lightvoting.simulation.action.message.voter.CVote;
 import org.lightvoting.simulation.action.rules.minmaxapproval.CCommittee;
+import org.lightvoting.simulation.constants.CVariableBuilder;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -58,11 +60,16 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
     private final AtomicLong m_agentcounter = new AtomicLong();
 
     /**
+     * environment reference
+     */
+    private final CEnvironment m_environment;
+
+    /**
      * constructor of the generator
      * @param p_stream ASL code as any stream e.g. FileInputStream
      * @throws Exception Thrown if something goes wrong while generating agents.
      */
-    public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream ) throws Exception
+    public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment ) throws Exception
     {
         super(
                 // input ASL stream
@@ -92,10 +99,14 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 
                 // aggregation function for the optimization function, here
                 // we use an empty function
-                IAggregation.EMPTY
+                IAggregation.EMPTY,
+
+                // variable builder
+                new CVariableBuilder( p_environment )
         );
 
         m_send = p_send;
+        m_environment = p_environment;
     }
 
     // unregister an agent
@@ -113,19 +124,29 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
     {
         // register a new agent object at the send action and the register
         // method retruns the object reference
-        return m_send.register(
-                new CVotingAgent(
 
-                        // create a string with the agent name "agent <number>"
-                        // get the value of the counter first and increment, build the agent
-                        // name with message format (see Java documentation)
-                        MessageFormat.format( "agent {0}", m_agentcounter.getAndIncrement() ),
+        final CVotingAgent l_votingAgent = new CVotingAgent(
 
-                        // add the agent configuration
-                        m_configuration,
-                        // add the chair agent
-                       ( (CChairAgentGenerator) p_data[0] ).generatesingle()
-                )
+        // create a string with the agent name "agent <number>"
+        // get the value of the counter first and increment, build the agent
+        // name with message format (see Java documentation)
+            MessageFormat.format( "agent {0}", m_agentcounter.getAndIncrement() ),
+
+            // add the agent configuration
+            m_configuration,
+            // add the chair agent
+            ( (CChairAgentGenerator) p_data[0] ).generatesingle(),
+            m_environment
         );
+
+
+        int l_group = (int) ( Math.random() * m_environment.size() );
+        while ( !m_environment.initialset( l_votingAgent, l_group ) )
+            l_group = (int) ( Math.random() * m_environment.size() );
+
+        System.out.println( "Agent reference: " + m_send.register( l_votingAgent ) );
+        return m_send.register( l_votingAgent );
+
+
     }
 }

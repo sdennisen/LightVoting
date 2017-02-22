@@ -23,10 +23,12 @@
 
 package org.lightvoting.simulation.agent;
 
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 
 /**
@@ -54,14 +56,19 @@ public final class CVotingAgentTest extends TestCase
         return new TestSuite( CVotingAgentTest.class );
     }
 
+    /* TODO fix test */
+
     /**
      * Testing CVotingAgent Class
+     *
+     *
      */
     public void testCVotingAgent()
     {
         try
         {
-            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>() );
+            final CChairAgent l_chairAgent = new CChairAgent( new CDefaultAgentConfiguration<>() );
+            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23 ) );
             l_agent.call();
         }
         catch ( final Exception l_exception )

@@ -43,7 +43,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         super( p_configuration );
     }
 
-
     // overload agent-cycle
     @Override
     public final CChairAgent call() throws Exception

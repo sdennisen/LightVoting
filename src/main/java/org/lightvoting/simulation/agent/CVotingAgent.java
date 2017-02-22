@@ -56,11 +56,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      */
-    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration )
+    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final CEnvironment p_environment )
     {
         super( p_configuration );
         m_name = p_name;
-        m_environment = new CEnvironment();
+        m_environment = p_environment;
     }
 
     /**
@@ -68,13 +68,16 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
+     * @param p_environment environment reference
      */
 
-    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent )
+    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
+                         final CEnvironment p_environment
+    )
     {
         super( p_configuration );
         m_name = p_name;
-        m_environment = new CEnvironment();
+        m_environment = p_environment;
 
         m_storage.put( "chair", p_chairagent.raw() );
 
