@@ -26,6 +26,8 @@ package org.lightvoting;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.agent.CChairAgent;
+import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 import org.lightvoting.simulation.rule.CMinimaxApproval;
@@ -68,24 +70,26 @@ public final class CMain
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
         final Set<CVotingAgent> l_agents;
+        final Set<CChairAgent> l_chairagents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
         // we need to use a single send action instance to (un)register, i.e. keeping track of, agents.
         final CSend l_sendaction = new CSend();
 
         try
-                (
-                        final FileInputStream l_stream = new FileInputStream( p_args[0] );
-                )
         {
+            final FileInputStream l_stream = new FileInputStream( p_args[0] );
+            final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+
 
             l_votingagentgenerator = new CVotingAgentGenerator( l_sendaction, l_stream );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[1] ) )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
 
-        } catch ( final Exception l_exception )
+        }
+        catch ( final Exception l_exception )
         {
             l_exception.printStackTrace();
             throw new RuntimeException();
@@ -122,7 +126,34 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
-        intstream( l_activeAgents, p_args, l_agentIterator );
+        IntStream
+            // define cycle range, i.e. number of cycles to run sequentially
+            .range( 0,
+                    p_args.length < 3
+                    ? Integer.MAX_VALUE
+                    : Integer.parseInt( p_args[2] ) )
+            .forEach( j ->
+            {
+                // if you want to do something in cycle j, put it here - in this case, activate three new agents
+                addAgents( l_activeAgents, 3, l_agentIterator );
+                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+                l_activeAgents.parallelStream().forEach( i ->
+                {
+                    try
+                    {
+                        // call each agent, i.e. trigger a new agent cycle
+                        i.call();
+                    }
+                    catch ( final Exception l_exception )
+                    {
+                        l_exception.printStackTrace();
+                        throw new RuntimeException();
+                    }
+                } );
+            } );
+
+
+     //   intstream( l_activeAgents, p_args, l_agentIterator );
 
         final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
 
@@ -158,6 +189,8 @@ public final class CMain
         l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
     }
 
+    /*
+
     private static void intstream( final Collection<CVotingAgent> p_activeAgents, final String[] p_args, final Iterator<CVotingAgent> p_agentIterator )
     {
         IntStream
@@ -186,7 +219,8 @@ public final class CMain
                     }
                 } );
             } );
-    }
+    }*/
+
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
     {

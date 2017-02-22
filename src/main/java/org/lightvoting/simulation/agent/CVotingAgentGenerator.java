@@ -122,7 +122,9 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                         MessageFormat.format( "agent {0}", m_agentcounter.getAndIncrement() ),
 
                         // add the agent configuration
-                        m_configuration
+                        m_configuration,
+                        // add the chair agent
+                       ( (CChairAgentGenerator) p_data[0] ).generatesingle()
                 )
         );
     }
