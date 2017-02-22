@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent;
 
+import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
@@ -34,6 +35,8 @@ import org.lightjason.agentspeak.language.CRawTerm;
 /**
  * BDI agent with voting capabilities.
  */
+// annotation to mark the class that actions are inside
+@IAgentAction
 public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 {
 
