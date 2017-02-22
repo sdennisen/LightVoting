@@ -35,7 +35,7 @@ import org.lightvoting.simulation.agent.CVotingAgent;
  * Created by sophie on 22.02.17.
  * Environment class
  */
-final class CEnvironment
+public final class CEnvironment
 {
     /**
      * open a new group
@@ -43,7 +43,7 @@ final class CEnvironment
      * @param p_chairAgent corresponding chair
      */
 
-    final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
+    public final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
     {
 
         final ITrigger l_trigger = CTrigger.from(

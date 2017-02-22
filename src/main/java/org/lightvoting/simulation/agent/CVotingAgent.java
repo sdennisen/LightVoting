@@ -30,6 +30,7 @@ import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 
 /**
@@ -46,6 +47,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private final String m_name;
 
     /**
+     * environment
+     */
+    private final CEnvironment m_environment;
+
+    /**
      * constructor of the agent
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
@@ -54,6 +60,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         super( p_configuration );
         m_name = p_name;
+        m_environment = new CEnvironment();
     }
 
     /**
@@ -67,6 +74,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         super( p_configuration );
         m_name = p_name;
+        m_environment = new CEnvironment();
 
         m_storage.put( "chair", p_chairagent.raw() );
 
@@ -98,6 +106,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         // wake up in next cycle
         p_chairagent.sleep( 0 );
+        m_environment.openNewGroup( this, (CChairAgent) p_chairagent );
 
         // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
 
