@@ -9,7 +9,7 @@
     generic/print("Hello World!");
     >>chair(Chair);
     generic/print("MyChair:", Chair);
-//  open/new/group(Chair);
+  //open/new/group(Chair);
     !nextcycle
 
 

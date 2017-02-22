@@ -23,8 +23,12 @@
 
 package org.lightvoting.simulation.agent;
 
+import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
+import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 
 
 /**
@@ -40,6 +44,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * constructor of the agent
+     * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      */
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration )
@@ -47,6 +52,55 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         super( p_configuration );
         m_name = p_name;
     }
+
+    /**
+     * constructor of the agent
+     * @param p_name name of the agent
+     * @param p_configuration agent configuration of the agent generator
+     * @param p_chairagent corresponding chair agent
+     */
+
+    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent )
+    {
+        super( p_configuration );
+        m_name = p_name;
+
+        m_storage.put( "chair", p_chairagent.raw() );
+
+        m_beliefbase.add(
+            CLiteral.from(
+                "chair",
+                CRawTerm.from( p_chairagent )
+            )
+        );
+
+        // sleep chair, Long.MAX_VALUE -> inf
+        p_chairagent.sleep( Long.MAX_VALUE );
+
+
+    }
+
+    // overload agent-cycle
+    @Override
+    public final CVotingAgent call() throws Exception
+    {
+        // run default cycle
+        return super.call();
+    }
+
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "open/new/group" )
+    private void myaction( final IBaseAgent<CChairAgent> p_chairagent )
+    {
+        // wake up in next cycle
+        p_chairagent.sleep( 0 );
+
+        // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
+
+    }
+
+
 
     /**
      * Get agent's name
