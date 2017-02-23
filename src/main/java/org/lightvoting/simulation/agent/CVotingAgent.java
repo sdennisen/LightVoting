@@ -54,16 +54,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private final CEnvironment m_environment;
 
     /**
-     * constructor of the agent
-     * @param p_name name of the agent
-     * @param p_configuration agent configuration of the agent generator
+     * associated chair agent;
      */
-    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final CEnvironment p_environment )
-    {
-        super( p_configuration );
-        m_name = p_name;
-        m_environment = p_environment;
-    }
+    private CChairAgent m_chair;
 
     /**
      * constructor of the agent
@@ -81,6 +74,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_name = p_name;
         m_environment = p_environment;
 
+        m_chair = (CChairAgent) p_chairagent;
         m_storage.put( "chair", p_chairagent.raw() );
 
         m_beliefbase.add(
@@ -126,5 +120,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     public final String name()
     {
         return m_name;
+    }
+
+    /**
+     * get associated chair agent
+     * @return chair agent
+     */
+    public CChairAgent getChair()
+    {
+        return m_chair;
     }
 }
