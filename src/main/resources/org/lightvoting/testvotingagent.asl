@@ -9,7 +9,11 @@
     generic/print("Hello World!");
     >>chair(Chair);
     generic/print("MyChair:", Chair);
-    open/new/group(Chair);
+
+    X = MyName;
+    Z = "agent 0";
+
+    Y = X == Z ? open/new/group(Chair) : 0;
     !nextcycle
 
     .
