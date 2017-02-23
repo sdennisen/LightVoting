@@ -33,6 +33,8 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 
+/* TODO group-related actions in group package? */
+
 /**
  * BDI agent with voting capabilities.
  */

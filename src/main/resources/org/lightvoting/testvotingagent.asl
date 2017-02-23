@@ -37,8 +37,8 @@
         message/send("agent 0", R)
         .
 
-+!new/group/opened(Traveller, Chair) <-
-     generic/print("traveller: " , Traveller, " chair: " , Chair).
++!new/group/opened(Traveller, Chair, GroupID) <-
+     generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair).
 
 
 +!message/receive(Message, AgentName) <-

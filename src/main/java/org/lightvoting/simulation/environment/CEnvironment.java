@@ -101,9 +101,10 @@ public final class CEnvironment
             CLiteral.from(
                 "new/group/opened",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( p_chairAgent.toString() )
-            )
-        );
+                CLiteral.from( p_chairAgent.toString() ),
+                CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
+            );
+
 
            // trigger all agents and tell them that the group was opened
         m_agentgroup
