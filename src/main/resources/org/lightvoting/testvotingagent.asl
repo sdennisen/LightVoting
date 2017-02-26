@@ -15,7 +15,6 @@
 
     Y = X == Z ? open/new/group(Chair) : 0;
     !nextcycle
-
     .
 
 +!nextcycle <-
@@ -31,11 +30,8 @@
         voting/send/chair/dissatisfaction(0.1);
         voting/send/chair/vote(0);
 
-        // send a message to myself
-        // message/send(MyName, "foo")
-
-        R = generic/string/random( 12, "abcdefghijklmnopqrstuvwxyz");
-        message/send("agent 0", R)
+        // send my name to agent 0
+        message/send("agent 0", MyName)
         .
 
 +!new/group/opened(Traveller, Chair, GroupID) <-
