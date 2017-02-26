@@ -44,14 +44,11 @@ public class CMinimaxApproval
 {
 
     /* m_alternatives list */
-    private List<String> m_alternatives;
+//    private List<String> m_alternatives;
     /* list of values*/
-    private List<AtomicIntegerArray> m_votes;
-    /* committee size */
-    private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
-
+//    private List<AtomicIntegerArray> m_votes;
+//    /* committee size */
+//    private int m_comSize;
 
     /**
      * compute the winning committee according to Minimax Approval
@@ -64,13 +61,12 @@ public class CMinimaxApproval
 
     public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
     {
-        m_alternatives = p_alternatives;
-        m_votes = p_votes;
-        m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
+        final List<String> l_alternatives = p_alternatives;
+        final List<AtomicIntegerArray> l_votes = p_votes;
+        final int l_comSize = p_comSize;
 
         /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
-        final int[][] l_committees = this.computeComittees( m_votes.size(), m_alternatives.size(), m_comSize );
+        final int[][] l_committees = this.computeComittees( l_votes.size(), l_alternatives.size(), l_comSize );
 
         /* Hashmap for storing the maximal hamming distance to any vote for all committees */
 
@@ -78,12 +74,8 @@ public class CMinimaxApproval
 
         for ( int i = 0; i < l_committees.length; i++ )
         {
-            final int l_maxHD = this.determineMaxHD( m_votes, l_committees[i] );
-            // System.out.println( "Maximal Hamming distance for committee " + i + ": " + l_maxHD );
-
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
-            l_maxMap.put( i, l_maxHD );
-
+            l_maxMap.put( i, this.determineMaxHD( l_votes, l_committees[i], l_alternatives.size() ) );
         }
 
         l_maxMap = this.sortMap( l_maxMap );
@@ -131,7 +123,7 @@ public class CMinimaxApproval
         for ( int i = 0; i < l_resultList.size(); i++ )
         {
 
-            for ( int j = 0; j < 3; j++ )
+            for ( int j = 0; j < p_comSize; j++ )
             {
                 // System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
                 l_comVects[i][l_resultList.get( i )[j]] = 1;
@@ -144,21 +136,21 @@ public class CMinimaxApproval
 
 
 
-    private int determineMaxHD( final List<AtomicIntegerArray> p_votes, final int[] p_comVect )
+    private int determineMaxHD( final List<AtomicIntegerArray> p_votes, final int[] p_comVect, final int p_altNum )
     {
         /* determine BitVector for committee */
 
-        final Boolean[] l_booleanCom = new Boolean[m_alternatives.size()];
+        final Boolean[] l_booleanCom = new Boolean[p_altNum ];
 
-        for ( int i = 0; i < m_alternatives.size(); i++ )
+        for ( int i = 0; i < p_altNum; i++ )
             if ( p_comVect[i] == 1 )
                 l_booleanCom[i] = true;
             else
                 l_booleanCom[i] = false;
 
-        final BitVector l_bitCom = new BitVector( m_alternatives.size() );
+        final BitVector l_bitCom = new BitVector( p_altNum );
 
-        for ( int i = 0; i < m_alternatives.size(); i++ )
+        for ( int i = 0; i < p_altNum; i++ )
         {
             l_bitCom.put( i, l_booleanCom[i] );
         }
@@ -171,17 +163,17 @@ public class CMinimaxApproval
 
         for ( int i = 0; i < p_votes.size(); i++ )
         {
-            final Boolean[] l_booleanVote = new Boolean[m_alternatives.size()];
+            final Boolean[] l_booleanVote = new Boolean[p_altNum];
 
-            for ( int j = 0; j < m_alternatives.size(); j++ )
+            for ( int j = 0; j < p_altNum; j++ )
                 if ( p_votes.get( i ).get( j ) == 1 )
                     l_booleanVote[j] = true;
                 else
                     l_booleanVote[j] = false;
 
-            final BitVector l_bitVote = new BitVector( m_alternatives.size() );
+            final BitVector l_bitVote = new BitVector( p_altNum );
 
-            for ( int j = 0; j < m_alternatives.size(); j++ )
+            for ( int j = 0; j < p_altNum; j++ )
             {
                 l_bitVote.put( j, l_booleanVote[j] );
             }
