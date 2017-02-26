@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /* TODO add test further cases for lexicographic tie-breaking */
 
@@ -70,10 +71,10 @@ public class CMinisumApprovalTest extends TestCase
         l_testAlternatives.add( "POI2" );
         l_testAlternatives.add( "POI3" );
 
-        final List<int[]> l_testVotes = new ArrayList<>();
-        final int[] l_vote1 = {1, 0, 1};
-        final int[] l_vote2 = {0, 1, 1};
-        final int[] l_vote3 = {0, 1, 1};
+        final List<AtomicIntegerArray> l_testVotes = new ArrayList<>();
+        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray( new int[]{1, 0, 1} );
+        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{0, 1, 1} );
+        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[]{0, 1, 1} );
         l_testVotes.add( l_vote1 );
         l_testVotes.add( l_vote2 );
         l_testVotes.add( l_vote3 );
@@ -99,10 +100,10 @@ public class CMinisumApprovalTest extends TestCase
         l_testAlternatives.add( "POI2" );
         l_testAlternatives.add( "POI3" );
 
-        final List<int[]> l_testVotes = new ArrayList<>();
-        final int[] l_vote1 = {1, 0, 1};
-        final int[] l_vote2 = {0, 1, 0};
-        final int[] l_vote3 = {1, 1, 1};
+        final List<AtomicIntegerArray> l_testVotes = new ArrayList<>();
+        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray( new int[]{1, 0, 1} );
+        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{0, 1, 0} );
+        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[]{1, 1, 1} );
         l_testVotes.add( l_vote1 );
         l_testVotes.add( l_vote2 );
         l_testVotes.add( l_vote3 );
@@ -133,12 +134,11 @@ public class CMinisumApprovalTest extends TestCase
         l_testAlternatives.add( "POI5" );
         l_testAlternatives.add( "POI6" );
 
-        List<int[]> l_testVotes;
-        l_testVotes = new ArrayList<int[]>( );
-        final int[] l_vote1 = {1, 0, 1, 1, 0, 1};
-        final int[] l_vote2 = {1, 0, 1, 1, 0, 1};
-        final int[] l_vote3 = {1, 0, 1, 1, 0, 1};
-        final int[] l_vote4 = {0, 0, 1, 0, 0, 0};
+        final List<AtomicIntegerArray> l_testVotes = new ArrayList<>( );
+        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray(  new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote4 = new AtomicIntegerArray( new int[]{0, 0, 1, 0, 0, 0} );
 
         l_testVotes.add( l_vote1 );
         l_testVotes.add( l_vote2 );

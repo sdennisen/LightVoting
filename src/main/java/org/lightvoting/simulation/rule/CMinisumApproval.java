@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 
@@ -47,7 +48,7 @@ public class CMinisumApproval
     /* m_alternatives list */
     private List<String> m_alternatives;
     /* list of values*/
-    private List<int[]> m_votes;
+    private List<AtomicIntegerArray> m_votes;
     /* committee size */
     private int m_comSize;
     /* committee */
@@ -64,7 +65,7 @@ public class CMinisumApproval
      * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
      */
 
-    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
     {
         m_alternatives = p_alternatives;
         m_votes = p_votes;
@@ -78,7 +79,7 @@ public class CMinisumApproval
         {
             for ( int j = 0; j < m_votes.size(); j++ )
             {
-                if ( ( m_votes.get( j ) )[i] == 1 )
+                if ( ( m_votes.get( j ) ).get( i ) == 1 )
                 {
                     l_valuesVect[i]++;
                 }
