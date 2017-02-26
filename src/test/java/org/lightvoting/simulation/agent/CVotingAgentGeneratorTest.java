@@ -76,8 +76,9 @@ public final class CVotingAgentGeneratorTest extends TestCase
             final CSend l_sendaction = new CSend();
 
             /* TODO Check test */
-            final Set<CVotingAgent> l_agents = new CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23 ) )
-                    .generatemultiple( 23 )
+            final Set<CVotingAgent> l_agents = new
+                CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23 ) )
+                    .generatemultiple( 23, new CChairAgentGenerator(  l_aslstream ) )
                     .collect( Collectors.toSet() );
 
             assertEquals( 23, l_agents.size() );
