@@ -23,8 +23,8 @@
 
 package org.lightvoting;
 
+import com.google.common.collect.Sets;
 import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
@@ -66,20 +66,14 @@ public final class CMain
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
         final Set<CVotingAgent> l_agents;
-        final Set<CChairAgent> l_chairagents;
         final CVotingAgentGenerator l_votingagentgenerator;
-
-        // we need to use a single send action instance to (un)register, i.e. keeping track of, agents.
-        final CSend l_sendaction = new CSend();
 
         try
         {
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            final int l_agentnumber = Integer.parseInt( p_args[2] );
-
-            l_votingagentgenerator = new CVotingAgentGenerator( l_sendaction, l_stream, new CEnvironment( l_agentnumber ) );
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, new CEnvironment( Integer.parseInt( p_args[2] ) ) );
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
                     .collect( Collectors.toSet() );
@@ -94,13 +88,9 @@ public final class CMain
 
         // generate empty set of active agents
 
-        final Set<CVotingAgent> l_activeAgents = l_votingagentgenerator
-            .generatemultiple( 0 )
-            .collect( Collectors.toSet() );
+        final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-
-        final Iterator<CVotingAgent>  l_agentIterator = l_agents.iterator();
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
@@ -115,7 +105,7 @@ public final class CMain
             .forEach( j ->
             {
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents
-                addAgents( l_activeAgents, 3, l_agentIterator );
+                addAgents( l_activeAgents, 3, l_agents.iterator() );
                 System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
                 l_activeAgents.parallelStream().forEach( i ->
                 {
