@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/* TODO method for computing the committee vectors */
-
 /**
  * Created by sophie on 08.02.17.
  * uses http://stackoverflow.com/questions/127704/algorithm-to-return-all-combinations-of-k-elements-from-n
