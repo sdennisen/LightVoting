@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 /**
@@ -61,6 +62,9 @@ public class CMinimaxApprovalTest extends TestCase
      * test application of voting rule
      */
 
+    /* TODO test cases */
+    /* TODO use atomic arrays */
+
     public void testApplyRule()
     {
         final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
@@ -74,14 +78,14 @@ public class CMinimaxApprovalTest extends TestCase
         l_alternatives.add( "POI5" );
         l_alternatives.add( "POI6" );
 
-        final List<int[]> l_votes = new ArrayList<int[]>();
+        final List<AtomicIntegerArray> l_votes = new ArrayList<>();
 
-        final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote4 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote5 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote6 = {0, 0, 0, 1, 1, 1};
+        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
+        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{1, 1, 1, 1, 1, 0} );
+        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
+        final AtomicIntegerArray l_vote4 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
+        final AtomicIntegerArray l_vote5 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
+        final AtomicIntegerArray l_vote6 = new AtomicIntegerArray( new int[]{0, 0, 0, 1, 1, 1} );
 
         l_votes.add( l_vote1 );
         l_votes.add( l_vote2 );

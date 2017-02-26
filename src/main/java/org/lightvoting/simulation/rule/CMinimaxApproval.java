@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 /**
@@ -45,7 +46,7 @@ public class CMinimaxApproval
     /* m_alternatives list */
     private List<String> m_alternatives;
     /* list of values*/
-    private List<int[]> m_votes;
+    private List<AtomicIntegerArray> m_votes;
     /* committee size */
     private int m_comSize;
     /* committee */
@@ -61,7 +62,7 @@ public class CMinimaxApproval
      * @return elected committee
      */
 
-    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
     {
         m_alternatives = p_alternatives;
         m_votes = p_votes;
@@ -143,7 +144,7 @@ public class CMinimaxApproval
 
 
 
-    private int determineMaxHD( final List<int[]> p_votes, final int[] p_comVect )
+    private int determineMaxHD( final List<AtomicIntegerArray> p_votes, final int[] p_comVect )
     {
         /* determine BitVector for committee */
 
@@ -173,7 +174,7 @@ public class CMinimaxApproval
             final Boolean[] l_booleanVote = new Boolean[m_alternatives.size()];
 
             for ( int j = 0; j < m_alternatives.size(); j++ )
-                if ( p_votes.get( i )[j] == 1 )
+                if ( p_votes.get( i ).get( j ) == 1 )
                     l_booleanVote[j] = true;
                 else
                     l_booleanVote[j] = false;
