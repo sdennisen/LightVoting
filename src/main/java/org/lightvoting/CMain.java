@@ -29,13 +29,10 @@ import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.rule.CMinimaxApproval;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -105,13 +102,7 @@ public final class CMain
 
         final Iterator<CVotingAgent>  l_agentIterator = l_agents.iterator();
 
-        /* TODO reproduce example: draw three agents in each cycle */
-
-
-
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-
-        /* TODO use IntStream.range(int inclusiveStartIndex, int exclEndIndex) to define behaviour for the corresponding cycles */
 
         // runtime call (with parallel execution)
 
@@ -140,76 +131,7 @@ public final class CMain
                     }
                 } );
             } );
-
-
-     //   intstream( l_activeAgents, p_args, l_agentIterator );
-
-        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
-
-        final List<String> l_alternatives = new ArrayList<String>();
-
-        l_alternatives.add( "POI1" );
-        l_alternatives.add( "POI2" );
-        l_alternatives.add( "POI3" );
-        l_alternatives.add( "POI4" );
-        l_alternatives.add( "POI5" );
-        l_alternatives.add( "POI6" );
-
-        final List<int[]> l_votes = new ArrayList<int[]>();
-
-        /* TODO use atomic arrays */
-
-        final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote4 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote5 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote6 = {0, 0, 0, 1, 1, 1};
-
-        l_votes.add( l_vote1 );
-        l_votes.add( l_vote2 );
-        l_votes.add( l_vote3 );
-        l_votes.add( l_vote4 );
-        l_votes.add( l_vote5 );
-        l_votes.add( l_vote6 );
-
-        final int l_comSize = 3;
-
-        l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
     }
-
-    /*
-
-    private static void intstream( final Collection<CVotingAgent> p_activeAgents, final String[] p_args, final Iterator<CVotingAgent> p_agentIterator )
-    {
-        IntStream
-            // define cycle range, i.e. number of cycles to run sequentially
-            .range( 0,
-                   p_args.length < 3
-                   ? Integer.MAX_VALUE
-                   : Integer.parseInt( p_args[2] ) )
-            .forEach( j ->
-            {
-                // if you want to do something in cycle j, put it here - in this case, activate three new agents
-
-                addAgents( p_activeAgents, 3, p_agentIterator );
-                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + p_activeAgents.size() );
-                p_activeAgents.parallelStream().forEach( i ->
-                {
-                    try
-                    {
-                        // call each agent, i.e. trigger a new agent cycle
-                        i.call();
-                    }
-                    catch ( final Exception l_exception )
-                    {
-                        l_exception.printStackTrace();
-                        throw new RuntimeException();
-                    }
-                } );
-            } );
-    }*/
-
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
     {
