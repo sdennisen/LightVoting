@@ -58,11 +58,6 @@ public class CMinimaxApprovalTest extends TestCase
         return new TestSuite( CMinisumApprovalTest.class );
     }
 
-
-
-    /* TODO test cases */
-    /* TODO use atomic arrays */
-
     /**
      * test application of voting rule
      */
