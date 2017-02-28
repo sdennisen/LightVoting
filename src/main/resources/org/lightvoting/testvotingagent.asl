@@ -13,7 +13,7 @@
     X = MyName;
     Z = "agent 0";
 
-    Y = X == Z ? open/new/group(Chair) : 0;
+    Y = X == Z ? env/open/new/group(Chair) : 0;
     !nextcycle
     .
 
