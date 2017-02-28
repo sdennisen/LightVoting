@@ -28,6 +28,7 @@ import org.lightvoting.simulation.combinations.CCombination;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -78,7 +79,7 @@ public class CMinimaxApproval
             l_maxMap.put( i, this.determineMaxHD( l_votes, l_committees[i], l_alternatives.size() ) );
         }
 
-        l_maxMap = this.sortMap( l_maxMap );
+        l_maxMap = this.sortMapASC( l_maxMap );
 
         final Map.Entry<Integer, Integer> l_entry = l_maxMap.entrySet().iterator().next();
 
@@ -222,34 +223,13 @@ public class CMinimaxApproval
      */
 
 
-    public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
+    public Map<Integer, Integer> sortMapASC( final Map<Integer, Integer> p_valuesMap )
 
     {
-        final boolean l_DESC = true;
-        final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
+        final List<Map.Entry<Integer, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
-        return l_sortedMapDesc;
-
-    }
-
-    private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
-    {
-
-        final List<Map.Entry<Integer, Integer>> l_list = new LinkedList<>( p_unsortMap.entrySet() );
-
-        // Sorting the list based on values
-        Collections.sort( l_list, ( p_first, p_second ) ->
-        {
-            if ( p_order )
-            {
-                return p_first.getValue().compareTo( p_second.getValue() );
-            }
-            else
-            {
-                return p_second.getValue().compareTo( p_first.getValue() );
-
-            }
-        } );
+        // Sorting the list based on values in ascending order
+        Collections.sort( l_list, Comparator.comparing( Map.Entry::getValue ) );
 
         /* Maintaining insertion order with the help of LinkedList */
         final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();

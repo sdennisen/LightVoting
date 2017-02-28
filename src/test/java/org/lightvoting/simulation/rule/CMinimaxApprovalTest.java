@@ -55,7 +55,7 @@ public class CMinimaxApprovalTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CMinisumApprovalTest.class );
+        return new TestSuite( CMinimaxApprovalTest.class );
     }
 
     /**
