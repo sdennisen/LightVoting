@@ -30,14 +30,19 @@
         voting/send/chair/dissatisfaction(0.1);
         voting/send/chair/vote(0);
 
+
         // send my name to agent 0
         message/send("agent 0", MyName)
         .
 
 +!new/group/opened(Traveller, Chair, GroupID) <-
-     generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair).
+      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
+      env/join/group("foo")
+      .
 
 
 +!message/receive(Message, AgentName) <-
-        generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
-        .
+      generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
+      .
+
+

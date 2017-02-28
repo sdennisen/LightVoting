@@ -114,6 +114,17 @@ public final class CEnvironment
 
     }
 
+    /**
+     * join a group
+     * @param p_votingAgent voting agent joining a group
+     */
+
+    public final void joinGroup( final CVotingAgent p_votingAgent )
+    {
+        System.out.println( "do something" );
+
+    }
+
     public final int size()
     {
         return m_size;
