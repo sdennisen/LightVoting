@@ -149,32 +149,4 @@ public class CMinisumApproval
         return l_sortedMap;
     }
 
-    private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
-    {
-
-        final List<Entry<Integer, Integer>> l_list = new LinkedList<>( p_unsortMap.entrySet() );
-
-        /* Sorting the list based on values */
-        Collections.sort( l_list, ( p_first, p_second ) ->
-        {
-            if ( p_order )
-            {
-                return p_first.getValue().compareTo( p_second.getValue() );
-            }
-            else
-            {
-                return p_second.getValue().compareTo( p_first.getValue() );
-
-            }
-        } );
-
-        /* Maintaining insertion order with the help of LinkedList */
-        final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();
-        for ( final Entry<Integer, Integer> l_entry : l_list )
-        {
-            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
-        }
-
-        return l_sortedMap;
-    }
 }
