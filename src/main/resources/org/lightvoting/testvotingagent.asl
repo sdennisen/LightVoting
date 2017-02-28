@@ -32,17 +32,20 @@
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName)
+        message/send("agent 0", MyName);
+      //  env/join/group(0)
         .
 
-+!new/group/opened(Traveller, Chair, GroupID) <-
-      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
-      env/join/group("foo")
-      .
++!joined/group(Traveller, GroupID) <-
+       generic/print("traveller: ", Traveller, " joined group: ", GroupID)
+       .
 
 
 +!message/receive(Message, AgentName) <-
-      generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
-      .
+     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
+     .
 
 
++!new/group/opened(Traveller, Chair, GroupID) <-
+      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair)
+       .

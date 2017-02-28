@@ -119,9 +119,24 @@ public final class CEnvironment
      * @param p_votingAgent voting agent joining a group
      */
 
-    public final void joinGroup( final CVotingAgent p_votingAgent )
+    public final void joinGroup( final CVotingAgent p_votingAgent, final int p_testID )
     {
         System.out.println( "do something" );
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "joined/group",
+                CLiteral.from( p_votingAgent.name() ),
+                CLiteral.from( String.valueOf( p_testID ) ) )
+        );
+
+
+        // trigger all agents and tell them that the agent joined a group
+        m_agentgroup
+            .keySet()
+            .parallelStream()
+            .forEach( i -> i.trigger( l_trigger ) );
 
     }
 
