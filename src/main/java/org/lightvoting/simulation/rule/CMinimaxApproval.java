@@ -44,11 +44,11 @@ public class CMinimaxApproval
 {
 
     /* m_alternatives list */
-//    private List<String> m_alternatives;
+    //    private List<String> m_alternatives;
     /* list of values*/
-//    private List<AtomicIntegerArray> m_votes;
-//    /* committee size */
-//    private int m_comSize;
+    //    private List<AtomicIntegerArray> m_votes;
+    //    /* committee size */
+    //    private int m_comSize;
 
     /**
      * compute the winning committee according to Minimax Approval
@@ -262,6 +262,14 @@ public class CMinimaxApproval
     }
 
 }
+
+
+
+
+
+
+
+
 
 
 

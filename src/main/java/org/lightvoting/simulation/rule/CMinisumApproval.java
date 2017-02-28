@@ -101,7 +101,7 @@ public class CMinisumApproval
 
         /* sort the HashMap in descending order according to values */
 
-        l_valuesMap = this.sortMap( l_valuesMap );
+        l_valuesMap = this.sortMapDESC( l_valuesMap );
 
         /* create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.*/
 
@@ -129,15 +129,24 @@ public class CMinisumApproval
      * @param p_valuesMap HashMap with Approval scores
      * @return sorted HashMap
      */
-    public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
+    public Map<Integer, Integer> sortMapDESC( final Map<Integer, Integer> p_valuesMap )
 
     {
 
-        final boolean l_DESC = false;
-        final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
+        final List<Entry<Integer, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
-        return l_sortedMapDesc;
+        /* Sorting the list based on values in descending order */
+        Collections.sort( l_list, ( p_first, p_second ) ->
+            p_second.getValue().compareTo( p_first.getValue() ) );
 
+        /* Maintaining insertion order with the help of LinkedList */
+        final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();
+        for ( final Entry<Integer, Integer> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
     }
 
     private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
