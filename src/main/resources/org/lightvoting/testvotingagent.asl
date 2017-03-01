@@ -47,7 +47,25 @@
      generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
      .
 
++!new/group/opened(Traveller, Chair, GroupID) : (MyName == Traveller) <-
+       generic/print("wrap up ", MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
+       !wrapUp
+        .
 
 +!new/group/opened(Traveller, Chair, GroupID) <-
       generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair)
+  //    X = MyName == Traveller ? !wrapUp : 0
        .
+
+
+// TODO remove ugly workaround
+
++!wrapUp  <-
+
+
+    generic/print("Testing Voting Agent");
+    !!test;
+
+
+    !nextcycle
+    .
