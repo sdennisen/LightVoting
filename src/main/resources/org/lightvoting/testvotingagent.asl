@@ -32,7 +32,7 @@
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName);
+        message/send("agent 0", MyName)
       //  env/join/group(0)
         .
 
