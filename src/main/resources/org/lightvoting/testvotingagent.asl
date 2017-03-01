@@ -1,30 +1,19 @@
-<<<<<<< HEAD
 lookForGroup(true).
-=======
 name("agent 0").
->>>>>>> developing
 
 // initial-goal
 !main.
 
-<<<<<<< HEAD
 // initial plan (triggered by the initial goal)
-+!main <-
++!main: >>(name(Name), MyName == Name)
+    <-
 
-    L= collection/list/create();
-    +groupIdList(L);
+            L= collection/list/create();
+            +groupIdList(L);
 
-    generic/print("Hello World!");
-    >>chair(Chair);
-    generic/print("MyChair:", Chair);
-=======
-+!main
-    : >>(name(Name), MyName == Name)
-        <-
-            generic/print(MyName, "Hello World!");
+            generic/print("Hello World!");
             >>chair(Chair);
-            generic/print(MyName, "MyChair:", Chair);
->>>>>>> developing
+            generic/print("MyChair:", Chair);
 
             env/open/new/group(Chair);
 
@@ -59,7 +48,7 @@ name("agent 0").
   // TODO: join random group
 +!lookForGroup: >>lookForGroup(T) <-
      Z = true;
-     T = T == Z ? env/join/group(0) : 0;
+     T = T == Z ? env/join/group(0) : 0
      .
 
 +!test  <-
@@ -72,7 +61,8 @@ name("agent 0").
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName)
+        message/send("agent 0", MyName);
+        !lookForGroup
 
         .
 
