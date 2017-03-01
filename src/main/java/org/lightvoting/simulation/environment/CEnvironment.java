@@ -119,10 +119,8 @@ public final class CEnvironment
      * @param p_votingAgent voting agent joining a group
      */
 
-    public final void joinGroup( final CVotingAgent p_votingAgent, final int p_testID )
+    public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
     {
-        System.out.println( "do something" );
-
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(

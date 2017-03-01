@@ -36,7 +36,7 @@
         .
 
 +!joined/group(Traveller, GroupID) <-
-       generic/print("traveller: ", Traveller, " joined group: ", GroupID)
+       generic/print("traveller ", Traveller, " joined group ", GroupID)
        .
 
 

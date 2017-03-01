@@ -68,6 +68,7 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
      */
     public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment ) throws Exception
     {
+
         super(
                 // input ASL stream
                 p_stream,

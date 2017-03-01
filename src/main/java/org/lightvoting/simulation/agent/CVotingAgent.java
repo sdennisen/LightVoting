@@ -111,7 +111,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "env/join/group" )
-    private void envJoinGroup( final int p_testInt )
+    private void envJoinGroup( final Number p_testInt )
     {
         m_environment.joinGroup( this, p_testInt );
     }
