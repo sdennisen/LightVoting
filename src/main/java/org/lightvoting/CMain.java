@@ -44,6 +44,8 @@ import java.util.stream.IntStream;
  */
 public final class CMain
 {
+    private static Iterator<CVotingAgent> s_agentIterator;
+
     /**
      * Hidden constructor
      */
@@ -68,6 +70,7 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
+
         try
         {
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
@@ -78,6 +81,7 @@ public final class CMain
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
+            s_agentIterator = l_agents.iterator();
 
         }
         catch ( final Exception l_exception )
@@ -105,7 +109,7 @@ public final class CMain
             .forEach( j ->
             {
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents
-                addAgents( l_activeAgents, 3, l_agents.iterator() );
+                addAgents( l_activeAgents, 3, s_agentIterator );
                 System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
                 l_activeAgents.parallelStream().forEach( i ->
                 {
@@ -132,9 +136,13 @@ public final class CMain
             {
                 final CVotingAgent l_curAg = p_agentIterator.next();
                 p_activeAgents.add( l_curAg );
-            }
+                System.out.println( "added Agent " + l_curAg.name() );
+                p_agentIterator.remove();
 
+            }
         }
 
     }
+
 }
+
