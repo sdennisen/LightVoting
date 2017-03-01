@@ -77,7 +77,7 @@ name("agent 0").
      .
 
 +!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
+      generic/print("traveller ", Traveller, " opened group ", GroupID);
       L = collection/list/union(L, GroupID);
       generic/print("ID List: ", L)
       .
