@@ -62,6 +62,5 @@ name("agent 0").
      .
 
 +!new/group/opened(Traveller, Chair, GroupID) <-
-       generic/print("wrap up ", MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
-       !wrapUp
-        .
+       generic/print("traveller ", Traveller, " opened group ", GroupID)
+       .
