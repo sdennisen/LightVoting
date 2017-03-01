@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 lookForGroup(true).
+=======
+name("agent 0").
+>>>>>>> developing
 
 // initial-goal
 !main.
 
+<<<<<<< HEAD
 // initial plan (triggered by the initial goal)
 +!main <-
 
@@ -12,18 +17,37 @@ lookForGroup(true).
     generic/print("Hello World!");
     >>chair(Chair);
     generic/print("MyChair:", Chair);
+=======
++!main
+    : >>(name(Name), MyName == Name)
+        <-
+            generic/print(MyName, "Hello World!");
+            >>chair(Chair);
+            generic/print(MyName, "MyChair:", Chair);
+>>>>>>> developing
 
-    X = MyName;
-    Z = "agent 0";
+            env/open/new/group(Chair);
 
-    Y = X == Z ? env/open/new/group(Chair) : 0;
-
-    generic/print("Testing Voting Agent");
-    !!test;
+            generic/print(MyName, "Testing Voting Agent");
+            !!test;
 
 
-    !nextcycle
-    .
+            !nextcycle
+            .
+
++!main
+    : >>(name(Name), MyName != Name)
+        <-
+            generic/print(MyName, "Hello World!");
+            >>chair(Chair);
+            generic/print(MyName, "MyChair:", Chair);
+
+            generic/print(MyName, "Testing Voting Agent");
+            !!test;
+
+
+            !nextcycle
+            .
 
 +!nextcycle <-
     >>chair(Chair);
@@ -62,9 +86,9 @@ lookForGroup(true).
      generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
      .
 
-
 +!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
       generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
       L = collection/list/union(L, GroupID);
       generic/print("ID List: ", L)
       .
+
