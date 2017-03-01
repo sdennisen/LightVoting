@@ -1,3 +1,5 @@
+lookForGroup(true).
+
 // initial-goal
 !main.
 
@@ -25,8 +27,16 @@
 
 +!nextcycle <-
     >>chair(Chair);
-    generic/print("MyChair:", Chair)
+    generic/print("MyChair:", Chair);
+    !lookForGroup
     .
+
+
+  // TODO: join random group
++!lookForGroup: >>lookForGroup(T) <-
+     Z = true;
+     T = T == Z ? env/join/group(0) : 0;
+     .
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -38,14 +48,13 @@
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName);
+        message/send("agent 0", MyName)
 
-        // TODO: join random group
-        env/join/group(0)
         .
 
 +!joined/group(Traveller, GroupID) <-
-       generic/print("traveller ", Traveller, " joined group ", GroupID)
+       generic/print("traveller ", Traveller, " joined group ", GroupID);
+       -lookForGroup(true)
        .
 
 
