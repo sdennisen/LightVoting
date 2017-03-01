@@ -1,23 +1,37 @@
+name("agent 0").
+
 // initial-goal
 !main.
 
-// initial plan (triggered by the initial goal)
-+!main <-
-    generic/print("Hello World!");
-    >>chair(Chair);
-    generic/print("MyChair:", Chair);
++!main
+    : >>(name(Name), MyName == Name)
+        <-
+            generic/print(MyName, "Hello World!");
+            >>chair(Chair);
+            generic/print(MyName, "MyChair:", Chair);
 
-    X = MyName;
-    Z = "agent 0";
+            env/open/new/group(Chair);
 
-    Y = X == Z ? env/open/new/group(Chair) : 0;
-
-    generic/print("Testing Voting Agent");
-    !!test;
+            generic/print(MyName, "Testing Voting Agent");
+            !!test;
 
 
-    !nextcycle
-    .
+            !nextcycle
+            .
+
++!main
+    : >>(name(Name), MyName != Name)
+        <-
+            generic/print(MyName, "Hello World!");
+            >>chair(Chair);
+            generic/print(MyName, "MyChair:", Chair);
+
+            generic/print(MyName, "Testing Voting Agent");
+            !!test;
+
+
+            !nextcycle
+            .
 
 +!nextcycle <-
     >>chair(Chair);
