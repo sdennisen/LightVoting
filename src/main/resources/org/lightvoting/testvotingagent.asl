@@ -3,6 +3,10 @@
 
 // initial plan (triggered by the initial goal)
 +!main <-
+
+    L= collection/list/create();
+    +groupIdList(L);
+
     generic/print("Hello World!");
     >>chair(Chair);
     generic/print("MyChair:", Chair);
@@ -24,7 +28,7 @@
     generic/print("MyChair:", Chair)
     .
 
-+!test <-
++!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
 
         voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
@@ -35,6 +39,8 @@
 
         // send my name to agent 0
         message/send("agent 0", MyName);
+
+        // TODO: join random group
         env/join/group(0)
         .
 
@@ -48,6 +54,8 @@
      .
 
 
-+!new/group/opened(Traveller, Chair, GroupID) <-
-      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair)
-       .
++!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
+      generic/print(MyName, ": group id: ", GroupID, " traveller: " , Traveller, " chair: " , Chair);
+      L = collection/list/union(L, GroupID);
+      generic/print("ID List: ", L)
+      .
