@@ -3,9 +3,6 @@
 
 // initial plan (triggered by the initial goal)
 +!main <-
-    generic/print("Testing Voting Agent");
-    !!test;
-
     generic/print("Hello World!");
     >>chair(Chair);
     generic/print("MyChair:", Chair);
@@ -14,7 +11,9 @@
     Z = "agent 0";
 
     Y = X == Z ? env/open/new/group(Chair) : 0;
-    !nextcycle
+    !nextcycle;
+    generic/print("Testing Voting Agent");
+    !!test
     .
 
 +!nextcycle <-
@@ -32,8 +31,8 @@
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName)
-      //  env/join/group(0)
+        message/send("agent 0", MyName);
+        env/join/group(0)
         .
 
 +!joined/group(Traveller, GroupID) <-
