@@ -1,4 +1,4 @@
-lookForGroup("true").
+lookForGroup(1).
 name("agent 0").
 
 // initial-goal
@@ -40,18 +40,24 @@ name("agent 0").
 
 +!nextcycle <-
     >>chair(Chair);
-    generic/print("MyChair:", Chair);
-    !lookForGroup
+    generic/print("MyChair:", Chair)
     .
 
-
   // TODO: join random group
+  // TODO: implement randomInt() in AgentSpeak(L++) instead of rounding double value
+
 +!lookForGroup <-
-        >>lookForGroup(T);
-        >>groupIdList(L);
-        Z = true;
-        T = T == Z ? env/join/group(0) : 0
-        .
+      >>groupIdList(L);
+      generic/print("List size: ", collection/size(L));
+      //    I = math/statistic/randomsimple() * collection/size(L);
+      // assuming there are 3 groups
+      I = math/statistic/randomsimple() * 3;
+      generic/print(MyName, " Random number: ", I);
+      //   Z = true;
+      //    T = T == Z ? env/join/group(0) : 0
+      env/join/group(0)
+     .
+
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -65,13 +71,10 @@ name("agent 0").
         // send my name to agent 0
         message/send("agent 0", MyName);
         !lookForGroup
-
-        .
+         .
 
 +!joined/group(Traveller, GroupID) <-
-       generic/print("traveller ", Traveller, " joined group ", GroupID);
-       -lookForGroup(true);
-       +lookForGroup(false)
+       generic/print("traveller ", Traveller, " joined group ", GroupID)
        .
 
 

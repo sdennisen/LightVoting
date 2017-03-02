@@ -121,6 +121,7 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
     {
+        System.out.println( "name of joining agent " + p_votingAgent.name() );
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
