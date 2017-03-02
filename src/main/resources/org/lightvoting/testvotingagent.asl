@@ -7,7 +7,7 @@ lookForGroup.
 // TODO: if there is no group, create a new one, otherwise choose one at random.
 
 // initial plan (triggered by the initial goal)
-+!main: >>(name(Name), MyName == Name)
++!main //: >>(name(Name), MyName == Name)
     <-
 
             L= collection/list/create();
@@ -21,19 +21,21 @@ lookForGroup.
             !nextcycle
             .
 
-+!main
-      : >>(name(Name), MyName != Name)
-        <-
-            L= collection/list/create();
-            +groupIdList(L);
-            generic/print(MyName, "Hello World!");
-            >>chair(Chair);
-            generic/print(MyName, "MyChair:", Chair);
+//+!main
+//      : >>(name(Name), MyName != Name)
+//        <-
+//            L= collection/list/create();
+//            +groupIdList(L);
+//            generic/print(MyName, "Hello World!");
+//            >>chair(Chair);
+//            generic/print(MyName, "MyChair:", Chair);
 
-            generic/print(MyName, "Testing Voting Agent");
+//            generic/print(MyName, "Testing Voting Agent");
 
-            !nextcycle
-            .
+//      //      env/open/new/group(Chair);
+
+//            !nextcycle
+//            .
 
 +!nextcycle <-
     >>chair(Chair);
@@ -42,8 +44,7 @@ lookForGroup.
     !!test
     .
 
-     // TODO ensure that agents only join open groups
-     // TODO fix case when list is empty -> join group 0 by default
+     // TODO current fix: join group 0 by default -> better: if you don't see a group, open a new one.
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -100,10 +101,9 @@ lookForGroup.
      .
 
 +!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-      generic/print("traveller ", Traveller, " opened group ", GroupID);
-      L = collection/list/union(L, GroupID);
-      generic/print("ID List: ", L);
-      NewL = L;
+      generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
+      NewL = collection/list/union(L, 0, GroupID);
+      generic/print("ID List: ", NewL);
       -groupIdList(L);
       +groupIdList(NewL)
       .
