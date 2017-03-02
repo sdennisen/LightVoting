@@ -4,6 +4,7 @@ lookForGroup.
 // initial-goal
 !main.
 
+// TODO: if there is no group, create a new one, otherwise choose one at random.
 
 // initial plan (triggered by the initial goal)
 +!main: >>(name(Name), MyName == Name)
@@ -42,8 +43,7 @@ lookForGroup.
     .
 
      // TODO ensure that agents only join open groups
-     // TODO fix case when list is empty
-     // TODO reinsert goal !lookForGroup
+     // TODO fix case when list is empty -> join group 0 by default
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -56,24 +56,39 @@ lookForGroup.
 
         // send my name to agent 0
         message/send("agent 0", MyName);
-        // !lookForGroup
+        !lookForGroup
 
-        >>groupIdList(L);
-        generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-         generic/print("Cycle: ", Cycle, " List: ", L);
 
-        I = math/statistic/randomsimple() * 3;
-
-        // TODO reinsert, fix bug
-        //I = math/statistic/randomsimple() * collection/size(L);
-
-        J = math/floor(I);
-
-        // TODO reinsert, fix bug
-        // K = collection/list/get(L, J);
-
-        env/join/group(J)
         .
+
+
++!lookForGroup : >>(groupIdList(L), (collection/size(L) !=0))
+<-
+                generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+                generic/print("Cycle: ", Cycle, " List: ", L);
+
+              //  I = math/statistic/randomsimple() * 3;
+
+                I = math/statistic/randomsimple() * collection/size(L);
+
+                J = math/floor(I);
+
+                // TODO reinsert, fix bug
+                K = collection/list/get(L, J);
+
+                env/join/group(J)
+.
+
++!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
+<-
+                 generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+                 generic/print("Cycle: ", Cycle, " List: ", L);
+
+                 env/join/group(0)
+.
+
+
+
 
 +!joined/group(Traveller, GroupID) <-
        generic/print("traveller ", Traveller, " joined group ", GroupID)
