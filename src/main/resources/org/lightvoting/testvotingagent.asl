@@ -1,7 +1,9 @@
 name("agent 0").
+lookForGroup.
 
 // initial-goal
 !main.
+
 
 // initial plan (triggered by the initial goal)
 +!main: >>(name(Name), MyName == Name)
@@ -9,16 +11,11 @@ name("agent 0").
 
             L= collection/list/create();
             +groupIdList(L);
-
             generic/print("Hello World!");
             >>chair(Chair);
             generic/print("MyChair:", Chair);
 
             env/open/new/group(Chair);
-
-            generic/print(MyName, "Testing Voting Agent");
-            !!test;
-
 
             !nextcycle
             .
@@ -28,26 +25,27 @@ name("agent 0").
         <-
             L= collection/list/create();
             +groupIdList(L);
-
             generic/print(MyName, "Hello World!");
             >>chair(Chair);
             generic/print(MyName, "MyChair:", Chair);
 
             generic/print(MyName, "Testing Voting Agent");
 
-            !!test;
-
             !nextcycle
             .
 
 +!nextcycle <-
     >>chair(Chair);
-    generic/print("MyChair:", Chair)
+    generic/print("MyChair:", Chair);
+    generic/print(MyName, "Testing Voting Agent");
+    !!test
     .
 
-  // TODO reinsert goal !lookForGroup
-  // TODO: join random group: round double value and use as group ID
-  // TODO: implement randomInt() in AgentSpeak(L++) instead of rounding double value
+
+     // TODO determine size of list correctly
+     // TODO ensure that agents only join open groups
+     // TODO: implement randomInt() in AgentSpeak(L++) instead of rounding double value
+     // TODO reinsert goal !lookForGroup
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -63,12 +61,14 @@ name("agent 0").
         // !lookForGroup
 
          >>groupIdList(L);
-         generic/print("List size: ", collection/size(L));
+         generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+         generic/print("Cycle: ", Cycle, " List: ", L);
       // I = math/statistic/randomsimple() * collection/size(L);
       // assuming there are 3 groups
-         I = math/statistic/randomsimple() * 3;
+         I = math/statistic/randomsimple() * 2;
          generic/print(MyName, " Random number: ", I);
-         env/join/group(0)
+         // TODO later L as input parameter, Index = round(I), ID is Index-th element of L
+         env/join/group(I)
          .
 
 +!joined/group(Traveller, GroupID) <-
@@ -83,7 +83,10 @@ name("agent 0").
 +!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
       generic/print("traveller ", Traveller, " opened group ", GroupID);
       L = collection/list/union(L, GroupID);
-      generic/print("ID List: ", L)
+      generic/print("ID List: ", L);
+      NewL = L;
+      -groupIdList(L);
+      +groupIdList(NewL)
       .
 
 

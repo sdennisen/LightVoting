@@ -127,7 +127,7 @@ public final class CEnvironment
             CLiteral.from(
                 "joined/group",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( String.valueOf( p_testID ) ) )
+                CLiteral.from( String.valueOf( Math.round( (Double) p_testID ) ) ) )
         );
 
 
