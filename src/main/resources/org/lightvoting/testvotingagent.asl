@@ -70,7 +70,8 @@ name("agent 0").
 
         // send my name to agent 0
         message/send("agent 0", MyName);
-        !lookForGroup
+        // !lookForGroup
+        env/join/group(0)
          .
 
 +!joined/group(Traveller, GroupID) <-
