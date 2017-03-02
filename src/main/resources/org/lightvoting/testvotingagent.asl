@@ -68,13 +68,10 @@ lookForGroup.
                 generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
                 generic/print("Cycle: ", Cycle, " List: ", L);
 
-              //  I = math/statistic/randomsimple() * 3;
-
                 I = math/statistic/randomsimple() * collection/size(L);
 
                 J = math/floor(I);
 
-                // TODO reinsert, fix bug
                 K = collection/list/get(L, J);
 
                 env/join/group(J)
