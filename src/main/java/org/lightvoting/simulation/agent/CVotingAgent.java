@@ -113,7 +113,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "env/join/group" )
     private void envJoinGroup( final Number p_testInt )
     {
-        System.out.println( "Agent class: name of joining agent: " + this.name() );
         m_environment.joinGroup( this, p_testInt );
     }
 

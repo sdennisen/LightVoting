@@ -1,4 +1,3 @@
-lookForGroup(1).
 name("agent 0").
 
 // initial-goal
@@ -25,15 +24,18 @@ name("agent 0").
             .
 
 +!main
-    : >>(name(Name), MyName != Name)
+      : >>(name(Name), MyName != Name)
         <-
+            L= collection/list/create();
+            +groupIdList(L);
+
             generic/print(MyName, "Hello World!");
             >>chair(Chair);
             generic/print(MyName, "MyChair:", Chair);
 
             generic/print(MyName, "Testing Voting Agent");
-            !!test;
 
+            !!test;
 
             !nextcycle
             .
@@ -43,21 +45,9 @@ name("agent 0").
     generic/print("MyChair:", Chair)
     .
 
-  // TODO: join random group
+  // TODO reinsert goal !lookForGroup
+  // TODO: join random group: round double value and use as group ID
   // TODO: implement randomInt() in AgentSpeak(L++) instead of rounding double value
-
-+!lookForGroup <-
-      >>groupIdList(L);
-      generic/print("List size: ", collection/size(L));
-      //    I = math/statistic/randomsimple() * collection/size(L);
-      // assuming there are 3 groups
-      I = math/statistic/randomsimple() * 3;
-      generic/print(MyName, " Random number: ", I);
-      //   Z = true;
-      //    T = T == Z ? env/join/group(0) : 0
-      env/join/group(0)
-     .
-
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -71,7 +61,14 @@ name("agent 0").
         // send my name to agent 0
         message/send("agent 0", MyName);
         // !lookForGroup
-        env/join/group(0)
+
+         >>groupIdList(L);
+         generic/print("List size: ", collection/size(L));
+      // I = math/statistic/randomsimple() * collection/size(L);
+      // assuming there are 3 groups
+         I = math/statistic/randomsimple() * 3;
+         generic/print(MyName, " Random number: ", I);
+         env/join/group(0)
          .
 
 +!joined/group(Traveller, GroupID) <-
@@ -89,3 +86,15 @@ name("agent 0").
       generic/print("ID List: ", L)
       .
 
+
+//+!lookForGroup <-
+//      >>groupIdList(L);
+//      generic/print("List size: ", collection/size(L));
+//      //    I = math/statistic/randomsimple() * collection/size(L);
+//      // assuming there are 3 groups
+//      I = math/statistic/randomsimple() * 3;
+//      generic/print(MyName, " Random number: ", I);
+//      //   Z = true;
+//      //    T = T == Z ? env/join/group(0) : 0
+//      env/join/group(0)
+//     .
