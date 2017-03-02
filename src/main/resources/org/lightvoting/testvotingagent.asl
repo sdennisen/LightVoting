@@ -41,8 +41,6 @@ lookForGroup.
     !!test
     .
 
-
-     // TODO determine size of list correctly
      // TODO ensure that agents only join open groups
      // TODO: implement randomInt() in AgentSpeak(L++) instead of rounding double value
      // TODO reinsert goal !lookForGroup
@@ -60,15 +58,17 @@ lookForGroup.
         message/send("agent 0", MyName);
         // !lookForGroup
 
-         >>groupIdList(L);
-         generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-         generic/print("Cycle: ", Cycle, " List: ", L);
+     //    >>groupIdList(L);
+     //    generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+     //    generic/print("Cycle: ", Cycle, " List: ", L);
       // I = math/statistic/randomsimple() * collection/size(L);
       // assuming there are 3 groups
-         I = math/statistic/randomsimple() * 2;
-         generic/print(MyName, " Random number: ", I);
+    //  I = 0;
+      //   I = math/round(1.7);
+    //     I = math/round(math/statistic/randomsimple() * 2);
+   //      generic/print(MyName, " Random number: ", I);
          // TODO later L as input parameter, Index = round(I), ID is Index-th element of L
-         env/join/group(I)
+        env/join/group(0)
          .
 
 +!joined/group(Traveller, GroupID) <-

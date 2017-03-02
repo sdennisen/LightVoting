@@ -121,14 +121,14 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
     {
-        System.out.println( "name of joining agent " + p_votingAgent.name() );
+        System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) )  );
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "joined/group",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( String.valueOf( Math.round( (Double) p_testID ) ) ) )
-        );
+                CLiteral.from( String.valueOf( Math.round( p_testID.doubleValue() ) )  ) )
+            );
 
 
         // trigger all agents and tell them that the agent joined a group
