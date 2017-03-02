@@ -1,4 +1,4 @@
-lookForGroup(true).
+lookForGroup("true").
 name("agent 0").
 
 // initial-goal
@@ -46,10 +46,12 @@ name("agent 0").
 
 
   // TODO: join random group
-+!lookForGroup: >>lookForGroup(T) <-
-     Z = true;
-     T = T == Z ? env/join/group(0) : 0
-     .
++!lookForGroup <-
+        >>lookForGroup(T);
+        >>groupIdList(L);
+        Z = true;
+        T = T == Z ? env/join/group(0) : 0
+        .
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
@@ -68,7 +70,8 @@ name("agent 0").
 
 +!joined/group(Traveller, GroupID) <-
        generic/print("traveller ", Traveller, " joined group ", GroupID);
-       -lookForGroup(true)
+       -lookForGroup(true);
+       +lookForGroup(false)
        .
 
 
