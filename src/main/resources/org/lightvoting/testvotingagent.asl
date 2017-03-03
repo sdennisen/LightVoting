@@ -74,7 +74,7 @@ lookForGroup.
 
                 K = collection/list/get(L, J);
 
-                env/join/group(J)
+                env/join/group(K)
 .
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
