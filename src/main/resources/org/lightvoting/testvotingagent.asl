@@ -72,7 +72,11 @@ lookForGroup.
 
                 J = math/floor(I);
 
+                generic/print("J :", J);
+
                 K = collection/list/get(L, J);
+
+                generic/print("K: ",  K);
 
                 env/join/group(K)
 .
