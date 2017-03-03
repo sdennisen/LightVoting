@@ -74,7 +74,11 @@ lookForGroup.
 
                 K = collection/list/get(L, J);
 
-                env/join/group(J)
+                // TODO reinsert later for branch dev-randomGroups/developing
+
+                // env/join/group(K)
+
+                env/join/group(0)
 .
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
@@ -82,6 +86,7 @@ lookForGroup.
                  generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
                  generic/print("Cycle: ", Cycle, " List: ", L);
 
+             // TODO remove workaround for branch dev-randomGroups, developing
                  env/join/group(0)
 .
 
