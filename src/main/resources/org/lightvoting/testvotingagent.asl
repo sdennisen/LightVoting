@@ -65,8 +65,8 @@ lookForGroup.
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) !=0))
 <-
-                generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-                generic/print("Cycle: ", Cycle, " List: ", L);
+                generic/print(MyName, " Cycle: ", Cycle, " List size: ", collection/size(L));
+                generic/print(MyName, "Cycle: ", Cycle, " List: ", L);
 
                 I = math/statistic/randomsimple() * collection/size(L);
 
@@ -83,8 +83,8 @@ lookForGroup.
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
 <-
-                 generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-                 generic/print("Cycle: ", Cycle, " List: ", L);
+                 generic/print(MyName, " Cycle: ", Cycle, " List size: ", collection/size(L));
+                 generic/print(MyName, "Cycle: ", Cycle, " List: ", L);
 
                  env/join/group(0)
 .
@@ -102,11 +102,21 @@ lookForGroup.
      .
 
 +!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-      generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
-      NewL = collection/list/union(L, 0, GroupID);
-      generic/print("ID List: ", NewL);
-      -groupIdList(L);
-      +groupIdList(NewL)
+   //     generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
+   //     NewL = collection/list/union(L, GroupID);
+   //     generic/print("ID List: ", NewL);
+   //     +groupIdList(NewL);
+   //     -groupIdList(L)
+
+      !!insertNewId(Traveller, GroupID, L)
+       .
+
++!insertNewId(Traveller, GroupID, L) <-
+       generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
+       NewL = collection/list/union(L, GroupID);
+       generic/print("ID List: ", NewL);
+       +groupIdList(NewL);
+       -groupIdList(L)
       .
 
 
