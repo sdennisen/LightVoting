@@ -25,6 +25,7 @@ package org.lightvoting;
 
 import com.google.common.collect.Sets;
 import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.agent.CVotingAgentGenerator;
@@ -70,6 +71,9 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
+        final Set<CChairAgent> l_chairAgents;
+        final CChairAgentGenerator l_chairagentgenerator;
+
 
         try
         {
@@ -82,6 +86,11 @@ public final class CMain
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();
+
+//            l_chairagentgenerator = new CChairAgentGenerator( l_chairstream );
+//            l_chairAgents = l_chairagentgenerator
+//                .generatemultiple( Integer.parseInt( p_args[3] ), new CChairAgentGenerator( l_chairstream )  )
+//                .collect( Collectors.toSet() );
 
         }
         catch ( final Exception l_exception )
@@ -124,6 +133,19 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } );
+//                l_chairAgents.parallelStream().forEach( i ->
+//                     {
+//                         try
+//                         {
+//                             // call each agent, i.e. trigger a new agent cycle
+//                             i.call();
+//                         }
+//                         catch ( final Exception l_exception )
+//                         {
+//                             l_exception.printStackTrace();
+//                             throw new RuntimeException();
+//                         }
+//                     } );
             } );
     }
 

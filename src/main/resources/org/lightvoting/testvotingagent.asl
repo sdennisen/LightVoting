@@ -102,8 +102,8 @@ lookForGroup.
 //     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
 //     .
 
-//+!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-//      generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
++!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
+     generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID).
 //      NewL = collection/list/union(L, 0, GroupID);
 //      generic/print("ID List: ", NewL);
 //      -groupIdList(L);

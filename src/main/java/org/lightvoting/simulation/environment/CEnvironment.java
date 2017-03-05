@@ -29,6 +29,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +88,6 @@ public final class CEnvironment
         if ( m_group.compareAndSet( p_group, null, p_votingAgent ) )
         {
             m_agentgroup.put( p_votingAgent, p_group );
-            System.out.println( " Agent " + p_votingAgent.name() + " group id " + p_group );
             return true;
         }
 
@@ -103,6 +103,21 @@ public final class CEnvironment
 
     public final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
     {
+        final List<CVotingAgent> l_agentList = new LinkedList<>();
+        l_agentList.add(  p_votingAgent );
+        m_chairgroup.put( p_votingAgent.getChair(), l_agentList );
+        System.out.println( " Agent " + p_votingAgent.name() + " group id " + ( m_agentgroup.get( p_votingAgent ) ).toString() );
+
+        final ITrigger l_triggerChair = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "myGroup",
+                CLiteral.from( p_votingAgent.name() ),
+                CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
+        );
+
+        p_votingAgent.getChair().trigger( l_triggerChair );
+
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
