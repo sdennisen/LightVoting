@@ -102,7 +102,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void envOpenNewGroup( final IBaseAgent<CChairAgent> p_chairagent )
     {
         // wake up in next cycle
-    //    p_chairagent.sleep( 0 );
+        p_chairagent.sleep( 0 );
         m_environment.openNewGroup( this, (CChairAgent) p_chairagent );
 
         // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
