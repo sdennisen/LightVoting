@@ -29,6 +29,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -46,9 +47,15 @@ public final class CEnvironment
     private final AtomicReferenceArray<CVotingAgent> m_group;
 
     /**
-     * map with agent-to-group mapping
+     * map with agent-to-group-id mapping
      */
     private final Map<CVotingAgent, Integer> m_agentgroup = new ConcurrentHashMap<>();
+
+    /**
+     * map with chair-to-group mapping
+     */
+
+    private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup = new ConcurrentHashMap<>();
 
     /**
      * maximum size
