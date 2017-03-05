@@ -65,8 +65,8 @@ lookForGroup.
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) !=0))
 <-
-                generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-                generic/print("Cycle: ", Cycle, " List: ", L);
+         //       generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+         //       generic/print("Cycle: ", Cycle, " List: ", L);
 
                 I = math/statistic/randomsimple() * collection/size(L);
 
@@ -83,8 +83,8 @@ lookForGroup.
 
 +!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
 <-
-                 generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-                 generic/print("Cycle: ", Cycle, " List: ", L);
+        //         generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
+        //         generic/print("Cycle: ", Cycle, " List: ", L);
 
              // TODO remove workaround for branch dev-randomGroups, developing
                  env/join/group(0)
@@ -98,17 +98,17 @@ lookForGroup.
        .
 
 
-+!message/receive(Message, AgentName) <-
-     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
-     .
+//+!message/receive(Message, AgentName) <-
+//     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
+//     .
 
-+!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-      generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
-      NewL = collection/list/union(L, 0, GroupID);
-      generic/print("ID List: ", NewL);
-      -groupIdList(L);
-      +groupIdList(NewL)
-      .
+//+!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
+//      generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
+//      NewL = collection/list/union(L, 0, GroupID);
+//      generic/print("ID List: ", NewL);
+//      -groupIdList(L);
+//      +groupIdList(NewL)
+//      .
 
 
 //+!lookForGroup <-
