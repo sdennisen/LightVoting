@@ -172,12 +172,14 @@ public final class CEnvironment
         {
             m_chairgroup.get( p_votingAgent.getChair() ).add( p_votingAgent );
 
+            // TODO There is a discrepance between p_testID and  m_agentgroup.get( p_votingAgent ) ).toString()!!
+
             final ITrigger l_triggerChair = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "my/group/new/agent",
                     CLiteral.from( p_votingAgent.name() ),
-                    CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() )
+                    CLiteral.from( p_testID.toString() )
                 )
             );
 
