@@ -77,7 +77,7 @@ public final class CEnvironment
     }
 
     /**
-     * initialize agents
+     * initialize groups
      *
      * @param p_votingAgent agent
      * @return boolean value
