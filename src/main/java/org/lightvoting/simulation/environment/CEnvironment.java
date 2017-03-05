@@ -61,11 +61,13 @@ public final class CEnvironment
     /**
      * maximum size
      */
+    private final int m_size;
 
     /**
-     * maximum size
+     * group capacity
      */
-    private final int m_size;
+
+    private final int m_capacity = 3;
 
     /**
      *constructor
@@ -143,21 +145,38 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
     {
-        System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) )  );
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "joined/group",
-                CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( String.valueOf( (int) ( p_testID.doubleValue() ) )  ) )
+        final int l_oldSize = m_chairgroup.get( p_votingAgent.getChair() ).size();
+        if ( ( l_oldSize + 1 ) < m_capacity )
+        {
+            m_chairgroup.get(  p_votingAgent.getChair() ).add( p_votingAgent );
+
+            final ITrigger l_triggerChair = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "my/group/new/agent",
+                    CLiteral.from( p_votingAgent.name() ),
+                    CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerChair );
+
+            System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) ) );
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "joined/group",
+                    CLiteral.from( p_votingAgent.name() ),
+                    CLiteral.from( String.valueOf( (int) ( p_testID.doubleValue() ) ) )
+                )
             );
 
 
-        // trigger all agents and tell them that the agent joined a group
-        m_agentgroup
-            .keySet()
-            .parallelStream()
-            .forEach( i -> i.trigger( l_trigger ) );
+            // trigger all agents and tell them that the agent joined a group
+            m_agentgroup
+                .keySet()
+                .parallelStream()
+                .forEach( i -> i.trigger( l_trigger ) );
+        }
 
     }
 
