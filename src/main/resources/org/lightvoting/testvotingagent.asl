@@ -7,7 +7,7 @@ lookForGroup.
 // TODO: if there is no group, create a new one, otherwise choose one at random.
 
 // initial plan (triggered by the initial goal)
-+!main //: >>(name(Name), MyName == Name)
++!main : >>(name(Name), MyName == Name)
     <-
 
             L= collection/list/create();
@@ -21,21 +21,21 @@ lookForGroup.
             !nextcycle
             .
 
-//+!main
-//      : >>(name(Name), MyName != Name)
-//        <-
-//            L= collection/list/create();
-//            +groupIdList(L);
-//            generic/print(MyName, "Hello World!");
-//            >>chair(Chair);
-//            generic/print(MyName, "MyChair:", Chair);
++!main
+     : >>(name(Name), MyName != Name)
+       <-
+           L= collection/list/create();
+           +groupIdList(L);
+           generic/print(MyName, "Hello World!");
+           >>chair(Chair);
+           generic/print(MyName, "MyChair:", Chair);
 
-//            generic/print(MyName, "Testing Voting Agent");
+            generic/print(MyName, "Testing Voting Agent");
 
-//      //      env/open/new/group(Chair);
+      //      env/open/new/group(Chair);
 
-//            !nextcycle
-//            .
+            !nextcycle
+            .
 
 +!nextcycle <-
     >>chair(Chair);
