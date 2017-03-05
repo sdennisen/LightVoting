@@ -170,20 +170,22 @@ public final class CEnvironment
         final int l_oldSize = m_chairgroup.get( p_votingAgent.getChair() ).size();
         if ( ( l_oldSize + 1 ) < m_capacity )
         {
-            m_chairgroup.get( p_votingAgent.getChair() ).add( p_votingAgent );
+            // TODO this doesn't work out, you don't need the chair of the joining agent
+            // m_chairgroup.get( p_votingAgent.getChair() ).add( p_votingAgent );
 
-            // TODO There is a discrepance between p_testID and  m_agentgroup.get( p_votingAgent ) ).toString()!!
+            // TODO There is a discrepancy between p_testID and  m_agentgroup.get( p_votingAgent ) ).toString()!!
 
-            final ITrigger l_triggerChair = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "my/group/new/agent",
-                    CLiteral.from( p_votingAgent.name() ),
-                    CLiteral.from( p_testID.toString() )
-                )
-            );
+//            final ITrigger l_triggerChair = CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "my/group/new/agent",
+//                    CLiteral.from( p_votingAgent.name() ),
+//                    CLiteral.from( p_testID.toString()
+//                    ))
+//
+//            );
 
-            p_votingAgent.getChair().trigger( l_triggerChair );
+//            p_votingAgent.getChair().trigger( l_triggerChair );
 
             System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) ) );
             final ITrigger l_trigger = CTrigger.from(
