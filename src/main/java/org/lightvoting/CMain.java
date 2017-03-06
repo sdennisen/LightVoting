@@ -46,6 +46,9 @@ public final class CMain
 {
     private static Iterator<CVotingAgent> s_agentIterator;
 
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
     /**
      * Hidden constructor
      */
@@ -100,6 +103,8 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
+        // TODO fix failing agent calls
+
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range( 0,
@@ -120,11 +125,13 @@ public final class CMain
                     }
                     catch ( final Exception l_exception )
                     {
-                        l_exception.printStackTrace();
-                        throw new RuntimeException();
+                        System.out.println( ANSI_RED + "Cycle " + j + " CMain: Calling Agent " + i.name() + " failed" + ANSI_RESET );
+                  //      l_exception.printStackTrace();
+                  //      throw new RuntimeException();
                     }
                 } );
             } );
+
     }
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
