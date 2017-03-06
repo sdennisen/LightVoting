@@ -128,10 +128,10 @@ public final class CEnvironment
      * @param p_votingAgent voting agent joining a group
      */
 
-    public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
+    public final void joinGroup( final CVotingAgent p_votingAgent )
     {
 
-                System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + ((Integer) p_testID).toString()  );
+                System.out.println( "name of joining agent " + p_votingAgent.name() );
 
              //   String l_idString= (p_testID.toString()).replace("[][]","");
 
@@ -141,8 +141,7 @@ public final class CEnvironment
                     ITrigger.EType.ADDGOAL,
                     CLiteral.from(
                         "joined/group",
-                        CLiteral.from( p_votingAgent.name() ),
-                        CLiteral.from( ((Integer) p_testID).toString() ) )
+                        CLiteral.from( p_votingAgent.name() ))
                     );
 
 
