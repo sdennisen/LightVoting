@@ -99,6 +99,8 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
+        // TODO fix failing agent calls
+
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range( 0,
@@ -125,6 +127,7 @@ public final class CMain
                     }
                 } );
             } );
+
     }
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )

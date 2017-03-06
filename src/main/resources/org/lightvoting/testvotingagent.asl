@@ -4,14 +4,12 @@ lookForGroup.
 // initial-goal
 !main.
 
-// TODO: if there is no group, create a new one, otherwise choose one at random.
+// TODO: naive approach: later, if there is no group, create a new one, otherwise choose one at random. -> implement in Java
 
 // initial plan (triggered by the initial goal)
+
 +!main : >>(name(Name), MyName == Name)
     <-
-
-            L= collection/list/create();
-            +groupIdList(L);
             generic/print("Hello World!");
             >>chair(Chair);
             generic/print("MyChair:", Chair);
@@ -44,8 +42,6 @@ lookForGroup.
     !!test
     .
 
-     // TODO current fix: join group 0 by default -> better: if you don't see a group, open a new one.
-
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
 
@@ -54,71 +50,19 @@ lookForGroup.
         voting/send/chair/dissatisfaction(0.1);
         voting/send/chair/vote(0);
 
-
         // send my name to agent 0
-        message/send("agent 0", MyName);
-        !lookForGroup
-
-
+        message/send("agent 0", MyName)
         .
 
-
-+!lookForGroup : >>(groupIdList(L), (collection/size(L) !=0))
-<-
-         //       generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-         //       generic/print("Cycle: ", Cycle, " List: ", L);
-
-                I = math/statistic/randomsimple() * collection/size(L);
-
-                J = math/floor(I);
-
-                K = collection/list/get(L, J);
-
-                // TODO reinsert later for branch dev-randomGroups/developing
-
-                // env/join/group(K)
-
-                env/join/group(0)
-.
-
-+!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
-<-
-        //         generic/print("Cycle: ", Cycle, " List size: ", collection/size(L));
-        //         generic/print("Cycle: ", Cycle, " List: ", L);
-
-             // TODO remove workaround for branch dev-randomGroups, developing
-                 env/join/group(0)
-.
++!new/group/opened(Traveller, Chair)         <-
+    generic/print("Traveller ", Traveller," opened group with Chair ", Chair).
 
 
-
-
-+!joined/group(Traveller, GroupID) <-
-       generic/print("traveller ", Traveller, " joined group ", GroupID)
++!joined/group(Traveller, Chair) <-
+       generic/print("traveller ", Traveller, " joined group with Chair ", Chair)
        .
 
+// TODO: In Java, either join one of the open groups or create aa new one if you see no groups
++!lookforgroup <-
+       env/join/group().
 
-//+!message/receive(Message, AgentName) <-
-//     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
-//     .
-
-+!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-     generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID).
-//      NewL = collection/list/union(L, 0, GroupID);
-//      generic/print("ID List: ", NewL);
-//      -groupIdList(L);
-//      +groupIdList(NewL)
-//      .
-
-
-//+!lookForGroup <-
-//      >>groupIdList(L);
-//      generic/print("List size: ", collection/size(L));
-//      //    I = math/statistic/randomsimple() * collection/size(L);
-//      // assuming there are 3 groups
-//      I = math/statistic/randomsimple() * 3;
-//      generic/print(MyName, " Random number: ", I);
-//      //   Z = true;
-//      //    T = T == Z ? env/join/group(0) : 0
-//      env/join/group(0)
-//     .

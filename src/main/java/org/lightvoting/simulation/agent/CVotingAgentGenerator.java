@@ -135,9 +135,9 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
         );
 
 
-        int l_group = (int) ( Math.random() * m_environment.size() );
-        while ( !m_environment.initialset( l_votingAgent, l_group ) )
-            l_group = (int) ( Math.random() * m_environment.size() );
+    //    int l_group = (int) ( Math.random() * m_environment.size() );
+        m_environment.initialset( l_votingAgent );
+     //       l_group = (int) ( Math.random() * m_environment.size() );
 
         System.out.println( "Agent reference: " + m_send.register( l_votingAgent ) );
         return m_send.register( l_votingAgent );

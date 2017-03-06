@@ -103,7 +103,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         // wake up in next cycle
         p_chairagent.sleep( 0 );
-        m_environment.openNewGroup( this, (CChairAgent) p_chairagent );
+        m_environment.openNewGroup( this );
 
         // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
 
@@ -111,9 +111,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "env/join/group" )
-    private void envJoinGroup( final Number p_testInt )
+    private void envJoinGroup( )
     {
-        m_environment.joinGroup( this, p_testInt );
+        m_environment.joinGroup( this );
     }
 
     /**
