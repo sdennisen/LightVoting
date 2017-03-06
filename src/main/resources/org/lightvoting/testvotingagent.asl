@@ -56,68 +56,51 @@ lookForGroup.
 
 
         // send my name to agent 0
-        message/send("agent 0", MyName);
-        !lookForGroup
-
+        message/send("agent 0", MyName)
 
         .
-
-
-+!lookForGroup : >>(groupIdList(L), (collection/size(L) !=0))
-<-
-                generic/print(MyName, " Cycle: ", Cycle, " List size: ", collection/size(L));
-                generic/print(MyName, "Cycle: ", Cycle, " List: ", L);
-
-                I = math/statistic/randomsimple() * collection/size(L);
-
-                J = math/floor(I);
-
-                generic/print("J :", J);
-
-                K = collection/list/get(L, J);
-
-                generic/print("K: ",  K);
-
-                env/join/group(K)
-.
-
-+!lookForGroup : >>(groupIdList(L), (collection/size(L) ==0))
-<-
-                 generic/print(MyName, " Cycle: ", Cycle, " List size: ", collection/size(L));
-                 generic/print(MyName, "Cycle: ", Cycle, " List: ", L);
-
-                 env/join/group(0)
-.
-
-
-
 
 +!joined/group(Traveller, GroupID) <-
        generic/print("traveller ", Traveller, " joined group ", GroupID)
        .
 
++groupIdList(L): (collection/size(L) != 0) <-
+generic/print(MyName, " List greater than 0 ", L );
+S = collection/size(L);
+generic/print("List size: ", S);
+I = math/statistic/randomsimple() * collection/size(L);
 
-+!message/receive(Message, AgentName) <-
-     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
-     .
+J = math/floor(I);
 
-+!new/group/opened(Traveller, Chair, GroupID): >>groupIdList(L) <-
-   //     generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
-   //     NewL = collection/list/union(L, GroupID);
-   //     generic/print("ID List: ", NewL);
-   //     +groupIdList(NewL);
-   //     -groupIdList(L)
+generic/print("J :", J);
 
-      !!insertNewId(Traveller, GroupID, L)
-       .
+K = collection/list/get(L, J);
 
-+!insertNewId(Traveller, GroupID, L) <-
-       generic/print(MyName, " heard that traveller ", Traveller, " opened group ", GroupID);
-       NewL = collection/list/union(L, GroupID);
-       generic/print("ID List: ", NewL);
-       +groupIdList(NewL);
-       -groupIdList(L)
-      .
+generic/print("K: ",  K);
+
+env/join/group(K)
+
+//env/join/group(0)
+.
+
++!new/group/opened(Traveller, Chair, GroupID)  <-
+    !insertNewId(Traveller, GroupID)
+    .
+
++!insertNewId(Traveller, GroupID): >>(groupIdList(L), (collection/list/isempty(L))) <-
+    NewL = collection/list/create(GroupID);
+    -groupIdList(L);
+    +groupIdList(NewL)
+    .
+
++groupIdList(L) <-
+
+ generic/print(MyName, " ID List: ", L).
+
+
+//+!message/receive(Message, AgentName) <-
+//     generic/print(MyName, "received", Message, AgentName,  " in cycle ", Cycle)
+//     .
 
 
 //+!lookForGroup <-
