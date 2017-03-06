@@ -46,9 +46,6 @@ public final class CMain
 {
     private static Iterator<CVotingAgent> s_agentIterator;
 
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_RESET = "\u001B[0m";
-
     /**
      * Hidden constructor
      */
@@ -125,9 +122,8 @@ public final class CMain
                     }
                     catch ( final Exception l_exception )
                     {
-                        System.out.println( ANSI_RED + "Cycle " + j + " CMain: Calling Agent " + i.name() + " failed" + ANSI_RESET );
-                  //      l_exception.printStackTrace();
-                  //      throw new RuntimeException();
+                        l_exception.printStackTrace();
+                        throw new RuntimeException();
                     }
                 } );
             } );

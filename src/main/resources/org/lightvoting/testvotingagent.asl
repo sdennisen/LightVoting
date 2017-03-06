@@ -4,7 +4,7 @@ lookForGroup.
 // initial-goal
 !main.
 
-// TODO: naive approach: later: if there is no group, create a new one, otherwise choose one at random. -> implement in Java
+// TODO: naive approach: later, if there is no group, create a new one, otherwise choose one at random. -> implement in Java
 
 // initial plan (triggered by the initial goal)
 +!main
@@ -25,8 +25,6 @@ lookForGroup.
     !!test
     .
 
-     // TODO current fix: join group 0 by default -> better: if you don't see a group, open a new one.
-
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
 
@@ -39,10 +37,13 @@ lookForGroup.
         message/send("agent 0", MyName)
         .
 
-+!joined/group(Traveller, GroupID) <-
-       generic/print("traveller ", Traveller, " joined group ", GroupID)
++!new/group/opened(Traveller, Chair)         <-
+    generic/print("Traveller ", Traveller," opened group with Chair ", Chair).
+
++!joined/group(Traveller, Chair) <-
+       generic/print("traveller ", Traveller, " joined group with Chair ", Chair)
        .
 
-// TODO: In Java, join one of the open groups.
+// TODO: In Java, either join one of the open groups or create aa new one if you see no groups
 +!lookforgroup <-
        env/join/group().

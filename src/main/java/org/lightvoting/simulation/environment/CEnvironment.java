@@ -29,8 +29,14 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
@@ -48,11 +54,11 @@ public final class CEnvironment
     /**
      * map with agent-to-group mapping
      */
-    private final Map<CVotingAgent, Integer> m_agentgroup = new ConcurrentHashMap<>();
+  //  private final Map<CVotingAgent, Integer> m_agentgroup = new ConcurrentHashMap<>();
 
-    /**
-     * maximum size
-     */
+    private final Set<CVotingAgent> m_agents;
+
+    private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
 
     /**
      * maximum size
@@ -67,6 +73,8 @@ public final class CEnvironment
     {
         m_size = p_size;
         m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
+        m_agents = new HashSet<>();
+        m_chairgroup = new HashMap<>();
     }
 
     /**
@@ -75,51 +83,56 @@ public final class CEnvironment
      * @param p_votingAgent agent
      * @return boolean value
      */
-    public final boolean initialset( final CVotingAgent p_votingAgent, final int p_group )
+    public final void initialset( final CVotingAgent p_votingAgent )
     {
-        if ( m_group.compareAndSet( p_group, null, p_votingAgent ) )
-        {
-            m_agentgroup.put( p_votingAgent, p_group );
-            System.out.println( " Agent " + p_votingAgent.name() + " group id " + p_group );
-            return true;
-        }
-
-        return false;
-
+        m_agents.add( p_votingAgent );
     }
 
     /**
      * open a new group
      * @param p_votingAgent voting opening the group
-     * @param p_chairAgent corresponding chair
      */
 
-    public final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
+    public final void openNewGroup( final CVotingAgent p_votingAgent )
     {
-        final int l_number = m_agentgroup.get( p_votingAgent );
-        final String l_numberString = String.valueOf(l_number);
 
-        System.out.println( "Number is " + l_number);
-        System.out.println( "String for number is " + l_numberString);
+        final List l_list = new LinkedList<CVotingAgent>();
+        l_list.add( p_votingAgent );
+
+        m_chairgroup.put( p_votingAgent.getChair(), l_list );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "new/group/opened",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( p_chairAgent.toString() ),
-                // TODO re-insert with correct form
-             //   CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
-             //   CLiteral.from ( (m_agentgroup.get( p_votingAgent).toString() ) ))
-                CLiteral.from ( l_numberString ) )
-            );
+                CLiteral.from( ( p_votingAgent.getChair() ).toString() ) )
+        );
 
 
            // trigger all agents and tell them that the group was opened
-        m_agentgroup
-            .keySet()
+
+        m_agents
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
+
+        // TODO rewrite naive approach
+        if ( m_chairgroup.size() == 3 )
+        {
+            final ITrigger l_triggerJoin = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "lookforgroup" )
+
+            );
+
+
+            // trigger all agents and tell them to choose one of the available groups
+
+            m_agents
+                .parallelStream()
+                .forEach( i -> i.trigger( l_triggerJoin ) );
+        }
 
     }
 
@@ -130,34 +143,30 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent )
     {
+        // choose random group to join
 
-                System.out.println( "name of joining agent " + p_votingAgent.name() );
+        final List<CChairAgent> l_chairsAsList = new ArrayList<>( m_chairgroup.keySet() );
+        final Random l_rand = new Random();
+
+        final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
+        m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+
+        System.out.println( "name of joining agent " + p_votingAgent.name() );
 
              //   String l_idString= (p_testID.toString()).replace("[][]","");
 
                 //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
 
-                final ITrigger l_trigger = CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "joined/group",
-                        CLiteral.from( p_votingAgent.name() ))
-                    );
-
-
-//        System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) )  );
-//        final ITrigger l_trigger = CTrigger.from(
-//            ITrigger.EType.ADDGOAL,
-//            CLiteral.from(
-//                "joined/group",
-//                CLiteral.from( p_votingAgent.name() ),
-//                CLiteral.from( String.valueOf( (int) ( p_testID.doubleValue() ) )  ) )
-//            );
-
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "joined/group",
+                CLiteral.from( p_votingAgent.name() ),
+                CLiteral.from( l_randomChair.toString() ) )
+            );
 
         // trigger all agents and tell them that the agent joined a group
-        m_agentgroup
-            .keySet()
+        m_agents
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
 
