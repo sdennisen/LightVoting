@@ -78,20 +78,28 @@ K = collection/list/get(L, J);
 
 generic/print("K: ",  K);
 
-env/join/group(K)
+env/join/group(0)
+
+//env/join/group(K)
 
 //env/join/group(0)
 .
 
 +!new/group/opened(Traveller, Chair, GroupID)  <-
+     generic/print("Traveller ", Traveller, " opens Group ", GroupID);
     !insertNewId(Traveller, GroupID)
     .
 
+// TODO remove isempty condition
+
 +!insertNewId(Traveller, GroupID): >>(groupIdList(L), (collection/list/isempty(L))) <-
+    generic/print("GroupID: ", GroupID);
     NewL = collection/list/create(GroupID);
     -groupIdList(L);
     +groupIdList(NewL)
     .
+
+
 
 +groupIdList(L) <-
 

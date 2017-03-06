@@ -96,13 +96,22 @@ public final class CEnvironment
 
     public final void openNewGroup( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
     {
+        final int l_number = m_agentgroup.get( p_votingAgent );
+        final String l_numberString = String.valueOf(l_number);
+
+        System.out.println( "Number is " + l_number);
+        System.out.println( "String for number is " + l_numberString);
+
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "new/group/opened",
                 CLiteral.from( p_votingAgent.name() ),
                 CLiteral.from( p_chairAgent.toString() ),
-                CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
+                // TODO re-insert with correct form
+             //   CLiteral.from( ( m_agentgroup.get( p_votingAgent ) ).toString() ) )
+             //   CLiteral.from ( (m_agentgroup.get( p_votingAgent).toString() ) ))
+                CLiteral.from ( l_numberString ) )
             );
 
 
@@ -121,14 +130,30 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent, final Number p_testID )
     {
-        System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) )  );
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "joined/group",
-                CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( String.valueOf( (int) ( p_testID.doubleValue() ) )  ) )
-            );
+
+                System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + ((Integer) p_testID).toString()  );
+
+             //   String l_idString= (p_testID.toString()).replace("[][]","");
+
+                //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
+
+                final ITrigger l_trigger = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "joined/group",
+                        CLiteral.from( p_votingAgent.name() ),
+                        CLiteral.from( ((Integer) p_testID).toString() ) )
+                    );
+
+
+//        System.out.println( "name of joining agent " + p_votingAgent.name() + " ID: " + String.valueOf( Math.round( p_testID.doubleValue() ) )  );
+//        final ITrigger l_trigger = CTrigger.from(
+//            ITrigger.EType.ADDGOAL,
+//            CLiteral.from(
+//                "joined/group",
+//                CLiteral.from( p_votingAgent.name() ),
+//                CLiteral.from( String.valueOf( (int) ( p_testID.doubleValue() ) )  ) )
+//            );
 
 
         // trigger all agents and tell them that the agent joined a group
