@@ -110,6 +110,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
     @IAgentActionFilter
+    @IAgentActionName( name = "env/submit/vote" )
+    private void submitVote( final CChairAgent p_chairAgent )
+    {
+        System.out.println( "XXXXXXXXXXXXXXXXXXXX Action submit/vote is called in " + this.name() );
+        m_environment.submitVote( this, p_chairAgent );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "env/join/group" )
     private void envJoinGroup( )
     {
@@ -134,16 +142,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return m_chair;
     }
 
-//    /**
-//     * Check if the agents are identical by comparing the name.
-//     * @param p_otherAgent the other agent
-//     * @return result of the comparison
-//     */
-//    public boolean equals ( final CVotingAgent p_otherAgent )
-//    {
-//        if ( this.name().equals( p_otherAgent.name() ) )
-//               return true;
-//        return false;
-//    }
+
 
 }

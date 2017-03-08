@@ -30,6 +30,7 @@ import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -130,7 +131,7 @@ public final class CEnvironment
             CLiteral.from(
                 "new/group/opened",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( ( p_votingAgent.getChair() ).name() )
+                CLiteral.from( ( p_votingAgent.getChair() ).toString() )
             )
         );
 
@@ -279,7 +280,7 @@ public final class CEnvironment
         // should in this case be the chair of the group opened by agent 0
 
         final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
-        System.out.println( " Agent " + p_votingAgent.name() + " wants to join chair " + l_randomChair.name() );
+        System.out.println( " Agent " + p_votingAgent.name() + " wants to join chair " + l_randomChair.toString() );
 
         final int l_oldSize = m_chairgroup.get( l_randomChair ).size();
 
@@ -306,7 +307,7 @@ public final class CEnvironment
                 CLiteral.from(
                     "joined/group",
                     CLiteral.from( p_votingAgent.name() ),
-                    CLiteral.from( l_randomChair.name() )
+                    CLiteral.from( l_randomChair.toString() )
                 )
             );
 
@@ -348,13 +349,39 @@ public final class CEnvironment
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "submit/your/vote",
-                CLiteral.from( p_chairAgent.name() ) )
+                CLiteral.from( p_chairAgent.toString() ) )
         );
 
         // trigger all agents and tell them that the agent joined a group
         m_agents
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
+
+    }
+
+    // TODO migrate to CVote ?
+
+    /**
+     * submit vote to chair
+     * @param p_votingAgent voting agent
+     * @param p_chairAgent chair agent
+     */
+    public void submitVote( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
+    {
+        final int[] l_vote = new int[] {1, 1, 1, 0, 0, 0};
+        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + Arrays.toString( l_vote ) + " to " + p_chairAgent.toString() );
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "vote/received",
+                CLiteral.from( p_votingAgent.name() ),
+                CLiteral.from( p_chairAgent.toString() ),
+                CLiteral.from( l_vote.toString() )
+            )
+        );
+
+        p_chairAgent.trigger( l_trigger );
 
     }
 }
