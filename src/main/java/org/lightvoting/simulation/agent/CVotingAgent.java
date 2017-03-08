@@ -133,4 +133,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         return m_chair;
     }
+
+//    /**
+//     * Check if the agents are identical by comparing the name.
+//     * @param p_otherAgent the other agent
+//     * @return result of the comparison
+//     */
+//    public boolean equals ( final CVotingAgent p_otherAgent )
+//    {
+//        if ( this.name().equals( p_otherAgent.name() ) )
+//               return true;
+//        return false;
+//    }
+
 }

@@ -59,10 +59,11 @@ lookForGroup.
 
 
 +!joined/group(Traveller, Chair) <-
-       generic/print("traveller ", Traveller, " joined group with Chair ", Chair)
+       generic/print(MyName, "heard that traveller ", Traveller, " joined group with Chair ", Chair)
        .
 
-// TODO: In Java, either join one of the open groups or create aa new one if you see no groups
+// TODO: In Java, either join one of the open groups or create a new one if you see no groups
 +!lookforgroup <-
+       generic/print(MyName, "I'm looking for a group to join");
        env/join/group().
 
