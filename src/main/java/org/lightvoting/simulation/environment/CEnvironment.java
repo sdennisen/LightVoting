@@ -31,7 +31,6 @@ import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
@@ -368,8 +368,8 @@ public final class CEnvironment
      */
     public void submitVote( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
     {
-        final int[] l_vote = new int[] {1, 1, 1, 0, 0, 0};
-        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + Arrays.toString( l_vote ) + " to " + p_chairAgent.toString() );
+        final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + l_vote + " to " + p_chairAgent.toString() );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
