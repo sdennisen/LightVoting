@@ -94,7 +94,6 @@ public final class CEnvironment
         m_joiningAllowed = new HashMap<>();
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
-
     }
 
     /**
@@ -145,8 +144,9 @@ public final class CEnvironment
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
 
-        // TODO rewrite naive approach
-        if ( m_chairgroup.size() == 3 )
+        // TODO this is only for testing, here each agent looks for a group as soon as agent 0 opened its group. Needs to be rewritten for general case
+        // if ( m_chairgroup.size() == 3 )
+        if ( m_chairgroup.size() == 1 )
         {
             final ITrigger l_triggerJoin = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
