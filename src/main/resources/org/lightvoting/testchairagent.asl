@@ -12,4 +12,6 @@
 
 +!start/criterion/fulfilled() <-
 
-    generic/print("I'm now starting the election.").
+    generic/print("I'm now starting the election.");
+    start/election()
+    .

@@ -338,8 +338,24 @@ public final class CEnvironment
         return m_size;
     }
 
+    /**
+     * start the election, i.e. ask the travellers
+     * @param p_chairAgent the chair starting the election
+     */
     public void startElection( final CChairAgent p_chairAgent )
     {
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "submit/your/vote",
+                CLiteral.from( p_chairAgent.toString() ) )
+        );
+
+        // trigger all agents and tell them that the agent joined a group
+        m_agents
+            .parallelStream()
+            .forEach( i -> i.trigger( l_trigger ) );
+
     }
 }
 

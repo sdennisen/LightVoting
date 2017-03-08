@@ -26,10 +26,12 @@ package org.lightvoting.simulation.agent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
+import org.lightvoting.simulation.action.rules.minmaxapproval.CCommittee;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.InputStream;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -56,11 +58,19 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
             p_stream,
 
             // a set with all possible actions for the agent
-            // we use all built-in actions of LightJason
-            CCommon.actionsFromPackage()
-
-                   // build the set with a collector
-                   .collect( Collectors.toSet() ),
+            Stream.concat(
+                // we use all build-in actions of LightJason
+                CCommon.actionsFromPackage(),
+                Stream.concat(
+                    // use the actions which are defined inside the agent class
+                    CCommon.actionsFromAgentClass( CChairAgent.class ),
+                    // add VotingAgent related external actions
+                    Stream.of(
+                        new CCommittee()
+                    )
+                )
+                // build the set with a collector
+            ) .collect( Collectors.toSet() ),
 
             // aggregation function for the optimisation function, here
             // we use an empty function

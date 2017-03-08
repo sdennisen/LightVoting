@@ -66,7 +66,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "start/election" )
-    private void startElection( )
+    public void startElection( )
     {
         m_environment.startElection( this );
     }
