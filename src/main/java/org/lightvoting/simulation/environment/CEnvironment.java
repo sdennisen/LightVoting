@@ -130,7 +130,7 @@ public final class CEnvironment
             CLiteral.from(
                 "new/group/opened",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( ( p_votingAgent.getChair() ).toString() )
+                CLiteral.from( ( p_votingAgent.getChair() ).name() )
             )
         );
 
@@ -279,7 +279,7 @@ public final class CEnvironment
         // should in this case be the chair of the group opened by agent 0
 
         final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
-        System.out.println( " Agent " + p_votingAgent.name() + " wants to join chair " + l_randomChair );
+        System.out.println( " Agent " + p_votingAgent.name() + " wants to join chair " + l_randomChair.name() );
 
         final int l_oldSize = m_chairgroup.get( l_randomChair ).size();
 
@@ -306,7 +306,7 @@ public final class CEnvironment
                 CLiteral.from(
                     "joined/group",
                     CLiteral.from( p_votingAgent.name() ),
-                    CLiteral.from( l_randomChair.toString() )
+                    CLiteral.from( l_randomChair.name() )
                 )
             );
 
@@ -348,7 +348,7 @@ public final class CEnvironment
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "submit/your/vote",
-                CLiteral.from( p_chairAgent.toString() ) )
+                CLiteral.from( p_chairAgent.name() ) )
         );
 
         // trigger all agents and tell them that the agent joined a group

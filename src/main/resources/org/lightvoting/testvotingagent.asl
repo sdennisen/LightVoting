@@ -26,7 +26,8 @@ lookForGroup.
            +groupIdList(L);
            generic/print(MyName, "Hello World!");
            >>chair(Chair);
-           generic/print(MyName, "MyChair:", Chair);
+           // TODO print name of chair in form chair 0, chair 1, ...
+          // generic/print(MyName, "MyChair:", Chair);
 
             generic/print(MyName, "Testing Voting Agent");
 
@@ -37,7 +38,8 @@ lookForGroup.
 
 +!nextcycle <-
     >>chair(Chair);
-    generic/print("MyChair:", Chair);
+    // TODO print name of chair in form chair 0, chair 1, ...
+ //   generic/print("MyChair:", Chair);
     generic/print(MyName, "Testing Voting Agent");
     !!test
     .

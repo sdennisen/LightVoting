@@ -41,6 +41,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 {
 
     /**
+     * name of chair
+     */
+    private final String m_name;
+
+    /**
      * environment
      */
     private final CEnvironment m_environment;
@@ -50,9 +55,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      *  @param p_configuration agent configuration of the agent generator
      */
 
-    public CChairAgent( final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
     {
         super( p_configuration );
+        m_name = p_name;
         m_environment = p_environment;
     }
 
@@ -69,6 +75,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     public void startElection( )
     {
         m_environment.startElection( this );
+    }
+
+    public String name()
+    {
+        return m_name;
     }
 
 

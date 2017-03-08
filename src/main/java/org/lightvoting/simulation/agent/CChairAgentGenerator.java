@@ -30,6 +30,8 @@ import org.lightvoting.simulation.action.rules.minmaxapproval.CCommittee;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +48,12 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
      */
     private final CEnvironment m_environment;
 
-   /**
+    /**
+     * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
+     */
+    private final AtomicLong m_agentcounter = new AtomicLong();
+
+    /**
      * constructor of the generator
      * @param p_stream ASL code as any stream e.g. FileInputStream
      * @throws Exception Thrown if something goes wrong while generating agents.
@@ -88,7 +95,11 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
     @Override
     public final CChairAgent generatesingle( final Object... p_data )
     {
-        return new CChairAgent( m_configuration, m_environment );
+        return new CChairAgent(
+            // create a string with the agent name "chair <number>"
+            // get the value of the counter first and increment, build the agent
+            // name with message format (see Java documentation)
+            MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment );
     }
 }
 
