@@ -113,7 +113,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "env/submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
-        System.out.println( "XXXXXXXXXXXXXXXXXXXX Action submit/vote is called in " + this.name() );
         m_environment.submitVote( this, p_chairAgent );
     }
 

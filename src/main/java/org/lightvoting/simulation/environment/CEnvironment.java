@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.environment;
 
 import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
@@ -348,8 +349,7 @@ public final class CEnvironment
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
-                "submit/your/vote",
-                CLiteral.from( p_chairAgent.toString() ) )
+                "submit/your/vote", CRawTerm.from( p_chairAgent  ) )
         );
 
         // trigger all agents and tell them that the agent joined a group
