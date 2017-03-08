@@ -325,7 +325,7 @@ public final class CEnvironment
             final ITrigger l_triggerStart = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "start/election" )
+                    "start/criterion/fulfilled" )
 
             );
 
@@ -338,6 +338,9 @@ public final class CEnvironment
         return m_size;
     }
 
+    public void startElection( final CChairAgent p_chairAgent )
+    {
+    }
 }
 
 

@@ -75,9 +75,11 @@ public final class CMain
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, new CEnvironment( Integer.parseInt( p_args[2] ) ) );
+            final CEnvironment l_environment = new CEnvironment( Integer.parseInt( p_args[2] ) );
+
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, l_environment );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, l_environment  )  )
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();

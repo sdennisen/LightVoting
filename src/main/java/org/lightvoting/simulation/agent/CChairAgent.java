@@ -24,8 +24,11 @@
 package org.lightvoting.simulation.agent;
 
 import org.lightjason.agentspeak.action.binding.IAgentAction;
+import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
+import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
+import org.lightvoting.simulation.environment.CEnvironment;
 
 
 /**
@@ -36,11 +39,21 @@ import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 @IAgentAction
 public final class CChairAgent extends IBaseAgent<CChairAgent>
 {
-    // constructor of the agent
-    // @param p_configuration agent configuration of the agent generator
-    public CChairAgent( final IAgentConfiguration<CChairAgent> p_configuration )
+
+    /**
+     * environment
+     */
+    private final CEnvironment m_environment;
+
+    /**
+     *  constructor of the agent
+     *  @param p_configuration agent configuration of the agent generator
+     */
+
+    public CChairAgent( final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
     {
         super( p_configuration );
+        m_environment = p_environment;
     }
 
     // overload agent-cycle
@@ -50,5 +63,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // run default cycle
         return super.call();
     }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "start/election" )
+    private void startElection( )
+    {
+        m_environment.startElection( this );
+    }
+
 
 }
