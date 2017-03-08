@@ -281,20 +281,17 @@ public final class CEnvironment
         final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
         System.out.println( " Agent " + p_votingAgent.name() + " wants to join chair " + l_randomChair );
 
-//        final int l_oldSize = ( m_chairgroup.get( p_votingAgent.getChair() ) ).size();
-//
-//        System.out.println( " old group size " + l_oldSize);
-//
-//        // TODO if l_oldSize >= capacity, tell the voter that s/he cannot join the group
-//
-//        final int l_newSize;
-//
-//        l_newSize = l_oldSize + 1;
+        final int l_oldSize = m_chairgroup.get( l_randomChair ).size();
 
+        System.out.println( " old group size " + l_oldSize );
 
-    //     else  l_newSize = l_oldSize;
+        //  TODO if l_oldSize >= capacity, tell the voter that s/he cannot join the group
 
-        System.out.println( "XXXXXXXXXXXXXXXXXXXX name of joining agent " + p_votingAgent.name() );
+        final int l_newSize;
+
+        l_newSize = l_oldSize + 1;
+
+//        System.out.println( "XXXXXXXXXXXXXXXXXXXX name of joining agent " + p_votingAgent.name() );
 
         ( m_chairgroup.get( l_randomChair ) ).add( p_votingAgent );
 
@@ -313,11 +310,7 @@ public final class CEnvironment
                 )
             );
 
-//        Random l_r = new Random();
-//        final long l_randomLong = l_r.nextLong();
-//        wait( l_randomLong );
-
-            // trigger all agents and tell them that the agent joined a group
+        // trigger all agents and tell them that the agent joined a group
         m_agents
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
@@ -325,19 +318,19 @@ public final class CEnvironment
 
             // if capacity is reached, tell the chair that she needs to start the election
 
-//            if ( l_newSize >= m_capacity )
-//            {
-//                System.out.println ( "trigger election " );
-//
-//                final ITrigger l_triggerStart = CTrigger.from(
-//                    ITrigger.EType.ADDGOAL,
-//                    CLiteral.from(
-//                        "start/election" )
-//
-//                );
-//
-//                l_randomChair.trigger( l_triggerStart );
-//            }
+        if ( l_newSize >= m_capacity )
+        {
+            System.out.println( "trigger election " );
+
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/election" )
+
+            );
+
+            l_randomChair.trigger( l_triggerStart );
+        }
     }
 
     public final int size()
