@@ -28,6 +28,7 @@ import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
+import org.lightjason.agentspeak.language.CLiteral;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 
@@ -68,6 +69,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         // run default cycle
         return super.call();
+    }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/vote" )
+    private void storeVote( final CVotingAgent p_votingAgent, final CLiteral p_vote )
+    {
+        System.out.println( this + " tries to add vote from agent " + p_votingAgent.name() );
+       // m_environment.storeVote( this, p_votingAgent, p_vote.raw() );
+
     }
 
     @IAgentActionFilter

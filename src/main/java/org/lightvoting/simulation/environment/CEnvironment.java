@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.environment;
 
+import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
@@ -67,6 +69,8 @@ public final class CEnvironment
 
     private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
 
+    private final Map<CChairAgent, TreeSet<AtomicIntegerArray>> m_voteSets;
+
     /**
      * maximum size
      */
@@ -89,6 +93,7 @@ public final class CEnvironment
         m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
+        m_voteSets = new HashMap<>();
     }
 
     /**
@@ -366,7 +371,7 @@ public final class CEnvironment
      * @param p_votingAgent voting agent
      * @param p_chairAgent chair agent
      */
-    public void submitVote( final CVotingAgent p_votingAgent, final CChairAgent p_chairAgent )
+    public void submitVote( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
         final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
         System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + l_vote + " to " + p_chairAgent.toString() );
@@ -376,13 +381,25 @@ public final class CEnvironment
             CLiteral.from(
                 "vote/received",
                 CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( p_chairAgent.toString() ),
+             //   CLiteral.from( p_chairAgent.toString() ),
                 CLiteral.from( l_vote.toString() )
             )
         );
 
         p_chairAgent.trigger( l_trigger );
 
+    }
+
+    /**
+     * store vote submitted to chair
+     * @param p_chairAgent chair agent
+     * @param p_vote submitted vote
+     */
+
+    public void storeVote( final CChairAgent p_chairAgent, final CVotingAgent p_votingAgent, final Object p_vote )
+    {
+        m_voteSets.get( p_chairAgent ).add( (AtomicIntegerArray) p_vote );
+        System.out.println( p_chairAgent + " added vote " + p_vote + " from agent " + p_votingAgent.name() );
     }
 }
 

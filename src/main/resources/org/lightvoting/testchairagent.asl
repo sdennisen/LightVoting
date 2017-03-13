@@ -15,3 +15,8 @@
     generic/print("I'm now starting the election.");
     start/election()
     .
+
++!vote/received(Traveller, Vote) <-
+    generic/print("Receiving vote from traveller ", Traveller)
+    //store/vote(Traveller, Vote)
+    .
