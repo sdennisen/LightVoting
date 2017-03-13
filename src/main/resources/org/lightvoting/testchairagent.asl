@@ -20,3 +20,7 @@
     generic/print("Receiving vote from traveller ", Traveller);
     store/vote(Traveller, Vote)
     .
+
++!all/votes/received() <-
+    generic/print("Received all votes.")
+    .

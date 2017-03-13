@@ -404,6 +404,20 @@ public final class CEnvironment
     {
 
         m_voteSets.get( p_chairAgent ).add( p_vote );
+        if ( ( m_voteSets.get( p_chairAgent ) ).size() == m_capacity )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/votes/received"
+                    )
+            );
+
+            p_chairAgent.trigger( l_trigger );
+
+            System.out.println( " XXXXXXXXXXXXXXXXXXXX All voters submitted their votes" );
+        }
+
     }
 }
 
