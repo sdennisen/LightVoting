@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
@@ -69,7 +68,7 @@ public final class CEnvironment
 
     private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
 
-    private final Map<CChairAgent, TreeSet<AtomicIntegerArray>> m_voteSets;
+    private final Map<CChairAgent, List> m_voteSets;
 
     /**
      * maximum size
@@ -93,18 +92,19 @@ public final class CEnvironment
         m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
-        m_voteSets = new HashMap<>();
+        m_voteSets = new HashMap<CChairAgent, List>();
     }
 
     /**
      * initialize groups
      *
      * @param p_votingAgent agent
-     * @return boolean value
+     *
      */
     public final void initialset( final CVotingAgent p_votingAgent )
     {
         m_agents.add( p_votingAgent );
+
     }
 
     /**
@@ -130,6 +130,9 @@ public final class CEnvironment
         l_list.add( p_votingAgent );
 
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
+
+        final List l_initalList = new LinkedList<AtomicIntegerArray>();
+        m_voteSets.put( p_votingAgent.getChair(), l_initalList );
 
 
         final ITrigger l_trigger = CTrigger.from(
@@ -392,14 +395,15 @@ public final class CEnvironment
 
     /**
      * store vote submitted to chair
-     * @param p_chairAgent chair agent
+     * @param p_chairAgent chair agent to whom vote is submitted
+     * @param p_votingAgent voting agent submitting the vote
      * @param p_vote submitted vote
      */
 
-    public void storeVote( final CChairAgent p_chairAgent, final CVotingAgent p_votingAgent, final Object p_vote )
+    public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final Object p_vote )
     {
-        m_voteSets.get( p_chairAgent ).add( (AtomicIntegerArray) p_vote );
-        System.out.println( p_chairAgent + " added vote " + p_vote + " from agent " + p_votingAgent.name() );
+
+        m_voteSets.get( p_chairAgent ).add( p_vote );
     }
 }
 

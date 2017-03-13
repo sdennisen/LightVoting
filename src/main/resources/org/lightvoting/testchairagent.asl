@@ -17,6 +17,6 @@
     .
 
 +!vote/received(Traveller, Vote) <-
-    generic/print("Receiving vote from traveller ", Traveller)
-    //store/vote(Traveller, Vote)
+    generic/print("Receiving vote from traveller ", Traveller);
+    store/vote(Traveller, Vote)
     .
