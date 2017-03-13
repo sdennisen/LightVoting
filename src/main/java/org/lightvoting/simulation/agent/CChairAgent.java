@@ -71,6 +71,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
     @IAgentActionFilter
+    @IAgentActionName( name = "start/election" )
+    public void startElection( )
+    {
+        m_environment.startElection( this );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
     private void storeVote( final Object p_votingAgent, final Object p_vote )
     {
@@ -82,10 +89,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
     @IAgentActionFilter
-    @IAgentActionName( name = "start/election" )
-    public void startElection( )
+    @IAgentActionName( name = "compute/result" )
+    private void computeResult( )
     {
-        m_environment.startElection( this );
+
+        System.out.println( " compute result " );
+//        m_environment.computeResult( this );
+//        System.out.println( " computed result " );
+
     }
 
     public String name()

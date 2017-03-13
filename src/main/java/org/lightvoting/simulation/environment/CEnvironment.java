@@ -419,6 +419,23 @@ public final class CEnvironment
         }
 
     }
+
+//    public void computeResult( final CChairAgent p_chairAgent )
+//    {
+//        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+//
+//        final List<String> l_alternatives = new LinkedList<>();
+//
+//        // TODO remove ugly hack
+//
+//        for ( char l_c: "ABCDEF".toCharArray() )
+//
+//            l_alternatives.add( String.valueOf( l_c ) );
+//
+//        // TODO specify comsize via config file
+//
+//        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
+//    }
 }
 
 
