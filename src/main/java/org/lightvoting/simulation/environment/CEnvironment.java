@@ -30,8 +30,10 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -421,28 +423,51 @@ public final class CEnvironment
 
     }
 
-//    public void computeResult( final CChairAgent p_chairAgent )
-//    {
-//        System.out.println( "Computing result " );
-//        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
-//
-//        final List<String> l_alternatives = new LinkedList<>();
-//
-//        // TODO remove ugly hack
-//
-//        for ( char l_c: "ABCDEF".toCharArray() )
-//
-//            l_alternatives.add( String.valueOf( l_c ) );
-//
-//        // TODO specify comsize via config file
-//
-//        System.out.println( " Alternatives: " + l_alternatives );
-//        System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
-//
-//        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
-//
-//        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
-//    }
+    // TODO move computeResult() to chair class or chair action
+
+    /**
+     * compute result of election
+     * @param p_chairAgent responsible chair
+     */
+
+    public void computeResult( final CChairAgent p_chairAgent )
+    {
+        System.out.println( "Computing result " );
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        // TODO remove ugly hack
+
+        for ( char l_char: "ABCDEF".toCharArray() )
+
+            l_alternatives.add( String.valueOf( l_char ) );
+
+        // TODO specify comsize via config file
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        final List<AtomicIntegerArray> l_testVotes = new ArrayList<>( );
+        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray(  new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
+        final AtomicIntegerArray l_vote4 = new AtomicIntegerArray( new int[]{0, 0, 1, 0, 0, 0} );
+
+        l_testVotes.add( l_vote1 );
+        l_testVotes.add( l_vote2 );
+        l_testVotes.add( l_vote3 );
+        l_testVotes.add( l_vote4 );
+
+        System.out.println( " Votes: " + l_testVotes );
+
+        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, l_testVotes, 3 );
+
+       // System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
+
+       // final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
+
+        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+    }
 }
 
 

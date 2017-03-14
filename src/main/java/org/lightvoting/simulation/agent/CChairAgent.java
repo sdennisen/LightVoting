@@ -94,7 +94,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
 
         System.out.println( " compute result " );
-//        m_environment.computeResult( this );
+        m_environment.computeResult( this );
 //        System.out.println( " computed result " );
 
     }

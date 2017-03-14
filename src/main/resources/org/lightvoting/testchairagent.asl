@@ -22,6 +22,6 @@
     .
 
 +!all/votes/received() <-
-    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all votes.")
-  //  compute/result()
+    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all votes.");
+    compute/result()
     .
