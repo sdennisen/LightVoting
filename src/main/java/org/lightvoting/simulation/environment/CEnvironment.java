@@ -29,7 +29,6 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -61,9 +60,18 @@ public final class CEnvironment
     private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
 
     /**
+     * List for storing current active chairs, i.e. chairs who accept more agents
+     */
+
+    private final List<CChairAgent> m_activechairs;
+
+    /**
      * maximum size
      */
     private final int m_size;
+
+
+    private int m_capacity = 3;
 
     /**
      *constructor
@@ -75,6 +83,7 @@ public final class CEnvironment
         m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
+        m_activechairs = new LinkedList<>();
     }
 
     /**
@@ -100,6 +109,7 @@ public final class CEnvironment
         l_list.add( p_votingAgent );
 
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
+        m_activechairs.add( p_votingAgent.getChair() );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -143,22 +153,26 @@ public final class CEnvironment
 
     public final void joinGroup( final CVotingAgent p_votingAgent )
     {
-        // choose random group to join
 
-        final List<CChairAgent> l_chairsAsList = new ArrayList<>( m_chairgroup.keySet() );
-
-        // if there are no open groups yet, create a new one
-        if ( l_chairsAsList.size() == 0 )
+        if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
         }
+
+
+
+        // choose random group to join
+
+    //    final List<CChairAgent> l_chairsAsList = new ArrayList<>( m_chairgroup.keySet() );
+
+        // if there are no open groups yet, create a new one
 
 
         else
         {
             final Random l_rand = new Random();
 
-            final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
+            final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
 
             System.out.println( "name of joining agent " + p_votingAgent.name() );
@@ -166,6 +180,13 @@ public final class CEnvironment
             //   String l_idString= (p_testID.toString()).replace("[][]","");
 
             //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
+
+            if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
+            {
+                m_activechairs.remove( l_randomChair );
+                for ( int i = 0; i < m_capacity; i++ )
+                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
+            }
 
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
