@@ -98,6 +98,7 @@ public final class CMain
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+        System.out.println( " Will run " + p_args[3] + " cycles." );
 
         // runtime call (with parallel execution)
 
@@ -106,9 +107,9 @@ public final class CMain
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range( 0,
-                    p_args.length < 3
+                    p_args.length < 4
                     ? Integer.MAX_VALUE
-                    : Integer.parseInt( p_args[2] ) )
+                    : Integer.parseInt( p_args[3] ) )
             .forEach( j ->
             {
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents

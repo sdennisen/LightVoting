@@ -403,25 +403,27 @@ public final class CEnvironment
     public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final Object p_vote )
     {
 
+
         m_voteSets.get( p_chairAgent ).add( p_vote );
         if ( ( m_voteSets.get( p_chairAgent ) ).size() == m_capacity )
         {
+            System.out.println( " All voters submitted their votes" );
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "all/votes/received"
-                    )
+                    "all/votes/received" )
+
             );
 
             p_chairAgent.trigger( l_trigger );
 
-            System.out.println( " XXXXXXXXXXXXXXXXXXXX All voters submitted their votes" );
         }
 
     }
 
 //    public void computeResult( final CChairAgent p_chairAgent )
 //    {
+//        System.out.println( "Computing result " );
 //        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 //
 //        final List<String> l_alternatives = new LinkedList<>();
@@ -434,7 +436,12 @@ public final class CEnvironment
 //
 //        // TODO specify comsize via config file
 //
+//        System.out.println( " Alternatives: " + l_alternatives );
+//        System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
+//
 //        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
+//
+//        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 //    }
 }
 
