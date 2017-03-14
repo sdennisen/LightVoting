@@ -73,3 +73,7 @@ lookForGroup.
        generic/print(MyName, " I need to submit my vote to chair ", Chair);
        env/submit/vote(Chair)
        .
+
++!election/result(Chair, Result) <-
+       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
+       .

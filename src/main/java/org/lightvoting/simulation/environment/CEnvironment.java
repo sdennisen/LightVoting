@@ -452,6 +452,19 @@ public final class CEnvironment
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
+        // broadcast result
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "election/result",
+                CLiteral.from( p_chairAgent.toString() ),
+                CRawTerm.from( Arrays.toString( l_comResult ) )
+            )
+        );
+
+        m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
+
 
     }
 }
