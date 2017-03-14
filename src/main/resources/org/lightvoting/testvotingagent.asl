@@ -40,13 +40,12 @@ lookForGroup.
         !lookforgroup
         .
 
-+!new/group/opened(Traveller, Chair)         <-
-    generic/print(MyName, " heard that traveller ", Traveller," opened group with Chair ", Chair).
+//+!new/group/opened(Traveller, Chair)         <-
+  //  generic/print(MyName, " heard that traveller ", Traveller," opened group with Chair ", Chair).
 
-+!joined/group(Traveller, Chair) <-
-       generic/print(MyName, " heard that traveller ", Traveller, " joined group with Chair ", Chair)
-       .
+//+!joined/group(Traveller, Chair) <-
+//       generic/print(MyName, " heard that traveller ", Traveller, " joined group with Chair ", Chair)
+//      .
 
-// TODO: In Java, either join one of the open groups or create aa new one if you see no groups
 +!lookforgroup <-
        env/join/group().

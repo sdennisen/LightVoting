@@ -149,14 +149,16 @@ public final class CEnvironment
     /**
      * join a group
      * @param p_votingAgent voting agent joining a group
+     * @return the chair of the group
      */
 
-    public final void joinGroup( final CVotingAgent p_votingAgent )
+    public final CChairAgent joinGroup( final CVotingAgent p_votingAgent )
     {
 
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
+            return p_votingAgent.getChair();
         }
 
 
@@ -175,7 +177,7 @@ public final class CEnvironment
             final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
 
-            System.out.println( "name of joining agent " + p_votingAgent.name() );
+            // System.out.println( "name of joining agent " + p_votingAgent.name() );
 
             //   String l_idString= (p_testID.toString()).replace("[][]","");
 
@@ -201,6 +203,8 @@ public final class CEnvironment
             m_agents
                 .parallelStream()
                 .forEach( i -> i.trigger( l_trigger ) );
+
+            return l_randomChair;
         }
 
     }
