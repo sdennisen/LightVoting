@@ -362,10 +362,9 @@ public final class CEnvironment
                 "submit/your/vote", CRawTerm.from( p_chairAgent  ) )
         );
 
-        // trigger all agents and tell them that the agent joined a group
-        m_agents
-            .parallelStream()
-            .forEach( i -> i.trigger( l_trigger ) );
+        final List<CVotingAgent> l_agents = m_chairgroup.get( p_chairAgent );
+
+        l_agents.forEach( i -> i.trigger( l_trigger ) );
 
     }
 
@@ -452,5 +451,7 @@ public final class CEnvironment
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+
+
     }
 }
