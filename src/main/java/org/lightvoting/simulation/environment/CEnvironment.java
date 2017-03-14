@@ -91,7 +91,7 @@ public final class CEnvironment
     public CEnvironment( final int p_size )
     {
         m_size = p_size;
-        m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
+        m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[m_size] );
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
         m_voteSets = new HashMap<CChairAgent, List>();
@@ -387,7 +387,7 @@ public final class CEnvironment
                 "vote/received",
                 CLiteral.from( p_votingAgent.name() ),
              //   CLiteral.from( p_chairAgent.toString() ),
-                CLiteral.from( l_vote.toString() )
+                CRawTerm.from( l_vote )
             )
         );
 
@@ -402,7 +402,7 @@ public final class CEnvironment
      * @param p_vote submitted vote
      */
 
-    public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final Object p_vote )
+    public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final AtomicIntegerArray p_vote )
     {
 
 
@@ -447,27 +447,10 @@ public final class CEnvironment
 
         System.out.println( " Alternatives: " + l_alternatives );
 
-        final List<AtomicIntegerArray> l_testVotes = new ArrayList<>( );
-        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray(  new int[]{1, 0, 1, 1, 0, 1} );
-        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
-        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[]{1, 0, 1, 1, 0, 1} );
-        final AtomicIntegerArray l_vote4 = new AtomicIntegerArray( new int[]{0, 0, 1, 0, 0, 0} );
+        System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
 
-        l_testVotes.add( l_vote1 );
-        l_testVotes.add( l_vote2 );
-        l_testVotes.add( l_vote3 );
-        l_testVotes.add( l_vote4 );
-
-        System.out.println( " Votes: " + l_testVotes );
-
-        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, l_testVotes, 3 );
-
-       // System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
-
-       // final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
+        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
     }
 }
-
-

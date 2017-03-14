@@ -30,6 +30,8 @@ import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 
 /**
  * Created by sophie on 21.02.17.
@@ -79,7 +81,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    private void storeVote( final Object p_votingAgent, final Object p_vote )
+    private void storeVote( final Object p_votingAgent, final AtomicIntegerArray p_vote )
     {
 
         System.out.println( " trying to add vote from agent " + p_votingAgent + ": " + p_vote );
