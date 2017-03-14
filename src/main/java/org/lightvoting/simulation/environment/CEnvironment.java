@@ -116,23 +116,23 @@ public final class CEnvironment
             .parallelStream()
             .forEach( i -> i.trigger( l_trigger ) );
 
-        // TODO rewrite naive approach
-        if ( m_chairgroup.size() == 3 )
-        {
-            final ITrigger l_triggerJoin = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "lookforgroup" )
-
-            );
-
-
-            // trigger all agents and tell them to choose one of the available groups
-
-            m_agents
-                .parallelStream()
-                .forEach( i -> i.trigger( l_triggerJoin ) );
-        }
+//        // TODO rewrite naive approach
+//        if ( m_chairgroup.size() == 3 )
+//        {
+//            final ITrigger l_triggerJoin = CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "lookforgroup" )
+//
+//            );
+//
+//
+//            // trigger all agents and tell them to choose one of the available groups
+//
+//            m_agents
+//                .parallelStream()
+//                .forEach( i -> i.trigger( l_triggerJoin ) );
+//        }
 
     }
 
@@ -146,29 +146,41 @@ public final class CEnvironment
         // choose random group to join
 
         final List<CChairAgent> l_chairsAsList = new ArrayList<>( m_chairgroup.keySet() );
-        final Random l_rand = new Random();
 
-        final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
-        m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+        // if there are no open groups yet, create a new one
+        if ( l_chairsAsList.size() == 0 )
+        {
+            this.openNewGroup( p_votingAgent );
+        }
 
-        System.out.println( "name of joining agent " + p_votingAgent.name() );
 
-             //   String l_idString= (p_testID.toString()).replace("[][]","");
+        else
+        {
+            final Random l_rand = new Random();
 
-                //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
+            final CChairAgent l_randomChair = l_chairsAsList.get( l_rand.nextInt( l_chairsAsList.size() ) );
+            m_chairgroup.get( l_randomChair ).add( p_votingAgent );
 
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "joined/group",
-                CLiteral.from( p_votingAgent.name() ),
-                CLiteral.from( l_randomChair.toString() ) )
+            System.out.println( "name of joining agent " + p_votingAgent.name() );
+
+            //   String l_idString= (p_testID.toString()).replace("[][]","");
+
+            //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
+
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "joined/group",
+                    CLiteral.from( p_votingAgent.name() ),
+                    CLiteral.from( l_randomChair.toString() )
+                )
             );
 
-        // trigger all agents and tell them that the agent joined a group
-        m_agents
-            .parallelStream()
-            .forEach( i -> i.trigger( l_trigger ) );
+            // trigger all agents and tell them that the agent joined a group
+            m_agents
+                .parallelStream()
+                .forEach( i -> i.trigger( l_trigger ) );
+        }
 
     }
 

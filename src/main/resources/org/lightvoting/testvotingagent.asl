@@ -34,14 +34,17 @@ lookForGroup.
         voting/send/chair/vote(0);
 
         // send my name to agent 0
-        message/send("agent 0", MyName)
+        message/send("agent 0", MyName);
+
+
+        !lookforgroup
         .
 
 +!new/group/opened(Traveller, Chair)         <-
-    generic/print("Traveller ", Traveller," opened group with Chair ", Chair).
+    generic/print(MyName, " heard that traveller ", Traveller," opened group with Chair ", Chair).
 
 +!joined/group(Traveller, Chair) <-
-       generic/print("traveller ", Traveller, " joined group with Chair ", Chair)
+       generic/print(MyName, " heard that traveller ", Traveller, " joined group with Chair ", Chair)
        .
 
 // TODO: In Java, either join one of the open groups or create aa new one if you see no groups
