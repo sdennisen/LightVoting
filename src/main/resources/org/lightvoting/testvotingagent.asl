@@ -13,8 +13,6 @@ lookForGroup.
             >>chair(Chair);
             generic/print(MyName, "MyChair:", Chair);
 
-          //  env/open/new/group(Chair);
-
             !nextcycle
             .
 
@@ -36,16 +34,14 @@ lookForGroup.
         // send my name to agent 0
         message/send("agent 0", MyName);
 
-
         !lookforgroup
         .
 
-//+!new/group/opened(Traveller, Chair)         <-
-  //  generic/print(MyName, " heard that traveller ", Traveller," opened group with Chair ", Chair).
-
-//+!joined/group(Traveller, Chair) <-
-//       generic/print(MyName, " heard that traveller ", Traveller, " joined group with Chair ", Chair)
-//      .
-
 +!lookforgroup <-
        env/join/group().
+
+// +!new/group/opened(Traveller, Chair) <-
+// .
+
+// +!joined/group(Traveller, Chair) <-
+// .

@@ -23,9 +23,6 @@
 
 package org.lightvoting.simulation.environment;
 
-import org.lightjason.agentspeak.language.CLiteral;
-import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
-import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
@@ -36,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 
 /**
@@ -45,17 +41,18 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  */
 public final class CEnvironment
 {
-    /**
-     * thread-safe structure for group-to-agent mapping
-     */
-    private final AtomicReferenceArray<CVotingAgent> m_group;
+
+    // private final AtomicReferenceArray<CVotingAgent> m_group;
 
     /**
-     * map with agent-to-group mapping
+     * Set of voting agents
      */
-  //  private final Map<CVotingAgent, Integer> m_agentgroup = new ConcurrentHashMap<>();
 
     private final Set<CVotingAgent> m_agents;
+
+    /**
+     * Map for storing agent groups
+     */
 
     private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
 
@@ -80,7 +77,7 @@ public final class CEnvironment
     public CEnvironment( final int p_size )
     {
         m_size = p_size;
-        m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
+      //  m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[(int) m_size] );
         m_agents = new HashSet<>();
         m_chairgroup = new HashMap<>();
         m_activechairs = new LinkedList<>();
@@ -111,7 +108,7 @@ public final class CEnvironment
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
         m_activechairs.add( p_votingAgent.getChair() );
 
-        final ITrigger l_trigger = CTrigger.from(
+/*        final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "new/group/opened",
@@ -120,29 +117,11 @@ public final class CEnvironment
         );
 
 
-           // trigger all agents and tell them that the group was opened
+        // trigger all agents and tell them that the group was opened
 
         m_agents
             .parallelStream()
-            .forEach( i -> i.trigger( l_trigger ) );
-
-//        // TODO rewrite naive approach
-//        if ( m_chairgroup.size() == 3 )
-//        {
-//            final ITrigger l_triggerJoin = CTrigger.from(
-//                ITrigger.EType.ADDGOAL,
-//                CLiteral.from(
-//                    "lookforgroup" )
-//
-//            );
-//
-//
-//            // trigger all agents and tell them to choose one of the available groups
-//
-//            m_agents
-//                .parallelStream()
-//                .forEach( i -> i.trigger( l_triggerJoin ) );
-//        }
+            .forEach( i -> i.trigger( l_trigger ) );*/
 
     }
 
@@ -175,12 +154,6 @@ public final class CEnvironment
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
             System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
 
-            // System.out.println( "name of joining agent " + p_votingAgent.name() );
-
-            //   String l_idString= (p_testID.toString()).replace("[][]","");
-
-            //   System.out.println( "name of joining agent " + p_votingAgent.name() + " ID ohne Annotationen: " + l_id  );
-
             if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
             {
                 m_activechairs.remove( l_randomChair );
@@ -188,7 +161,7 @@ public final class CEnvironment
                     System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
             }
 
-            final ITrigger l_trigger = CTrigger.from(
+/*            final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "joined/group",
@@ -200,7 +173,7 @@ public final class CEnvironment
             // trigger all agents and tell them that the agent joined a group
             m_agents
                 .parallelStream()
-                .forEach( i -> i.trigger( l_trigger ) );
+                .forEach( i -> i.trigger( l_trigger ) );*/
 
             return l_randomChair;
         }
@@ -211,13 +184,6 @@ public final class CEnvironment
         else
         {
             this.openNewGroup( p_votingAgent );
-
-//            final List l_list = new LinkedList<CVotingAgent>();
-//            l_list.add( p_votingAgent );
-//
-//            m_chairgroup.put( p_votingAgent.getChair(), l_list );
-//            m_activechairs.add( p_votingAgent.getChair() );
-
             System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
             return p_votingAgent.getChair();
         }
