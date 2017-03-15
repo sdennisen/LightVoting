@@ -4,8 +4,6 @@ lookForGroup.
 // initial-goal
 !main.
 
-// TODO: naive approach: later, if there is no group, create a new one, otherwise choose one at random. -> implement in Java
-
 // initial plan (triggered by the initial goal)
 
 +!main : >>(name(Name), MyName == Name)
@@ -26,20 +24,15 @@ lookForGroup.
            +groupIdList(L);
            generic/print(MyName, "Hello World!");
            >>chair(Chair);
-           // TODO print name of chair in form chair 0, chair 1, ...
-          // generic/print(MyName, "MyChair:", Chair);
+           generic/print(MyName, "MyChair:", Chair);
+           generic/print(MyName, "Testing Voting Agent");
 
-            generic/print(MyName, "Testing Voting Agent");
-
-      //      env/open/new/group(Chair);
-
-            !nextcycle
-            .
+           !nextcycle
+           .
 
 +!nextcycle <-
     >>chair(Chair);
-    // TODO print name of chair in form chair 0, chair 1, ...
- //   generic/print("MyChair:", Chair);
+    generic/print(MyName, "MyChair:", Chair);
     generic/print(MyName, "Testing Voting Agent");
     !!test
     .
@@ -56,14 +49,6 @@ lookForGroup.
         message/send("agent 0", MyName)
         .
 
-+!new/group/opened(Traveller, Chair)         <-
-    generic/print("Traveller ", Traveller," opened group with Chair ", Chair).
-
-
-+!joined/group(Traveller, Chair) <-
-       generic/print(MyName, "heard that traveller ", Traveller, " joined group with Chair ", Chair)
-       .
-
 +!lookforgroup <-
        generic/print(MyName, "I'm looking for a group to join");
        env/join/group()
@@ -77,3 +62,12 @@ lookForGroup.
 +!election/result(Chair, Result) <-
        generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
        .
+
+// +!new/group/opened(Traveller, Chair)         <-
+//     generic/print("Traveller ", Traveller," opened group with Chair ", Chair)
+//     .
+
+
+//+!joined/group(Traveller, Chair) <-
+//     generic/print(MyName, "heard that traveller ", Traveller, " joined group with Chair ", Chair)
+//     .
