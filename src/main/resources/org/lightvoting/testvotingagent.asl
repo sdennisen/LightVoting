@@ -51,6 +51,7 @@ lookForGroup.
        generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
        .
 
+
 // +!new/group/opened(Traveller, Chair)         <-
 //     generic/print("Traveller ", Traveller," opened group with Chair ", Chair)
 //     .

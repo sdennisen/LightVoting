@@ -215,19 +215,22 @@ public final class CEnvironment
             {
                 m_activechairs.remove( l_randomChair );
                 for ( int i = 0; i < m_capacity; i++ )
-                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
+                System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
 
-                    System.out.println( "trigger election " );
+                System.out.println( "trigger election " );
 
-                    final ITrigger l_triggerStart = CTrigger.from(
-                        ITrigger.EType.ADDGOAL,
-                        CLiteral.from(
-                            "start/criterion/fulfilled" )
+                final ITrigger l_triggerStart = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "start/criterion/fulfilled" )
 
-                    );
+                );
 
-                    l_randomChair.trigger( l_triggerStart );
-                }
+                l_randomChair.trigger( l_triggerStart );
+
+
+                System.out.println( l_randomChair + " should start election" );
+            }
 
 
 
@@ -252,12 +255,11 @@ public final class CEnvironment
        // if it was not possible to join a group, open a new group
 
         else
-    {
-        this.openNewGroup( p_votingAgent );
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-        return p_votingAgent.getChair();
-    }
-
+        {
+            this.openNewGroup( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+            return p_votingAgent.getChair();
+        }
     }
 
     private boolean containsnot( final CChairAgent p_randomChair, final CVotingAgent p_votingAgent )
