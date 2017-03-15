@@ -135,6 +135,9 @@ public final class CEnvironment
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
         m_activechairs.add( p_votingAgent.getChair() );
 
+        final List l_initalList = new LinkedList<AtomicIntegerArray>();
+        m_voteSets.put( p_votingAgent.getChair(), l_initalList );
+
 /*        final ITrigger l_trigger = CTrigger.from(
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
@@ -313,7 +316,7 @@ public final class CEnvironment
             CLiteral.from(
                 "vote/received",
                 CLiteral.from( p_votingAgent.name() ),
-             //   CLiteral.from( p_chairAgent.toString() ),
+                //   CLiteral.from( p_chairAgent.toString() ),
                 CRawTerm.from( l_vote )
             )
         );
