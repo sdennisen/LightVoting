@@ -158,28 +158,22 @@ public final class CEnvironment
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
             return p_votingAgent.getChair();
         }
 
-
-
         // choose random group to join
-
-    //    final List<CChairAgent> l_chairsAsList = new ArrayList<>( m_chairgroup.keySet() );
-
-        // if there are no open groups yet, create a new one
-
-
 
         final Random l_rand = new Random();
 
         final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
 
 
-        if ( this.containsnot( l_randomChair, p_votingAgent ) )
+        if   ( this.containsnot( l_randomChair, p_votingAgent ) )
         {
 
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
 
             // System.out.println( "name of joining agent " + p_votingAgent.name() );
 
@@ -217,8 +211,16 @@ public final class CEnvironment
         else
         {
             this.openNewGroup( p_votingAgent );
+
+//            final List l_list = new LinkedList<CVotingAgent>();
+//            l_list.add( p_votingAgent );
+//
+//            m_chairgroup.put( p_votingAgent.getChair(), l_list );
+//            m_activechairs.add( p_votingAgent.getChair() );
+
+            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+            return p_votingAgent.getChair();
         }
-        return p_votingAgent.getChair();
 
     }
 

@@ -11,16 +11,16 @@ lookForGroup.
     <-
             generic/print("Hello World!");
             >>chair(Chair);
-            generic/print("MyChair:", Chair);
+            generic/print(MyName, "MyChair:", Chair);
 
-            env/open/new/group(Chair);
+          //  env/open/new/group(Chair);
 
             !nextcycle
             .
 
 +!nextcycle <-
     >>chair(Chair);
-    generic/print("MyChair:", Chair);
+    generic/print(MyName, " MyChair:", Chair);
     generic/print(MyName, "Testing Voting Agent");
     !!test
     .

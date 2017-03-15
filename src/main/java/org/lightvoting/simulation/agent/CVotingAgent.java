@@ -115,7 +115,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void envJoinGroup( )
     {
         final CChairAgent l_chairAgent =  m_environment.joinGroup( this );
-        System.out.println( this.name() + " joined group with chair " + l_chairAgent );
+   //     System.out.println( this.name() + " joined group with chair " + l_chairAgent );
     }
 
     /**
