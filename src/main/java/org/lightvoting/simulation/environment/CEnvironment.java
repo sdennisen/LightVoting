@@ -48,6 +48,20 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
  */
 public final class CEnvironment
 {
+
+    // TODO set variables via config file
+    // TODO use m_protocol?
+
+    private String m_protocol = "BASIC";
+
+    private String m_grouping = "RANDOM";
+
+    /**
+     * group capacity
+     */
+
+    private final int m_capacity = 3;
+
     // private final AtomicReferenceArray<CVotingAgent> m_group;
 
     /**
@@ -75,12 +89,6 @@ public final class CEnvironment
      */
     private final int m_size;
 
-
-    /**
-     * group capacity
-     */
-
-    private final int m_capacity = 3;
 
     /**
      * constructor
@@ -195,6 +203,14 @@ public final class CEnvironment
     public final CChairAgent joinGroup( final CVotingAgent p_votingAgent )
     {
 
+        if ( "RANDOM".equals( m_grouping ) )
+            return this.joinRandomGroup( p_votingAgent );
+        return null;
+    }
+
+
+    private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
+    {
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
