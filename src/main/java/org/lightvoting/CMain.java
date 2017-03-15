@@ -121,6 +121,7 @@ public final class CMain
                     {
                         // call each agent, i.e. trigger a new agent cycle
                         i.call();
+                        i.getChair().sleep( 0 );
                         i.getChair().call();
                     }
                     catch ( final Exception l_exception )

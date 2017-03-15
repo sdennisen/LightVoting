@@ -204,7 +204,6 @@ public final class CEnvironment
         final Random l_rand = new Random();
         final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
 
-
         if   ( this.containsnot( l_randomChair, p_votingAgent ) )
         {
 
@@ -213,7 +212,9 @@ public final class CEnvironment
 
             if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
             {
+
                 m_activechairs.remove( l_randomChair );
+
                 for ( int i = 0; i < m_capacity; i++ )
                 System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
 
@@ -228,8 +229,6 @@ public final class CEnvironment
 
                 l_randomChair.trigger( l_triggerStart );
 
-
-                System.out.println( l_randomChair + " should start election" );
             }
 
 

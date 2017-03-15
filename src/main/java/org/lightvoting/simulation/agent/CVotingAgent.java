@@ -109,6 +109,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         // wake up in next cycle
      //   p_chairagent.sleep( 0 );
+     //   p_chairagent.wakeup();
         m_environment.openNewGroup( this );
         System.out.println( this.name() + " opened new group with chair " + p_chairagent );
 
