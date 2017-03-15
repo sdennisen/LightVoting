@@ -70,15 +70,16 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
-
         try
         {
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, new CEnvironment( Integer.parseInt( p_args[2] ) ) );
+            final CEnvironment l_environment = new CEnvironment( Integer.parseInt( p_args[2] ) );
+
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, l_environment );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, l_environment  )  )
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();
@@ -97,6 +98,7 @@ public final class CMain
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+        System.out.println( " Will run " + p_args[3] + " cycles." );
 
         // runtime call (with parallel execution)
 
@@ -119,6 +121,7 @@ public final class CMain
                     {
                         // call each agent, i.e. trigger a new agent cycle
                         i.call();
+                        i.getChair().call();
                     }
                     catch ( final Exception l_exception )
                     {

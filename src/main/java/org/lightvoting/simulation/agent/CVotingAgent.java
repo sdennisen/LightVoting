@@ -57,6 +57,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private CChairAgent m_chair;
 
     /**
+     * agent's vote
+     */
+
+   // private AtomicIntegerArray m_vote;
+
+    /**
      * constructor of the agent
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
@@ -111,6 +117,13 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
     @IAgentActionFilter
+    @IAgentActionName( name = "env/submit/vote" )
+    private void submitVote( final IBaseAgent<CChairAgent> p_chairAgent )
+    {
+        m_environment.submitVote( this, p_chairAgent );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "env/join/group" )
     private void envJoinGroup( )
     {
@@ -135,4 +148,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         return m_chair;
     }
+
+
+
 }

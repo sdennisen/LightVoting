@@ -134,7 +134,7 @@ public final class CVoteTest extends TestCase
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            final CChairAgent l_chairAgent = new CChairAgent( new CDefaultAgentConfiguration<>() );
+            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23 ) );
             return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23 ) );
         }
     }
