@@ -299,6 +299,15 @@ public final class CEnvironment
             this.openNewGroup( p_votingAgent );
             System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 
+            final ITrigger l_triggerFound = CTrigger.from(
+                ITrigger.EType.DELETEGOAL,
+                CLiteral.from(
+                    "lookforgroup" )
+
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerFound );
+
             final ITrigger l_triggerStart = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
@@ -329,87 +338,83 @@ public final class CEnvironment
             return p_votingAgent.getChair();
         }
 
-        if ( m_groupResults.size() > 0 )
+        // choose group to join
+        final Map<CChairAgent, Integer> l_groupDistances = new HashMap<>();
+
+
+        final AtomicIntegerArray l_vote = p_votingAgent.getVote();
+
+        System.out.println( "Vote: " + l_vote );
+
+        for ( int i = 0; i < m_activechairs.size(); i++ )
+        {
+            final AtomicIntegerArray l_com = new AtomicIntegerArray( m_groupResults.get( m_activechairs.get( i ) ) );
+
+            System.out.println( "Committee: " + l_com );
+
+            // TODO own class for Hamming distance computation
+
+            final BitVector l_bitVote = new BitVector( l_vote.length() );
+            final BitVector l_bitCom = new BitVector( l_vote.length() );
+
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitVote.put( j, l_vote.get( j ) == 1 );
+
+            System.out.println( "Vote: " + l_bitVote );
+
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitCom.put( j, l_com.get( j ) == 1 );
+
+            System.out.println( "Committee: " + l_bitCom );
+
+            // final BitVector l_curBitCom = l_bitCom.copy();
+
+            l_bitCom.xor( l_bitVote );
+
+            final int l_HD = l_bitCom.cardinality();
+
+            System.out.println( "Hamming distance: " + l_HD );
+
+            l_groupDistances.put( m_activechairs.get( i ), l_HD );
+
+        }
+
+        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
+
+        final Map.Entry<CChairAgent, Integer> l_entry = (Map.Entry<CChairAgent, Integer>) l_sortedDistances.entrySet().iterator().next();
+
+        final CChairAgent l_chair = l_entry.getKey();
+
+        System.out.println( " Chosen chair " + l_chair );
+
+        if ( this.containsnot( l_chair, p_votingAgent ) )
         {
 
-            // choose group to join
-            final Map<CChairAgent, Integer> l_groupDistances = new HashMap<>();
+            m_chairgroup.get( l_chair ).add( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
 
-
-            final AtomicIntegerArray l_vote = p_votingAgent.getVote();
-
-            System.out.println( "Vote: " + l_vote );
-
-            for ( int i = 0; i < m_activechairs.size(); i++ )
-            {
-                final AtomicIntegerArray l_com = new AtomicIntegerArray( m_groupResults.get( m_activechairs.get( i ) ) );
-
-                System.out.println( "Committee: " + l_com );
-
-                // TODO own class for Hamming distance computation
-
-                final BitVector l_bitVote = new BitVector( l_vote.length() );
-                final BitVector l_bitCom = new BitVector( l_vote.length() );
-
-                for ( int j = 0; j < l_vote.length(); j++ )
-                    l_bitVote.put( j, l_vote.get( j ) == 1 );
-
-                System.out.println( "Vote: " + l_bitVote );
-
-                for ( int j = 0; j < l_vote.length(); j++ )
-                    l_bitCom.put( j, l_com.get( j ) == 1 );
-
-                System.out.println( "Committee: " + l_bitCom );
-
-                // final BitVector l_curBitCom = l_bitCom.copy();
-
-                l_bitCom.xor( l_bitVote );
-
-                final int l_HD = l_bitCom.cardinality();
-
-                System.out.println( "Hamming distance: " + l_HD );
-
-                l_groupDistances.put( m_activechairs.get( i ), l_HD );
-
-            }
-
-            final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
-
-            final Map.Entry<CChairAgent, Integer> l_entry = (Map.Entry<CChairAgent, Integer>) l_sortedDistances.entrySet().iterator().next();
-
-            final CChairAgent l_chair = l_entry.getKey();
-
-            System.out.println( " Chosen chair " + l_chair );
-
-
-            if ( this.containsnot( l_chair, p_votingAgent ) )
+            if ( m_chairgroup.get( l_chair ).size() == m_capacity )
             {
 
-                m_chairgroup.get( l_chair ).add( p_votingAgent );
-                System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
+                m_activechairs.remove( l_chair );
 
-                if ( m_chairgroup.get( l_chair ).size() == m_capacity )
-                {
+                for ( int i = 0; i < m_capacity; i++ )
+                    System.out.println( m_chairgroup.get( l_chair ).get( i ).name() + " with chair " + l_chair );
 
-                    m_activechairs.remove( l_chair );
+                System.out.println( "trigger election " );
 
-                    for ( int i = 0; i < m_capacity; i++ )
-                        System.out.println( m_chairgroup.get( l_chair ).get( i ).name() + " with chair " + l_chair );
+                final ITrigger l_triggerStart = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "start/criterion/fulfilled" )
 
-                    System.out.println( "trigger election " );
+                );
 
-                    final ITrigger l_triggerStart = CTrigger.from(
-                        ITrigger.EType.ADDGOAL,
-                        CLiteral.from(
-                            "start/criterion/fulfilled" )
+                l_chair.trigger( l_triggerStart );
 
-                    );
-
-                    l_chair.trigger( l_triggerStart );
-
-                }
-                return l_chair;
             }
+            return l_chair;
+
 
 
 
@@ -461,10 +466,15 @@ public final class CEnvironment
             //            return l_randomChair;
             //        }
         }
+        // if the agent is already in the group, just return the chair of the agent
+        else
+        {
+            return p_votingAgent.getChair();
+        }
 
-        this.openNewGroup( p_votingAgent );
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-        return p_votingAgent.getChair();
+//        this.openNewGroup( p_votingAgent );
+//        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+//        return p_votingAgent.getChair();
 
     }
 
