@@ -299,15 +299,6 @@ public final class CEnvironment
             this.openNewGroup( p_votingAgent );
             System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 
-            final ITrigger l_triggerFound = CTrigger.from(
-                ITrigger.EType.DELETEGOAL,
-                CLiteral.from(
-                    "lookforgroup" )
-
-            );
-
-            p_votingAgent.getChair().trigger( l_triggerFound );
-
             final ITrigger l_triggerStart = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
@@ -395,6 +386,7 @@ public final class CEnvironment
 
             if ( m_chairgroup.get( l_chair ).size() == m_capacity )
             {
+                System.out.println( " XXXXXXXXXXXXXXXX Capacity reached " );
 
                 m_activechairs.remove( l_chair );
 
