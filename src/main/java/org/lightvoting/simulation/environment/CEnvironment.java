@@ -31,6 +31,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,10 +55,11 @@ public final class CEnvironment
 
     private String m_protocol = "BASIC";
 
-    private String m_grouping = "RANDOM";
+ // private String m_grouping = "RANDOM";
 
- // private String m_grouping = "COORDINATED";
+    private String m_grouping = "COORDINATED";
 
+    private final HashMap<CChairAgent, int[]> m_groupResults = new HashMap<>();
     /**
      * group capacity
      */
@@ -297,7 +299,23 @@ public final class CEnvironment
 
         // choose group to join
 
-//        for (int i )
+        final HashMap<CChairAgent, Integer> l_groupDistances = new HashMap<>();
+
+      //  for ( int i = 0; i < m_activechairs.size(); i++ )
+
+      /*      final BitVector l_bitVote = new BitVector( p_altNum );
+
+        for ( int j = 0; j < p_altNum; j++ )
+        {
+            l_bitVote.put( j, l_booleanVote[j] );
+        }
+
+        final BitVector l_curBitCom = l_bitCom.copy();
+
+        l_curBitCom.xor( l_bitVote );
+
+        final int l_curHD = l_curBitCom.cardinality();*/
+
 //        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
 //
 //
@@ -331,12 +349,10 @@ public final class CEnvironment
 //            return l_randomChair;
 //        }
 
-        else
-        {
-            this.openNewGroup( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-            return p_votingAgent.getChair();
-        }
+        this.openNewGroup( p_votingAgent );
+        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+        return p_votingAgent.getChair();
+
     }
 
 
@@ -453,6 +469,8 @@ public final class CEnvironment
         System.out.println( " Votes: " + m_voteSets.get( p_chairAgent ) );
 
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
+
+        m_groupResults.put( p_chairAgent, l_comResult );
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
