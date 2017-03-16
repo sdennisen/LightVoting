@@ -32,6 +32,8 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 
 /**
  * BDI agent with voting capabilities.
@@ -60,7 +62,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * agent's vote
      */
 
-   // private AtomicIntegerArray m_vote;
+    private AtomicIntegerArray m_vote;
 
     /**
      * constructor of the agent
@@ -91,6 +93,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // sleep chair, Long.MAX_VALUE -> inf
         p_chairagent.sleep( Long.MAX_VALUE );
 
+        // TODO replace this with real vote generation
+        m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
 
     }
 
@@ -151,5 +155,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
 
-
+    public AtomicIntegerArray getVote()
+    {
+        return m_vote;
+    }
 }

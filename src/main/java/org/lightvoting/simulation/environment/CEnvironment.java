@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.environment;
 
+import cern.colt.bitvector.BitVector;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
@@ -33,8 +34,10 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +62,7 @@ public final class CEnvironment
 
     private String m_grouping = "COORDINATED";
 
-    private final HashMap<CChairAgent, int[]> m_groupResults = new HashMap<>();
+    private final Map<CChairAgent, int[]> m_groupResults;
     /**
      * group capacity
      */
@@ -108,6 +111,7 @@ public final class CEnvironment
         m_chairgroup = new HashMap<>();
         m_activechairs = new LinkedList<>();
         m_voteSets = new HashMap<CChairAgent, List>();
+        m_groupResults = new HashMap<CChairAgent, int[]>();
 
     }
 
@@ -294,14 +298,122 @@ public final class CEnvironment
         {
             this.openNewGroup( p_votingAgent );
             System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/criterion/fulfilled" )
+
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerStart );
+
+
             return p_votingAgent.getChair();
         }
 
-        // choose group to join
+        if ( m_groupResults.size() == 0 )
+        {
+            this.openNewGroup( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 
-        final HashMap<CChairAgent, Integer> l_groupDistances = new HashMap<>();
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/criterion/fulfilled" )
 
-      //  for ( int i = 0; i < m_activechairs.size(); i++ )
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerStart );
+
+            return p_votingAgent.getChair();
+        }
+
+        if ( m_groupResults.size() > 0 )
+        {
+
+            // choose group to join
+            final Map<CChairAgent, Integer> l_groupDistances = new HashMap<>();
+
+
+            final AtomicIntegerArray l_vote = p_votingAgent.getVote();
+
+            System.out.println( "Vote: " + l_vote );
+
+            for ( int i = 0; i < m_activechairs.size(); i++ )
+            {
+                final AtomicIntegerArray l_com = new AtomicIntegerArray( m_groupResults.get( m_activechairs.get( i ) ) );
+
+                System.out.println( "Committee: " + l_com );
+
+                // TODO own class for Hamming distance computation
+
+                final BitVector l_bitVote = new BitVector( l_vote.length() );
+                final BitVector l_bitCom = new BitVector( l_vote.length() );
+
+                for ( int j = 0; j < l_vote.length(); j++ )
+                    l_bitVote.put( j, l_vote.get( j ) == 1 );
+
+                System.out.println( "Vote: " + l_bitVote );
+
+                for ( int j = 0; j < l_vote.length(); j++ )
+                    l_bitCom.put( j, l_com.get( j ) == 1 );
+
+                System.out.println( "Committee: " + l_bitCom );
+
+                // final BitVector l_curBitCom = l_bitCom.copy();
+
+                l_bitCom.xor( l_bitVote );
+
+                final int l_HD = l_bitCom.cardinality();
+
+                System.out.println( "Hamming distance: " + l_HD );
+
+                l_groupDistances.put( m_activechairs.get( i ), l_HD );
+
+            }
+
+            final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
+
+            final Map.Entry<CChairAgent, Integer> l_entry = (Map.Entry<CChairAgent, Integer>) l_sortedDistances.entrySet().iterator().next();
+
+            final CChairAgent l_chair = l_entry.getKey();
+
+            System.out.println( " Chosen chair " + l_chair );
+
+
+            if ( this.containsnot( l_chair, p_votingAgent ) )
+            {
+
+                m_chairgroup.get( l_chair ).add( p_votingAgent );
+                System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
+
+                if ( m_chairgroup.get( l_chair ).size() == m_capacity )
+                {
+
+                    m_activechairs.remove( l_chair );
+
+                    for ( int i = 0; i < m_capacity; i++ )
+                        System.out.println( m_chairgroup.get( l_chair ).get( i ).name() + " with chair " + l_chair );
+
+                    System.out.println( "trigger election " );
+
+                    final ITrigger l_triggerStart = CTrigger.from(
+                        ITrigger.EType.ADDGOAL,
+                        CLiteral.from(
+                            "start/criterion/fulfilled" )
+
+                    );
+
+                    l_chair.trigger( l_triggerStart );
+
+                }
+                return l_chair;
+            }
+
+
+
+
 
       /*      final BitVector l_bitVote = new BitVector( p_altNum );
 
@@ -316,43 +428,64 @@ public final class CEnvironment
 
         final int l_curHD = l_curBitCom.cardinality();*/
 
-//        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
-//
-//
-//
-//        if ( this.containsnot( l_randomChair, p_votingAgent ) )
-//        {
-//
-//            m_chairgroup.get( l_randomChair ).add( p_votingAgent );
-//            System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
-//
-//            if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
-//            {
-//
-//                m_activechairs.remove( l_randomChair );
-//
-//                for ( int i = 0; i < m_capacity; i++ )
-//                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
-//
-//                System.out.println( "trigger election " );
-//
-//                final ITrigger l_triggerStart = CTrigger.from(
-//                    ITrigger.EType.ADDGOAL,
-//                    CLiteral.from(
-//                        "start/criterion/fulfilled" )
-//
-//                );
-//
-//                l_randomChair.trigger( l_triggerStart );
-//
-//            }
-//            return l_randomChair;
-//        }
+            //        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
+            //
+            //
+            //
+            //        if ( this.containsnot( l_randomChair, p_votingAgent ) )
+            //        {
+            //
+            //            m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+            //            System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
+            //
+            //            if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
+            //            {
+            //
+            //                m_activechairs.remove( l_randomChair );
+            //
+            //                for ( int i = 0; i < m_capacity; i++ )
+            //                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
+            //
+            //                System.out.println( "trigger election " );
+            //
+            //                final ITrigger l_triggerStart = CTrigger.from(
+            //                    ITrigger.EType.ADDGOAL,
+            //                    CLiteral.from(
+            //                        "start/criterion/fulfilled" )
+            //
+            //                );
+            //
+            //                l_randomChair.trigger( l_triggerStart );
+            //
+            //            }
+            //            return l_randomChair;
+            //        }
+        }
 
         this.openNewGroup( p_votingAgent );
         System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
         return p_votingAgent.getChair();
 
+    }
+
+    private Map sortMapDESC( final Map<CChairAgent, Integer> p_valuesMap )
+
+    {
+
+        final List<Map.Entry<CChairAgent, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
+
+        /* Sorting the list based on values in descending order */
+        Collections.sort( l_list, ( p_first, p_second ) ->
+            p_second.getValue().compareTo( p_first.getValue() ) );
+
+        /* Maintaining insertion order with the help of LinkedList */
+        final Map<CChairAgent, Integer> l_sortedMap = new LinkedHashMap<>();
+        for ( final Map.Entry<CChairAgent, Integer> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
     }
 
 
@@ -428,7 +561,8 @@ public final class CEnvironment
     {
 
         m_voteSets.get( p_chairAgent ).add( p_vote );
-        if ( ( m_voteSets.get( p_chairAgent ) ).size() == m_capacity )
+        if ( ( m_voteSets.get( p_chairAgent ) ).size() == m_chairgroup.get( p_chairAgent ).size() )
+            //m_capacity )
         {
             System.out.println( " All voters submitted their votes" );
             final ITrigger l_trigger = CTrigger.from(
