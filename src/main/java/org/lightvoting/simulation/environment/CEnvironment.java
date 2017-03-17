@@ -62,6 +62,10 @@ public final class CEnvironment
 
     private String m_grouping = "COORDINATED";
 
+    // TODO join threshold via config
+
+    private final int m_joinThreshold = 0;
+
     private final Map<CChairAgent, int[]> m_groupResults;
     /**
      * group capacity
@@ -154,6 +158,9 @@ public final class CEnvironment
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
 
+        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+
+
 /*        final ITrigger l_trigger = CTrigger.from(
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
@@ -225,8 +232,8 @@ public final class CEnvironment
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
             return p_votingAgent.getChair();
+
         }
 
         // choose random group to join
@@ -297,7 +304,6 @@ public final class CEnvironment
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 
             final ITrigger l_triggerStart = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
@@ -331,8 +337,6 @@ public final class CEnvironment
 
         // choose group to join
         final Map<CChairAgent, Integer> l_groupDistances = new HashMap<>();
-
-
         final AtomicIntegerArray l_vote = p_votingAgent.getVote();
 
         System.out.println( "Vote: " + l_vote );
@@ -376,13 +380,30 @@ public final class CEnvironment
 
         final CChairAgent l_chair = l_entry.getKey();
 
+        // if Hamming distance is above the threshold, do not join the chair but create a new group
+        if ( l_entry.getValue() > m_joinThreshold )
+        {
+            this.openNewGroup( p_votingAgent );
+
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/criterion/fulfilled" )
+
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerStart );
+
+            return p_votingAgent.getChair();
+        }
+
         System.out.println( " Chosen chair " + l_chair );
 
         if ( this.containsnot( l_chair, p_votingAgent ) )
         {
 
             m_chairgroup.get( l_chair ).add( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
+       //     System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
 
             if ( m_chairgroup.get( l_chair ).size() == m_capacity )
             {
@@ -390,10 +411,10 @@ public final class CEnvironment
 
                 m_activechairs.remove( l_chair );
 
-                for ( int i = 0; i < m_capacity; i++ )
-                    System.out.println( m_chairgroup.get( l_chair ).get( i ).name() + " with chair " + l_chair );
+            //    for ( int i = 0; i < m_capacity; i++ )
+              //      System.out.println( m_chairgroup.get( l_chair ).get( i ).name() + " with chair " + l_chair );
 
-                System.out.println( "trigger election " );
+          //      System.out.println( "trigger election " );
 
                 final ITrigger l_triggerStart = CTrigger.from(
                     ITrigger.EType.ADDGOAL,
