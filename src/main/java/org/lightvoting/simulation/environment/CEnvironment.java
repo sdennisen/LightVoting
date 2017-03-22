@@ -100,6 +100,10 @@ public final class CEnvironment
      */
     private final int m_size;
 
+    /**
+     * indicates if new cycle can be triggered
+     */
+
 
     /**
      * constructor

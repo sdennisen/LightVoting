@@ -116,21 +116,26 @@ public final class CMain
             {
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents
                 // addAgents( l_activeAgents, 3, s_agentIterator );
-                addAgents( l_activeAgents, 1, s_agentIterator );
-                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+
+                if ( s_environment.ready() )
+                {
+
+                    addAgents( l_activeAgents, 1, s_agentIterator );
+                    System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+                }
                 l_activeAgents.parallelStream().forEach( i ->
                 {
                     try
                     {
                         // check if the conditions for triggering a new cycle are fulfilled in the environment
 
-                        if ( s_environment.ready() )
+
                         // call each agent, i.e. trigger a new agent cycle
-                        {
-                            i.call();
-                            i.getChair().sleep( 0 );
-                            i.getChair().call();
-                        }
+
+                        i.call();
+                        i.getChair().sleep( 0 );
+                        i.getChair().call();
+
                     }
                     catch ( final Exception l_exception )
                     {
