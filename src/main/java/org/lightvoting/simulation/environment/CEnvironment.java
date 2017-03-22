@@ -638,6 +638,10 @@ public final class CEnvironment
 
         m_groupResults.put( p_chairAgent, l_comResult );
 
+        // set Ready to true
+
+        m_ready = true;
+
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
         // broadcast result
@@ -652,6 +656,8 @@ public final class CEnvironment
         );
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
+
+
 
     }
 
