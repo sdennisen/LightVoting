@@ -46,6 +46,8 @@ public final class CMain
 {
     private static Iterator<CVotingAgent> s_agentIterator;
 
+    private static CEnvironment s_environment;
+
     /**
      * Hidden constructor
      */
@@ -75,11 +77,11 @@ public final class CMain
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            final CEnvironment l_environment = new CEnvironment( Integer.parseInt( p_args[2] ) );
+            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ) );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, l_environment );
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, l_environment  )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment  )  )
                     .collect( Collectors.toSet() );
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();
@@ -120,10 +122,15 @@ public final class CMain
                 {
                     try
                     {
+                        // check if the conditions for triggering a new cycle are fulfilled in the environment
+
+                        if ( s_environment.ready() )
                         // call each agent, i.e. trigger a new agent cycle
-                        i.call();
-                        i.getChair().sleep( 0 );
-                        i.getChair().call();
+                        {
+                            i.call();
+                            i.getChair().sleep( 0 );
+                            i.getChair().call();
+                        }
                     }
                     catch ( final Exception l_exception )
                     {

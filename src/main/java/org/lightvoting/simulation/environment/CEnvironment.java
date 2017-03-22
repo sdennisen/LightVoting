@@ -226,6 +226,11 @@ public final class CEnvironment
         return null;
     }
 
+    public boolean ready()
+    {
+        return true;
+    }
+
 
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
