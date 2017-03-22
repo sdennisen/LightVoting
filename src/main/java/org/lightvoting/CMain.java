@@ -117,10 +117,10 @@ public final class CMain
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents
                 // addAgents( l_activeAgents, 3, s_agentIterator );
 
-                if ( s_environment.ready() )
+                if ( s_environment.getReady() )
                 {
-
                     addAgents( l_activeAgents, 1, s_agentIterator );
+                    s_environment.setReady( false );
                     System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
                 }
                 l_activeAgents.parallelStream().forEach( i ->
@@ -150,7 +150,7 @@ public final class CMain
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
     {
 
-        for ( int i = 0; i < 3; i++ )
+        for ( int i = 0; i < p_newAgNum; i++ )
         {
             if ( p_agentIterator.hasNext() )
             {

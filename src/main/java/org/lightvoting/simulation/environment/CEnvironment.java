@@ -103,7 +103,7 @@ public final class CEnvironment
     /**
      * indicates if new cycle can be triggered
      */
-
+    private boolean m_ready = true;
 
     /**
      * constructor
@@ -230,9 +230,9 @@ public final class CEnvironment
         return null;
     }
 
-    public boolean ready()
+    public boolean getReady()
     {
-        return true;
+        return m_ready;
     }
 
 
@@ -653,5 +653,10 @@ public final class CEnvironment
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
 
+    }
+
+    public void setReady( final boolean p_ready )
+    {
+        m_ready = p_ready;
     }
 }
