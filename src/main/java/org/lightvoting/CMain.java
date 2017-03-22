@@ -113,7 +113,8 @@ public final class CMain
             .forEach( j ->
             {
                 // if you want to do something in cycle j, put it here - in this case, activate three new agents
-                addAgents( l_activeAgents, 3, s_agentIterator );
+                // addAgents( l_activeAgents, 3, s_agentIterator );
+                addAgents( l_activeAgents, 1, s_agentIterator );
                 System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
                 l_activeAgents.parallelStream().forEach( i ->
                 {
