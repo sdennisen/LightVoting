@@ -58,9 +58,11 @@ public final class CEnvironment
 
     private String m_protocol = "BASIC";
 
- // private String m_grouping = "RANDOM";
+ // private String m_protocol = "ITERATIVE";
 
-    private String m_grouping = "COORDINATED";
+    private String m_grouping = "RANDOM";
+
+//  private String m_grouping = "COORDINATED";
 
     // TODO join threshold via config
 
@@ -657,14 +659,38 @@ public final class CEnvironment
 
         // broadcast result
 
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "election/result",
-                CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( Arrays.toString( l_comResult ) )
-            )
-        );
+        final ITrigger l_trigger;
+
+        if ("BASIC".equals( m_protocol ))
+        {
+            l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "election/result",
+                    CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( Arrays.toString( l_comResult ) )
+                )
+            );
+        }
+
+        else if ("ITERATIVE".equals( m_protocol ) )
+        {
+
+            l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "election/result",
+                    CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( Arrays.toString( l_comResult ) ),
+                    CLiteral.from( String.valueOf( 0 ) )
+                )
+            );
+        }
+        // this shouldn't happen
+        else
+        {
+            l_trigger = null;
+        }
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
 
