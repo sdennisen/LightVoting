@@ -246,7 +246,6 @@ public final class CEnvironment
         return m_ready;
     }
 
-
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
         if ( m_activechairs.size() == 0 )
@@ -687,6 +686,11 @@ public final class CEnvironment
 
             p_chairAgent.trigger( l_chairTrigger );
         }
+    }
+
+    public void recomputeResult( final CChairAgent p_chairAgent, final Number p_iteration )
+    {
+        System.out.println( " --------------- Recomputing result " + " iteration " + String.valueOf( p_iteration.intValue() )  + "  --------------- " +  p_chairAgent );
     }
 
     public void setReady( final boolean p_ready )

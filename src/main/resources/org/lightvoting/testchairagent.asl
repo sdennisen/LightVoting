@@ -29,9 +29,10 @@ iteration(0).
     .
 
 +!election/result(Chair, Result): >>iteration(I) <-
-       generic/print("My current Result is  ", Result, "in Iteration ", I, " I'm ", Chair);
-       -iteration(I);
-       NewI = I+1;
-       +iteration(NewI);
-       generic/print("Start Iteration: ", NewI)
-       .
+    generic/print("My current Result is  ", Result, "in Iteration ", I, " I'm ", Chair);
+    -iteration(I);
+    NewI = I+1;
+    +iteration(NewI);
+    generic/print("Start Iteration: ", NewI);
+    recompute/result(NewI)
+    .

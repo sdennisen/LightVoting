@@ -101,6 +101,17 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     }
 
+    @IAgentActionFilter
+    @IAgentActionName( name = "recompute/result" )
+    private void recomputeResult( final Number p_iteration )
+    {
+
+        System.out.println( " recompute result " );
+        m_environment.recomputeResult( this, p_iteration );
+        //        System.out.println( " computed result " );
+
+    }
+
     public String name()
     {
         return m_name;
