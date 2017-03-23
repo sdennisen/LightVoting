@@ -56,9 +56,9 @@ public final class CEnvironment
     // TODO set variables via config file or commando line
     // TODO use m_protocol?
 
-    private String m_protocol = "BASIC";
+ // private String m_protocol = "BASIC";
 
- // private String m_protocol = "ITERATIVE";
+    private String m_protocol = "ITERATIVE";
 
     private String m_grouping = "RANDOM";
 
@@ -659,11 +659,9 @@ public final class CEnvironment
 
         // broadcast result
 
-        final ITrigger l_trigger;
-
-        if ("BASIC".equals( m_protocol ))
+        if ( "BASIC".equals( m_protocol ) )
         {
-            l_trigger = CTrigger.from(
+            final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "election/result",
@@ -671,29 +669,24 @@ public final class CEnvironment
                     CRawTerm.from( Arrays.toString( l_comResult ) )
                 )
             );
+
+            m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
         }
 
-        else if ("ITERATIVE".equals( m_protocol ) )
+        else if ( "ITERATIVE".equals( m_protocol ) )
         {
 
-            l_trigger = CTrigger.from(
+            final ITrigger l_chairTrigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "election/result",
                     CLiteral.from( p_chairAgent.toString() ),
-                    CRawTerm.from( Arrays.toString( l_comResult ) ),
-                    CLiteral.from( String.valueOf( 0 ) )
+                    CRawTerm.from( Arrays.toString( l_comResult ) )
                 )
             );
-        }
-        // this shouldn't happen
-        else
-        {
-            l_trigger = null;
-        }
 
-        m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
-
+            p_chairAgent.trigger( l_chairTrigger );
+        }
     }
 
     public void setReady( final boolean p_ready )
