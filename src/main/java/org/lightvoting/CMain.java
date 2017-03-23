@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
@@ -112,31 +113,39 @@ public final class CMain
 
         // add first agent
 
-        addAgents( l_activeAgents, 1, s_agentIterator );
+//        addAgents( l_activeAgents, 1, s_agentIterator );
+//
+//        // call agent until first Result is computed
+//        while ( !( s_environment.getResultComputed() ) )
+//
+//            try
+//            {
+//                // check if the conditions for triggering a new cycle are fulfilled in the environment
+//
+//
+//                // call each agent, i.e. trigger a new agent cycle
+//                final CVotingAgent l_votingAgent = l_activeAgents.iterator().next();
+//
+//                l_votingAgent.call();
+//                l_votingAgent.getChair().sleep( 0 );
+//                l_votingAgent.getChair().call();
+//
+//            }
+//            catch ( final Exception l_exception )
+//            {
+//                l_exception.printStackTrace();
+//                throw new RuntimeException();
+//            }
 
-        // call agent until first Result is computed
-        while ( !( s_environment.getResultComputed() ) )
+        IntStream
+       //  define cycle range, i.e. number of cycles to run sequentially
+                   .range( 0,
+                           p_args.length < 4
+                           ? Integer.MAX_VALUE
+                           : Integer.parseInt( p_args[3] ) )
+                   .forEach( j ->
 
-            try
-            {
-                // check if the conditions for triggering a new cycle are fulfilled in the environment
-
-
-                // call each agent, i.e. trigger a new agent cycle
-                final CVotingAgent l_votingAgent = l_activeAgents.iterator().next();
-
-                l_votingAgent.call();
-                l_votingAgent.getChair().sleep( 0 );
-                l_votingAgent.getChair().call();
-
-            }
-            catch ( final Exception l_exception )
-            {
-                l_exception.printStackTrace();
-                throw new RuntimeException();
-            }
-
-        while ( s_environment.getReady() )
+    //    while ( s_environment.getReady() )
         {
             addAgents( l_activeAgents, 1, s_agentIterator );
             s_environment.setResultComputed( false );
@@ -165,7 +174,7 @@ public final class CMain
                     }
                 } );
             }
-        }
+        });
 
 
 
