@@ -106,6 +106,14 @@ public final class CEnvironment
     private boolean m_ready = true;
 
     /**
+     * number of cycles
+     */
+
+    private int m_cycles;
+    private boolean m_resultComputed;
+
+
+    /**
      * constructor
      *
      * @param p_size number of agents
@@ -120,6 +128,7 @@ public final class CEnvironment
         m_activechairs = new LinkedList<>();
         m_voteSets = new HashMap<CChairAgent, List>();
         m_groupResults = new HashMap<CChairAgent, int[]>();
+        m_resultComputed = false;
 
     }
 
@@ -638,6 +647,8 @@ public final class CEnvironment
 
         m_groupResults.put( p_chairAgent, l_comResult );
 
+        m_resultComputed = true;
+
         // set Ready to true
 
         m_ready = true;
@@ -657,12 +668,25 @@ public final class CEnvironment
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
 
-
-
     }
 
     public void setReady( final boolean p_ready )
     {
         m_ready = p_ready;
+    }
+
+    public void setCycles( final int p_cycles )
+    {
+        m_cycles = p_cycles;
+    }
+
+    public boolean getResultComputed()
+    {
+        return m_resultComputed;
+    }
+
+    public void setResultComputed( boolean p_resultComputed )
+    {
+        m_resultComputed = p_resultComputed;
     }
 }
