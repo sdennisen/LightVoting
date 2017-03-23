@@ -58,9 +58,9 @@ public final class CEnvironment
 
     private String m_protocol = "BASIC";
 
- // private String m_grouping = "RANDOM";
+    private String m_grouping = "RANDOM";
 
-    private String m_grouping = "COORDINATED";
+   // private String m_grouping = "COORDINATED";
 
     // TODO join threshold via config
 
