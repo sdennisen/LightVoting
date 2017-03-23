@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
@@ -105,44 +106,20 @@ public final class CMain
 
         // TODO fix failing agent calls
 
-        // set cycle number in environment
-        s_environment.setCycles( p_args.length < 4
-                               ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[3] ) );
-
-        // add first agent
-
-        addAgents( l_activeAgents, 1, s_agentIterator );
-
-        // call agent until first Result is computed
-        while ( !( s_environment.getResultComputed() ) )
-
-            try
+        IntStream
+            // define cycle range, i.e. number of cycles to run sequentially
+            .range( 0,
+                    p_args.length < 4
+                    ? Integer.MAX_VALUE
+                    : Integer.parseInt( p_args[3] ) )
+            .forEach( j ->
             {
-                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                // if you want to do something in cycle j, put it here - in this case, activate three new agents
+                // addAgents( l_activeAgents, 3, s_agentIterator );
 
-
-                // call each agent, i.e. trigger a new agent cycle
-                final CVotingAgent l_votingAgent = l_activeAgents.iterator().next();
-
-                l_votingAgent.call();
-                l_votingAgent.getChair().sleep( 0 );
-                l_votingAgent.getChair().call();
-
-            }
-            catch ( final Exception l_exception )
-            {
-                l_exception.printStackTrace();
-                throw new RuntimeException();
-            }
-
-        while ( s_environment.getReady() )
-        {
-            addAgents( l_activeAgents, 1, s_agentIterator );
-            s_environment.setResultComputed( false );
-
-            while ( !( s_environment.getResultComputed() ) )
-            {
+                addAgents( l_activeAgents, 1, s_agentIterator );
+                s_environment.setReady( false );
+                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
 
                 l_activeAgents.parallelStream().forEach( i ->
                 {
@@ -164,50 +141,8 @@ public final class CMain
                         throw new RuntimeException();
                     }
                 } );
-            }
-        }
 
-
-
-//        IntStream
-//            // define cycle range, i.e. number of cycles to run sequentially
-//            .range( 0,
-//                    p_args.length < 4
-//                    ? Integer.MAX_VALUE
-//                    : Integer.parseInt( p_args[3] ) )
-//            .forEach( j ->
-//            {
-//                // if you want to do something in cycle j, put it here - in this case, activate three new agents
-//                // addAgents( l_activeAgents, 3, s_agentIterator );
-//
-//                if ( s_environment.getReady() )
-//                {
-//                    addAgents( l_activeAgents, 1, s_agentIterator );
-//                    s_environment.setReady( false );
-//                    System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
-//                }
-//                l_activeAgents.parallelStream().forEach( i ->
-//                {
-//                    try
-//                    {
-//                        // check if the conditions for triggering a new cycle are fulfilled in the environment
-//
-//
-//                        // call each agent, i.e. trigger a new agent cycle
-//
-//                        i.call();
-//                        i.getChair().sleep( 0 );
-//                        i.getChair().call();
-//
-//                    }
-//                    catch ( final Exception l_exception )
-//                    {
-//                        l_exception.printStackTrace();
-//                        throw new RuntimeException();
-//                    }
-//                } );
-//
-//            } );
+            } );
 
 
 
