@@ -1,3 +1,5 @@
+iteration(0).
+
 !main.
 
 +!main <- generic/print("....Chair....").
@@ -25,3 +27,7 @@
     generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all votes.");
     compute/result()
     .
+
++!election/result(Chair, Result): >>iteration(I) <-
+       generic/print("My current Result is  ", Result, "in Iteration ", I, " I'm ", Chair)
+       .
