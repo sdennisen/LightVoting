@@ -688,9 +688,36 @@ public final class CEnvironment
         }
     }
 
+    /**
+     * recompute result of election regarding to criteria of iterative election
+     * @param p_chairAgent chair agent conducting the election
+     * @param p_iteration number of current iteration
+     */
+
     public void recomputeResult( final CChairAgent p_chairAgent, final Number p_iteration )
     {
         System.out.println( " --------------- Recomputing result " + " iteration " + String.valueOf( p_iteration.intValue() )  + "  --------------- " +  p_chairAgent );
+
+        System.out.println( "Computing result " );
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        for ( char l_char: "ABCDEF".toCharArray() )
+
+            l_alternatives.add( String.valueOf( l_char ) );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        m_voteSets.get( p_chairAgent ).remove( 0 );
+
+        System.out.println( " Votes: " +   m_voteSets.get( p_chairAgent ) );
+
+        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives,  m_voteSets.get( p_chairAgent ), 3 );
+
+        m_groupResults.put( p_chairAgent, l_comResult );
+
+        System.out.println( " Result of iteration " + String.valueOf( p_iteration.intValue() ) + ": " + Arrays.toString( l_comResult ) );
     }
 
     public void setReady( final boolean p_ready )
