@@ -255,20 +255,28 @@ public final class CEnvironment
     {
         final double l_diss = p_votingAgent.computeDiss( m_groupResults.get( p_chairAgent ) );
 
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "diss/received",
-                CLiteral.from( p_votingAgent.name() ),
-                //   CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( l_diss )
-            )
-        );
+        if ( this.isChair( p_votingAgent, p_chairAgent ) )
 
-        p_chairAgent.trigger( l_trigger );
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "diss/received",
+                    CLiteral.from( p_votingAgent.name() ),
+                    //   CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( l_diss )
+                )
+            );
+            p_chairAgent.trigger( l_trigger );
+        }
 
+    }
 
-
+    private boolean isChair( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
+    {
+        if ( m_chairgroup.get( p_chairAgent ).contains( p_votingAgent ) )
+            return true;
+        return false;
     }
 
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
