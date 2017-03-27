@@ -711,6 +711,12 @@ public final class CEnvironment
 
         m_voteSets.get( p_chairAgent ).remove( 0 );
 
+        if ( m_voteSets.get( p_chairAgent ).isEmpty() )
+        {
+            System.out.println( " Voter list is empty " );
+            return;
+        }
+
         System.out.println( " Votes: " +   m_voteSets.get( p_chairAgent ) );
 
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives,  m_voteSets.get( p_chairAgent ), 3 );
@@ -718,6 +724,18 @@ public final class CEnvironment
         m_groupResults.put( p_chairAgent, l_comResult );
 
         System.out.println( " Result of iteration " + String.valueOf( p_iteration.intValue() ) + ": " + Arrays.toString( l_comResult ) );
+
+        final ITrigger l_chairTrigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "election/result",
+                CLiteral.from( p_chairAgent.toString() ),
+                CRawTerm.from( Arrays.toString( l_comResult ) )
+            )
+        );
+
+        p_chairAgent.trigger( l_chairTrigger );
+
     }
 
     public void setReady( final boolean p_ready )
