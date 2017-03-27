@@ -675,16 +675,18 @@ public final class CEnvironment
         else if ( "ITERATIVE".equals( m_protocol ) )
         {
 
-            final ITrigger l_chairTrigger = CTrigger.from(
+            final ITrigger l_iterativeTrigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "election/result",
                     CLiteral.from( p_chairAgent.toString() ),
-                    CRawTerm.from( Arrays.toString( l_comResult ) )
+                    CRawTerm.from( Arrays.toString( l_comResult ) ),
+                    CRawTerm.from( 0 )
                 )
             );
 
-            p_chairAgent.trigger( l_chairTrigger );
+            m_agents.stream().forEach( i -> i.trigger( l_iterativeTrigger ) );
+          //  p_chairAgent.trigger( l_chairTrigger );
         }
     }
 
@@ -740,7 +742,7 @@ public final class CEnvironment
 
     private void removeVoter( final CChairAgent p_chairAgent )
     {
-        m_voteSets.get( p_chairAgent ).remove( 0 );
+       m_voteSets.get( p_chairAgent ).remove( 0 );
     }
 
     public void setReady( final boolean p_ready )

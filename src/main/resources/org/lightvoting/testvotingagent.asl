@@ -47,8 +47,14 @@ lookForGroup.
        env/submit/vote(Chair)
        .
 
+// plan for basic voting
 +!election/result(Chair, Result) <-
        generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
+       .
+
+// plan for iterative voting
++!election/result(Chair, Result, Iteration) <-
+       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair)
        .
 
 
