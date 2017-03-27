@@ -103,18 +103,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
-    private void storeDiss( final Object p_votingAgent, final Double p_diss )
+    private void storeDiss( final Object p_votingAgent, final Double p_diss, final int p_iteration )
     {
 
-        System.out.println( " trying to add diss from agent " + p_votingAgent + ": " + p_diss );
-        m_environment.storeDiss( this, p_diss );
+        System.out.println( " trying to add diss from agent " + p_votingAgent + ": " + p_diss + " next iteration " + p_iteration );
+        m_environment.storeDiss( this, p_diss, p_iteration );
         System.out.println( " added diss from agent " + p_votingAgent );
 
     }
 
     @IAgentActionFilter
     @IAgentActionName( name = "recompute/result" )
-    private void recomputeResult( final Number p_iteration )
+    private void recomputeResult( final int p_iteration )
     {
 
         System.out.println( " recompute result " );

@@ -256,8 +256,10 @@ public final class CEnvironment
      * @param p_votingAgent voting agent
      * @param p_chairAgent chair agent
      */
-    public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
+    public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
     {
+
+        System.out.println( "submit diss for iteration " + p_iteration );
         final double l_diss = p_votingAgent.computeDiss( m_groupResults.get( p_chairAgent ) );
 
         if ( this.isChair( p_votingAgent, p_chairAgent ) )
@@ -269,7 +271,8 @@ public final class CEnvironment
                     "diss/received",
                     CLiteral.from( p_votingAgent.name() ),
                     //   CLiteral.from( p_chairAgent.toString() ),
-                    CRawTerm.from( l_diss )
+                    CRawTerm.from( l_diss ),
+                    CRawTerm.from( p_iteration )
                 )
             );
             p_chairAgent.trigger( l_trigger );
@@ -283,13 +286,16 @@ public final class CEnvironment
      * @param p_diss dissatisfaction value
      */
 
-    public void storeDiss( final CChairAgent p_chairAgent, final Double p_diss )
+    public void storeDiss( final CChairAgent p_chairAgent, final Double p_diss, final int p_iteration )
     {
+
         m_dissSets.get( p_chairAgent ).add( p_diss );
-        if ( ( m_dissSets.get( p_chairAgent ) ).size() == m_chairgroup.get( p_chairAgent ).size() )
+
+        System.out.println( "After iteration " + p_iteration + " number of agents " + m_dissSets.get( p_chairAgent ).size() );
+        if ( m_dissSets.get( p_chairAgent ).size() == m_chairgroup.get( p_chairAgent ).size() )
         //m_capacity )
         {
-            System.out.println( " All voters submitted their dissatisfaction value" );
+            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
@@ -298,6 +304,10 @@ public final class CEnvironment
             );
 
             p_chairAgent.trigger( l_trigger );
+
+            System.out.println( " trying to recompute, old iteration  " + p_iteration );
+
+            this.recomputeResult( p_chairAgent, p_iteration );
         }
 
     }
@@ -759,9 +769,10 @@ public final class CEnvironment
      * @param p_iteration number of current iteration
      */
 
-    public void recomputeResult( final CChairAgent p_chairAgent, final Number p_iteration )
+    public void recomputeResult( final CChairAgent p_chairAgent, final int p_iteration )
     {
-        System.out.println( " --------------- Recomputing result " + " iteration " + String.valueOf( p_iteration.intValue() )  + "  --------------- " +  p_chairAgent );
+        final int l_newIteration = p_iteration + 1;
+        System.out.println( " --------------- Recomputing result " + " iteration " + l_newIteration  + "  --------------- " +  p_chairAgent );
 
         System.out.println( "Computing result " );
         final CMinisumApproval l_minisumApproval = new CMinisumApproval();
@@ -788,18 +799,20 @@ public final class CEnvironment
 
         m_groupResults.put( p_chairAgent, l_comResult );
 
-        System.out.println( " Result of iteration " + String.valueOf( p_iteration.intValue() ) + ": " + Arrays.toString( l_comResult ) );
+        System.out.println( " Result of iteration " + l_newIteration + ": " + Arrays.toString( l_comResult ) );
 
-        final ITrigger l_chairTrigger = CTrigger.from(
+        final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "election/result",
                 CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( Arrays.toString( l_comResult ) )
+                CRawTerm.from( Arrays.toString( l_comResult ) ),
+                CRawTerm.from( l_newIteration )
             )
         );
 
-        p_chairAgent.trigger( l_chairTrigger );
+        m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
+        // p_chairAgent.trigger( l_chairTrigger );
 
     }
 
