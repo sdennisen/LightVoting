@@ -145,7 +145,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "env/submit/dissatisfaction" )
     private void submitDiss( final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
     {
-        System.out.println( "Trying to submit diss " );
+        System.out.println( "Trying to submit diss for iteration " + p_iteration );
         m_environment.submitDiss( this, p_chairAgent, p_iteration );
     }
 

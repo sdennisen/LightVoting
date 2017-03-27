@@ -265,6 +265,7 @@ public final class CEnvironment
         if ( this.isChair( p_votingAgent, p_chairAgent ) )
 
         {
+            System.out.println( p_votingAgent.name() + " iteration " + p_iteration + ": Found chair" );
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
