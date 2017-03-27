@@ -246,6 +246,16 @@ public final class CEnvironment
         return m_ready;
     }
 
+    /**
+     * submit dissatisfaction regarding latest result to chair
+     * @param p_votingAgent voting agent
+     * @param p_chairAgent chair agent
+     */
+    public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
+    {
+        final double l_diss = p_votingAgent.computeDiss( m_groupResults.get( p_chairAgent ) );
+    }
+
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
         if ( m_activechairs.size() == 0 )
@@ -742,7 +752,7 @@ public final class CEnvironment
 
     private void removeVoter( final CChairAgent p_chairAgent )
     {
-       m_voteSets.get( p_chairAgent ).remove( 0 );
+        m_voteSets.get( p_chairAgent ).remove( 0 );
     }
 
     public void setReady( final boolean p_ready )

@@ -106,6 +106,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return super.call();
     }
 
+    public double computeDiss( final int[] p_ints )
+    {
+        return 1;
+    }
+
 
     @IAgentActionFilter
     @IAgentActionName( name = "env/open/new/group" )
@@ -135,6 +140,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final CChairAgent l_chairAgent =  m_environment.joinGroup( this );
    //     System.out.println( this.name() + " joined group with chair " + l_chairAgent );
     }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "env/submit/dissatisfaction" )
+    private void submitDiss( final IBaseAgent<CChairAgent> p_chairAgent )
+    {
+        m_environment.submitDiss( this, p_chairAgent );
+    }
+
 
     /**
      * Get agent's name
