@@ -709,7 +709,7 @@ public final class CEnvironment
 
         System.out.println( " Alternatives: " + l_alternatives );
 
-        m_voteSets.get( p_chairAgent ).remove( 0 );
+        this.removeVoter( p_chairAgent );
 
         if ( m_voteSets.get( p_chairAgent ).isEmpty() )
         {
@@ -736,6 +736,11 @@ public final class CEnvironment
 
         p_chairAgent.trigger( l_chairTrigger );
 
+    }
+
+    private void removeVoter( final CChairAgent p_chairAgent )
+    {
+        m_voteSets.get( p_chairAgent ).remove( 0 );
     }
 
     public void setReady( final boolean p_ready )
