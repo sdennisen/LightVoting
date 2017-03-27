@@ -24,12 +24,17 @@ iteration(0).
     .
 
 +!diss/received(Traveller, Diss) <-
-    generic/print("Receiving dissatisfaction from traveller ", Traveller)
+    generic/print("Receiving dissatisfaction from traveller ", Traveller);
+    store/diss(Traveller, Diss)
     .
 
 +!all/votes/received() <-
     generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all votes.");
     compute/result()
+    .
+
++!all/dissatisfaction/received() <-
+    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all dissatisfaction values.")
     .
 
 +!election/result(Chair, Result): >>iteration(I) <-

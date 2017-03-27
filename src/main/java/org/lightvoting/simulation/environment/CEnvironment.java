@@ -113,6 +113,7 @@ public final class CEnvironment
 
     private int m_cycles;
     private boolean m_resultComputed;
+    private Map<CChairAgent, List<Double>> m_dissSets;
 
 
     /**
@@ -131,6 +132,7 @@ public final class CEnvironment
         m_voteSets = new HashMap<CChairAgent, List>();
         m_groupResults = new HashMap<CChairAgent, int[]>();
         m_resultComputed = false;
+        m_dissSets = new HashMap<>();
 
     }
 
@@ -172,6 +174,9 @@ public final class CEnvironment
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
+
+        final List l_initialDissList = new LinkedList<Double>();
+        m_dissSets.put( p_votingAgent.getChair(), l_initialDissList );
 
         System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 
@@ -267,6 +272,31 @@ public final class CEnvironment
                     CRawTerm.from( l_diss )
                 )
             );
+            p_chairAgent.trigger( l_trigger );
+        }
+
+    }
+
+    /**
+     * store dissatisfaction value
+     * @param p_chairAgent chair agent
+     * @param p_diss dissatisfaction value
+     */
+
+    public void storeDiss( final CChairAgent p_chairAgent, final Double p_diss )
+    {
+        m_dissSets.get( p_chairAgent ).add( p_diss );
+        if ( ( m_dissSets.get( p_chairAgent ) ).size() == m_chairgroup.get( p_chairAgent ).size() )
+        //m_capacity )
+        {
+            System.out.println( " All voters submitted their dissatisfaction value" );
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/dissatisfaction/received" )
+
+            );
+
             p_chairAgent.trigger( l_trigger );
         }
 
