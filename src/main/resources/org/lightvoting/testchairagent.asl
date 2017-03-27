@@ -33,8 +33,9 @@ iteration(0).
     compute/result()
     .
 
-+!all/dissatisfaction/received() <-
-    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all dissatisfaction values.")
++!all/dissatisfaction/received(Iteration) <-
+    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all dissatisfaction values for iteration ", Iteration);
+    recompute/result(Iteration)
     .
 
 +!election/result(Chair, Result): >>iteration(I) <-

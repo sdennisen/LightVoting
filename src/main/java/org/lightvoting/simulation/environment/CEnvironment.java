@@ -299,15 +299,16 @@ public final class CEnvironment
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "all/dissatisfaction/received" )
+                    "all/dissatisfaction/received",
+                    CRawTerm.from( p_iteration ) )
 
             );
 
             p_chairAgent.trigger( l_trigger );
 
-            System.out.println( " trying to recompute, old iteration  " + p_iteration );
-
-            this.recomputeResult( p_chairAgent, p_iteration );
+//            System.out.println( " trying to recompute, old iteration  " + p_iteration );
+//
+//            this.recomputeResult( p_chairAgent, p_iteration );
         }
 
     }
