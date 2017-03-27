@@ -817,9 +817,12 @@ public final class CEnvironment
 
     }
 
+    // TODO structure needs refactoring
+
     private void removeVoter( final CChairAgent p_chairAgent )
     {
         m_voteSets.get( p_chairAgent ).remove( 0 );
+        m_chairgroup.get( p_chairAgent ).remove( 0 );
     }
 
     public void setReady( final boolean p_ready )
