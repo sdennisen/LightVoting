@@ -254,6 +254,21 @@ public final class CEnvironment
     public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
         final double l_diss = p_votingAgent.computeDiss( m_groupResults.get( p_chairAgent ) );
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "diss/received",
+                CLiteral.from( p_votingAgent.name() ),
+                //   CLiteral.from( p_chairAgent.toString() ),
+                CRawTerm.from( l_diss )
+            )
+        );
+
+        p_chairAgent.trigger( l_trigger );
+
+
+
     }
 
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
@@ -674,7 +689,7 @@ public final class CEnvironment
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "election/result",
-                    CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( p_chairAgent ),
                     CRawTerm.from( Arrays.toString( l_comResult ) )
                 )
             );
@@ -689,7 +704,7 @@ public final class CEnvironment
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "election/result",
-                    CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( p_chairAgent ),
                     CRawTerm.from( Arrays.toString( l_comResult ) ),
                     CRawTerm.from( 0 )
                 )

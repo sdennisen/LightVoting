@@ -55,6 +55,7 @@ lookForGroup.
 // plan for iterative voting
 +!election/result(Chair, Result, Iteration) <-
        generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
+       generic/print("Submit Dissatisfaction");
        env/submit/dissatisfaction(Chair)
        .
 
