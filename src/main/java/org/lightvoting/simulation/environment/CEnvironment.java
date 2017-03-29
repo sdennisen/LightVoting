@@ -807,8 +807,9 @@ public final class CEnvironment
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "election/result",
-                CLiteral.from( p_chairAgent.toString() ),
+                CRawTerm.from( p_chairAgent ),
                 CRawTerm.from( Arrays.toString( l_comResult ) ),
+                // CRawTerm.from( 1 )
                 CRawTerm.from( l_newIteration )
             )
         );
