@@ -32,6 +32,7 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
@@ -106,9 +107,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return super.call();
     }
 
+    /**
+     * compute dissatisfaction of voter with given committee
+     * @param p_ints committee
+     * @return dissatisfaction with committee
+     */
+
     public double computeDiss( final int[] p_ints )
     {
-        return 1;
+        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
+        return l_random;
+        // return 1;
     }
 
 
