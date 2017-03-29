@@ -801,6 +801,10 @@ public final class CEnvironment
 
         m_groupResults.put( p_chairAgent, l_comResult );
 
+        // clear list of dissatisfaction values
+
+        m_dissSets.get( p_chairAgent ).clear();
+
         System.out.println( " Result of iteration " + l_newIteration + ": " + Arrays.toString( l_comResult ) );
 
         final ITrigger l_trigger = CTrigger.from(
