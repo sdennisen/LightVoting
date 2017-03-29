@@ -45,7 +45,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-
 /**
  * Created by sophie on 22.02.17.
  * Environment class
@@ -827,8 +826,26 @@ public final class CEnvironment
 
     private void removeVoter( final CChairAgent p_chairAgent )
     {
-        m_voteSets.get( p_chairAgent ).remove( 0 );
-        m_chairgroup.get( p_chairAgent ).remove( 0 );
+        final int l_maxIndex = this.getMaxIndex( m_dissSets.get( p_chairAgent ) );
+
+        m_voteSets.get( p_chairAgent ).remove( l_maxIndex );
+        m_chairgroup.get( p_chairAgent ).remove( l_maxIndex );
+       // m_voteSets.get( p_chairAgent ).remove( 0 );
+       // m_chairgroup.get( p_chairAgent ).remove( 0 );
+    }
+
+    private int getMaxIndex( final  List<Double> p_dissValues )
+    {
+        int l_maxIndex = 0;
+        for ( int i = 0; i < p_dissValues.size(); i++ )
+        {
+            if ( p_dissValues.get( i ) > l_maxIndex )
+            {
+                System.out.println( " changed max index to " + l_maxIndex + " diss: " + p_dissValues.get( i ) );
+                l_maxIndex = i;
+            }
+        }
+        return l_maxIndex;
     }
 
     public void setReady( final boolean p_ready )
