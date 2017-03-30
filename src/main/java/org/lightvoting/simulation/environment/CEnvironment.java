@@ -436,7 +436,18 @@ public final class CEnvironment
         if ( this.containsnot( l_chair, p_votingAgent ) )
         {
             m_chairgroup.get( l_chair ).add( p_votingAgent );
-       //     System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
+            System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
+
+            if ( "COORDINATED".equals( m_grouping ) )
+            {
+                final ITrigger l_triggerStart = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "start/criterion/fulfilled" )
+
+                );
+                l_chair.trigger( l_triggerStart );
+            }
 
             if ( m_chairgroup.get( l_chair ).size() == m_capacity )
             {
