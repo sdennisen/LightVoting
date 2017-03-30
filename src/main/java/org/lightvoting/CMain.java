@@ -111,6 +111,11 @@ public final class CMain
                                ? Integer.MAX_VALUE
                                 : Integer.parseInt( p_args[3] ) );
 
+        // wake up first agent
+        final CVotingAgent l_firstAgent = l_agents.iterator().next();
+
+        l_firstAgent.sleep( 0 );
+        l_firstAgent.getChair().sleep( 0 );
 
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
