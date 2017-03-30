@@ -679,6 +679,11 @@ public final class CEnvironment
         m_cycles = p_cycles;
     }
 
+    public int getCycles()
+    {
+        return m_cycles;
+    }
+
     public boolean getResultComputed()
     {
         return m_resultComputed;

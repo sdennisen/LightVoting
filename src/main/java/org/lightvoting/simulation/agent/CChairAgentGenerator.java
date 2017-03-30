@@ -95,11 +95,13 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
     @Override
     public final CChairAgent generatesingle( final Object... p_data )
     {
-        return new CChairAgent(
+        final CChairAgent l_chairAgent = new CChairAgent(
             // create a string with the agent name "chair <number>"
             // get the value of the counter first and increment, build the agent
             // name with message format (see Java documentation)
             MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment );
+        l_chairAgent.sleep( Integer.MAX_VALUE );
+        return l_chairAgent;
     }
 }
 
