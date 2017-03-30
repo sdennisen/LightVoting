@@ -81,6 +81,8 @@ public final class CEnvironment
 
     private final Set<CVotingAgent> m_agents;
 
+    private final List<CVotingAgent> m_agentList;
+
     /**
      * Map for storing agent groups
      */
@@ -133,6 +135,7 @@ public final class CEnvironment
         m_voteSets = new HashMap<CChairAgent, List>();
         m_groupResults = new HashMap<CChairAgent, int[]>();
         m_resultComputed = false;
+        m_agentList = new LinkedList<>();
 
     }
 
@@ -145,11 +148,12 @@ public final class CEnvironment
     public final void initialset( final CVotingAgent p_votingAgent )
     {
         m_agents.add( p_votingAgent );
+        m_agentList.add( p_votingAgent );
 
         if  ( !m_firstActivated )
         {
 
-            final CVotingAgent l_firstAgent = m_agents.iterator().next();
+            final CVotingAgent l_firstAgent = m_agentList.get( 0 );
 
             l_firstAgent.sleep( 0 );
             l_firstAgent.getChair().sleep( 0 );
@@ -675,16 +679,18 @@ public final class CEnvironment
 
         m_currentIndex++;
 
-        for ( int i = 0; i < m_currentIndex; i++ )
-        {
-            System.out.println( "i: " + i );
-            m_agents.iterator().next();
-        }
 
-        final CVotingAgent l_wakingAgent = m_agents.iterator().next();
+
+//        for ( int i = 0; i < m_currentIndex; i++ )
+//        {
+//            System.out.println( "i: " + i );
+//            m_agents.iterator().next();
+//        }
+
+        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
         l_wakingAgent.sleep( 0 );
-        l_wakingAgent.getChair().sleep( 0 );
-        System.out.println( "Waking up agent " + l_wakingAgent.name() );
+        l_wakingAgent.sleep( 0 );
+        System.out.println( "Waking up agent " +  l_wakingAgent.name() );
 
         m_resultComputed = true;
 
