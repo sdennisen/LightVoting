@@ -419,7 +419,6 @@ public final class CEnvironment
 
         if ( this.containsnot( l_chair, p_votingAgent ) )
         {
-
             m_chairgroup.get( l_chair ).add( p_votingAgent );
        //     System.out.println( p_votingAgent.name() + " joins group with chair " + l_chair );
 

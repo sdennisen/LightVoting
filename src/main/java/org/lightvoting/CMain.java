@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
@@ -137,6 +136,7 @@ public final class CMain
 //                throw new RuntimeException();
 //            }
 
+/*
         IntStream
        //  define cycle range, i.e. number of cycles to run sequentially
                    .range( 0,
@@ -147,6 +147,7 @@ public final class CMain
 
     //    while ( s_environment.getReady() )
         {
+            System.out.println( "Cycle " + j );
             addAgents( l_activeAgents, 1, s_agentIterator );
             s_environment.setResultComputed( false );
 
@@ -172,10 +173,12 @@ public final class CMain
                         l_exception.printStackTrace();
                         throw new RuntimeException();
                     }
+                    System.out.println( " called " + i.name() );
                 } );
             }
         });
 
+*/
 
 
 //        IntStream
