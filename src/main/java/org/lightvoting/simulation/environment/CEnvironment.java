@@ -112,11 +112,15 @@ public final class CEnvironment
     private int m_cycles;
     private boolean m_resultComputed;
 
+    // Index of the last activated agent
+    private int m_currentIndex;
+
+    private boolean m_firstActivated;
 
     /**
      * constructor
+     *  @param p_size number of agents
      *
-     * @param p_size number of agents
      */
     public CEnvironment( final int p_size )
     {
@@ -141,6 +145,18 @@ public final class CEnvironment
     public final void initialset( final CVotingAgent p_votingAgent )
     {
         m_agents.add( p_votingAgent );
+
+        if  ( !m_firstActivated )
+        {
+
+            final CVotingAgent l_firstAgent = m_agents.iterator().next();
+
+            l_firstAgent.sleep( 0 );
+            l_firstAgent.getChair().sleep( 0 );
+            m_firstActivated = true;
+        }
+
+     //   System.out.println( "Added agent: " + p_votingAgent.name() );
     }
 
     /**
@@ -645,6 +661,19 @@ public final class CEnvironment
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_voteSets.get( p_chairAgent ), 3 );
 
         m_groupResults.put( p_chairAgent, l_comResult );
+
+        m_currentIndex++;
+
+        for ( int i = 0; i < m_currentIndex; i++ )
+        {
+            System.out.println( "i: " + i );
+            m_agents.iterator().next();
+        }
+
+        final CVotingAgent l_wakingAgent = m_agents.iterator().next();
+        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
+        System.out.println( "Waking up agent " + l_wakingAgent.name() );
 
         m_resultComputed = true;
 

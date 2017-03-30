@@ -83,6 +83,8 @@ public final class CMain
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment  )  )
                     .collect( Collectors.toSet() );
+
+
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();
 
@@ -112,10 +114,10 @@ public final class CMain
                                 : Integer.parseInt( p_args[3] ) );
 
         // wake up first agent
-        final CVotingAgent l_firstAgent = l_agents.iterator().next();
-
-        l_firstAgent.sleep( 0 );
-        l_firstAgent.getChair().sleep( 0 );
+//        final CVotingAgent l_firstAgent = l_agents.iterator().next();
+//
+//        l_firstAgent.sleep( 0 );
+//        l_firstAgent.getChair().sleep( 0 );
 
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
