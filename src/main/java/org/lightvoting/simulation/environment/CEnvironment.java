@@ -751,7 +751,7 @@ public final class CEnvironment
 
         final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
         l_wakingAgent.sleep( 0 );
-        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
         System.out.println( "Waking up agent " +  l_wakingAgent.name() );
 
     }
