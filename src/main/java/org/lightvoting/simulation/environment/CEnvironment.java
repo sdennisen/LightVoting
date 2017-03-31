@@ -183,6 +183,7 @@ public final class CEnvironment
             )
         );
 
+        p_votingAgent.getChair().sleep( 0 );
         p_votingAgent.getChair().trigger( l_triggerChair );
 
 
