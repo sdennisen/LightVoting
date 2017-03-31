@@ -126,22 +126,25 @@ public final class CMain
                     ? Integer.MAX_VALUE
                     : Integer.parseInt( p_args[3] ) )
             .forEach( j ->
-                          l_agents.parallelStream().forEach( i ->
-                          {
-                              try
-                              {
-                    // check if the conditions for triggering a new cycle are fulfilled in the environment
-                    // call each agent, i.e. trigger a new agent cycle
-                                  i.call();
-                    //   i.getChair().sleep( 0 );
-                                  i.getChair().call();
-                              }
-                              catch ( final Exception l_exception )
-                              {
-                                  l_exception.printStackTrace();
-                                  throw new RuntimeException();
-                              }
-                          } ) );
+            {
+                System.out.println( "Global cycle: " + j );
+                l_agents.parallelStream().forEach( i ->
+                {
+                    try
+                    {
+                        // check if the conditions for triggering a new cycle are fulfilled in the environment
+                        // call each agent, i.e. trigger a new agent cycle
+                        i.call();
+                        //   i.getChair().sleep( 0 );
+                        i.getChair().call();
+                    }
+                    catch ( final Exception l_exception )
+                    {
+                        l_exception.printStackTrace();
+                        throw new RuntimeException();
+                    }
+                } );
+            } );
     }
 
         // add first agent
