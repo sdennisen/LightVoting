@@ -195,8 +195,20 @@ public final class CEnvironment
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
 
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+        if ( "COORDINATED".equals( m_grouping ) )
+        {
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/criterion/fulfilled" )
 
+            );
+
+            p_votingAgent.getChair().trigger( l_triggerStart );
+
+
+            System.out.println( "Coordinated Grouping " + p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+        }
 
 /*        final ITrigger l_trigger = CTrigger.from(
 
@@ -348,14 +360,14 @@ public final class CEnvironment
             System.out.println( "no active agents " );
             this.openNewGroup( p_votingAgent );
 
-            final ITrigger l_triggerStart = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "start/criterion/fulfilled" )
-
-            );
-
-            p_votingAgent.getChair().trigger( l_triggerStart );
+//            final ITrigger l_triggerStart = CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "start/criterion/fulfilled" )
+//
+//            );
+//
+//            p_votingAgent.getChair().trigger( l_triggerStart );
 
 
             return p_votingAgent.getChair();
@@ -364,16 +376,16 @@ public final class CEnvironment
         if ( m_groupResults.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-
-            final ITrigger l_triggerStart = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "start/criterion/fulfilled" )
-
-            );
-
-            p_votingAgent.getChair().trigger( l_triggerStart );
+//            System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+//
+//            final ITrigger l_triggerStart = CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "start/criterion/fulfilled" )
+//
+//            );
+//
+//            p_votingAgent.getChair().trigger( l_triggerStart );
 
             return p_votingAgent.getChair();
         }
@@ -428,14 +440,14 @@ public final class CEnvironment
         {
             this.openNewGroup( p_votingAgent );
 
-            final ITrigger l_triggerStart = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "start/criterion/fulfilled" )
-
-            );
-
-            p_votingAgent.getChair().trigger( l_triggerStart );
+//            final ITrigger l_triggerStart = CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "start/criterion/fulfilled" )
+//
+//            );
+//
+//            p_votingAgent.getChair().trigger( l_triggerStart );
 
             return p_votingAgent.getChair();
         }
@@ -544,8 +556,16 @@ public final class CEnvironment
         }
 
         this.openNewGroup( p_votingAgent );
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-
+//        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+//
+//        final ITrigger l_triggerStart = CTrigger.from(
+//            ITrigger.EType.ADDGOAL,
+//            CLiteral.from(
+//                "start/criterion/fulfilled" )
+//
+//        );
+//
+//        p_votingAgent.getChair().trigger( l_triggerStart );
 
 
         return p_votingAgent.getChair();
