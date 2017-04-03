@@ -655,6 +655,8 @@ public final class CEnvironment
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
+        // TODO write result, dissatisfaction and size of group to hdf file here
+
         // broadcast result
 
         final ITrigger l_trigger = CTrigger.from(
