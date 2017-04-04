@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
+import org.bytedeco.javacpp.hdf5.H5File;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
@@ -74,7 +74,7 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
-    //    createHDF5();
+        createHDF5();
 
         try
         {
@@ -213,22 +213,22 @@ public final class CMain
 
     // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
 
-/*    private static void createHDF5()
+    private static void createHDF5()
     {
-        final String l_fileName = "results.h5";
+        final String l_fileName = "results.hdf5";
 
         // Create a new file.
         try
         {
-            final hdf5.H5File l_file = new hdf5.H5File( l_fileName, 0 );
-        //    l_file.close();
+            final H5File l_file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
+            l_file.close();
         }
         catch ( final Exception l_ex )
         {
             l_ex.printStackTrace();
         }
 
-    }*/
+    }
 
 
 }
