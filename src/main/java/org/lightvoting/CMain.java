@@ -24,6 +24,7 @@
 package org.lightvoting;
 
 import com.google.common.collect.Sets;
+import org.bytedeco.javacpp.hdf5.H5File;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
@@ -36,8 +37,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bytedeco.javacpp.hdf5.H5File;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
