@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
 /**
@@ -71,6 +73,8 @@ public final class CMain
         // 3. number of iterations (if not set maximum)
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
+
+    //    createHDF5();
 
         try
         {
@@ -206,6 +210,26 @@ public final class CMain
         }
 
     }
+
+    // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
+
+/*    private static void createHDF5()
+    {
+        final String l_fileName = "results.h5";
+
+        // Create a new file.
+        try
+        {
+            final hdf5.H5File l_file = new hdf5.H5File( l_fileName, 0 );
+        //    l_file.close();
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
+
+    }*/
+
 
 }
 
