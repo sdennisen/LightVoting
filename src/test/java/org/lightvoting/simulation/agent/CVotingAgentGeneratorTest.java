@@ -27,6 +27,7 @@ package org.lightvoting.simulation.agent;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.agent.IAgent;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -77,8 +78,8 @@ public final class CVotingAgentGeneratorTest extends TestCase
 
             /* TODO Check test */
             final Set<CVotingAgent> l_agents = new
-                CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23 ) )
-                    .generatemultiple( 23, new CChairAgentGenerator(  l_aslstream, new CEnvironment( 23 ) ) )
+                CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, new hdf5.H5File() ) )
+                    .generatemultiple( 23, new CChairAgentGenerator(  l_aslstream, new CEnvironment( 23, new hdf5.H5File() ) ) )
                     .collect( Collectors.toSet() );
 
             assertEquals( 23, l_agents.size() );

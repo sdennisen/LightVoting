@@ -27,6 +27,7 @@ package org.lightvoting.simulation.agent;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
 import org.lightvoting.simulation.environment.CEnvironment;
 
@@ -67,8 +68,8 @@ public final class CVotingAgentTest extends TestCase
     {
         try
         {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23 ) );
-            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23 ) );
+            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, new hdf5.H5File() ) );
+            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, new hdf5.H5File() ) );
             l_agent.call();
         }
         catch ( final Exception l_exception )

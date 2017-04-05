@@ -48,6 +48,7 @@ public final class CMain
     private static Iterator<CVotingAgent> s_agentIterator;
 
     private static CEnvironment s_environment;
+    private static H5File s_h5file;
 
     /**
      * Hidden constructor
@@ -73,6 +74,7 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgentGenerator l_votingagentgenerator;
 
+
         createHDF5();
 
         try
@@ -80,7 +82,7 @@ public final class CMain
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ) );
+            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
 
             l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment );
             l_agents = l_votingagentgenerator
@@ -219,8 +221,8 @@ public final class CMain
         // Create a new file.
         try
         {
-            final H5File l_file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
-            l_file.close();
+            s_h5file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
+            s_h5file.close();
         }
         catch ( final Exception l_ex )
         {

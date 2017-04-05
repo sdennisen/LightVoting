@@ -27,6 +27,7 @@ package org.lightvoting.simulation.action.message.chair;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
@@ -135,8 +136,8 @@ public final class CCommitteeTest extends TestCase
         @Override
         public final CVotingAgent generatesingle( final Object... p_data )
         {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23 ) );
-            return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23 ) );
+            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, new hdf5.H5File() ) );
+            return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23, new hdf5.H5File() ) );
         }
     }
 }

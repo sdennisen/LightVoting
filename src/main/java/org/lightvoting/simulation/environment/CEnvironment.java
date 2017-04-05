@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.environment;
 
 import cern.colt.bitvector.BitVector;
+import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
@@ -112,13 +113,16 @@ public final class CEnvironment
     private int m_cycles;
     private boolean m_resultComputed;
 
+    private hdf5.H5File m_h5File;
+
 
     /**
      * constructor
      *
      * @param p_size number of agents
+     * @param p_h5file HDF5 file
      */
-    public CEnvironment( final int p_size )
+    public CEnvironment( final int p_size, final hdf5.H5File p_h5file )
     {
         m_size = p_size;
 
@@ -129,7 +133,13 @@ public final class CEnvironment
         m_voteSets = new HashMap<CChairAgent, List>();
         m_groupResults = new HashMap<CChairAgent, int[]>();
         m_resultComputed = false;
+        m_h5File = p_h5file;
 
+    }
+
+    public hdf5.H5File getH5File()
+    {
+        return m_h5File;
     }
 
     /**
@@ -656,6 +666,8 @@ public final class CEnvironment
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
         // TODO write result, dissatisfaction and size of group to hdf file here
+
+
 
         // broadcast result
 
