@@ -216,7 +216,7 @@ public final class CMain
 
     private static void createHDF5()
     {
-        final String l_fileName = "results.hdf5";
+        final String l_fileName = "results.h5";
 
         // Create a new file.
         try

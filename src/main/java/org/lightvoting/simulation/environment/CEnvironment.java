@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.environment;
 
 import cern.colt.bitvector.BitVector;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
@@ -60,6 +61,8 @@ public final class CEnvironment
     private String m_protocol = "BASIC";
 
     private String m_grouping = "RANDOM";
+
+    private String m_rule = "MINISUM";
 
    // private String m_grouping = "COORDINATED";
 
@@ -665,9 +668,47 @@ public final class CEnvironment
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
-        // TODO write result, dissatisfaction and size of group to hdf file here
+        //==========================================================================================================
+
+        // TODO write result, dissatisfaction and size of group to hdf file
+        // m_run, group ID, iteration = 0, preferences, votes, group size, dissatisfaction values, winning committee
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( "results.h5", org.bytedeco.javacpp.hdf5.H5F_ACC_RDWR );
 
 
+        final String l_DATASETNAME = "Results";
+        final int l_DIM0 = 100;
+        final int l_DIM1 = 20;
+
+        // dataset dimensions
+        final long[] l_dims = {l_DIM0, l_DIM1};
+        // chunk dimensions
+        final long[] l_chunkDims = {20, 20};
+        final int[] l_buf = new int[l_DIM0 * l_DIM1];
+
+        // Create the data space for the dataset.
+        final hdf5.DataSpace l_dataSpace = new hdf5.DataSpace( 2, l_dims );
+
+        // Modify dataset creation property to enable chunking
+        final hdf5.DSetCreatPropList l_plist = new hdf5.DSetCreatPropList();
+        l_plist.setChunk( 2, l_chunkDims );
+
+        final hdf5.DataSet l_dataset = new hdf5.DataSet( l_file.asCommonFG().createDataSet( l_DATASETNAME,
+                                                                                      new hdf5.DataType( hdf5.PredType.STD_I32BE() ), l_dataSpace, l_plist ) );
+
+        for ( int i = 0; i <  l_DIM0; i++ )
+            for ( int j = 0; j < l_DIM1; j++ )
+                l_buf[i * l_DIM1 + j] = i + j;
+
+        // Write data to dataset.
+        l_dataset.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+        l_dataSpace.close();
+        l_dataset.close();
+        l_plist.close();
+        l_file.close();
+
+        // =================================================================================
 
         // broadcast result
 
