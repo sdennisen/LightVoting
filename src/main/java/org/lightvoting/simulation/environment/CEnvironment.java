@@ -649,8 +649,10 @@ public final class CEnvironment
      */
     public void submitVote( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
-        final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
-        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + l_vote + " to " + p_chairAgent.toString() );
+       // final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+
+
+        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + p_votingAgent.getVote() + " to " + p_chairAgent.toString() );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -658,7 +660,7 @@ public final class CEnvironment
                 "vote/received",
                 CLiteral.from( p_votingAgent.name() ),
                 //   CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( l_vote )
+                CRawTerm.from( p_votingAgent.getVote() )
             )
         );
 

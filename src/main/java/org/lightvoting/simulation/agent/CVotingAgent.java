@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent;
 
+import cern.colt.Arrays;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
@@ -105,17 +106,25 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_altNum = p_altNum;
 
-        final AtomicDoubleArray l_atomicPrefValues = generatePreferences( m_altNum );
-        m_vote = convertPreferences( l_atomicPrefValues );
+        final AtomicDoubleArray l_atomicPrefValues = this.generatePreferences( m_altNum );
+        m_vote = this.convertPreferences( l_atomicPrefValues );
 
         // TODO replace this with real vote generation
-        m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+       // m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
 
     }
 
     private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
     {
-        return null;
+        final int[] l_voteValues = new int[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            if ( p_atomicPrefValues.get( i ) > 0.5 )
+                l_voteValues[i] = 1;
+            else
+                l_voteValues[i] = 0;
+        System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
+        return new AtomicIntegerArray( l_voteValues );
+
     }
 
     private AtomicDoubleArray generatePreferences( final int p_altNum )
@@ -123,13 +132,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final Random l_random = new Random();
         final double[] l_prefValues = new double[m_altNum];
         for ( int i = 0; i < m_altNum; i++ )
-            l_prefValues[i] = sigmoidValue( l_random.nextDouble()-0.5 );
+            l_prefValues[i] = this.sigmoidValue( l_random.nextDouble() - 0.5 );
+        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
         return new AtomicDoubleArray( l_prefValues );
     }
 
-    private double sigmoidValue( double p_x )
+    private double sigmoidValue( double p_var )
     {
-         return (1/( 1 + Math.pow(Math.E,(-1*p_x))));
+        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
     // overload agent-cycle
