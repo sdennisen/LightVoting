@@ -113,6 +113,8 @@ public final class CEnvironment
     private int m_cycles;
     private boolean m_resultComputed;
     private Map<CChairAgent, List<Double>> m_dissSets;
+    // TODO via config in CMain
+    private double m_dissThreshold = 1.5;
 
 
     /**
@@ -788,7 +790,12 @@ public final class CEnvironment
 
         System.out.println( " Alternatives: " + l_alternatives );
 
-        this.removeVoter( p_chairAgent );
+        if ( !( this.removeVoter( p_chairAgent ) ) )
+        {
+            System.out.println( " No voter removed, we are done " );
+            m_activechairs.remove( p_chairAgent );
+            return;
+        }
 
         if ( m_voteSets.get( p_chairAgent ).isEmpty() )
         {
@@ -826,14 +833,24 @@ public final class CEnvironment
 
     // TODO structure needs refactoring
 
-    private void removeVoter( final CChairAgent p_chairAgent )
+    private boolean removeVoter( final CChairAgent p_chairAgent )
     {
         final int l_maxIndex = this.getMaxIndex( m_dissSets.get( p_chairAgent ) );
+        final double l_max = m_dissSets.get( p_chairAgent ).get( l_maxIndex );
+        System.out.println( " max diss is " + l_max );
 
-        m_voteSets.get( p_chairAgent ).remove( l_maxIndex );
-        m_chairgroup.get( p_chairAgent ).remove( l_maxIndex );
-       // m_voteSets.get( p_chairAgent ).remove( 0 );
-       // m_chairgroup.get( p_chairAgent ).remove( 0 );
+        if ( l_max > m_dissThreshold )
+        {
+
+            m_voteSets.get( p_chairAgent ).remove( l_maxIndex );
+            System.out.println( "Removing " + m_chairgroup.get( p_chairAgent ).get( l_maxIndex ).name() );
+            m_chairgroup.get( p_chairAgent ).remove( l_maxIndex );
+
+            // m_voteSets.get( p_chairAgent ).remove( 0 );
+            // m_chairgroup.get( p_chairAgent ).remove( 0 );
+            return true;
+        }
+        return false;
     }
 
     private int getMaxIndex( final  List<Double> p_dissValues )
@@ -841,9 +858,9 @@ public final class CEnvironment
         int l_maxIndex = 0;
         for ( int i = 0; i < p_dissValues.size(); i++ )
         {
-            if ( p_dissValues.get( i ) > l_maxIndex )
+            if ( p_dissValues.get( i ) > p_dissValues.get( l_maxIndex ) )
             {
-                System.out.println( " changed max index to " + l_maxIndex + " diss: " + p_dissValues.get( i ) );
+                System.out.println( " changed max index to " + i + " diss: " + p_dissValues.get( i ) );
                 l_maxIndex = i;
             }
         }
