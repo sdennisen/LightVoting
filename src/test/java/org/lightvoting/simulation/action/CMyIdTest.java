@@ -136,7 +136,7 @@ public final class CMyIdTest extends TestCase
         public final CVotingAgent generatesingle( final Object... p_data )
         {
             final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23 ) );
-            return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23 ) );
+            return new CVotingAgent( "agent", m_configuration, l_chairAgent, new CEnvironment( 23 ), 10 );
         }
     }
 }

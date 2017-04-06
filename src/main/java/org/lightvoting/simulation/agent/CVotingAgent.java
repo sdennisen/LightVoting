@@ -66,15 +66,22 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private AtomicIntegerArray m_vote;
 
     /**
+     * number of alternatives
+     */
+    private final int m_altNum;
+
+    /**
      * constructor of the agent
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
+     * @param p_altNum number of alternatives
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
-                         final CEnvironment p_environment
+                         final CEnvironment p_environment,
+                         final int p_altNum
     )
     {
         super( p_configuration );
@@ -94,6 +101,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // sleep chair, Long.MAX_VALUE -> inf
         p_chairagent.sleep( Long.MAX_VALUE );
 
+        m_altNum = p_altNum;
         // TODO replace this with real vote generation
         m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
 
