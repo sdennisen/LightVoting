@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent;
 
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -32,6 +33,7 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -102,9 +104,32 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         p_chairagent.sleep( Long.MAX_VALUE );
 
         m_altNum = p_altNum;
+
+        final AtomicDoubleArray l_atomicPrefValues = generatePreferences( m_altNum );
+        m_vote = convertPreferences( l_atomicPrefValues );
+
         // TODO replace this with real vote generation
         m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
 
+    }
+
+    private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        return null;
+    }
+
+    private AtomicDoubleArray generatePreferences( final int p_altNum )
+    {
+        final Random l_random = new Random();
+        final double[] l_prefValues = new double[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            l_prefValues[i] = sigmoidValue( l_random.nextDouble()-0.5 );
+        return new AtomicDoubleArray( l_prefValues );
+    }
+
+    private double sigmoidValue( double p_x )
+    {
+         return (1/( 1 + Math.pow(Math.E,(-1*p_x))));
     }
 
     // overload agent-cycle
