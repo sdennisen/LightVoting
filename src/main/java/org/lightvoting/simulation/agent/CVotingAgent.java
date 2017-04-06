@@ -35,7 +35,6 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
@@ -74,6 +73,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private final int m_altNum;
 
     /**
+     * agent's preferences
+     */
+    private final AtomicDoubleArray m_atomicPrefValues;
+
+    /**
      * constructor of the agent
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
@@ -106,8 +110,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_altNum = p_altNum;
 
-        final AtomicDoubleArray l_atomicPrefValues = this.generatePreferences( m_altNum );
-        m_vote = this.convertPreferences( l_atomicPrefValues );
+        m_atomicPrefValues = this.generatePreferences( m_altNum );
+        m_vote = this.convertPreferences( m_atomicPrefValues );
 
         // TODO replace this with real vote generation
        // m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
@@ -152,15 +156,24 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * compute dissatisfaction of voter with given committee
-     * @param p_ints committee
+     * @param p_resultValues committee
      * @return dissatisfaction with committee
      */
 
-    public double computeDiss( final int[] p_ints )
+    public double computeDiss( final int[] p_resultValues )
     {
-        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
-        return l_random;
-        // return 1;
+//        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
+//        return l_random;
+//        return 1;
+
+        double l_diss = 0;
+
+        for ( int i = 0; i < p_resultValues.length; i++ )
+        {
+            if ( p_resultValues[i] == 1 )
+                l_diss = l_diss + m_atomicPrefValues.get( i );
+        }
+        return l_diss;
     }
 
 
