@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.lightjason</groupId>
-            <artifactId>AgentSpeak</artifactId>
+            <artifactId>agentspeak</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

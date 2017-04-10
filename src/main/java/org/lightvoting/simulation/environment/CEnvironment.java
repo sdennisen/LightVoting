@@ -346,7 +346,8 @@ public final class CEnvironment
         {
 
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
+            System.out.println( p_votingAgent.name() + " joins group with ID " + m_groupIds.get( l_randomChair ) );
+            // chair " + l_randomChair );
 
             if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
             {
