@@ -24,7 +24,6 @@
 package org.lightvoting.simulation.environment;
 
 import cern.colt.bitvector.BitVector;
-import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
@@ -675,7 +674,7 @@ public final class CEnvironment
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( "results.h5", org.bytedeco.javacpp.hdf5.H5F_ACC_RDWR );
 
-
+/*
         final String l_DATASETNAME = "Results";
         final int l_DIM0 = 100;
         final int l_DIM1 = 20;
@@ -705,7 +704,7 @@ public final class CEnvironment
 
         l_dataSpace.close();
         l_dataset.close();
-        l_plist.close();
+        l_plist.close();*/
         l_file.close();
 
         // =================================================================================
