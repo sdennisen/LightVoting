@@ -68,6 +68,8 @@ public final class CEnvironment
     private final int m_joinThreshold = 0;
 
     private final Map<CChairAgent, int[]> m_groupResults;
+
+    private final Map<CChairAgent, Integer> m_groupIds;
     /**
      * group capacity
      */
@@ -116,6 +118,7 @@ public final class CEnvironment
     // TODO via config in CMain
     private double m_dissThreshold = 1.5;
 
+    private int m_groupId;
 
     /**
      * constructor
@@ -134,6 +137,7 @@ public final class CEnvironment
         m_groupResults = new HashMap<CChairAgent, int[]>();
         m_resultComputed = false;
         m_dissSets = new HashMap<>();
+        m_groupIds = new HashMap<>();
 
     }
 
@@ -172,6 +176,7 @@ public final class CEnvironment
 
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
         m_activechairs.add( p_votingAgent.getChair() );
+        m_groupIds.put( p_votingAgent.getChair(), m_groupId );
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
@@ -179,8 +184,9 @@ public final class CEnvironment
         final List l_initialDissList = new LinkedList<Double>();
         m_dissSets.put( p_votingAgent.getChair(), l_initialDissList );
 
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+        System.out.println( p_votingAgent.name() + " opened group with ID " + m_groupId + " and chair " + p_votingAgent.getChair() );
 
+        m_groupId++;
 
 /*        final ITrigger l_trigger = CTrigger.from(
 
@@ -732,7 +738,7 @@ public final class CEnvironment
 
         m_ready = true;
 
-        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+        System.out.println( " ----------------------- Group ID " + m_groupIds.get( p_chairAgent ) + " Result of election: " + Arrays.toString( l_comResult ) );
 
         // broadcast result
 
@@ -777,7 +783,7 @@ public final class CEnvironment
     public void recomputeResult( final CChairAgent p_chairAgent, final int p_iteration )
     {
         final int l_newIteration = p_iteration + 1;
-        System.out.println( " --------------- Recomputing result " + " iteration " + l_newIteration  + "  --------------- " +  p_chairAgent );
+        System.out.println( " ------------- ID " + m_groupIds.get( p_chairAgent ) + " Recomputing " + " iteration " + l_newIteration  + "  --------------- " +  p_chairAgent );
 
         System.out.println( "Computing result " );
         final CMinisumApproval l_minisumApproval = new CMinisumApproval();
@@ -813,7 +819,7 @@ public final class CEnvironment
 
         m_dissSets.get( p_chairAgent ).clear();
 
-        System.out.println( " Result of iteration " + l_newIteration + ": " + Arrays.toString( l_comResult ) );
+        System.out.println( "------------------- ID " + m_groupIds.get( p_chairAgent ) + " Result of it " + l_newIteration + ": " + Arrays.toString( l_comResult ) );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
