@@ -171,7 +171,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         for ( int i = 0; i < p_resultValues.length; i++ )
         {
             if ( p_resultValues[i] == 1 )
-                l_diss = l_diss + m_atomicPrefValues.get( i );
+                l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
         }
         return l_diss;
     }
