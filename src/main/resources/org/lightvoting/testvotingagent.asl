@@ -1,5 +1,6 @@
 name("agent 0").
 lookForGroup.
+iteration(0).
 
 // initial-goal
 !main.
@@ -47,8 +48,19 @@ lookForGroup.
        env/submit/vote(Chair)
        .
 
+// plan for basic voting
 +!election/result(Chair, Result) <-
        generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
+       .
+
+// plan for iterative voting
++!election/result(Chair, Result, Iteration) <-
+       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
+       generic/print(MyName, " Submit Dissatisfaction");
+ //      -iteration(I);
+ //      NewI = Iteration+1;
+ //      +iteration(NewI);
+       env/submit/dissatisfaction(Chair, Iteration)
        .
 
 

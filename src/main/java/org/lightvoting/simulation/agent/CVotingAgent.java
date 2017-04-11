@@ -23,6 +23,8 @@
 
 package org.lightvoting.simulation.agent;
 
+import cern.colt.Arrays;
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -32,6 +34,7 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
@@ -65,15 +68,27 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private AtomicIntegerArray m_vote;
 
     /**
+     * number of alternatives
+     */
+    private final int m_altNum;
+
+    /**
+     * agent's preferences
+     */
+    private final AtomicDoubleArray m_atomicPrefValues;
+
+    /**
      * constructor of the agent
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
+     * @param p_altNum number of alternatives
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
-                         final CEnvironment p_environment
+                         final CEnvironment p_environment,
+                         final int p_altNum
     )
     {
         super( p_configuration );
@@ -93,9 +108,42 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // sleep chair, Long.MAX_VALUE -> inf
         p_chairagent.sleep( Long.MAX_VALUE );
 
-        // TODO replace this with real vote generation
-        m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+        m_altNum = p_altNum;
 
+        m_atomicPrefValues = this.generatePreferences( m_altNum );
+        m_vote = this.convertPreferences( m_atomicPrefValues );
+
+        // TODO replace this with real vote generation
+       // m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+
+    }
+
+    private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final int[] l_voteValues = new int[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            if ( p_atomicPrefValues.get( i ) > 0.5 )
+                l_voteValues[i] = 1;
+            else
+                l_voteValues[i] = 0;
+        System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
+        return new AtomicIntegerArray( l_voteValues );
+
+    }
+
+    private AtomicDoubleArray generatePreferences( final int p_altNum )
+    {
+        final Random l_random = new Random();
+        final double[] l_prefValues = new double[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            l_prefValues[i] = this.sigmoidValue( l_random.nextDouble() - 0.5 );
+        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
+        return new AtomicDoubleArray( l_prefValues );
+    }
+
+    private double sigmoidValue( double p_var )
+    {
+        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
     // overload agent-cycle
@@ -104,6 +152,28 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         // run default cycle
         return super.call();
+    }
+
+    /**
+     * compute dissatisfaction of voter with given committee
+     * @param p_resultValues committee
+     * @return dissatisfaction with committee
+     */
+
+    public double computeDiss( final int[] p_resultValues )
+    {
+//        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
+//        return l_random;
+//        return 1;
+
+        double l_diss = 0;
+
+        for ( int i = 0; i < p_resultValues.length; i++ )
+        {
+            if ( p_resultValues[i] == 1 )
+                l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
+        }
+        return l_diss;
     }
 
 
@@ -135,6 +205,15 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final CChairAgent l_chairAgent =  m_environment.joinGroup( this );
    //     System.out.println( this.name() + " joined group with chair " + l_chairAgent );
     }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "env/submit/dissatisfaction" )
+    private void submitDiss( final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
+    {
+        System.out.println( "Trying to submit diss for iteration " + p_iteration );
+        m_environment.submitDiss( this, p_chairAgent, p_iteration );
+    }
+
 
     /**
      * Get agent's name

@@ -46,7 +46,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-
 /**
  * Created by sophie on 22.02.17.
  * Environment class
@@ -57,19 +56,23 @@ public final class CEnvironment
     // TODO set variables via config file or commando line
     // TODO use m_protocol?
 
-    private String m_protocol = "BASIC";
+ // private String m_protocol = "BASIC";
+
+    private String m_protocol = "ITERATIVE";
 
     private String m_grouping = "RANDOM";
 
     private String m_rule = "MINISUM";
 
-   // private String m_grouping = "COORDINATED";
+    // private String m_grouping = "COORDINATED";
 
     // TODO join threshold via config
 
     private final int m_joinThreshold = 0;
 
     private final Map<CChairAgent, int[]> m_groupResults;
+
+    private final Map<CChairAgent, Integer> m_groupIds;
     /**
      * group capacity
      */
@@ -114,9 +117,11 @@ public final class CEnvironment
 
     private int m_cycles;
     private boolean m_resultComputed;
-
+    private Map<CChairAgent, List<Double>> m_dissSets;
+    // TODO via config in CMain
+    private double m_dissThreshold = 1.5;
     private hdf5.H5File m_h5File;
-
+    private int m_groupId;
 
     /**
      * constructor
@@ -136,8 +141,10 @@ public final class CEnvironment
         m_groupResults = new HashMap<CChairAgent, int[]>();
         m_resultComputed = false;
         m_h5File = p_h5file;
-
+        m_dissSets = new HashMap<>();
+        m_groupIds = new HashMap<>();
     }
+
 
     public hdf5.H5File getH5File()
     {
@@ -179,12 +186,17 @@ public final class CEnvironment
 
         m_chairgroup.put( p_votingAgent.getChair(), l_list );
         m_activechairs.add( p_votingAgent.getChair() );
+        m_groupIds.put( p_votingAgent.getChair(), m_groupId );
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
 
-        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+        final List l_initialDissList = new LinkedList<Double>();
+        m_dissSets.put( p_votingAgent.getChair(), l_initialDissList );
 
+        System.out.println( p_votingAgent.name() + " opened group with ID " + m_groupId + " and chair " + p_votingAgent.getChair() );
+
+        m_groupId++;
 
 /*        final ITrigger l_trigger = CTrigger.from(
 
@@ -256,6 +268,75 @@ public final class CEnvironment
         return m_ready;
     }
 
+    /**
+     * submit dissatisfaction regarding latest result to chair
+     * @param p_votingAgent voting agent
+     * @param p_chairAgent chair agent
+     */
+    public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
+    {
+
+        System.out.println( "submit diss for iteration " + p_iteration );
+        final double l_diss = p_votingAgent.computeDiss( m_groupResults.get( p_chairAgent ) );
+
+        if ( this.isChair( p_votingAgent, p_chairAgent ) )
+
+        {
+            System.out.println( p_votingAgent.name() + " iteration " + p_iteration + ": Found chair" );
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "diss/received",
+                    CLiteral.from( p_votingAgent.name() ),
+                    //   CLiteral.from( p_chairAgent.toString() ),
+                    CRawTerm.from( l_diss ),
+                    CRawTerm.from( p_iteration )
+                )
+            );
+            p_chairAgent.trigger( l_trigger );
+        }
+
+    }
+
+    /**
+     * store dissatisfaction value
+     * @param p_chairAgent chair agent
+     * @param p_diss dissatisfaction value
+     */
+
+    public void storeDiss( final CChairAgent p_chairAgent, final Double p_diss, final int p_iteration )
+    {
+
+        m_dissSets.get( p_chairAgent ).add( p_diss );
+
+        System.out.println( "After iteration " + p_iteration + " number of agents " + m_dissSets.get( p_chairAgent ).size() );
+        if ( m_dissSets.get( p_chairAgent ).size() == m_chairgroup.get( p_chairAgent ).size() )
+        //m_capacity )
+        {
+            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/dissatisfaction/received",
+                    CRawTerm.from( p_iteration ) )
+
+            );
+
+            p_chairAgent.trigger( l_trigger );
+
+//            System.out.println( " trying to recompute, old iteration  " + p_iteration );
+//
+//            this.recomputeResult( p_chairAgent, p_iteration );
+        }
+
+    }
+
+    private boolean isChair( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
+    {
+        if ( m_chairgroup.get( p_chairAgent ).contains( p_votingAgent ) )
+            return true;
+        return false;
+    }
 
     private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
@@ -275,7 +356,8 @@ public final class CEnvironment
         {
 
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
-            System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
+            System.out.println( p_votingAgent.name() + " joins group with ID " + m_groupIds.get( l_randomChair ) );
+            // chair " + l_randomChair );
 
             if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
             {
@@ -586,8 +668,10 @@ public final class CEnvironment
      */
     public void submitVote( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
-        final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
-        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + l_vote + " to " + p_chairAgent.toString() );
+       // final AtomicIntegerArray l_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+
+
+        System.out.println( "Agent " + p_votingAgent.name() + " sends vote " + p_votingAgent.getVote() + " to " + p_chairAgent.toString() );
 
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -595,7 +679,7 @@ public final class CEnvironment
                 "vote/received",
                 CLiteral.from( p_votingAgent.name() ),
                 //   CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( l_vote )
+                CRawTerm.from( p_votingAgent.getVote() )
             )
         );
 
@@ -665,7 +749,7 @@ public final class CEnvironment
 
         m_ready = true;
 
-        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+        System.out.println( " ----------------------- Group ID " + m_groupIds.get( p_chairAgent ) + " Result of election: " + Arrays.toString( l_comResult ) );
 
         //==========================================================================================================
 
@@ -711,17 +795,135 @@ public final class CEnvironment
 
         // broadcast result
 
+        if ( "BASIC".equals( m_protocol ) )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "election/result",
+                    CRawTerm.from( p_chairAgent ),
+                    CRawTerm.from( Arrays.toString( l_comResult ) )
+                )
+            );
+
+            m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
+        }
+
+        else if ( "ITERATIVE".equals( m_protocol ) )
+        {
+
+            final ITrigger l_iterativeTrigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "election/result",
+                    CRawTerm.from( p_chairAgent ),
+                    CRawTerm.from( Arrays.toString( l_comResult ) ),
+                    CRawTerm.from( 0 )
+                )
+            );
+
+            m_agents.stream().forEach( i -> i.trigger( l_iterativeTrigger ) );
+          //  p_chairAgent.trigger( l_chairTrigger );
+        }
+    }
+
+    /**
+     * recompute result of election regarding to criteria of iterative election
+     * @param p_chairAgent chair agent conducting the election
+     * @param p_iteration number of current iteration
+     */
+
+    public void recomputeResult( final CChairAgent p_chairAgent, final int p_iteration )
+    {
+        final int l_newIteration = p_iteration + 1;
+        System.out.println( " ------------- ID " + m_groupIds.get( p_chairAgent ) + " Recomputing " + " iteration " + l_newIteration  + "  --------------- " +  p_chairAgent );
+
+        System.out.println( "Computing result " );
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        for ( char l_char: "ABCDEF".toCharArray() )
+
+            l_alternatives.add( String.valueOf( l_char ) );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        if ( !( this.removeVoter( p_chairAgent ) ) )
+        {
+            System.out.println( " No voter removed, we are done " );
+            m_activechairs.remove( p_chairAgent );
+            return;
+        }
+
+        if ( m_voteSets.get( p_chairAgent ).isEmpty() )
+        {
+            System.out.println( " Voter list is empty " );
+            return;
+        }
+
+        System.out.println( " Votes: " +   m_voteSets.get( p_chairAgent ) );
+
+        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives,  m_voteSets.get( p_chairAgent ), 3 );
+
+        m_groupResults.put( p_chairAgent, l_comResult );
+
+        // clear list of dissatisfaction values
+
+        m_dissSets.get( p_chairAgent ).clear();
+
+        System.out.println( "------------------- ID " + m_groupIds.get( p_chairAgent ) + " Result of it " + l_newIteration + ": " + Arrays.toString( l_comResult ) );
+
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
                 "election/result",
-                CLiteral.from( p_chairAgent.toString() ),
-                CRawTerm.from( Arrays.toString( l_comResult ) )
+                CRawTerm.from( p_chairAgent ),
+                CRawTerm.from( Arrays.toString( l_comResult ) ),
+                // CRawTerm.from( 1 )
+                CRawTerm.from( l_newIteration )
             )
         );
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
+        // p_chairAgent.trigger( l_chairTrigger );
 
+    }
+
+    // TODO structure needs refactoring
+
+    private boolean removeVoter( final CChairAgent p_chairAgent )
+    {
+        final int l_maxIndex = this.getMaxIndex( m_dissSets.get( p_chairAgent ) );
+        final double l_max = m_dissSets.get( p_chairAgent ).get( l_maxIndex );
+        System.out.println( " max diss is " + l_max );
+
+        if ( l_max > m_dissThreshold )
+        {
+
+            m_voteSets.get( p_chairAgent ).remove( l_maxIndex );
+            System.out.println( "Removing " + m_chairgroup.get( p_chairAgent ).get( l_maxIndex ).name() );
+            m_chairgroup.get( p_chairAgent ).remove( l_maxIndex );
+
+            // m_voteSets.get( p_chairAgent ).remove( 0 );
+            // m_chairgroup.get( p_chairAgent ).remove( 0 );
+            return true;
+        }
+        return false;
+    }
+
+    private int getMaxIndex( final  List<Double> p_dissValues )
+    {
+        int l_maxIndex = 0;
+        for ( int i = 0; i < p_dissValues.size(); i++ )
+        {
+            if ( p_dissValues.get( i ) > p_dissValues.get( l_maxIndex ) )
+            {
+                System.out.println( " changed max index to " + i + " diss: " + p_dissValues.get( i ) );
+                l_maxIndex = i;
+            }
+        }
+        return l_maxIndex;
     }
 
     public void setReady( final boolean p_ready )

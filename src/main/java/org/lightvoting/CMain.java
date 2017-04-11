@@ -50,6 +50,9 @@ public final class CMain
     private static CEnvironment s_environment;
     private static H5File s_h5file;
 
+    // TODO later via config
+    private static int s_AltNum = 6;
+
     /**
      * Hidden constructor
      */
@@ -84,7 +87,7 @@ public final class CMain
 
             s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment );
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum );
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment  )  )
                     .collect( Collectors.toSet() );

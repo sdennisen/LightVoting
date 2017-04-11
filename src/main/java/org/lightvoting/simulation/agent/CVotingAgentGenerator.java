@@ -62,11 +62,17 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
     private final CEnvironment m_environment;
 
     /**
+     * number of alternatives
+     */
+    private final int m_altNum;
+
+    /**
      * constructor of the generator
      * @param p_stream ASL code as any stream e.g. FileInputStream
+     * @param p_altNum number of alternatives
      * @throws Exception Thrown if something goes wrong while generating agents.
      */
-    public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment ) throws Exception
+    public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum ) throws Exception
     {
 
         super(
@@ -102,6 +108,7 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 
         m_send = p_send;
         m_environment = p_environment;
+        m_altNum = p_altNum;
     }
 
     // unregister an agent
@@ -131,7 +138,8 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
             m_configuration,
             // add the chair agent
             ( (CChairAgentGenerator) p_data[0] ).generatesingle(),
-            m_environment
+            m_environment,
+            m_altNum
         );
 
 
