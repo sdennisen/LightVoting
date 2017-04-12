@@ -322,6 +322,7 @@ public final class CEnvironment
                 l_randomChair.trigger( l_triggerStart );
 
             }
+
             return l_randomChair;
         }
 
@@ -740,10 +741,13 @@ public final class CEnvironment
 
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
 
-        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
-        l_wakingAgent.sleep( 0 );
-        l_wakingAgent.getChair().sleep( 0 );
-        System.out.println( "Waking up agent " +  l_wakingAgent.name() );
+        if ( "COORDINATED".equals( m_grouping ) )
+        {
+            final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
+            l_wakingAgent.sleep( 0 );
+            l_wakingAgent.getChair().sleep( 0 );
+            System.out.println( "Waking up agent " + l_wakingAgent.name() );
+        }
 
     }
 
