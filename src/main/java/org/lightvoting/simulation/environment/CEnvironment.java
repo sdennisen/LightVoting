@@ -58,9 +58,9 @@ public final class CEnvironment
 
     private String m_protocol = "BASIC";
 
- // private String m_grouping = "RANDOM";
+    private String m_grouping = "RANDOM";
 
-    private String m_grouping = "COORDINATED";
+//  private String m_grouping = "COORDINATED";
 
     // TODO join threshold via config
 
@@ -287,6 +287,7 @@ public final class CEnvironment
         if ( m_activechairs.size() == 0 )
         {
             this.openNewGroup( p_votingAgent );
+            this.wakeUpAgent();
             return p_votingAgent.getChair();
 
         }
@@ -301,6 +302,8 @@ public final class CEnvironment
 
             m_chairgroup.get( l_randomChair ).add( p_votingAgent );
             System.out.println( p_votingAgent.name() + " joins group with chair " + l_randomChair );
+
+            this.wakeUpAgent();
 
             if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
             {
@@ -353,6 +356,15 @@ public final class CEnvironment
 //        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
 //        return p_votingAgent.getChair();
 
+    }
+
+    private void wakeUpAgent()
+    {
+        m_currentIndex++;
+        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
+        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
+        System.out.println( "Waking up agent " + l_wakingAgent.name() );
     }
 
     private final CChairAgent joinGroupCoordinated( final CVotingAgent p_votingAgent )
@@ -710,9 +722,6 @@ public final class CEnvironment
 
         m_groupResults.put( p_chairAgent, l_comResult );
 
-        m_currentIndex++;
-
-
 
 //        for ( int i = 0; i < m_currentIndex; i++ )
 //        {
@@ -742,12 +751,7 @@ public final class CEnvironment
         m_agents.stream().forEach( i -> i.trigger( l_trigger ) );
 
         if ( "COORDINATED".equals( m_grouping ) )
-        {
-            final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
-            l_wakingAgent.sleep( 0 );
-            l_wakingAgent.getChair().sleep( 0 );
-            System.out.println( "Waking up agent " + l_wakingAgent.name() );
-        }
+            this.wakeUpAgent();
 
     }
 
