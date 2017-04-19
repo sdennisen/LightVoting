@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 /**
  * Code from https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
  */
@@ -142,14 +143,16 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
             m_altNum
         );
 
-
     //    int l_group = (int) ( Math.random() * m_environment.size() );
+
+        l_votingAgent.sleep( Integer.MAX_VALUE  );
+
         m_environment.initialset( l_votingAgent );
      //       l_group = (int) ( Math.random() * m_environment.size() );
 
         System.out.println( "Agent reference: " + m_send.register( l_votingAgent ) );
-        return m_send.register( l_votingAgent );
 
+        return m_send.register( l_votingAgent );
 
     }
 }

@@ -91,6 +91,8 @@ public final class CMain
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment  )  )
                     .collect( Collectors.toSet() );
+
+
             System.out.println( " Numbers of agents: " + l_agents.size() );
             s_agentIterator = l_agents.iterator();
 
@@ -114,6 +116,17 @@ public final class CMain
 
         // TODO fix failing agent calls
 
+        // set cycle number in environment
+        s_environment.setCycles( p_args.length < 4
+                               ? Integer.MAX_VALUE
+                                : Integer.parseInt( p_args[3] ) );
+
+        // wake up first agent
+//        final CVotingAgent l_firstAgent = l_agents.iterator().next();
+//
+//        l_firstAgent.sleep( 0 );
+//        l_firstAgent.getChair().sleep( 0 );
+
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range( 0,
@@ -122,12 +135,77 @@ public final class CMain
                     : Integer.parseInt( p_args[3] ) )
             .forEach( j ->
             {
-                // if you want to do something in cycle j, put it here - in this case, activate three new agents
-                // addAgents( l_activeAgents, 3, s_agentIterator );
+//<<<<<<< HEAD
+//                // if you want to do something in cycle j, put it here - in this case, activate three new agents
+//                // addAgents( l_activeAgents, 3, s_agentIterator );
+//
+//                addAgents( l_activeAgents, 1, s_agentIterator );
+//                s_environment.setReady( false );
+//                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+//=======
+                System.out.println( "Global cycle: " + j );
+                l_agents.parallelStream().forEach( i ->
+                {
+                    try
+                    {
+                        // check if the conditions for triggering a new cycle are fulfilled in the environment
+                        // call each agent, i.e. trigger a new agent cycle
+                        i.call();
+                        //   i.getChair().sleep( 0 );
+                        i.getChair().call();
+                    }
+                    catch ( final Exception l_exception )
+                    {
+                        l_exception.printStackTrace();
+                        throw new RuntimeException();
+                    }
+                } );
+            } );
+    }
 
-                addAgents( l_activeAgents, 1, s_agentIterator );
-                s_environment.setReady( false );
-                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+        // add first agent
+
+//        addAgents( l_activeAgents, 1, s_agentIterator );
+//
+//        // call agent until first Result is computed
+//        while ( !( s_environment.getResultComputed() ) )
+//
+//            try
+//            {
+//                // check if the conditions for triggering a new cycle are fulfilled in the environment
+//
+//
+//                // call each agent, i.e. trigger a new agent cycle
+//                final CVotingAgent l_votingAgent = l_activeAgents.iterator().next();
+//
+//                l_votingAgent.call();
+//                l_votingAgent.getChair().sleep( 0 );
+//                l_votingAgent.getChair().call();
+//
+//            }
+//            catch ( final Exception l_exception )
+//            {
+//                l_exception.printStackTrace();
+//                throw new RuntimeException();
+//            }
+
+/*
+        IntStream
+       //  define cycle range, i.e. number of cycles to run sequentially
+                   .range( 0,
+                           p_args.length < 4
+                           ? Integer.MAX_VALUE
+                           : Integer.parseInt( p_args[3] ) )
+                   .forEach( j ->
+
+    //    while ( s_environment.getReady() )
+        {
+            System.out.println( "Cycle " + j );
+            addAgents( l_activeAgents, 1, s_agentIterator );
+            s_environment.setResultComputed( false );
+
+            while ( !( s_environment.getResultComputed() ) )
+            {
 
                 l_activeAgents.parallelStream().forEach( i ->
                 {
@@ -148,12 +226,12 @@ public final class CMain
                         l_exception.printStackTrace();
                         throw new RuntimeException();
                     }
+                    System.out.println( " called " + i.name() );
                 } );
+            }
+        });
 
-            } );
-
-
-
+*/
 
        /* // TODO fix failing agent calls
 
@@ -196,7 +274,7 @@ public final class CMain
                                                                    } );
                       } );*/
 
-    }
+
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
     {
