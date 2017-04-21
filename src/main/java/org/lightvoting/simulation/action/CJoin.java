@@ -34,6 +34,7 @@ import org.lightjason.agentspeak.language.execution.fuzzy.CFuzzyValue;
 import org.lightjason.agentspeak.language.execution.fuzzy.IFuzzyValue;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.text.MessageFormat;
@@ -45,6 +46,8 @@ import java.util.List;
  */
 public class CJoin extends IBaseAction
 {
+    private String m_grouping = "RANDOM";
+
     @Override
     public final IPath name()
     {
@@ -68,7 +71,14 @@ public class CJoin extends IBaseAction
                 )
         );
 
+        final CChairAgent l_chairAgent;
 
+        if ( "RANDOM".equals( m_grouping ) )
+               l_chairAgent = this.joinRandomGroup( p_context );
+
+/*        if ( "COORDINATED".equals( m_grouping ) )
+                return this.joinGroupCoordinated();
+            return null;*/
 
         /**
          * first parameter of the action is the name of the receiving chair
@@ -106,6 +116,75 @@ public class CJoin extends IBaseAction
         // the optional second parameter is a fuzzy-value in [0,1] on default it is 1
         return CFuzzyValue.from( true );
     }
+
+    private final CChairAgent joinRandomGroup( final IContext p_context )
+    {
+
+        // TODO generate list of available chairs from beliefbase
+        // beliefs have the form group(Chair)
+
+        if ( !( p_context.agent().beliefbase().containsLiteral( new CPath( "group" ) ) ) )
+        {
+            System.out.println( "No groups available - open a new one " );
+            // TODO open new group and announce this via env
+        }
+
+
+//        if ( m_activechairs.size() == 0 )
+//        {
+//            this.openNewGroup( p_votingAgent );
+//            this.wakeUpAgent();
+//            return p_votingAgent.getChair();
+//
+//        }
+//
+//        // choose random group to join
+//
+//        final Random l_rand = new Random();
+//        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
+//
+//        if ( this.containsnot( l_randomChair, p_votingAgent ) )
+//        {
+//
+//            m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+//            System.out.println( p_votingAgent.name() + " joins group with ID " + m_groupIds.get( l_randomChair ) );
+//            // chair " + l_randomChair );
+//
+//            this.wakeUpAgent();
+//
+//            if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
+//            {
+//
+//                m_activechairs.remove( l_randomChair );
+//
+//                for ( int i = 0; i < m_capacity; i++ )
+//                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
+//
+//                System.out.println( "trigger election " );
+//
+//                final ITrigger l_triggerStart = CTrigger.from(
+//                    ITrigger.EType.ADDGOAL,
+//                    CLiteral.from(
+//                        "start/criterion/fulfilled" )
+//
+//                );
+//
+//                l_randomChair.trigger( l_triggerStart );
+//
+//            }
+//
+//            return l_randomChair;
+//        }
+//
+//        // if the agent is already in the group, just return the chair agent
+//        else
+//        {
+//            return l_randomChair;
+//        }
+
+        return null;
+    }
+
 }
 
 
