@@ -24,13 +24,9 @@
 package org.lightvoting.simulation.agent;
 
 import org.lightjason.agentspeak.action.binding.IAgentAction;
-import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
-import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightvoting.simulation.environment.CEnvironment;
-
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 /**
@@ -72,14 +68,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return super.call();
     }
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "start/election" )
     public void startElection( )
     {
         m_environment.startElection( this );
-    }
+    }*/
 
-    @IAgentActionFilter
+  /*  @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
     private void storeVote( final Object p_votingAgent, final AtomicIntegerArray p_vote )
     {
@@ -88,9 +84,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_environment.storeVote( this, p_votingAgent, p_vote );
         System.out.println( " added vote from agent " + p_votingAgent );
 
-    }
+    }*/
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
     private void computeResult( )
     {
@@ -99,9 +95,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_environment.computeResult( this );
 //        System.out.println( " computed result " );
 
-    }
+    }*/
 
-    @IAgentActionFilter
+  /*  @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
     private void storeDiss( final Object p_votingAgent, final Double p_diss, final int p_iteration )
     {
@@ -110,9 +106,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_environment.storeDiss( this, p_diss, p_iteration );
         System.out.println( " added diss from agent " + p_votingAgent );
 
-    }
+    }*/
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "recompute/result" )
     private void recomputeResult( final int p_iteration )
     {
@@ -121,7 +117,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_environment.recomputeResult( this, p_iteration );
         //        System.out.println( " computed result " );
 
-    }
+    }*/
 
     public String name()
     {

@@ -39,36 +39,31 @@ iteration(0).
         .
 
 +!lookforgroup <-
-       generic/print(MyName, "I'm looking for a group to join");
-       env/join/group()
+       generic/print(MyName, "I'm looking for a group to join")
+   //    env/join/group()
        .
 
-+!submit/your/vote(Chair) <-
-       generic/print(MyName, " I need to submit my vote to chair ", Chair);
-       env/submit/vote(Chair)
+//+!submit/your/vote(Chair) <-
+//       generic/print(MyName, " I need to submit my vote to chair ", Chair);
+//       env/submit/vote(Chair)
        .
 
 // plan for basic voting
-+!election/result(Chair, Result) <-
-       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
-       .
+//+!election/result(Chair, Result) <-
+//       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
+//       .
 
 // plan for iterative voting
-+!election/result(Chair, Result, Iteration) <-
-       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
-       generic/print(MyName, " Submit Dissatisfaction");
- //      -iteration(I);
- //      NewI = Iteration+1;
- //      +iteration(NewI);
-       env/submit/dissatisfaction(Chair, Iteration)
-       .
+//+!election/result(Chair, Result, Iteration) <-
+//       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
+//       generic/print(MyName, " Submit Dissatisfaction");
+//       env/submit/dissatisfaction(Chair, Iteration)
+//       .
 
 
-+new/group/opened(ID, Chair)         <-
-    generic/print(MyName, " Group ", ID," opened with Chair ", Chair)
-    .
+//+new/group/opened(ID, Chair)         <-
+//    generic/print(MyName, " Group ", ID," opened with Chair ", Chair)
+//    .
 
 
-//+!joined/group(Traveller, Chair) <-
-//     generic/print(MyName, "heard that traveller ", Traveller, " joined group with Chair ", Chair)
-//     .
+

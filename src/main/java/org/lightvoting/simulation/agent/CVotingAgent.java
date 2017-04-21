@@ -26,8 +26,6 @@ package org.lightvoting.simulation.agent;
 import cern.colt.Arrays;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
-import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
-import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
@@ -177,7 +175,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "env/open/new/group" )
     private void envOpenNewGroup( final IBaseAgent<CChairAgent> p_chairagent )
     {
@@ -189,9 +187,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
 
-    }
+    }*/
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "env/submit/vote" )
     private void submitVote( final IBaseAgent<CChairAgent> p_chairAgent )
     {
@@ -204,15 +202,15 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         final CChairAgent l_chairAgent =  m_environment.joinGroup( this );
    //     System.out.println( this.name() + " joined group with chair " + l_chairAgent );
-    }
+    }*/
 
-    @IAgentActionFilter
+/*    @IAgentActionFilter
     @IAgentActionName( name = "env/submit/dissatisfaction" )
     private void submitDiss( final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
     {
         System.out.println( "Trying to submit diss for iteration " + p_iteration );
         m_environment.submitDiss( this, p_chairAgent, p_iteration );
-    }
+    }*/
 
 
     /**

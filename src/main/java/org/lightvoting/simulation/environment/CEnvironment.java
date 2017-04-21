@@ -23,28 +23,28 @@
 
 package org.lightvoting.simulation.environment;
 
-import cern.colt.bitvector.BitVector;
+// import cern.colt.bitvector.BitVector;
 import org.bytedeco.javacpp.hdf5;
-import org.lightjason.agentspeak.agent.IBaseAgent;
+// import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.rule.CMinisumApproval;
+// import org.lightvoting.simulation.rule.CMinisumApproval;
 
-import java.util.Arrays;
-import java.util.Collections;
+// import java.util.Arrays;
+// import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+// import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+// import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicIntegerArray;
+// import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  * Created by sophie on 22.02.17.
@@ -187,12 +187,13 @@ public final class CEnvironment
      //   System.out.println( "Added agent: " + p_votingAgent.name() );
     }
 
-    /**
+    // TODO reinsert functionality
+
+  /*
      * open a new group
      *
-     * @param p_votingAgent voting opening the group
-     */
-
+     * /
+/*
     public final void openNewGroup( final CVotingAgent p_votingAgent )
     {
         final ITrigger l_triggerChair = CTrigger.from(
@@ -243,7 +244,8 @@ public final class CEnvironment
 
 
 
-/*        final ITrigger l_trigger = CTrigger.from(
+*/
+  /*        final ITrigger l_trigger = CTrigger.from(
 
         final List l_initalList = new LinkedList<AtomicIntegerArray>();
         m_voteSets.put( p_votingAgent.getChair(), l_initalList );
@@ -266,9 +268,11 @@ public final class CEnvironment
             .parallelStream()
 
             .forEach( i -> i.trigger( l_trigger ) );*/
+  /*
 
        //     .forEach( i -> i.trigger( l_trigger ) );
 
+  */
   /*      // TODO this is only for testing, here each agent looks for a group as soon as agent 0 opened its group. Needs to be rewritten for general case
         if ( m_chairgroup.size() == 1 )
         {
@@ -286,10 +290,11 @@ public final class CEnvironment
                 .parallelStream()
                 .forEach( i -> i.trigger( l_triggerJoin ) );
         }*/
+  /*
 
 
     }
-
+*/
     private void announceGroup( final int p_groupID, final CChairAgent p_chairAgent )
     {
 
@@ -312,12 +317,15 @@ public final class CEnvironment
             .forEach( i -> i.trigger( l_trigger ) );
     }
 
-    /**
+    // TODO reinsert functionality
+
+   /*
      * join a group
      *
      * @param p_votingAgent voting agent joining a group
      * @return the chair of the group
      */
+   /*
 
     public final CChairAgent joinGroup( final CVotingAgent p_votingAgent )
     {
@@ -329,17 +337,19 @@ public final class CEnvironment
             return this.joinGroupCoordinated( p_votingAgent );
         return null;
     }
-
+*/
     public boolean getReady()
     {
         return m_ready;
     }
 
-    /**
+    // TODO reinsert functionality
+    /*
      * submit dissatisfaction regarding latest result to chair
      * @param p_votingAgent voting agent
      * @param p_chairAgent chair agent
      */
+         /*
     public void submitDiss( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent, final int p_iteration )
     {
 
@@ -364,12 +374,16 @@ public final class CEnvironment
         }
 
     }
+    */
+    // TODO reinsert functionality
+/*
 
-    /**
+    */
+/**
      * store dissatisfaction value
-     * @param p_chairAgent chair agent
-     * @param p_diss dissatisfaction value
-     */
+ */
+/*
+
 
     public void storeDiss( final CChairAgent p_chairAgent, final Double p_diss, final int p_iteration )
     {
@@ -397,15 +411,20 @@ public final class CEnvironment
         }
 
     }
-
+*/
+// TODO reinsert functionality
+/*
     private boolean isChair( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
         if ( m_chairgroup.get( p_chairAgent ).contains( p_votingAgent ) )
             return true;
         return false;
     }
+*/
 
-    private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
+    // TODO reinsert functionality
+
+    /*private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
         if ( m_activechairs.size() == 0 )
         {
@@ -489,8 +508,10 @@ public final class CEnvironment
         l_wakingAgent.sleep( 0 );
         l_wakingAgent.getChair().sleep( 0 );
         System.out.println( "Waking up agent " + l_wakingAgent.name() );
-    }
+    }*/
 
+    // TODO reinsert functionality
+/*
     private final CChairAgent joinGroupCoordinated( final CVotingAgent p_votingAgent )
     {
         if ( m_activechairs.size() == 0 )
@@ -625,7 +646,8 @@ public final class CEnvironment
 
 
 
-      /*      final BitVector l_bitVote = new BitVector( p_altNum );
+      */
+/*      final BitVector l_bitVote = new BitVector( p_altNum );
 
         for ( int j = 0; j < p_altNum; j++ )
         {
@@ -637,6 +659,7 @@ public final class CEnvironment
         l_curBitCom.xor( l_bitVote );
 
         final int l_curHD = l_curBitCom.cardinality();*/
+/*
 
             //        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
             //
@@ -680,7 +703,8 @@ public final class CEnvironment
             // return l_chair;
 
 
-        }
+        }*/
+    /*
 
        // this.openNewGroup( p_votingAgent );
 //        System.out.println( p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
@@ -697,19 +721,25 @@ public final class CEnvironment
 
      //   return p_votingAgent.getChair();
 
-    }
+    }*/
 
-    private Map sortMapDESC( final Map<CChairAgent, Integer> p_valuesMap )
+    // TODO reinsert functionality
+
+    /*private Map sortMapDESC( final Map<CChairAgent, Integer> p_valuesMap )
 
     {
 
         final List<Map.Entry<CChairAgent, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
-        /* Sorting the list based on values in descending order */
+
+        */
+    /* Sorting the list based on values in descending order *//*
         Collections.sort( l_list, ( p_first, p_second ) ->
             p_second.getValue().compareTo( p_first.getValue() ) );
 
-        /* Maintaining insertion order with the help of LinkedList */
+        */
+    /* Maintaining insertion order with the help of LinkedList */
+/*
         final Map<CChairAgent, Integer> l_sortedMap = new LinkedHashMap<>();
         for ( final Map.Entry<CChairAgent, Integer> l_entry : l_list )
         {
@@ -718,9 +748,10 @@ public final class CEnvironment
 
         return l_sortedMap;
     }
+*/
+    // TODO reinsert functionality
 
-
-    private boolean containsnot( final CChairAgent p_randomChair, final CVotingAgent p_votingAgent )
+   /* private boolean containsnot( final CChairAgent p_randomChair, final CVotingAgent p_votingAgent )
     {
         for ( int i = 0; i < m_chairgroup.get( p_randomChair ).size(); i++ )
             if ( m_chairgroup.get( p_randomChair ).get( i ).name().equals( p_votingAgent.name() ) )
@@ -729,7 +760,7 @@ public final class CEnvironment
             }
 
         return true;
-    }
+    }*/
 
 
     public final int size()
@@ -737,10 +768,13 @@ public final class CEnvironment
         return m_size;
     }
 
+    // TODO reinsert functionality
+
     /**
      * start the election, i.e. ask the travellers
      * @param p_chairAgent the chair starting the election
      */
+    /*
     public void startElection( final CChairAgent p_chairAgent )
     {
         final ITrigger l_trigger = CTrigger.from(
@@ -754,14 +788,16 @@ public final class CEnvironment
         l_agents.forEach( i -> i.trigger( l_trigger ) );
 
     }
-
+*/
     // TODO migrate to CVote ?
+    // TODO reinsert functionality
 
     /**
      * submit vote to chair
      * @param p_votingAgent voting agent
      * @param p_chairAgent chair agent
      */
+    /*
     public void submitVote( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
 
@@ -785,6 +821,8 @@ public final class CEnvironment
         }
 
     }
+*/
+    // TODO reinsert functionality
 
     /**
      * store vote submitted to chair
@@ -792,6 +830,7 @@ public final class CEnvironment
      * @param p_votingAgent voting agent submitting the vote
      * @param p_vote submitted vote
      */
+    /*
 
     public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final AtomicIntegerArray p_vote )
     {
@@ -814,13 +853,15 @@ public final class CEnvironment
             p_chairAgent.trigger( l_trigger );
         }
     }
-
+*/
     // TODO move computeResult() to chair class or chair action
+    // TODO reinsert functionality
 
-    /**
+   /*
      * compute result of election
      * @param p_chairAgent responsible chair
      */
+   /*
 
     public void computeResult( final CChairAgent p_chairAgent )
     {
@@ -867,7 +908,8 @@ public final class CEnvironment
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( "results.h5", org.bytedeco.javacpp.hdf5.H5F_ACC_RDWR );
 
-/*
+*/
+   /*
         final String l_DATASETNAME = "Results";
         final int l_DIM0 = 100;
         final int l_DIM1 = 20;
@@ -898,6 +940,7 @@ public final class CEnvironment
         l_dataSpace.close();
         l_dataset.close();
         l_plist.close();*/
+   /*
         l_file.close();
 
         // =================================================================================
@@ -939,12 +982,15 @@ public final class CEnvironment
         }
 
     }
+*/
+    // TODO reinsert functionality
 
-    /**
+  /*
      * recompute result of election regarding to criteria of iterative election
      * @param p_chairAgent chair agent conducting the election
      * @param p_iteration number of current iteration
      */
+  /*
 
     public void recomputeResult( final CChairAgent p_chairAgent, final int p_iteration )
     {
@@ -1005,10 +1051,11 @@ public final class CEnvironment
             this.wakeUpAgent();
 
     }
-
+*/
     // TODO structure needs refactoring
+    // TODO reinsert functionality
 
-    private boolean removeVoter( final CChairAgent p_chairAgent )
+ /*   private boolean removeVoter( final CChairAgent p_chairAgent )
     {
         final int l_maxIndex = this.getMaxIndex( m_dissSets.get( p_chairAgent ) );
         final double l_max = m_dissSets.get( p_chairAgent ).get( l_maxIndex );
@@ -1027,8 +1074,9 @@ public final class CEnvironment
         }
         return false;
     }
-
-    private int getMaxIndex( final  List<Double> p_dissValues )
+*/
+    // TODO reinsert functionality
+/*    private int getMaxIndex( final  List<Double> p_dissValues )
     {
         int l_maxIndex = 0;
         for ( int i = 0; i < p_dissValues.size(); i++ )
@@ -1040,7 +1088,7 @@ public final class CEnvironment
             }
         }
         return l_maxIndex;
-    }
+    }*/
 
     public void setReady( final boolean p_ready )
     {
