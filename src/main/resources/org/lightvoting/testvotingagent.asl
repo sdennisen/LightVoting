@@ -39,7 +39,8 @@ iteration(0).
         .
 
 +!lookforgroup <-
-       generic/print(MyName, "I'm looking for a group to join")
+       generic/print(MyName, "I'm looking for a group to join");
+       join/group()
    //    env/join/group()
        .
 

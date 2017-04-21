@@ -733,7 +733,8 @@ public final class CEnvironment
 
 
         */
-    /* Sorting the list based on values in descending order *//*
+    /* Sorting the list based on values in descending order */
+    /*
         Collections.sort( l_list, ( p_first, p_second ) ->
             p_second.getValue().compareTo( p_first.getValue() ) );
 

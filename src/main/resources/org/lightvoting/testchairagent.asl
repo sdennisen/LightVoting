@@ -12,6 +12,9 @@ iteration(0).
 
     generic/print("I'm chair of group ", GroupID, " and traveller ", Traveller, " joins").
 
++!join/group(Traveller) <-
+     generic/print("Traveller ", Traveller, " joins my group").
+
 //+!start/criterion/fulfilled() <-
 //    generic/print("I'm now starting the election.");
 //    start/election()
