@@ -28,6 +28,7 @@ import org.lightjason.agentspeak.agent.IAgent;
 import org.lightjason.agentspeak.common.CPath;
 import org.lightjason.agentspeak.common.IPath;
 import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
 import org.lightjason.agentspeak.language.execution.fuzzy.CFuzzyValue;
@@ -127,6 +128,7 @@ public class CJoin extends IBaseAction
         {
             System.out.println( "No groups available - open a new one " );
             // TODO open new group and announce this via env
+            this.openNewGroup( p_context );
         }
 
 
@@ -183,6 +185,48 @@ public class CJoin extends IBaseAction
 //        }
 
         return null;
+    }
+
+    private void openNewGroup( final IContext p_context )
+    {
+        final CVotingAgent l_votingAgent = (CVotingAgent) p_context.agent();
+
+        l_votingAgent.getChair().sleep( 0 );
+
+        l_votingAgent.beliefbase().add( CLiteral.from( "group", CRawTerm.from( l_votingAgent.getChair() ) ) );
+
+   /*     final List l_list = new LinkedList<CVotingAgent>();
+        l_list.add( l_votingAgent );
+
+        m_chairgroup.put( l_votingAgent.getChair(), l_list );
+        m_activechairs.add( l_votingAgent.getChair() );
+        m_groupIds.put( l_votingAgent.getChair(), m_groupId );*/
+
+ /*       final List l_initalList = new LinkedList<AtomicIntegerArray>();
+        m_voteSets.put( l_votingAgent.getChair(), l_initalList );
+
+        final List l_initialDissList = new LinkedList<Double>();
+        m_dissSets.put( l_votingAgent.getChair(), l_initialDissList );*/
+
+        if ( "COORDINATED".equals( m_grouping ) )
+        {
+            final ITrigger l_triggerStart = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "start/criterion/fulfilled" )
+
+            );
+
+            l_votingAgent.getChair().trigger( l_triggerStart );
+
+            System.out.println( "Coordinated Grouping " + l_votingAgent.name() + " opened group with chair " + l_votingAgent.getChair() );
+
+        }
+
+        System.out.println( l_votingAgent.name() + " opened group with chair " + l_votingAgent.getChair() );
+
+    //    announceGroup( l_votingAgent.getChair() );
+
     }
 
 }
