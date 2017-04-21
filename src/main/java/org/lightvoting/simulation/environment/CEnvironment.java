@@ -135,8 +135,6 @@ public final class CEnvironment
     /**
      * constructor
      *  @param p_size number of agents
-     *
-     * @param p_size number of agents
      * @param p_h5file HDF5 file
      */
     public CEnvironment( final int p_size, final hdf5.H5File p_h5file )
@@ -233,12 +231,17 @@ public final class CEnvironment
 
             p_votingAgent.getChair().trigger( l_triggerStart );
 
+            System.out.println( "Coordinated Grouping " + p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
+
+        }
+
         System.out.println( p_votingAgent.name() + " opened group with ID " + m_groupId + " and chair " + p_votingAgent.getChair() );
+
+        this.announceGroup( m_groupId, p_votingAgent.getChair() );
 
         m_groupId++;
 
-            System.out.println( "Coordinated Grouping " + p_votingAgent.name() + " opened group with chair " + p_votingAgent.getChair() );
-        }
+
 
 /*        final ITrigger l_trigger = CTrigger.from(
 
@@ -285,6 +288,28 @@ public final class CEnvironment
         }*/
 
 
+    }
+
+    private void announceGroup( final int p_groupID, final CChairAgent p_chairAgent )
+    {
+
+        final ITrigger l_trigger = CTrigger.from(
+
+            ITrigger.EType.ADDBELIEF,
+            CLiteral.from(
+                "new/group/opened",
+                CLiteral.from( String.valueOf( p_groupID ) ),
+                CRawTerm.from( p_chairAgent )
+            )
+        );
+
+
+        // trigger all agents and tell them that the group was opened
+
+        m_agents
+            .parallelStream()
+
+            .forEach( i -> i.trigger( l_trigger ) );
     }
 
     /**

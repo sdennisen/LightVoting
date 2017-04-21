@@ -64,9 +64,9 @@ iteration(0).
        .
 
 
-// +!new/group/opened(Traveller, Chair)         <-
-//     generic/print("Traveller ", Traveller," opened group with Chair ", Chair)
-//     .
++new/group/opened(ID, Chair)         <-
+    generic/print(MyName, " Group ", ID," opened with Chair ", Chair)
+    .
 
 
 //+!joined/group(Traveller, Chair) <-
