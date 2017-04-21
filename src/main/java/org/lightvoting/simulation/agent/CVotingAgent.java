@@ -116,6 +116,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     }
 
+    public CEnvironment getEnvironment()
+    {
+        return m_environment;
+    }
+
     private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
     {
         final int[] l_voteValues = new int[m_altNum];

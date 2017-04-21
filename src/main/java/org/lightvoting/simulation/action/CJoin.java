@@ -225,7 +225,7 @@ public class CJoin extends IBaseAction
 
         System.out.println( l_votingAgent.name() + " opened group with chair " + l_votingAgent.getChair() );
 
-    //    announceGroup( l_votingAgent.getChair() );
+        l_votingAgent.getEnvironment().announceGroup( l_votingAgent.getChair() );
 
     }
 

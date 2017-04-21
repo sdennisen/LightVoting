@@ -295,26 +295,35 @@ public final class CEnvironment
 
     }
 */
-    private void announceGroup( final int p_groupID, final CChairAgent p_chairAgent )
+
+    /**
+     * announce new group and activate new agent if grouping is random
+     * @param p_chairAgent chair Agent of new group
+     */
+    public void announceGroup( final CChairAgent p_chairAgent )
     {
 
         final ITrigger l_trigger = CTrigger.from(
 
-            ITrigger.EType.ADDBELIEF,
+            ITrigger.EType.ADDGOAL,
             CLiteral.from(
-                "new/group/opened",
-                CLiteral.from( String.valueOf( p_groupID ) ),
+                "group",
+                CLiteral.from( String.valueOf( m_groupId ) ),
                 CRawTerm.from( p_chairAgent )
             )
         );
-
 
         // trigger all agents and tell them that the group was opened
 
         m_agents
             .parallelStream()
+            .forEach( i ->
+                          i.trigger( l_trigger )
+            );
+        m_groupId++;
 
-            .forEach( i -> i.trigger( l_trigger ) );
+        // TODO activate next agent if grouping is random
+
     }
 
     // TODO reinsert functionality

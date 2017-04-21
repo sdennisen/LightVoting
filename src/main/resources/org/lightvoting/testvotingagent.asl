@@ -62,9 +62,9 @@ iteration(0).
 //       .
 
 
-//+new/group/opened(ID, Chair)         <-
-//    generic/print(MyName, " Group ", ID," opened with Chair ", Chair)
-//    .
++!group(ID, Chair) <-
+generic/print("------------------ ", MyName, " Group ", ID," opened with Chair ", Chair)
+.
 
 
 
