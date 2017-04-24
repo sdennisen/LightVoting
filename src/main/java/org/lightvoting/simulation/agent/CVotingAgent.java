@@ -26,6 +26,8 @@ package org.lightvoting.simulation.agent;
 import cern.colt.Arrays;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
+import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
+import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
@@ -177,6 +179,21 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
         }
         return l_diss;
+    }
+
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "perceive/env" )
+    private void perceiveEnv()
+    {
+        // wake up in next cycle
+     //   p_chairagent.sleep( 0 );
+     //   p_chairagent.wakeup();
+        this.beliefbase().add( m_environment.literal( this ) );
+        System.out.println( this.name() + " perceived environment " );
+
+        // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
+
     }
 
 

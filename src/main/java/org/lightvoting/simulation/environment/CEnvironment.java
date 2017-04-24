@@ -24,26 +24,29 @@
 package org.lightvoting.simulation.environment;
 
 // import cern.colt.bitvector.BitVector;
+
 import org.bytedeco.javacpp.hdf5;
-// import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
-// import org.lightvoting.simulation.rule.CMinisumApproval;
 
-// import java.util.Arrays;
-// import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-// import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-// import java.util.Random;
 import java.util.Set;
+
+// import org.lightjason.agentspeak.agent.IBaseAgent;
+// import org.lightvoting.simulation.rule.CMinisumApproval;
+// import java.util.Arrays;
+// import java.util.Collections;
+// import java.util.LinkedHashMap;
+// import java.util.Random;
 // import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
@@ -1120,5 +1123,16 @@ public final class CEnvironment
     public void setResultComputed( boolean p_resultComputed )
     {
         m_resultComputed = p_resultComputed;
+    }
+
+    /**
+     * returns literal representation of existing groups
+     * @param p_votingAgent voting agent
+     * @return literal with references to existing groups
+     */
+    public ILiteral literal( final CVotingAgent p_votingAgent )
+    {
+        return CLiteral.from(
+            "groups" );
     }
 }

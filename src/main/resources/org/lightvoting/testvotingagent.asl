@@ -14,6 +14,8 @@ iteration(0).
    generic/print(MyName, "MyChair:", Chair);
    generic/print(MyName, "Testing Voting Agent");
 
+   perceive/env();
+
  //  !lookforgroup;
 
    !nextcycle
@@ -36,6 +38,10 @@ iteration(0).
 
         // send my name to agent 0
         message/send("agent 0", MyName)
+        .
+
++groups <-
+        generic/print("Received belief on groups")
         .
 
 // +!lookforgroup <-
@@ -65,6 +71,7 @@ iteration(0).
 +!group(ID, Chair) <-
 generic/print("------------------ ", MyName, " Group ", ID," opened with Chair ", Chair)
 .
+
 
 
 
