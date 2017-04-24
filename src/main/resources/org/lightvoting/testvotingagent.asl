@@ -14,7 +14,7 @@ iteration(0).
    generic/print(MyName, "MyChair:", Chair);
    generic/print(MyName, "Testing Voting Agent");
 
-   !lookforgroup;
+ //  !lookforgroup;
 
    !nextcycle
    .
@@ -38,11 +38,11 @@ iteration(0).
         message/send("agent 0", MyName)
         .
 
-+!lookforgroup <-
-       generic/print(MyName, "I'm looking for a group to join");
-       join/group()
+// +!lookforgroup <-
+   //    generic/print(MyName, "I'm looking for a group to join");
+   //    join/group()
    //    env/join/group()
-       .
+   //    .
 
 //+!submit/your/vote(Chair) <-
 //       generic/print(MyName, " I need to submit my vote to chair ", Chair);
