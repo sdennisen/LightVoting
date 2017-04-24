@@ -836,9 +836,6 @@ public final class CEnvironment
 
     /**
      * store vote submitted to chair
-     * @param p_chairAgent chair agent to whom vote is submitted
-     * @param p_votingAgent voting agent submitting the vote
-     * @param p_vote submitted vote
      */
     /*
 
