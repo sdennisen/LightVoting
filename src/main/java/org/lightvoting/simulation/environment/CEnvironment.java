@@ -1165,9 +1165,11 @@ public final class CEnvironment
      * @param p_votingAgent voting agent opening group
      * @return literal representation of group
      */
-    public ILiteral openNewGroup( final CVotingAgent p_votingAgent )
+    public CGroup openNewGroup( final CVotingAgent p_votingAgent )
     {
         final CGroup l_group = new CGroup( p_votingAgent );
-        return l_group.literal( p_votingAgent );
+        System.out.println( "Created Group " + l_group );
+       // return l_group.literal( p_votingAgent );
+        return l_group;
     }
 }

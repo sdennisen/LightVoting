@@ -226,10 +226,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         if ( ( l_groupList.get() ).isEmpty() )
         {
             System.out.println( "Group list is empty, create a new group" );
-            //    l_bb.add( m_environment.openNewGroup( this) );
+            final CGroup l_group = m_environment.openNewGroup( this );
+            // TODO fix erroneous behaviour
+            this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group" );
         }
-
 
     }
 

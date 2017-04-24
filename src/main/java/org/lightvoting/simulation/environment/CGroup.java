@@ -28,6 +28,7 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class CGroup
      */
     public CGroup( final CVotingAgent p_votingAgent )
     {
-        m_agentList = new LinkedList<>();
+        m_agentList = Collections.synchronizedList( new LinkedList<>() );
         m_agentList.add( p_votingAgent );
     }
 
@@ -62,7 +63,6 @@ public class CGroup
         final ILiteral l_literal = CLiteral.from( "agents", CRawTerm.from( m_agentList ) );
 
         return l_literal;
-
     }
 
     public void add( final CVotingAgent p_votingAgent )
