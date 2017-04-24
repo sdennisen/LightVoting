@@ -40,8 +40,8 @@ iteration(0).
         message/send("agent 0", MyName)
         .
 
-+groups <-
-        generic/print("Received belief on groups")
++groups(Groups) <-
+        generic/print("..................Received belief on groups ", Groups )
         .
 
 // +!lookforgroup <-

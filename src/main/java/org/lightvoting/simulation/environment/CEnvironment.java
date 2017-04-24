@@ -1138,7 +1138,13 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-        return CLiteral.from(
-            "groups" );
+
+        m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
+
+        final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
+
+        return l_literal;
     }
+
+
 }
