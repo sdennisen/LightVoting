@@ -186,14 +186,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "perceive/env" )
     private void perceiveEnv()
     {
-        // wake up in next cycle
-     //   p_chairagent.sleep( 0 );
-     //   p_chairagent.wakeup();
         this.beliefbase().add( m_environment.literal( this ) );
         System.out.println( this.name() + " perceived environment " );
-
-        // hier könnten dann auch gleich die nötigen trigger in den chair-agent gepusht werden wenn die gruppe aufgemacht wird
-
     }
 
 
