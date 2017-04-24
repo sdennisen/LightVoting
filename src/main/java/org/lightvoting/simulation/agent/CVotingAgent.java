@@ -29,13 +29,16 @@ import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
+import org.lightjason.agentspeak.beliefbase.IBeliefbase;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.environment.CEnvironment;
 
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.stream.Stream;
 
 
 /**
@@ -188,6 +191,97 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         this.beliefbase().add( m_environment.literal( this ) );
         System.out.println( this.name() + " perceived environment " );
+    }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "join/group" )
+    private void joinGroup()
+    {
+        // TODO insert condition for random grouping
+        this.joinRandomGroup();
+    }
+
+    private void joinRandomGroup()
+    {
+
+        final Stream l_rawTerms;
+        final IBeliefbase l_bb = m_beliefbase.beliefbase();
+
+
+
+        if ( l_bb.containsLiteral( "groups" ) )
+        {
+            System.out.println( "Found groups belief in beliefbase " );
+
+            final Collection l_groups = l_bb.literal( "groups" );
+
+            if ( l_groups.isEmpty() )
+            {
+                System.out.println( "Collection is empty " );
+            }
+
+            l_groups.stream().forEach( i->  System.out.println( ".................. print group reference " + i ) );
+
+
+            // test
+       /*     CRawTerm l_rawTerm = CRawTerm.from( new LinkedList<CGroup>() );
+
+            if ( ( (List) l_rawTerm.raw() ).isEmpty() )
+            {
+                System.out.println( "Group list is empty, create a new group" );
+                l_bb.add( m_environment.openNewGroup( this) );
+            }*/
+
+        }
+
+        // Old code
+
+
+        /*if ( m_activechairs.size() == 0 )
+        {
+            this.openNewGroup( p_votingAgent );
+            this.wakeUpAgent();
+            return p_votingAgent.getChair();
+
+        }
+
+        // choose random group to join
+
+        final Random l_rand = new Random();
+        final CChairAgent l_randomChair = m_activechairs.get( l_rand.nextInt( m_activechairs.size() ) );
+
+        if ( this.containsnot( l_randomChair, p_votingAgent ) )
+        {
+
+            m_chairgroup.get( l_randomChair ).add( p_votingAgent );
+            System.out.println( p_votingAgent.name() + " joins group with ID " + m_groupIds.get( l_randomChair ) );
+            // chair " + l_randomChair );
+
+            this.wakeUpAgent();
+
+            if ( m_chairgroup.get( l_randomChair ).size() == m_capacity )
+            {
+
+                m_activechairs.remove( l_randomChair );
+
+                for ( int i = 0; i < m_capacity; i++ )
+                    System.out.println( m_chairgroup.get( l_randomChair ).get( i ).name() + " with chair " + l_randomChair );
+
+                System.out.println( "trigger election " );
+
+                final ITrigger l_triggerStart = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "start/criterion/fulfilled" )
+
+                );
+
+                l_randomChair.trigger( l_triggerStart );
+
+            }
+
+            return l_randomChair;
+        }*/
     }
 
 

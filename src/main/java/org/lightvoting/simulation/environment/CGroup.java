@@ -23,9 +23,50 @@
 
 package org.lightvoting.simulation.environment;
 
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightjason.agentspeak.language.ILiteral;
+import org.lightvoting.simulation.agent.CVotingAgent;
+
+import java.util.LinkedList;
+import java.util.List;
+
+
 /**
  * Created by sophie on 24.04.17.
  */
 public class CGroup
 {
+    private final List<CVotingAgent> m_agentList;
+
+    /**
+     * constructor
+     * @param p_votingAgent voting agent creating the group
+     */
+    public CGroup( final CVotingAgent p_votingAgent )
+    {
+        m_agentList = new LinkedList<>();
+        m_agentList.add( p_votingAgent );
+    }
+
+    /**
+     * returns literal representation for voting agent
+     * @param p_votingAgent voting agent
+     * @return literal with agents in the group
+     */
+
+    public ILiteral literal( final CVotingAgent p_votingAgent )
+    {
+        m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
+
+        final ILiteral l_literal = CLiteral.from( "agents", CRawTerm.from( m_agentList ) );
+
+        return l_literal;
+
+    }
+
+    public void add( final CVotingAgent p_votingAgent )
+    {
+        m_agentList.add( p_votingAgent );
+    }
 }

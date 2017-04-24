@@ -15,6 +15,7 @@ iteration(0).
    generic/print(MyName, "Testing Voting Agent");
 
    perceive/env();
+   join/group();
 
  //  !lookforgroup;
 

@@ -1138,7 +1138,8 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-
+        // Test
+        // m_groups.add( new CGroup( p_votingAgent ) );
         m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
 
         final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
@@ -1147,4 +1148,14 @@ public final class CEnvironment
     }
 
 
+//    /**
+//     * open new group
+//     * @param p_votingAgent
+//     * @return
+//     */
+//    public ILiteral openNewGroup( final CVotingAgent p_votingAgent )
+//    {
+//        final CGroup l_group = new CGroup( p_votingAgent );
+//        return l_group.literal( p_votingAgent );
+//    }
 }
