@@ -34,6 +34,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -118,6 +119,9 @@ public final class CEnvironment
      */
     private boolean m_ready = true;
 
+
+    private final List<CGroup> m_groups;
+
     /**
      * number of cycles
      */
@@ -156,6 +160,8 @@ public final class CEnvironment
         m_groupIds = new HashMap<>();
         m_agentList = new LinkedList<>();
         m_voted = new HashMap<>();
+
+        m_groups = Collections.synchronizedList( new LinkedList<>() );
     }
 
 
