@@ -33,12 +33,15 @@ import org.lightjason.agentspeak.beliefbase.IBeliefbase;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightjason.agentspeak.language.ILiteral;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.environment.CGroup;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -204,35 +207,31 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void joinRandomGroup()
     {
 
-        final Stream l_rawTerms;
         final IBeliefbase l_bb = m_beliefbase.beliefbase();
+        final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
-
-
-        if ( l_bb.containsLiteral( "groups" ) )
-        {
-            System.out.println( "Found groups belief in beliefbase " );
-
-            final Collection l_groups = l_bb.literal( "groups" );
-
-            if ( l_groups.isEmpty() )
+        final Collection l_groups = l_bb.literal( "groups" );
+        l_groups.stream().forEach( i->
             {
-                System.out.println( "Collection is empty " );
+                System.out.println( ".................. print group reference " + i );
+                System.out.println( "Contents of group literal" + ( (ILiteral) i ).values().findFirst().get().raw() );
+                System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );
+                l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
             }
+        );
 
-            l_groups.stream().forEach( i->  System.out.println( ".................. print group reference " + i ) );
 
+        System.out.println( l_groupList.get() );
 
-            // test
-       /*     CRawTerm l_rawTerm = CRawTerm.from( new LinkedList<CGroup>() );
-
-            if ( ( (List) l_rawTerm.raw() ).isEmpty() )
-            {
-                System.out.println( "Group list is empty, create a new group" );
-                l_bb.add( m_environment.openNewGroup( this) );
-            }*/
-
+        if ( ( l_groupList.get() ).isEmpty() )
+        {
+            System.out.println( "Group list is empty, create a new group" );
+            //    l_bb.add( m_environment.openNewGroup( this) );
+            System.out.println( "opened new group" );
         }
+
+
+    }
 
         // Old code
 
@@ -282,7 +281,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
             return l_randomChair;
         }*/
-    }
+
 
 
 /*    @IAgentActionFilter

@@ -1138,24 +1138,36 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-        // Test
-        // m_groups.add( new CGroup( p_votingAgent ) );
+             // Test
+    //    m_groups.add( new CGroup( p_votingAgent ) );
         m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
 
         final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
 
         return l_literal;
+
+      /*  List<ILiteral> l_literalList = new LinkedList<>();
+
+        m_groups.parallelStream().forEach( i ->
+                                           {
+                                               System.out.println( " Added " + CRawTerm.from( i ) );
+                                               l_literalList.add( CLiteral.from( "group", CRawTerm.from( i ) ) );
+                                           }
+        );
+
+        return l_literalList;*/
+
     }
 
 
-//    /**
-//     * open new group
-//     * @param p_votingAgent
-//     * @return
-//     */
-//    public ILiteral openNewGroup( final CVotingAgent p_votingAgent )
-//    {
-//        final CGroup l_group = new CGroup( p_votingAgent );
-//        return l_group.literal( p_votingAgent );
-//    }
+    /**
+     * open new group
+     * @param p_votingAgent voting agent opening group
+     * @return literal representation of group
+     */
+    public ILiteral openNewGroup( final CVotingAgent p_votingAgent )
+    {
+        final CGroup l_group = new CGroup( p_votingAgent );
+        return l_group.literal( p_votingAgent );
+    }
 }
