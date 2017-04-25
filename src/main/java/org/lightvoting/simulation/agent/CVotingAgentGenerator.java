@@ -26,7 +26,6 @@ package org.lightvoting.simulation.agent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.CJoin;
 import org.lightvoting.simulation.action.group.CPreferred;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.action.message.voter.CDissatisfaction;
@@ -94,8 +93,7 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                                         new CCommittee(),
                                         new CPreferred(),
                                         new CDissatisfaction(),
-                                        new CVote(),
-                                        new CJoin()
+                                        new CVote()
                                 )
                         )
                         // build the set with a collector
