@@ -27,7 +27,6 @@ import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.action.message.voter.CVote;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.CEnvironment;
 
@@ -86,8 +85,7 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                                 CCommon.actionsFromAgentClass( CVotingAgent.class ),
                                 // add VotingAgent related external actions
                                 Stream.of(
-                                        p_send,
-                                        new CVote()
+                                        p_send
                                 )
                         )
                         // build the set with a collector
@@ -155,3 +153,4 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 // TODO if necessary, reinsert in constructor CPreferred()
 // TODO if necessary, reinsert in constructor CCommittee()
 // TODO if necessary, reinsert in constructor CDissatisfaction()
+// TODO if necessary, reinsert in constructor new CVote()

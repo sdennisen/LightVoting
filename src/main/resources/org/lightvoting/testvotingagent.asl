@@ -31,7 +31,6 @@ iteration(0).
 
 +!test  <-
         generic/print("Testing", MyName, "actions in cycle", Cycle);
-        voting/send/chair/vote(0);
         // send my name to agent 0
         message/send("agent 0", MyName)
         .
@@ -72,5 +71,6 @@ generic/print("------------------ ", MyName, " Group ", ID," opened with Chair "
 // TODO if necessary, reinsert in test  voting/group/find-preferred();
 // TODO if necessary, reinsert in test  voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
 // TODO if necessary, reinsert in test  voting/send/chair/dissatisfaction(0.1);
+// TODO if necessary, reinsert in test  voting/send/chair/vote(0);
 
 
