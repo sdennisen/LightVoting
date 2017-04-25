@@ -231,10 +231,20 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group " + l_group );
         }
-
+        // TODO: for testing, choose random group from all groups
+        // TODO: after testing, filter out inactive groups => list of active groups
+        else
+        {
+            final Random l_rand = new Random();
+            final CGroup l_randomGroup = l_groupList.get().get( l_rand.nextInt( l_groupList.get().size() ) );
+            m_environment.addAgentRandom( l_randomGroup, this );
+            this.beliefbase().add( l_randomGroup.literal( this ) );
+        }
     }
 
-        // Old code
+
+
+    // Old code
 
 
         /*if ( m_activechairs.size() == 0 )
@@ -347,3 +357,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return m_vote;
     }
 }
+
+// XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
+
+// TODO tip from Malte for filtering
+
+/*m_groups.parallelStream()
+    .filter( i -> i.open() )
+    .min( (g1, g2) -> Double.compare( g1.satisfaction(this), g2.satisfaction(this)) )
+    .get();*/

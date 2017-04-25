@@ -1149,11 +1149,25 @@ public final class CEnvironment
     public CGroup openNewGroup( final CVotingAgent p_votingAgent )
     {
         final CGroup l_group = new CGroup( p_votingAgent );
+        m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
        // return l_group.literal( p_votingAgent );
         this.wakeUpAgent();
 
         return l_group;
+    }
+
+    /**
+     * add agent to group (for random grouping)
+     * @param p_randomGroup random group to join
+     * @param p_votingAgent joining agent
+     */
+
+    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
+    {
+        p_randomGroup.add( p_votingAgent );
+        System.out.println( "XXXXXXXXXXXX Group " + p_randomGroup + " adds agent " + p_votingAgent );
+        this.wakeUpAgent();
     }
 
     private void wakeUpAgent()
