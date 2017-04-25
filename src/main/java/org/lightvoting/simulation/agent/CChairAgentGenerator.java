@@ -26,7 +26,6 @@ package org.lightvoting.simulation.agent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.rules.minmaxapproval.CCommittee;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.InputStream;
@@ -73,7 +72,7 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
                     CCommon.actionsFromAgentClass( CChairAgent.class ),
                     // add VotingAgent related external actions
                     Stream.of(
-                        new CCommittee()
+
                     )
                 )
                 // build the set with a collector
@@ -103,5 +102,9 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
         l_chairAgent.sleep( Integer.MAX_VALUE );
         return l_chairAgent;
     }
+
 }
+
+// XXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXX
+// TODO if necessary, reinsert in constructor new CCommittee()
 
