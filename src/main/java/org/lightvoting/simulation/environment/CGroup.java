@@ -26,6 +26,7 @@ package org.lightvoting.simulation.environment;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.Collections;
@@ -42,7 +43,11 @@ public class CGroup
 
     private final int m_capacity = 3;
 
+    private final CChairAgent m_chair;
+
     private boolean m_open;
+
+    private int[] m_result;
 
     /**
      * constructor
@@ -52,7 +57,9 @@ public class CGroup
     {
         m_agentList = Collections.synchronizedList( new LinkedList<>() );
         m_agentList.add( p_votingAgent );
+        m_chair = p_votingAgent.getChair();
         m_open = true;
+        m_result = null;
     }
 
     /**
@@ -65,7 +72,8 @@ public class CGroup
     {
         m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
 
-        return CLiteral.from( "group", CRawTerm.from( m_agentList ) );
+        return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
+                              CRawTerm.from( m_agentList.contains( p_votingAgent ) ) );
     }
 
     /**
