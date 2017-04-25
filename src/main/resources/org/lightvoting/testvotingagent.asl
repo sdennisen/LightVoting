@@ -39,6 +39,10 @@ iteration(0).
         generic/print("..................Received belief on groups ", Groups )
         .
 
+//+group(Agents) <-
+//        generic/print("..................Received belief on group with agents ", Agents )
+//        .
+
 // +!lookforgroup <-
    //    generic/print(MyName, "I'm looking for a group to join");
    //    join/group()

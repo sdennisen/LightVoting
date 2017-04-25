@@ -229,7 +229,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             final CGroup l_group = m_environment.openNewGroup( this );
             // TODO fix erroneous behaviour
             this.beliefbase().add( l_group.literal( this ) );
-            System.out.println( "opened new group" );
+            System.out.println( "opened new group " + l_group );
         }
 
     }

@@ -60,9 +60,7 @@ public class CGroup
     {
         m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
 
-        final ILiteral l_literal = CLiteral.from( "agents", CRawTerm.from( m_agentList ) );
-        return null;
-        //   return l_literal;
+        return CLiteral.from( "group", CRawTerm.from( m_agentList ) );
     }
 
     public void add( final CVotingAgent p_votingAgent )
