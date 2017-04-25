@@ -40,6 +40,10 @@ public class CGroup
 {
     private final List<CVotingAgent> m_agentList;
 
+    private final int m_capacity = 3;
+
+    private boolean m_open;
+
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
@@ -48,6 +52,7 @@ public class CGroup
     {
         m_agentList = Collections.synchronizedList( new LinkedList<>() );
         m_agentList.add( p_votingAgent );
+        m_open = true;
     }
 
     /**
@@ -63,8 +68,26 @@ public class CGroup
         return CLiteral.from( "group", CRawTerm.from( m_agentList ) );
     }
 
+    /**
+     * add voting agent
+     * @param p_votingAgent joining voting agent
+     */
     public void add( final CVotingAgent p_votingAgent )
     {
+        System.out.println( "Adding agent, old size is " + m_agentList.size() );
         m_agentList.add( p_votingAgent );
+        if ( m_agentList.size() >= m_capacity )
+        {
+            m_open = false;
+        }
+
+    }
+
+    public boolean open()
+    {
+        return m_open;
     }
 }
+
+// XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX
+// TODO set m_capacity via config file

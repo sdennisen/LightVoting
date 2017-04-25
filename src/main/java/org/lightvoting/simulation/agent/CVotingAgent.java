@@ -38,6 +38,7 @@ import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -227,7 +228,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         {
             System.out.println( "Group list is empty, create a new group" );
             final CGroup l_group = m_environment.openNewGroup( this );
-            // TODO fix erroneous behaviour
             this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group " + l_group );
         }
@@ -235,10 +235,30 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // TODO: after testing, filter out inactive groups => list of active groups
         else
         {
+            final List<CGroup> l_activeGroups = new LinkedList<>();
+
+            for ( int i = 0; i < l_groupList.get().size(); i++ )
+                if ( l_groupList.get().get( i ).open() )
+                {
+                    l_activeGroups.add( l_groupList.get().get( i ) );
+                    System.out.println( " add active group " + l_groupList.get().get( i ) );
+                }
+
+            if ( l_activeGroups.isEmpty() )
+            {
+                System.out.println( "No active groups, create a new group" );
+                final CGroup l_group = m_environment.openNewGroup( this );
+                this.beliefbase().add( l_group.literal( this ) );
+                System.out.println( "opened new group " + l_group );
+                return;
+            }
+
             final Random l_rand = new Random();
-            final CGroup l_randomGroup = l_groupList.get().get( l_rand.nextInt( l_groupList.get().size() ) );
+
+            final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
             m_environment.addAgentRandom( l_randomGroup, this );
             this.beliefbase().add( l_randomGroup.literal( this ) );
+
         }
     }
 
@@ -366,3 +386,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     .filter( i -> i.open() )
     .min( (g1, g2) -> Double.compare( g1.satisfaction(this), g2.satisfaction(this)) )
     .get();*/
+
+// TODO tip from Malte for filtering
+// m_groups.get( l_random.nextInt( m_groups.size() ) );
