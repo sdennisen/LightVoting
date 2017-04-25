@@ -221,50 +221,35 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             }
         );
 
+        final List<CGroup> l_activeGroups = new LinkedList<>();
 
-        System.out.println( l_groupList.get() );
+        for ( int i = 0; i < l_groupList.get().size(); i++ )
+            if ( l_groupList.get().get( i ).open() )
+            {
+                l_activeGroups.add( l_groupList.get().get( i ) );
+                System.out.println( " add active group " + l_groupList.get().get( i ) );
+            }
 
-        if ( ( l_groupList.get() ).isEmpty() )
+        if ( l_activeGroups.isEmpty() )
         {
-            System.out.println( "Group list is empty, create a new group" );
+            System.out.println( "No active groups, create a new group" );
             final CGroup l_group = m_environment.openNewGroup( this );
             this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group " + l_group );
+            return;
         }
-        // TODO: for testing, choose random group from all groups
-        // TODO: after testing, filter out inactive groups => list of active groups
-        else
-        {
-            final List<CGroup> l_activeGroups = new LinkedList<>();
 
-            for ( int i = 0; i < l_groupList.get().size(); i++ )
-                if ( l_groupList.get().get( i ).open() )
-                {
-                    l_activeGroups.add( l_groupList.get().get( i ) );
-                    System.out.println( " add active group " + l_groupList.get().get( i ) );
-                }
+        final Random l_rand = new Random();
 
-            if ( l_activeGroups.isEmpty() )
-            {
-                System.out.println( "No active groups, create a new group" );
-                final CGroup l_group = m_environment.openNewGroup( this );
-                this.beliefbase().add( l_group.literal( this ) );
-                System.out.println( "opened new group " + l_group );
-                return;
-            }
+        final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
+        m_environment.addAgentRandom( l_randomGroup, this );
+        this.beliefbase().add( l_randomGroup.literal( this ) );
 
-            final Random l_rand = new Random();
-
-            final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
-            m_environment.addAgentRandom( l_randomGroup, this );
-            this.beliefbase().add( l_randomGroup.literal( this ) );
-
-        }
     }
 
 
 
-    // Old code
+    //
 
 
         /*if ( m_activechairs.size() == 0 )
