@@ -44,11 +44,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private final String m_name;
 
     /**
-     * environment
-     */
-    private final CEnvironment m_environment;
-
-    /**
      *  constructor of the agent
      *  @param p_configuration agent configuration of the agent generator
      */
@@ -57,7 +52,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         super( p_configuration );
         m_name = p_name;
-        m_environment = p_environment;
+
     }
 
     // overload agent-cycle
@@ -67,6 +62,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // run default cycle
         return super.call();
     }
+
+    public String name()
+    {
+        return m_name;
+    }
+
+}
+
+// XXXXXXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+//   private final CEnvironment m_environment;
+// constructor:   m_environment = p_environment;
+
 
 /*    @IAgentActionFilter
     @IAgentActionName( name = "start/election" )
@@ -119,10 +128,3 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     }*/
 
-    public String name()
-    {
-        return m_name;
-    }
-
-
-}
