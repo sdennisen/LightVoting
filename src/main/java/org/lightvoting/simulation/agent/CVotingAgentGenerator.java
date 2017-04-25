@@ -26,7 +26,6 @@ package org.lightvoting.simulation.agent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.score.IAggregation;
-import org.lightvoting.simulation.action.group.CPreferred;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.action.message.voter.CDissatisfaction;
 import org.lightvoting.simulation.action.message.voter.CVote;
@@ -91,7 +90,6 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
                                 Stream.of(
                                         p_send,
                                         new CCommittee(),
-                                        new CPreferred(),
                                         new CDissatisfaction(),
                                         new CVote()
                                 )
@@ -156,3 +154,6 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 
     }
 }
+
+// XXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXX
+// TODO if necessary, reinsert CPreferred() in constructor
