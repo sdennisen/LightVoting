@@ -518,15 +518,7 @@ public final class CEnvironment
 //        return p_votingAgent.getChair();
 
     }
-
-    private void wakeUpAgent()
-    {
-        m_currentIndex++;
-        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
-        l_wakingAgent.sleep( 0 );
-        l_wakingAgent.getChair().sleep( 0 );
-        System.out.println( "Waking up agent " + l_wakingAgent.name() );
-    }*/
+*/
 
     // TODO reinsert functionality
 /*
@@ -1146,17 +1138,6 @@ public final class CEnvironment
 
         return l_literal;
 
-      /*  List<ILiteral> l_literalList = new LinkedList<>();
-
-        m_groups.parallelStream().forEach( i ->
-                                           {
-                                               System.out.println( " Added " + CRawTerm.from( i ) );
-                                               l_literalList.add( CLiteral.from( "group", CRawTerm.from( i ) ) );
-                                           }
-        );
-
-        return l_literalList;*/
-
     }
 
 
@@ -1170,6 +1151,21 @@ public final class CEnvironment
         final CGroup l_group = new CGroup( p_votingAgent );
         System.out.println( "Created Group " + l_group );
        // return l_group.literal( p_votingAgent );
+        this.wakeUpAgent();
+
         return l_group;
     }
+
+    private void wakeUpAgent()
+    {
+        m_currentIndex++;
+        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
+        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
+        System.out.println( "Waking up agent " + l_wakingAgent.name() );
+    }
 }
+
+
+
+// XXXXXXXXXXXXXXXx Old code XXXXXXXXXXXXXXXXXXXXXXXXX
