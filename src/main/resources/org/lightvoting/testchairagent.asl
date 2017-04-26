@@ -7,17 +7,11 @@ iteration(0).
     !nextcycle
   .
 
-
 +!nextcycle <-
     perceive/group();
-  //  generic/print("... determining my group...");
     check/conditions();
     !nextcycle
     .
-
-//+group(Group) <-
-//    generic/print( "XXXXXXXXXXXXXXXXXX Cycle ", Cycle, " Print Group ", Group )
-//    .
 
 +!start/criterion/fulfilled() <-
     generic/print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I'm now starting the election.")
@@ -25,24 +19,27 @@ iteration(0).
 //  start/election()
     .
 
+// XXXXX Old Code XXXXXXX
+
+//+group(Group) <-
+//    generic/print( "XXXXXXXXXXXXXXXXXX Cycle ", Cycle, " Print Group ", Group )
+//    .
 
 
 //+group( Group, Agents, Open, Result) <-
 //    generic/print( " XXXXXXXXXXXXXXXXXXX Print Group ", Group, " ", Agents, " ", Open, " ", Result)
 //    .
 
-+!myGroup( Traveller, GroupID) <-
+//+!myGroup( Traveller, GroupID) <-
 
-    generic/print("I'm chair of group ", GroupID, " with traveller ", Traveller).
+    // generic/print("I'm chair of group ", GroupID, " with traveller ", Traveller).
 
-+!my/group/new/agent( Traveller, GroupID) <-
+// +!my/group/new/agent( Traveller, GroupID) <-
 
-    generic/print("I'm chair of group ", GroupID, " and traveller ", Traveller, " joins").
+  //  generic/print("I'm chair of group ", GroupID, " and traveller ", Traveller, " joins").
 
-+!join/group(Traveller) <-
-     generic/print("Traveller ", Traveller, " joins my group").
-
-
+// +!join/group(Traveller) <-
+ //    generic/print("Traveller ", Traveller, " joins my group").
 
 //+!vote/received(Traveller, Vote) <-
 //    generic/print("Receiving vote from traveller ", Traveller);
