@@ -44,13 +44,6 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 public class CMinimaxApproval
 {
 
-    /* m_alternatives list */
-    //    private List<String> m_alternatives;
-    /* list of values*/
-    //    private List<AtomicIntegerArray> m_votes;
-    //    /* committee size */
-    //    private int m_comSize;
-
     /**
      * compute the winning committee according to Minimax Approval
      *
@@ -85,8 +78,6 @@ public class CMinimaxApproval
 
         final int l_winnerIndex = l_entry.getKey();
 
-        // System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
-
         return l_committees[l_winnerIndex];
 
     }
@@ -113,12 +104,6 @@ public class CMinimaxApproval
         final List<int[]> l_resultList = l_combination.getResultList();
         l_combination.clearList();
 
-        // for ( int i = 0; i < l_resultList.size(); i++ )
-        // {
-        // System.out.println( Arrays.toString( l_resultList.get( i ) ) );
-        // }
-        // System.out.println( "Number of committees: " + l_resultList.size() );
-
         final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
 
         for ( int i = 0; i < l_resultList.size(); i++ )
@@ -126,10 +111,8 @@ public class CMinimaxApproval
 
             for ( int j = 0; j < p_comSize; j++ )
             {
-                // System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
                 l_comVects[i][l_resultList.get( i )[j]] = 1;
             }
-            // System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
         }
 
         return l_comVects;
@@ -155,8 +138,6 @@ public class CMinimaxApproval
         {
             l_bitCom.put( i, l_booleanCom[i] );
         }
-
-        // System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
 
         /* compute Hamming distances to all votes and determine the maximum */
 
@@ -184,8 +165,6 @@ public class CMinimaxApproval
             l_curBitCom.xor( l_bitVote );
 
             final int l_curHD = l_curBitCom.cardinality();
-
-            // System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
 
             if ( l_curHD > l_maxHD )
                 l_maxHD = l_curHD;
@@ -242,6 +221,34 @@ public class CMinimaxApproval
     }
 
 }
+
+// XXXXXXXXXXXXXXXXXX Old Code XXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+    /* m_alternatives list */
+//    private List<String> m_alternatives;
+    /* list of values*/
+//    private List<AtomicIntegerArray> m_votes;
+//    /* committee size */
+//    private int m_comSize;
+
+// ---- war in applyRule() -----
+// System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
+
+// ---- war in computeCommittees() -----
+
+// for ( int i = 0; i < l_resultList.size(); i++ )
+// {
+// System.out.println( Arrays.toString( l_resultList.get( i ) ) );
+// }
+// System.out.println( "Number of committees: " + l_resultList.size() );
+// System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
+// System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
+
+// --- war in determineMaxHD()
+// System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
+// System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
 
 
 
