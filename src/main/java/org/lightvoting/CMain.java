@@ -114,12 +114,10 @@ public final class CMain
 
         // runtime call (with parallel execution)
 
-        // TODO fix failing agent calls
-
-        // set cycle number in environment
-        s_environment.setCycles( p_args.length < 4
-                               ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[3] ) );
+//        // set cycle number in environment
+//        s_environment.setCycles( p_args.length < 4
+//                               ? Integer.MAX_VALUE
+//                                : Integer.parseInt( p_args[3] ) );
 
         // wake up first agent
 //        final CVotingAgent l_firstAgent = l_agents.iterator().next();

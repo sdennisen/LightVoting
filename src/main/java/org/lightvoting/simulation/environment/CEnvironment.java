@@ -23,32 +23,17 @@
 
 package org.lightvoting.simulation.environment;
 
-// import cern.colt.bitvector.BitVector;
-
 import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
-import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
-import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-// import org.lightjason.agentspeak.agent.IBaseAgent;
-// import org.lightvoting.simulation.rule.CMinisumApproval;
-// import java.util.Arrays;
-// import java.util.Collections;
-// import java.util.LinkedHashMap;
-// import java.util.Random;
-// import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  * Created by sophie on 22.02.17.
@@ -56,83 +41,11 @@ import java.util.Set;
  */
 public final class CEnvironment
 {
-
-    // TODO set variables via config file or commando line
-    // TODO use m_protocol?
-
- // private String m_protocol = "BASIC";
-
-    private String m_protocol = "BASIC";
-
-    private String m_grouping = "COORDINATED";
-
-    private String m_rule = "MINISUM";
-
-    // private String m_grouping = "COORDINATED";
-
-    // TODO join threshold via config
-
-    private final int m_joinThreshold = 0;
-
-    private final Map<CChairAgent, int[]> m_groupResults;
-
-    private final Map<CChairAgent, Integer> m_groupIds;
-    /**
-     * group capacity
-     */
-
-    private final int m_capacity = 3;
-
-    // private final AtomicReferenceArray<CVotingAgent> m_group;
-
-    /**
-     * Set of voting agents
-     */
-
-    private final Set<CVotingAgent> m_agents;
+    private final List<CGroup> m_groups;
 
     private final List<CVotingAgent> m_agentList;
 
-    private final Map<CVotingAgent, Boolean> m_voted;
-
-    /**
-     * Map for storing agent groups
-     */
-
-    private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
-
-    private final Map<CChairAgent, List> m_voteSets;
-
-    /**
-     * List for storing current active chairs, i.e. chairs who accept more agents
-     */
-
-    private final List<CChairAgent> m_activechairs;
-
-    /**
-     * maximum size
-     */
-    private final int m_size;
-
-    /**
-     * indicates if new cycle can be triggered
-     */
-    private boolean m_ready = true;
-
-
-    private final List<CGroup> m_groups;
-
-    /**
-     * number of cycles
-     */
-
-    private int m_cycles;
-    private boolean m_resultComputed;
-    private Map<CChairAgent, List<Double>> m_dissSets;
-    // TODO via config in CMain
-    private double m_dissThreshold = 1.5;
     private hdf5.H5File m_h5File;
-    private int m_groupId;
 
     // Index of the last activated agent
     private int m_currentIndex;
@@ -141,29 +54,15 @@ public final class CEnvironment
 
     /**
      * constructor
-     *  @param p_size number of agents
+     * @param p_size number of agents
      * @param p_h5file HDF5 file
      */
     public CEnvironment( final int p_size, final hdf5.H5File p_h5file )
     {
-        m_size = p_size;
-
-        //  m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[m_size] );
-        m_agents = new HashSet<>();
-        m_chairgroup = new HashMap<>();
-        m_activechairs = new LinkedList<>();
-        m_voteSets = new HashMap<CChairAgent, List>();
-        m_groupResults = new HashMap<CChairAgent, int[]>();
-        m_resultComputed = false;
         m_h5File = p_h5file;
-        m_dissSets = new HashMap<>();
-        m_groupIds = new HashMap<>();
-        m_agentList = new LinkedList<>();
-        m_voted = new HashMap<>();
-
         m_groups = Collections.synchronizedList( new LinkedList<>() );
+        m_agentList = new LinkedList<>();
     }
-
 
 
     public hdf5.H5File getH5File()
@@ -179,9 +78,7 @@ public final class CEnvironment
      */
     public final void initialset( final CVotingAgent p_votingAgent )
     {
-        m_agents.add( p_votingAgent );
         m_agentList.add( p_votingAgent );
-        m_voted.put( p_votingAgent, false );
 
         if  ( !m_firstActivated )
         {
@@ -192,11 +89,216 @@ public final class CEnvironment
             l_firstAgent.getChair().sleep( 0 );
             m_firstActivated = true;
         }
-
-     //   System.out.println( "Added agent: " + p_votingAgent.name() );
     }
 
-    // TODO reinsert functionality
+    /**
+     * returns literal representation of existing groups
+     * @param p_votingAgent voting agent
+     * @return literal with references to existing groups
+     */
+    public ILiteral literal( final CVotingAgent p_votingAgent )
+    {
+        final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
+
+        return l_literal;
+
+    }
+
+
+    /**
+     * open new group
+     * @param p_votingAgent voting agent opening group
+     * @return literal representation of group
+     */
+    public CGroup openNewGroup( final CVotingAgent p_votingAgent )
+    {
+        final CGroup l_group = new CGroup( p_votingAgent );
+        m_groups.add( l_group );
+        System.out.println( "Created Group " + l_group );
+        this.wakeUpAgent();
+
+        return l_group;
+    }
+
+    /**
+     * add agent to group (for random grouping)
+     * @param p_randomGroup random group to join
+     * @param p_votingAgent joining agent
+     */
+
+    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
+    {
+        p_randomGroup.add( p_votingAgent );
+        this.wakeUpAgent();
+    }
+
+    /**
+     * detect group of chair agent
+     * @param p_chairAgent chair agent
+     * @return literal representation of group if chair is assigned to a group
+     */
+    public ILiteral detectGroup( final CChairAgent p_chairAgent )
+    {
+        for ( final CGroup l_group : m_groups )
+        {
+            if ( !( ( l_group.literal( p_chairAgent ) ) == null ) )
+                return l_group.literal( p_chairAgent );
+        }
+        return null;
+    }
+
+    private void wakeUpAgent()
+    {
+        m_currentIndex++;
+        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
+        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
+        System.out.println( "Waking up agent " + l_wakingAgent.name() );
+    }
+}
+
+
+
+// XXXXXXXXXXXXXXXx Old code XXXXXXXXXXXXXXXXXXXXXXXXX
+// import cern.colt.bitvector.BitVector;
+// import org.lightjason.agentspeak.agent.IBaseAgent;
+// import org.lightvoting.simulation.rule.CMinisumApproval;
+// import java.util.Arrays;
+// import java.util.Collections;
+// import java.util.LinkedHashMap;
+// import java.util.Random;
+// import java.util.concurrent.atomic.AtomicIntegerArray;
+
+    // TODO set variables via config file or commando line
+
+ /*   private String m_protocol = "BASIC";
+
+    private String m_grouping = "COORDINATED";
+
+    private String m_rule = "MINISUM";
+
+    private final int m_joinThreshold = 0;
+
+    private final Map<CChairAgent, int[]> m_groupResults;
+
+    private final Map<CChairAgent, Integer> m_groupIds;
+
+    private final AtomicReferenceArray<CVotingAgent> m_group; */
+
+//        /**
+//     * Map for storing agent groups
+//     */
+//
+//    private final Map<CChairAgent, List<CVotingAgent>> m_chairgroup;
+//
+//    private final Map<CChairAgent, List> m_voteSets;
+//
+//    /**
+//     * List for storing current active chairs, i.e. chairs who accept more agents
+//     */
+//
+//    private final List<CChairAgent> m_activechairs;
+//
+//
+//    /**
+//     * group capacity
+//     */
+//
+//    private final int m_capacity = 3;
+//
+//    /**
+//     * Set of voting agents
+//     */
+//
+//    private final Set<CVotingAgent> m_agents;
+//
+//
+//
+//    private final Map<CVotingAgent, Boolean> m_voted;
+//
+//    /**
+//     * maximum size
+//     */
+//    private final int m_size;
+//
+//    /**
+//     * indicates if new cycle can be triggered
+//     */
+//    private boolean m_ready = true;
+
+//    /**
+//     * number of cycles
+//     */
+//
+//    private int m_cycles;
+//    private boolean m_resultComputed;
+//    private Map<CChairAgent, List<Double>> m_dissSets;
+//    // TODO via config in CMain
+//    private double m_dissThreshold = 1.5;
+//    private int m_groupId;
+
+
+ // ---- was in constructor ----
+ //       m_groupResults = new HashMap<CChairAgent, int[]>();
+//        m_size = p_size;
+//
+//            //  m_group = new AtomicReferenceArray<CVotingAgent>( new CVotingAgent[m_size] );
+//            m_agents = new HashSet<>();
+//    m_chairgroup = new HashMap<>();
+//    m_activechairs = new LinkedList<>();
+//    m_voteSets = new HashMap<CChairAgent, List>();
+//    m_resultComputed = false;
+//        m_dissSets = new HashMap<>();
+//    m_groupIds = new HashMap<>();
+//
+//    m_voted = new HashMap<>();
+
+
+
+
+//    public void setReady( final boolean p_ready )
+//    {
+//        m_ready = p_ready;
+//    }
+//
+//    public void setCycles( final int p_cycles )
+//    {
+//        m_cycles = p_cycles;
+//    }
+//
+//    public int getCycles()
+//    {
+//        return m_cycles;
+//    }
+//
+//    public boolean getResultComputed()
+//    {
+//        return m_resultComputed;
+//    }
+//
+//    public void setResultComputed( boolean p_resultComputed )
+//    {
+//        m_resultComputed = p_resultComputed;
+//    }
+//
+////     public boolean getReady()
+//    {
+//        return m_ready;
+//        }
+//
+////     public final int size()
+//    {
+//        return m_size;
+//        }
+
+/// --- was in initialset ----
+
+//    m_agents.add( p_votingAgent );
+//    m_voted.put( p_votingAgent, false );
+
+
+
+// TODO reinsert functionality
 
   /*
      * open a new group
@@ -305,37 +407,37 @@ public final class CEnvironment
     }
 */
 
-    /**
-     * announce new group and activate new agent if grouping is random
-     * @param p_chairAgent chair Agent of new group
-     */
-    public void announceGroup( final CChairAgent p_chairAgent )
-    {
+//    /**
+//     * announce new group and activate new agent if grouping is random
+//     * @param p_chairAgent chair Agent of new group
+//     */
+//    public void announceGroup( final CChairAgent p_chairAgent )
+//    {
+//
+//        final ITrigger l_trigger = CTrigger.from(
+//
+//            ITrigger.EType.ADDGOAL,
+//            CLiteral.from(
+//                "group",
+//                CLiteral.from( String.valueOf( m_groupId ) ),
+//                CRawTerm.from( p_chairAgent )
+//            )
+//        );
+//
+//        // trigger all agents and tell them that the group was opened
+//
+//        m_agents
+//            .parallelStream()
+//            .forEach( i ->
+//                          i.trigger( l_trigger )
+//            );
+//        m_groupId++;
+//
+//        // TODO activate next agent if grouping is random
+//
+//    }
 
-        final ITrigger l_trigger = CTrigger.from(
-
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "group",
-                CLiteral.from( String.valueOf( m_groupId ) ),
-                CRawTerm.from( p_chairAgent )
-            )
-        );
-
-        // trigger all agents and tell them that the group was opened
-
-        m_agents
-            .parallelStream()
-            .forEach( i ->
-                          i.trigger( l_trigger )
-            );
-        m_groupId++;
-
-        // TODO activate next agent if grouping is random
-
-    }
-
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
    /*
      * join a group
@@ -356,12 +458,9 @@ public final class CEnvironment
         return null;
     }
 */
-    public boolean getReady()
-    {
-        return m_ready;
-    }
 
-    // TODO reinsert functionality
+
+// TODO reinsert functionality
     /*
      * submit dissatisfaction regarding latest result to chair
      * @param p_votingAgent voting agent
@@ -393,12 +492,12 @@ public final class CEnvironment
 
     }
     */
-    // TODO reinsert functionality
+// TODO reinsert functionality
 /*
 
     */
 /**
-     * store dissatisfaction value
+ * store dissatisfaction value
  */
 /*
 
@@ -440,7 +539,7 @@ public final class CEnvironment
     }
 */
 
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
     /*private final CChairAgent joinRandomGroup( final CVotingAgent p_votingAgent )
     {
@@ -520,7 +619,7 @@ public final class CEnvironment
     }
 */
 
-    // TODO reinsert functionality
+// TODO reinsert functionality
 /*
     private final CChairAgent joinGroupCoordinated( final CVotingAgent p_votingAgent )
     {
@@ -733,7 +832,7 @@ public final class CEnvironment
 
     }*/
 
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
     /*private Map sortMapDESC( final Map<CChairAgent, Integer> p_valuesMap )
 
@@ -760,7 +859,7 @@ public final class CEnvironment
         return l_sortedMap;
     }
 */
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
    /* private boolean containsnot( final CChairAgent p_randomChair, final CVotingAgent p_votingAgent )
     {
@@ -774,17 +873,14 @@ public final class CEnvironment
     }*/
 
 
-    public final int size()
-    {
-        return m_size;
-    }
 
-    // TODO reinsert functionality
 
-    /**
-     * start the election, i.e. ask the travellers
-     * @param p_chairAgent the chair starting the election
-     */
+// TODO reinsert functionality
+
+/**
+ * start the election, i.e. ask the travellers
+ * @param p_chairAgent the chair starting the election
+ */
     /*
     public void startElection( final CChairAgent p_chairAgent )
     {
@@ -800,14 +896,14 @@ public final class CEnvironment
 
     }
 */
-    // TODO migrate to CVote ?
-    // TODO reinsert functionality
+// TODO migrate to CVote ?
+// TODO reinsert functionality
 
-    /**
-     * submit vote to chair
-     * @param p_votingAgent voting agent
-     * @param p_chairAgent chair agent
-     */
+/**
+ * submit vote to chair
+ * @param p_votingAgent voting agent
+ * @param p_chairAgent chair agent
+ */
     /*
     public void submitVote( final CVotingAgent p_votingAgent, final IBaseAgent<CChairAgent> p_chairAgent )
     {
@@ -833,11 +929,11 @@ public final class CEnvironment
 
     }
 */
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
-    /**
-     * store vote submitted to chair
-     */
+/**
+ * store vote submitted to chair
+ */
     /*
 
     public void storeVote( final CChairAgent p_chairAgent, final Object p_votingAgent, final AtomicIntegerArray p_vote )
@@ -862,8 +958,8 @@ public final class CEnvironment
         }
     }
 */
-    // TODO move computeResult() to chair class or chair action
-    // TODO reinsert functionality
+// TODO move computeResult() to chair class or chair action
+// TODO reinsert functionality
 
    /*
      * compute result of election
@@ -991,7 +1087,7 @@ public final class CEnvironment
 
     }
 */
-    // TODO reinsert functionality
+// TODO reinsert functionality
 
   /*
      * recompute result of election regarding to criteria of iterative election
@@ -1060,8 +1156,8 @@ public final class CEnvironment
 
     }
 */
-    // TODO structure needs refactoring
-    // TODO reinsert functionality
+// TODO structure needs refactoring
+// TODO reinsert functionality
 
  /*   private boolean removeVoter( final CChairAgent p_chairAgent )
     {
@@ -1083,7 +1179,7 @@ public final class CEnvironment
         return false;
     }
 */
-    // TODO reinsert functionality
+// TODO reinsert functionality
 /*    private int getMaxIndex( final  List<Double> p_dissValues )
     {
         int l_maxIndex = 0;
@@ -1098,103 +1194,8 @@ public final class CEnvironment
         return l_maxIndex;
     }*/
 
-    public void setReady( final boolean p_ready )
-    {
-        m_ready = p_ready;
-    }
 
-    public void setCycles( final int p_cycles )
-    {
-        m_cycles = p_cycles;
-    }
-
-    public int getCycles()
-    {
-        return m_cycles;
-    }
-
-    public boolean getResultComputed()
-    {
-        return m_resultComputed;
-    }
-
-    public void setResultComputed( boolean p_resultComputed )
-    {
-        m_resultComputed = p_resultComputed;
-    }
-
-    /**
-     * returns literal representation of existing groups
-     * @param p_votingAgent voting agent
-     * @return literal with references to existing groups
-     */
-    public ILiteral literal( final CVotingAgent p_votingAgent )
-    {
-             // Test
-    //    m_groups.add( new CGroup( p_votingAgent ) );
-   //     m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
-
-        final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
-
-        return l_literal;
-
-    }
-
-
-    /**
-     * open new group
-     * @param p_votingAgent voting agent opening group
-     * @return literal representation of group
-     */
-    public CGroup openNewGroup( final CVotingAgent p_votingAgent )
-    {
-        final CGroup l_group = new CGroup( p_votingAgent );
-        m_groups.add( l_group );
-        System.out.println( "Created Group " + l_group );
-       // return l_group.literal( p_votingAgent );
-        this.wakeUpAgent();
-
-        return l_group;
-    }
-
-    /**
-     * add agent to group (for random grouping)
-     * @param p_randomGroup random group to join
-     * @param p_votingAgent joining agent
-     */
-
-    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
-    {
-        p_randomGroup.add( p_votingAgent );
-   //     System.out.println( "XXXXXXXXXXXX Group " + p_randomGroup + " adds agent " + p_votingAgent );
-        this.wakeUpAgent();
-    }
-
-    /**
-     * detect group of chair agent
-     * @param p_chairAgent chair agent
-     * @return literal representation of group if chair is assigned to a group
-     */
-    public ILiteral detectGroup( final CChairAgent p_chairAgent )
-    {
-        for ( final CGroup l_group : m_groups )
-        {
-            if ( !( ( l_group.literal( p_chairAgent ) ) == null ) )
-                return l_group.literal( p_chairAgent );
-        }
-        return null;
-    }
-
-    private void wakeUpAgent()
-    {
-        m_currentIndex++;
-        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
-        l_wakingAgent.sleep( 0 );
-        l_wakingAgent.getChair().sleep( 0 );
-        System.out.println( "Waking up agent " + l_wakingAgent.name() );
-    }
-}
-
-
-
-// XXXXXXXXXXXXXXXx Old code XXXXXXXXXXXXXXXXXXXXXXXXX
+// ---- was in  literal() ----
+// Test
+//    m_groups.add( new CGroup( p_votingAgent ) );
+//     m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
