@@ -10,14 +10,14 @@ iteration(0).
 
 +!nextcycle <-
     perceive/group();
-    generic/print("... determining my group...");
+  //  generic/print("... determining my group...");
     check/conditions();
     !nextcycle
     .
 
-+group(Group) <-
-    generic/print( "XXXXXXXXXXXXXXXXXX Cycle ", Cycle, " Print Group ", Group )
-    .
+//+group(Group) <-
+//    generic/print( "XXXXXXXXXXXXXXXXXX Cycle ", Cycle, " Print Group ", Group )
+//    .
 
 +!start/criterion/fulfilled() <-
     generic/print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I'm now starting the election.")

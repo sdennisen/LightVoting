@@ -214,9 +214,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final Collection l_groups = l_bb.literal( "groups" );
         l_groups.stream().forEach( i->
             {
-                System.out.println( ".................. print group reference " + i );
+              /*  System.out.println( ".................. print group reference " + i );
                 System.out.println( "Contents of group literal" + ( (ILiteral) i ).values().findFirst().get().raw() );
-                System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );
+                System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
                 l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
             }
         );
@@ -227,12 +227,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             if ( l_groupList.get().get( i ).open() )
             {
                 l_activeGroups.add( l_groupList.get().get( i ) );
-                System.out.println( " add active group " + l_groupList.get().get( i ) );
+             //   System.out.println( " add active group " + l_groupList.get().get( i ) );
             }
 
         if ( l_activeGroups.isEmpty() )
         {
-            System.out.println( "No active groups, create a new group" );
+         //   System.out.println( "No active groups, create a new group" );
             final CGroup l_group = m_environment.openNewGroup( this );
             this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group " + l_group );

@@ -114,9 +114,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
         l_groups.stream().forEach( i->
         {
-            System.out.println( ".................. print group  " + i );
+/*            System.out.println( ".................. print group  " + i );
             System.out.println( "Contents of group " + ( (ILiteral) i ).values().findFirst().get().raw() );
-            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );
+            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
             l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() );
         } );
         // if conditions for election are fulfilled, trigger goal start/election

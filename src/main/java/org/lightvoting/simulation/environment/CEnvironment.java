@@ -1132,7 +1132,7 @@ public final class CEnvironment
     {
              // Test
     //    m_groups.add( new CGroup( p_votingAgent ) );
-        m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
+   //     m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
 
         final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
 
@@ -1166,7 +1166,7 @@ public final class CEnvironment
     public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
     {
         p_randomGroup.add( p_votingAgent );
-        System.out.println( "XXXXXXXXXXXX Group " + p_randomGroup + " adds agent " + p_votingAgent );
+   //     System.out.println( "XXXXXXXXXXXX Group " + p_randomGroup + " adds agent " + p_votingAgent );
         this.wakeUpAgent();
     }
 
