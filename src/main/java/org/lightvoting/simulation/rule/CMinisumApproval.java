@@ -96,7 +96,6 @@ public class CMinisumApproval
         {
             final int l_key = index;
             final String l_value = l_valuesMap.get( index ).toString();
-            // System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
         }
 
         /* sort the HashMap in descending order according to values */
@@ -117,8 +116,6 @@ public class CMinisumApproval
             else
                 break;
         }
-
-        // System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
 
         return m_comVect;
     }
@@ -150,3 +147,9 @@ public class CMinisumApproval
     }
 
 }
+
+// XXXXXXXXXX Old Code XXXXXX
+// ---- was in applyRule() ----
+
+// System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
+// System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
