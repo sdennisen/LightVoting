@@ -49,6 +49,12 @@ iteration(0).
     submit/vote(Chair)
     .
 
+// plan for basic voting
++!election/result(Result) <-
+ generic/print(MyName, " heard result ", Result)
+ .
+
+
 // XXXXXXXXXXXX Old code XXXXXXXXXXXX
 // TODO if necessary, reinsert in test  voting/group/find-preferred();
 // TODO if necessary, reinsert in test  voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");

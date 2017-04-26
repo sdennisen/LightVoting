@@ -34,7 +34,9 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
+import org.lightvoting.simulation.rule.CMinisumApproval;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -63,6 +65,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private final CEnvironment m_environment;
     private List<AtomicIntegerArray> m_votes;
+    private Arrays m_agents;
 
     /**
      * constructor of the agent
@@ -187,6 +190,42 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
     }
 
+    /**
+     * compute result of election
+     */
+
+    // TODO Minisum via parameter
+    // TODO Alternatives via parameter/environment
+    // TODO specify comsize via parameter
+    // TODO see HDF5 structure in old code in CEnvironment
+    @IAgentActionFilter
+    @IAgentActionName( name = "compute/result" )
+
+    public void computeResult( )
+    {
+        final CGroup l_group = this.determineGroup();
+
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        for ( char l_char : "ABCDEF".toCharArray() )
+
+            l_alternatives.add( String.valueOf( l_char ) );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_votes );
+
+        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
+
+        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+
+        // TODO see old code in CEnvironment for other cases
+
+        this.beliefbase().add( l_group.update( this, l_comResult ) );
+
+    }
 
 }
 

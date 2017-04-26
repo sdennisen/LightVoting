@@ -32,6 +32,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -159,6 +160,29 @@ public class CGroup
     public int size()
     {
         return m_agentList.size();
+    }
+
+    /**
+     * update group literal for chair agent
+     * @param p_chairAgent chair agent
+     * @param p_result election result
+     * @return group literal for chair agent
+     */
+
+    public ILiteral update( final CChairAgent p_chairAgent, final int[] p_result )
+    {
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "election/result",
+                 CRawTerm.from( Arrays.toString( p_result ) )
+            )
+        );
+        // send result of election to all agents in the group
+        m_agentList.stream().forEach( i -> i.trigger( l_trigger ) );
+
+        m_result = p_result;
+        return this.literal( p_chairAgent );
     }
 }
 

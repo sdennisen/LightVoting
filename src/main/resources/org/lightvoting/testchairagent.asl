@@ -25,8 +25,8 @@ iteration(0).
    .
 
 +!all/votes/received() <-
-  generic/print(" All voters submitted their votes" )
- //    compute/result()
+  generic/print(" All voters submitted their votes" );
+  compute/result()
  .
 
 // XXXXX Old Code XXXXXXX
