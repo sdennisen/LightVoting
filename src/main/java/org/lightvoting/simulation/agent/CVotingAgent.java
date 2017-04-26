@@ -136,7 +136,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 l_voteValues[i] = 0;
         System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
         return new AtomicIntegerArray( l_voteValues );
-
     }
 
     private AtomicDoubleArray generatePreferences( final int p_altNum )

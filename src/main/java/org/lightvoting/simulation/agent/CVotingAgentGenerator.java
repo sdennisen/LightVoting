@@ -135,15 +135,8 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
             m_altNum
         );
 
-    //    int l_group = (int) ( Math.random() * m_environment.size() );
-
         l_votingAgent.sleep( Integer.MAX_VALUE  );
-
         m_environment.initialset( l_votingAgent );
-     //       l_group = (int) ( Math.random() * m_environment.size() );
-
-        System.out.println( "Agent reference: " + m_send.register( l_votingAgent ) );
-
         return m_send.register( l_votingAgent );
 
     }
@@ -154,3 +147,8 @@ public class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
 // TODO if necessary, reinsert in constructor CCommittee()
 // TODO if necessary, reinsert in constructor CDissatisfaction()
 // TODO if necessary, reinsert in constructor new CVote()
+// ------- was in generatesingle()------
+//  int l_group = (int) ( Math.random() * m_environment.size() );
+//  l_group = (int) ( Math.random() * m_environment.size() );
+//  System.out.println( "Agent reference: " + m_send.register( l_votingAgent ) );
+
