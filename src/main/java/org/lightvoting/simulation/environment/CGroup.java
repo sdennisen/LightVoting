@@ -65,15 +65,23 @@ public class CGroup
     /**
      * returns literal representation for voting agent
      * @param p_votingAgent voting agent
-     * @return literal with agents in the group
+     * @return literal with chair, status of group, curret voting result and info whether the group contains the agent
      */
 
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-        m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
-
         return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
                               CRawTerm.from( m_agentList.contains( p_votingAgent ) ) );
+    }
+
+    /**
+     * returns literal representation for chair agent, is null if the chair is not the chair of the group
+     * @param p_chairAgent chair agent
+     * @return literal with group reference, agents in group, status of group, current voting result )
+     */
+    public ILiteral literal( final CChairAgent p_chairAgent )
+    {
+        return CLiteral.from( "group", CRawTerm.from( this ), CRawTerm.from( m_agentList ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ) );
     }
 
     /**
@@ -88,7 +96,6 @@ public class CGroup
         {
             m_open = false;
         }
-
     }
 
     public boolean open()
@@ -99,3 +106,4 @@ public class CGroup
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX
 // TODO set m_capacity via config file
+// TODO if necessary, reinsert in literal( CVotingAgent p_ag ) m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
