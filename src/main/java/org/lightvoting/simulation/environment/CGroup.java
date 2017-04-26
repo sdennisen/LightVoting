@@ -152,6 +152,14 @@ public class CGroup
         m_agentList.forEach( i -> i.trigger( l_trigger ) );
     }
 
+    /**
+     * return size
+     * @return size of agent list
+     */
+    public int size()
+    {
+        return m_agentList.size();
+    }
 }
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX

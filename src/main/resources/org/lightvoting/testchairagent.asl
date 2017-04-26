@@ -20,9 +20,14 @@ iteration(0).
     .
 
 +!vote/received(Traveller, Vote) <-
-   generic/print("Receiving vote from traveller ", Traveller)
- //    store/vote(Traveller, Vote)
-    .
+   generic/print("Receiving vote from traveller ", Traveller);
+   store/vote(Traveller, Vote)
+   .
+
++!all/votes/received() <-
+  generic/print(" All voters submitted their votes" )
+ //    compute/result()
+ .
 
 // XXXXX Old Code XXXXXXX
 
@@ -54,11 +59,6 @@ iteration(0).
 //+!diss/received(Traveller, Diss, Iteration) <-
 //    generic/print("Receiving dissatisfaction from traveller ", Traveller);
 //    store/diss(Traveller, Diss, Iteration)
-//    .
-
-//+!all/votes/received() <-
-//    generic/print("!!!!!!!!!!!!!!!!!!!!!!! Received all votes.");
-//    compute/result()
 //    .
 
 //+!all/dissatisfaction/received(Iteration) <-

@@ -36,6 +36,10 @@ import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -58,6 +62,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
 
     private final CEnvironment m_environment;
+    private List<AtomicIntegerArray> m_votes;
 
     /**
      * constructor of the agent
@@ -71,6 +76,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
+        m_votes = Collections.synchronizedList( new LinkedList<>() );
 
     }
 
@@ -149,6 +155,36 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         final CGroup l_group = this.determineGroup();
         l_group.triggerAgents( this );
+    }
+
+    /**
+     * store vote
+     * @param p_votingAgent voting agent
+     * @param p_vote vote
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/vote" )
+    public void storeVote( final Object p_votingAgent, final AtomicIntegerArray p_vote )
+    {
+        final CGroup l_group = this.determineGroup();
+
+
+        m_votes.add( p_vote );
+
+        if ( m_votes.size() == l_group.size() )
+        {
+
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/votes/received" )
+
+            );
+
+            System.out.println( " CChairAgent.java: all votes received " );
+
+            this.trigger( l_trigger );
+        }
     }
 
 
