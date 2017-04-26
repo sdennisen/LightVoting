@@ -64,7 +64,6 @@ public class CCombination
     {
         if ( p_len == 0 )
         {
-           // System.out.println( Arrays.toString( p_result ) );
             final int[] l_tempResult = Arrays.copyOf( p_result, p_result.length );
             m_resultList.add( l_tempResult );
             return;
