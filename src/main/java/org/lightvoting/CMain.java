@@ -45,8 +45,6 @@ import java.util.stream.IntStream;
  */
 public final class CMain
 {
-    private static Iterator<CVotingAgent> s_agentIterator;
-
     private static CEnvironment s_environment;
     private static H5File s_h5file;
 
@@ -94,7 +92,7 @@ public final class CMain
 
 
             System.out.println( " Numbers of agents: " + l_agents.size() );
-            s_agentIterator = l_agents.iterator();
+
 
         }
         catch ( final Exception l_exception )
@@ -112,19 +110,6 @@ public final class CMain
         System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
         System.out.println( " Will run " + p_args[3] + " cycles." );
 
-        // runtime call (with parallel execution)
-
-//        // set cycle number in environment
-//        s_environment.setCycles( p_args.length < 4
-//                               ? Integer.MAX_VALUE
-//                                : Integer.parseInt( p_args[3] ) );
-
-        // wake up first agent
-//        final CVotingAgent l_firstAgent = l_agents.iterator().next();
-//
-//        l_firstAgent.sleep( 0 );
-//        l_firstAgent.getChair().sleep( 0 );
-
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
             .range( 0,
@@ -133,14 +118,6 @@ public final class CMain
                     : Integer.parseInt( p_args[3] ) )
             .forEach( j ->
             {
-//<<<<<<< HEAD
-//                // if you want to do something in cycle j, put it here - in this case, activate three new agents
-//                // addAgents( l_activeAgents, 3, s_agentIterator );
-//
-//                addAgents( l_activeAgents, 1, s_agentIterator );
-//                s_environment.setReady( false );
-//                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
-//=======
                 System.out.println( "Global cycle: " + j );
                 l_agents.parallelStream().forEach( i ->
                 {
@@ -161,7 +138,76 @@ public final class CMain
             } );
     }
 
-        // add first agent
+    private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
+    {
+
+        for ( int i = 0; i < p_newAgNum; i++ )
+        {
+            if ( p_agentIterator.hasNext() )
+            {
+                final CVotingAgent l_curAg = p_agentIterator.next();
+                p_activeAgents.add( l_curAg );
+                System.out.println( "added Agent " + l_curAg.name() );
+                p_agentIterator.remove();
+
+            }
+        }
+
+    }
+
+    // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
+
+    private static void createHDF5()
+    {
+        final String l_fileName = "results.h5";
+
+        // Create a new file.
+        try
+        {
+            s_h5file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
+            s_h5file.close();
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
+
+    }
+
+
+}
+
+
+// XXXXXXX Old Code XXXXXXX
+//     private static Iterator<CVotingAgent> s_agentIterator;
+
+// ---- was in constructor ----
+//           s_agentIterator = l_agents.iterator();
+
+
+// runtime call (with parallel execution)
+
+//        // set cycle number in environment
+//        s_environment.setCycles( p_args.length < 4
+//                               ? Integer.MAX_VALUE
+//                                : Integer.parseInt( p_args[3] ) );
+
+// wake up first agent
+//        final CVotingAgent l_firstAgent = l_agents.iterator().next();
+//
+//        l_firstAgent.sleep( 0 );
+//        l_firstAgent.getChair().sleep( 0 );
+
+//<<<<<<< HEAD
+//                // if you want to do something in cycle j, put it here - in this case, activate three new agents
+//                // addAgents( l_activeAgents, 3, s_agentIterator );
+//
+//                addAgents( l_activeAgents, 1, s_agentIterator );
+//                s_environment.setReady( false );
+//                System.out.println( "After Cycle " + j + ": Numbers of active agents: " + l_activeAgents.size() );
+//=======
+
+// add first agent
 
 //        addAgents( l_activeAgents, 1, s_agentIterator );
 //
@@ -272,44 +318,4 @@ public final class CMain
                                                                    } );
                       } );*/
 
-
-
-    private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
-    {
-
-        for ( int i = 0; i < p_newAgNum; i++ )
-        {
-            if ( p_agentIterator.hasNext() )
-            {
-                final CVotingAgent l_curAg = p_agentIterator.next();
-                p_activeAgents.add( l_curAg );
-                System.out.println( "added Agent " + l_curAg.name() );
-                p_agentIterator.remove();
-
-            }
-        }
-
-    }
-
-    // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
-
-    private static void createHDF5()
-    {
-        final String l_fileName = "results.h5";
-
-        // Create a new file.
-        try
-        {
-            s_h5file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
-            s_h5file.close();
-        }
-        catch ( final Exception l_ex )
-        {
-            l_ex.printStackTrace();
-        }
-
-    }
-
-
-}
 
