@@ -112,13 +112,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
         final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
-        l_groups.stream().forEach( i->
-        {
-/*            System.out.println( ".................. print group  " + i );
-            System.out.println( "Contents of group " + ( (ILiteral) i ).values().findFirst().get().raw() );
-            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
-            l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() );
-        } );
+        l_groups.stream().forEach( i-> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
         // if conditions for election are fulfilled, trigger goal start/election
 
         final ITrigger l_trigger;
@@ -140,6 +134,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 }
 
 // XXXXXXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// TODO if necessary, reinsert into checkConditions()
+
+/*            System.out.println( ".................. print group  " + i );
+            System.out.println( "Contents of group " + ( (ILiteral) i ).values().findFirst().get().raw() );
+            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
 
 
 /*    @IAgentActionFilter
