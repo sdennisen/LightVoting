@@ -119,10 +119,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
-
-        // TODO replace this with real vote generation
-       // m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
-
     }
 
     public CEnvironment getEnvironment()
@@ -174,10 +170,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     public double computeDiss( final int[] p_resultValues )
     {
-//        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
-//        return l_random;
-//        return 1;
-
         double l_diss = 0;
 
         for ( int i = 0; i < p_resultValues.length; i++ )
@@ -214,9 +206,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final Collection l_groups = l_bb.literal( "groups" );
         l_groups.stream().forEach( i->
             {
-              /*  System.out.println( ".................. print group reference " + i );
-                System.out.println( "Contents of group literal" + ( (ILiteral) i ).values().findFirst().get().raw() );
-                System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
                 l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
             }
         );
@@ -227,12 +216,10 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             if ( l_groupList.get().get( i ).open() )
             {
                 l_activeGroups.add( l_groupList.get().get( i ) );
-             //   System.out.println( " add active group " + l_groupList.get().get( i ) );
             }
 
         if ( l_activeGroups.isEmpty() )
         {
-         //   System.out.println( "No active groups, create a new group" );
             final CGroup l_group = m_environment.openNewGroup( this );
             this.beliefbase().add( l_group.literal( this ) );
             System.out.println( "opened new group " + l_group );
@@ -247,9 +234,58 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     }
 
+    /**
+     * Get agent's name
+     * @return name of agent
+     */
+    public final String name()
+    {
+        return m_name;
+    }
+
+    /**
+     * get associated chair agent
+     * @return chair agent
+     */
+    public CChairAgent getChair()
+    {
+        return m_chair;
+    }
 
 
-    //
+    public AtomicIntegerArray getVote()
+    {
+        return m_vote;
+    }
+}
+
+// XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
+
+// m_vote = new AtomicIntegerArray( new int[] {1, 1, 1, 0, 0, 0} );
+
+// ---- Test in computeDiss() ------
+
+//        final double l_random = ThreadLocalRandom.current().nextDouble( 0, 10 );
+//        return l_random;
+//        return 1;
+
+// TODO if necessary, reinsert in joinGroupRandom()
+
+/*  System.out.println( ".................. print group reference " + i );
+    System.out.println( "Contents of group literal" + ( (ILiteral) i ).values().findFirst().get().raw() );
+    System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
+
+// TODO tip from Malte for filtering
+
+/*m_groups.parallelStream()
+    .filter( i -> i.open() )
+    .min( (g1, g2) -> Double.compare( g1.satisfaction(this), g2.satisfaction(this)) )
+    .get();*/
+
+// TODO tip from Malte for filtering
+// m_groups.get( l_random.nextInt( m_groups.size() ) );
+
+//
 
 
         /*if ( m_activechairs.size() == 0 )
@@ -336,41 +372,3 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         System.out.println( "Trying to submit diss for iteration " + p_iteration );
         m_environment.submitDiss( this, p_chairAgent, p_iteration );
     }*/
-
-
-    /**
-     * Get agent's name
-     * @return name of agent
-     */
-    public final String name()
-    {
-        return m_name;
-    }
-
-    /**
-     * get associated chair agent
-     * @return chair agent
-     */
-    public CChairAgent getChair()
-    {
-        return m_chair;
-    }
-
-
-    public AtomicIntegerArray getVote()
-    {
-        return m_vote;
-    }
-}
-
-// XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
-
-// TODO tip from Malte for filtering
-
-/*m_groups.parallelStream()
-    .filter( i -> i.open() )
-    .min( (g1, g2) -> Double.compare( g1.satisfaction(this), g2.satisfaction(this)) )
-    .get();*/
-
-// TODO tip from Malte for filtering
-// m_groups.get( l_random.nextInt( m_groups.size() ) );
