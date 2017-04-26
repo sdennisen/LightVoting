@@ -16,9 +16,6 @@ iteration(0).
 
    perceive/env();
    join/group();
-
- //  !lookforgroup;
-
    !nextcycle
    .
 
@@ -43,30 +40,6 @@ iteration(0).
        generic/print("..................Received belief on group with open:", Open, " result:", Result, " mygroup:", MyGroup, " ", Chair )
        .
 
-// +!lookforgroup <-
-   //    generic/print(MyName, "I'm looking for a group to join");
-   //    join/group()
-   //    env/join/group()
-   //    .
-
-//+!submit/your/vote(Chair) <-
-//       generic/print(MyName, " I need to submit my vote to chair ", Chair);
-//       env/submit/vote(Chair)
-//       .
-
-// plan for basic voting
-//+!election/result(Chair, Result) <-
-//       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
-//       .
-
-// plan for iterative voting
-//+!election/result(Chair, Result, Iteration) <-
-//       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
-//       generic/print(MyName, " Submit Dissatisfaction");
-//       env/submit/dissatisfaction(Chair, Iteration)
-//       .
-
-
 +!group(ID, Chair) <-
 generic/print("------------------ ", MyName, " Group ", ID," opened with Chair ", Chair)
 .
@@ -77,4 +50,28 @@ generic/print("------------------ ", MyName, " Group ", ID," opened with Chair "
 // TODO if necessary, reinsert in test  voting/send/chair/dissatisfaction(0.1);
 // TODO if necessary, reinsert in test  voting/send/chair/vote(0);
 
+ //  !lookforgroup;
+
+ // +!lookforgroup <-
+    //    generic/print(MyName, "I'm looking for a group to join");
+    //    join/group()
+    //    env/join/group()
+    //    .
+
+ //+!submit/your/vote(Chair) <-
+ //       generic/print(MyName, " I need to submit my vote to chair ", Chair);
+ //       env/submit/vote(Chair)
+ //       .
+
+ // plan for basic voting
+ //+!election/result(Chair, Result) <-
+ //       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
+ //       .
+
+ // plan for iterative voting
+ //+!election/result(Chair, Result, Iteration) <-
+ //       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
+ //       generic/print(MyName, " Submit Dissatisfaction");
+ //       env/submit/dissatisfaction(Chair, Iteration)
+ //       .
 
