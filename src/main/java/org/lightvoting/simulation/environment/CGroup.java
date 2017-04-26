@@ -26,6 +26,7 @@ package org.lightvoting.simulation.environment;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
+import org.lightjason.agentspeak.language.ITerm;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
@@ -49,6 +50,7 @@ public class CGroup
     private int[] m_result;
 
     private boolean m_readyForElection;
+    private boolean m_inProgress;
 
     /**
      * constructor
@@ -62,6 +64,7 @@ public class CGroup
         m_open = true;
         m_result = null;
         m_readyForElection = false;
+        m_inProgress = false;
     }
 
     /**
@@ -84,12 +87,18 @@ public class CGroup
      */
     public ILiteral literal( final CChairAgent p_chairAgent )
     {
+        final List<ITerm> l_terms = new LinkedList<>();
+
+        for ( int i = 0; i < m_agentList.size(); i++ )
+            l_terms.add( CRawTerm.from( m_agentList.get( i ) ) );
+
+
         if ( ( this.m_chair ).equals( p_chairAgent ) )
-            return CLiteral.from( "group", CRawTerm.from( this ), CRawTerm.from( this.readyForElection() ) );
+            return CLiteral.from( "group", CRawTerm.from( this ) );
         else return null;
     }
 
-    private boolean readyForElection()
+    public boolean readyForElection()
     {
         return m_readyForElection;
     }
@@ -112,6 +121,16 @@ public class CGroup
     public boolean open()
     {
         return m_open;
+    }
+
+    public boolean electionInProgress()
+    {
+        return m_inProgress;
+    }
+
+    public void startProgress()
+    {
+        m_inProgress = true;
     }
 }
 

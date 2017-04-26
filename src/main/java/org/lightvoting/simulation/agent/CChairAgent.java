@@ -28,7 +28,15 @@ import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.ILiteral;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.environment.CGroup;
+
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -92,6 +100,42 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( !( m_environment.detectGroup( this ) == null ) )
         this.beliefbase().add( m_environment.detectGroup( this ) );
     }
+    /**
+     * check conditions
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "check/conditions" )
+    /**
+     * add literal for group of chair agent if it exists
+     */
+    public void checkConditions()
+    {
+        final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
+        final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
+        l_groups.stream().forEach( i->
+        {
+            System.out.println( ".................. print group  " + i );
+            System.out.println( "Contents of group " + ( (ILiteral) i ).values().findFirst().get().raw() );
+            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );
+            l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() );
+        } );
+        // if conditions for election are fulfilled, trigger goal start/election
+
+        final ITrigger l_trigger;
+
+        if ( l_groupAtomic.get().readyForElection() && ( !( l_groupAtomic.get().electionInProgress() ) ) )
+        {
+            l_groupAtomic.get().startProgress();
+
+            l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from( "start/criterion/fulfilled" )
+            );
+
+            this.trigger( l_trigger );
+        }
+    }
+
 
 }
 

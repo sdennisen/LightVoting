@@ -11,17 +11,25 @@ iteration(0).
 +!nextcycle <-
     perceive/group();
     generic/print("... determining my group...");
+    check/conditions();
     !nextcycle
     .
 
-+group( Group, Ready ) <-
-    generic/print( "Cycle ", Cycle, " Print Group ", Group, " Ready ", Ready )
++group(Group) <-
+    generic/print( "XXXXXXXXXXXXXXXXXX Cycle ", Cycle, " Print Group ", Group )
     .
+
++!start/criterion/fulfilled() <-
+    generic/print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I'm now starting the election.")
+
+//  start/election()
+    .
+
+
 
 //+group( Group, Agents, Open, Result) <-
 //    generic/print( " XXXXXXXXXXXXXXXXXXX Print Group ", Group, " ", Agents, " ", Open, " ", Result)
 //    .
-
 
 +!myGroup( Traveller, GroupID) <-
 
@@ -34,10 +42,7 @@ iteration(0).
 +!join/group(Traveller) <-
      generic/print("Traveller ", Traveller, " joins my group").
 
-//+!start/criterion/fulfilled() <-
-//    generic/print("I'm now starting the election.");
-//    start/election()
-//.
+
 
 //+!vote/received(Traveller, Vote) <-
 //    generic/print("Receiving vote from traveller ", Traveller);
