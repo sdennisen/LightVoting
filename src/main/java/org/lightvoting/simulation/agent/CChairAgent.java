@@ -24,6 +24,8 @@
 package org.lightvoting.simulation.agent;
 
 import org.lightjason.agentspeak.action.binding.IAgentAction;
+import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
+import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -44,14 +46,22 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private final String m_name;
 
     /**
-     *  constructor of the agent
-     *  @param p_configuration agent configuration of the agent generator
+     * environment
+     */
+
+    private final CEnvironment m_environment;
+
+    /**
+     * constructor of the agent
+     *
+     * @param p_configuration agent configuration of the agent generator
      */
 
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
     {
         super( p_configuration );
         m_name = p_name;
+        m_environment = p_environment;
 
     }
 
@@ -68,13 +78,24 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_name;
     }
 
+
+    /**
+     * perceive group
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "perceive/group" )
+    /**
+     * add literal for group of chair agent if it exists
+     */
+    public void perceiveGroup()
+    {
+        if ( !( m_environment.detectGroup( this ) == null ) )
+        this.beliefbase().add( m_environment.detectGroup( this ) );
+    }
+
 }
 
 // XXXXXXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-//   private final CEnvironment m_environment;
-// constructor:   m_environment = p_environment;
 
 
 /*    @IAgentActionFilter

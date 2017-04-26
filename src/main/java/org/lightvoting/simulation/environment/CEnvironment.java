@@ -1170,6 +1170,21 @@ public final class CEnvironment
         this.wakeUpAgent();
     }
 
+    /**
+     * detect group of chair agent
+     * @param p_chairAgent chair agent
+     * @return literal representation of group if chair is assigned to a group
+     */
+    public ILiteral detectGroup( final CChairAgent p_chairAgent )
+    {
+        for ( final CGroup l_group : m_groups )
+        {
+            if ( !( ( l_group.literal( p_chairAgent ) ) == null ) )
+                return l_group.literal( p_chairAgent );
+        }
+        return null;
+    }
+
     private void wakeUpAgent()
     {
         m_currentIndex++;

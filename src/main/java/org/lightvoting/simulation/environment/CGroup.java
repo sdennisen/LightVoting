@@ -29,7 +29,6 @@ import org.lightjason.agentspeak.language.ILiteral;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,17 +48,20 @@ public class CGroup
 
     private int[] m_result;
 
+    private boolean m_readyForElection;
+
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
      */
     public CGroup( final CVotingAgent p_votingAgent )
     {
-        m_agentList = Collections.synchronizedList( new LinkedList<>() );
+        m_agentList = new LinkedList<>();
         m_agentList.add( p_votingAgent );
         m_chair = p_votingAgent.getChair();
         m_open = true;
         m_result = null;
+        m_readyForElection = false;
     }
 
     /**
@@ -70,6 +72,7 @@ public class CGroup
 
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
+
         return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
                               CRawTerm.from( m_agentList.contains( p_votingAgent ) ) );
     }
@@ -81,7 +84,14 @@ public class CGroup
      */
     public ILiteral literal( final CChairAgent p_chairAgent )
     {
-        return CLiteral.from( "group", CRawTerm.from( this ), CRawTerm.from( m_agentList ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ) );
+        if ( ( this.m_chair ).equals( p_chairAgent ) )
+            return CLiteral.from( "group", CRawTerm.from( this ), CRawTerm.from( this.readyForElection() ) );
+        else return null;
+    }
+
+    private boolean readyForElection()
+    {
+        return m_readyForElection;
     }
 
     /**
@@ -95,6 +105,7 @@ public class CGroup
         if ( m_agentList.size() >= m_capacity )
         {
             m_open = false;
+            m_readyForElection = true;
         }
     }
 
@@ -107,3 +118,36 @@ public class CGroup
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX
 // TODO set m_capacity via config file
 // TODO if necessary, reinsert in literal( CVotingAgent p_ag ) m_agentList.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
+// TODO reinsert the following in literal( CChairAgent p_chairAg ) ?
+       /* Collection<ITerm> l_rawTerms = new LinkedList<>();
+        for ( int i = 0; i < m_agentList.size(); i++ )
+            l_rawTerms.add( CRawTerm.from( m_agentList.get( i ) ) );
+
+
+        ILiteral l_literal = CLiteral.from( "agents", l_rawTerms ) ;*/
+//   return CLiteral.from( "group", CRawTerm.from( this ), l_literal, CRawTerm.from( this.open() ), CRawTerm.from( m_result ) );
+
+// TODO Hinweis Malte
+
+/*
+https://lightjason.github.io/AgentSpeak/sources/d2/dd3/classorg_1_1lightjason_1_1agentspeak_1_1action_1_1buildin_1_1collection_1_1list_1_1CCreate.html
+    das ganze ist dann ein List<ITerm> objekt
+
+    sophie
+    11:50 AM
+    mh ja ok dann müsste ich in java eine List<ITerm> erzeugen und dann CRawTerm.from( list) machen
+    11:50 AM
+    meine nur das hätte ich vorhin schon mal versucht
+
+    malte
+    11:54 AM
+    kannst ja mal in der methode schauen. da macht phil am ende
+    Java
+    p_return.add( CRawTerm.from(
+    p_parallel
+    ? Collections.synchronizedList( l_list )
+    : l_list
+    ) );
+    d.h. wenn du das parallel zusammen schieben willst, erzeug halt per
+    Java
+    CRawTerm.from( Collections.synchronizedList( new <deine liste> ) );*/

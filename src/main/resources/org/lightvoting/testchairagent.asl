@@ -2,7 +2,26 @@ iteration(0).
 
 !main.
 
-+!main <- generic/print("....Chair....").
++!main <-
+    generic/print("....Chair....");
+    !nextcycle
+  .
+
+
++!nextcycle <-
+    perceive/group();
+    generic/print("... determining my group...");
+    !nextcycle
+    .
+
++group( Group, Ready ) <-
+    generic/print( "Cycle ", Cycle, " Print Group ", Group, " Ready ", Ready )
+    .
+
+//+group( Group, Agents, Open, Result) <-
+//    generic/print( " XXXXXXXXXXXXXXXXXXX Print Group ", Group, " ", Agents, " ", Open, " ", Result)
+//    .
+
 
 +!myGroup( Traveller, GroupID) <-
 
