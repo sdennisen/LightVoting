@@ -34,6 +34,8 @@ import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 
@@ -256,7 +258,29 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         return m_vote;
     }
+
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "submit/vote" )
+    private void submitVote( final CChairAgent p_chairAgent )
+    {
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "vote/received",
+                CLiteral.from( this.name() ),
+                CRawTerm.from( this.getVote() )
+            )
+        );
+
+        p_chairAgent.trigger( l_trigger );
+
+    }
+
 }
+
+
 
 // XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
 

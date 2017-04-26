@@ -45,8 +45,8 @@ iteration(0).
     .
 
 +!submit/vote(Chair) <-
-    generic/print(MyName, " I need to submit my vote to chair ", Chair)
-//  submit/vote(Chair)
+    generic/print(MyName, " I need to submit my vote to chair ", Chair);
+    submit/vote(Chair)
     .
 
 // XXXXXXXXXXXX Old code XXXXXXXXXXXX
