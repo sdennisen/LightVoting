@@ -65,6 +65,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_configuration agent configuration of the agent generator
      */
 
+
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
     {
         super( p_configuration );
@@ -110,17 +111,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     public void checkConditions()
     {
-        final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
-        final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
-        l_groups.stream().forEach( i-> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        final CGroup l_group = this.determineGroup();
 
         // if conditions for election are fulfilled, trigger goal start/criterion/fulfilled
 
         final ITrigger l_trigger;
 
-        if ( l_groupAtomic.get().readyForElection() && ( !( l_groupAtomic.get().electionInProgress() ) ) )
+        if ( l_group.readyForElection() && ( !( l_group.electionInProgress() ) ) )
         {
-            l_groupAtomic.get().startProgress();
+            l_group.startProgress();
 
             l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
@@ -129,6 +128,27 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             this.trigger( l_trigger );
         }
+    }
+
+    private CGroup determineGroup()
+    {
+        final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
+        final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
+        l_groups.stream().forEach( i-> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        return l_groupAtomic.get();
+    }
+
+
+    /**
+     * start election
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "start/election" )
+
+    public void startElection()
+    {
+        final CGroup l_group = this.determineGroup();
+        l_group.triggerAgents( this );
     }
 
 

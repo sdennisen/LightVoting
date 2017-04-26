@@ -14,9 +14,9 @@ iteration(0).
     .
 
 +!start/criterion/fulfilled() <-
-    generic/print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I'm now starting the election.")
+    generic/print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I'm now starting the election.");
 
-//  start/election()
+    start/election()
     .
 
 // XXXXX Old Code XXXXXXX

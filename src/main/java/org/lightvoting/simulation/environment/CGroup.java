@@ -27,6 +27,8 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.ITerm;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
@@ -132,6 +134,24 @@ public class CGroup
     {
         m_inProgress = true;
     }
+
+    /**
+     * trigger agents in group
+     * @param p_chairAgent chair agent
+     */
+    public void triggerAgents( final CChairAgent p_chairAgent )
+    {
+
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "submit/vote",
+                CRawTerm.from( p_chairAgent ) )
+        );
+
+        m_agentList.forEach( i -> i.trigger( l_trigger ) );
+    }
+
 }
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX

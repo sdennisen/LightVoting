@@ -41,8 +41,13 @@ iteration(0).
        .
 
 +!group(ID, Chair) <-
-generic/print("------------------ ", MyName, " Group ", ID," opened with Chair ", Chair)
-.
+    generic/print("------------------ ", MyName, " Group ", ID," opened with Chair ", Chair)
+    .
+
++!submit/vote(Chair) <-
+    generic/print(MyName, " I need to submit my vote to chair ", Chair)
+//  submit/vote(Chair)
+    .
 
 // XXXXXXXXXXXX Old code XXXXXXXXXXXX
 // TODO if necessary, reinsert in test  voting/group/find-preferred();
