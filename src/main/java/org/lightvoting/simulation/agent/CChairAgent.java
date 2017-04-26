@@ -113,7 +113,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
         final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
         l_groups.stream().forEach( i-> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
-        // if conditions for election are fulfilled, trigger goal start/election
+
+        // if conditions for election are fulfilled, trigger goal start/criterion/fulfilled
 
         final ITrigger l_trigger;
 
