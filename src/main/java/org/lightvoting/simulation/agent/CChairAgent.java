@@ -225,7 +225,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         m_dissList.add( p_diss );
 
-        System.out.println( "Storing diss " );
+        System.out.println( "Storing diss " + p_diss );
 
         if ( m_dissList.size() == l_group.size() )
         {
@@ -366,4 +366,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         //        System.out.println( " computed result " );
 
     }*/
+
+//    final ITrigger l_ack = CTrigger.from(
+//        ITrigger.EType.ADDGOAL,
+//        CLiteral.from( "ack"
+//
+//        )
+//
+//    );
+//
+//        p_votingAgent.trigger( l_ack );
 

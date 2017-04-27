@@ -107,6 +107,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private Integer m_joinThreshold;
 
+    private String m_ack;
+
     /**
      * constructor of the agent
      *
@@ -148,6 +150,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_voted = false;
         m_joinThreshold = 5;
         m_grouping = p_grouping;
+        m_ack = null;
     }
 
     public CEnvironment getEnvironment()
@@ -412,28 +415,26 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/dissatisfaction" )
-    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result )
+    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result ) throws InterruptedException
     {
 
         final Double l_diss = this.computeDiss( p_result );
 
+        System.out.println( this.name() + " tries to submit diss " + l_diss );
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
-            CLiteral.from( "diss/received",
-                           CRawTerm.from( this ),
-                           CRawTerm.from( l_diss ),
-                           CRawTerm.from( p_iteration )
-                        )
-                    );
+            CLiteral.from(
+                "diss/received",
+                CRawTerm.from( this ),
+                CRawTerm.from( l_diss ),
+                CRawTerm.from( p_iteration )
+            )
+        );
         p_chairAgent.trigger( l_trigger );
-
-        System.out.println( this.name() + " submitted diss" );
     }
 
-
-
-
 }
+
 
 // XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
 
@@ -573,3 +574,34 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //    );
 //
 //        p_chairAgent.beliefbase().add( l_literal );
+
+
+//    private boolean receivedAck()
+//    {
+//        return !(m_ack == null);
+//    }
+//
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "verify/ack" )
+//    private void verifyAck()
+//    {
+//        m_ack = "ACK";
+//    }
+
+
+//    Random l_random = new Random();
+//    wait( l_random.nextInt() );
+//
+//    System.out.println( this.name() + " tries again to submit diss " + l_diss );
+//
+//final ITrigger l_trigger1 = CTrigger.from(
+//    ITrigger.EType.ADDGOAL,
+//    CLiteral.from(
+//    "diss/received",
+//    CRawTerm.from( this ),
+//    CRawTerm.from( l_diss ),
+//    CRawTerm.from( p_iteration )
+//    )
+//    );
+//
+//    p_chairAgent.trigger( l_trigger1 );

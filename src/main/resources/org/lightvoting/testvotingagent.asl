@@ -61,6 +61,7 @@ iteration(0).
       submit/dissatisfaction(Chair, Iteration, Result)
       .
 
+
 // XXXXXXXXXXXX Old code XXXXXXXXXXXX
 // TODO if necessary, reinsert in test  voting/group/find-preferred();
 // TODO if necessary, reinsert in test  voting/rules/minmaxapproval/committee-from("foo", "bar", "baz");
@@ -87,3 +88,6 @@ iteration(0).
 
 
 
+//+!ack() <-
+//      verify/ack()
+//      .
