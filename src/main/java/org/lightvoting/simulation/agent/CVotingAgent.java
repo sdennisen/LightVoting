@@ -86,6 +86,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private final AtomicDoubleArray m_atomicPrefValues;
 
+    // TODO define via config file
+    /**
+     * grouping algorithm
+     */
+    private String m_grouping = "RANDOM";
+
     /**
      * constructor of the agent
      * @param p_name name of the agent
@@ -194,7 +200,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "join/group" )
     private void joinGroup()
     {
-        // TODO insert condition for random grouping
+        if ( "RANDOM".equals( m_grouping ) )
         this.joinRandomGroup();
     }
 
