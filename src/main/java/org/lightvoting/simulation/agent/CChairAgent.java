@@ -247,7 +247,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         // for the iterative case, you need to differentiate between the final election and intermediate elections.
 
-        if ( "ITERATIVE".equals( m_protocol )  && ( l_group.readyForFinale() ) )
+        if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
+        {
+
+            this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
+        }
+
+        if ( "ITERATIVE".equals( m_protocol )  && ( l_group.finale() ) )
         {
 
             this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
@@ -255,7 +261,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
 
         // if grouping is coordinated, reopen group for further voters
-        if ( "COORDINATED".equals( m_grouping ) && !l_group.readyForFinale() )
+        if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() )
             m_environment.reopen( l_group );
 
         // TODO watch out with case coordinated grouping and iterative voting

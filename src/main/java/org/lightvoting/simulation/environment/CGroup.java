@@ -259,7 +259,7 @@ public class CGroup
     }
 
 
-    public boolean readyForFinale()
+    public boolean finale()
     {
         return m_agentList.size() >= m_capacity;
     }
