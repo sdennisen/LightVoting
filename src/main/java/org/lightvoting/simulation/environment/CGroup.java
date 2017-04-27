@@ -266,6 +266,7 @@ public class CGroup
     {
         return m_agentList.size() >= m_capacity;
     }
+
 }
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX
@@ -304,3 +305,29 @@ https://lightjason.github.io/AgentSpeak/sources/d2/dd3/classorg_1_1lightjason_1_
     d.h. wenn du das parallel zusammen schieben willst, erzeug halt per
     Java
     CRawTerm.from( Collections.synchronizedList( new <deine liste> ) );*/
+
+////
+//public boolean contains( final CVotingAgent p_votingAgent )
+//{
+//    return m_agentList.contains( p_votingAgent );
+//}
+//
+//    public ILiteral resultLiteral( final CVotingAgent p_votingAgent )
+//    {
+//
+//    }
+
+
+
+//    ILiteral l_literal = CLiteral.from( "election/result",
+//                                        CRawTerm.from( p_chairAgent ),
+//                                        CRawTerm.from( p_result  ),
+//                                        CRawTerm.from( p_iteration ) )
+//        ;
+//// send result of election to all agents in the group
+//        m_agentList.stream().forEach( i ->
+//            {
+//            i.beliefbase().add( l_literal );
+//            System.out.println( "add election result belief " + i.name() );
+//            } );
+

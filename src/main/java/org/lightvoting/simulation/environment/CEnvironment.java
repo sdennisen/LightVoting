@@ -1240,3 +1240,17 @@ public final class CEnvironment
 // Test
 //    m_groups.add( new CGroup( p_votingAgent ) );
 //     m_groups.parallelStream().forEach( i -> System.out.println( " Added " + CRawTerm.from( i ) ) );
+
+
+
+
+//public ILiteral detectResult( final CVotingAgent p_votingAgent )
+//{
+//    for ( int i = 0; i < m_groups.size(); i++ )
+//    {
+//        if ( m_groups.get(i).contains( p_votingAgent ) )
+//            return m_groups.get( i ).resultLiteral( p_votingAgent );
+//
+//    }
+//    return null;
+//}

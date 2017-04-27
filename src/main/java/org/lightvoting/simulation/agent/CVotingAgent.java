@@ -109,6 +109,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * constructor of the agent
+     *
      * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
@@ -191,6 +192,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * compute dissatisfaction of voter with given committee
+     *
      * @param p_resultValues committee
      * @return dissatisfaction with committee
      */
@@ -221,7 +223,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void joinGroup()
     {
         if ( "RANDOM".equals( m_grouping ) )
-        this.joinGroupRandom();
+            this.joinGroupRandom();
 
         if ( "COORDINATED".equals( m_grouping ) )
             this.joinGroupCoordinated();
@@ -233,8 +235,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
         final Collection l_groups = l_bb.literal( "groups" );
-        l_groups.stream().forEach( i->
-            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        l_groups.stream().forEach( i ->
+                                       l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
@@ -362,6 +364,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * Get agent's name
+     *
      * @return name of agent
      */
     public final String name()
@@ -371,6 +374,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     /**
      * get associated chair agent
+     *
      * @return chair agent
      */
     public CChairAgent getChair()
@@ -413,21 +417,34 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         final Double l_diss = this.computeDiss( p_result );
 
-        final ITrigger l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from( "diss/received",
-                               CRawTerm.from( this ),
-                               CRawTerm.from( l_diss ),
-                               CRawTerm.from( p_iteration )
-                )
-            );
-        p_chairAgent.trigger( l_trigger );
+        //        final ITrigger l_trigger = CTrigger.from(
+        //                ITrigger.EType.ADDGOAL,
+        //                CLiteral.from( "diss/received",
+        //                               CRawTerm.from( this ),
+        //                               CRawTerm.from( l_diss ),
+        //                               CRawTerm.from( p_iteration )
+        //                )
+        //            );
+        //   p_chairAgent.trigger( l_trigger );
+
+
+        final ILiteral l_literal = CLiteral.from(
+            "diss/received",
+            CRawTerm.from( this ),
+            CRawTerm.from( l_diss ),
+            CRawTerm.from( p_iteration )
+
+        );
+
+        p_chairAgent.beliefbase().add( l_literal );
 
         System.out.println( this.name() + " submitted diss" );
     }
+
+
+
+
 }
-
-
 
 // XXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXX
 
@@ -542,3 +559,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         System.out.println( "Trying to submit diss for iteration " + p_iteration );
         m_environment.submitDiss( this, p_chairAgent, p_iteration );
     }*/
+
+//    /**
+//     * perceive result
+//     */
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "perceive/result" )
+//    /**
+//     * update literal for result
+//     */
+//    public void perceiveResult()
+//    {
+//        if ( !( m_environment.detectResult( this ) == null ) )
+//            this.beliefbase().add( m_environment.detectResult( this ) );
+//    }

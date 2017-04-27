@@ -29,6 +29,7 @@ iteration(0).
    store/diss(Traveller, Diss, Iteration)
    .
 
+
 +!all/votes/received() <-
   generic/print(" All voters submitted their votes" );
   compute/result()
@@ -86,3 +87,9 @@ iteration(0).
 //    generic/print("Start Iteration: ", NewI);
 //    recompute/result(NewI)
 //    .
+
+
+//+diss/received(Traveller, Diss, Iteration) <-
+ //  generic/print("Receiving dissatisfaction" );
+ //  store/diss(Traveller, Diss, Iteration)
+ //  .
