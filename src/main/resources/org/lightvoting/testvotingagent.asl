@@ -50,10 +50,16 @@ iteration(0).
     .
 
 // plan for basic voting
-+!election/result(Result) <-
- generic/print(MyName, " heard result ", Result)
++!election/result(Chair, Result) <-
+ generic/print(MyName, " heard result ", Result, " from chair ", Chair)
  .
 
+ // plan for iterative voting
++!election/result(Chair, Result, Iteration) <-
+      generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
+      generic/print(MyName, " Submit Dissatisfaction")
+  //  env/submit/dissatisfaction(Chair, Iteration)
+      .
 
 // XXXXXXXXXXXX Old code XXXXXXXXXXXX
 // TODO if necessary, reinsert in test  voting/group/find-preferred();
@@ -79,10 +85,5 @@ iteration(0).
  //       generic/print(MyName, " heard result ", Result, " from Chair ", Chair)
  //       .
 
- // plan for iterative voting
- //+!election/result(Chair, Result, Iteration) <-
- //       generic/print(MyName, "heard result", Result, "Iteration", Iteration, "from Chair", Chair);
- //       generic/print(MyName, " Submit Dissatisfaction");
- //       env/submit/dissatisfaction(Chair, Iteration)
- //       .
+
 

@@ -50,7 +50,8 @@ public final class CMain
 
     // TODO later via config
     private static int s_AltNum = 6;
-    private static String s_grouping = "COORDINATED";
+    private static String s_grouping = "RANDOM";
+    private static String s_protocol = "ITERATIVE";
 
     /**
      * Hidden constructor
@@ -88,7 +89,7 @@ public final class CMain
 
             l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment, s_grouping  )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol )  )
                     .collect( Collectors.toSet() );
 
 

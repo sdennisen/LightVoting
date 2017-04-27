@@ -73,21 +73,29 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     private String m_grouping;
 
+    private int m_iteration;
+    private String m_protocol;
+
     /**
      * constructor of the agent
-     *
-     * @param p_configuration agent configuration of the agent generator
+     *  @param p_configuration agent configuration of the agent generator
      * @param p_grouping grouping algorithm
+     * @param p_protocol voting protocol
      */
 
 
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping )
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping,
+                        final String p_protocol
+    )
     {
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
         m_votes = Collections.synchronizedList( new LinkedList<>() );
         m_grouping = p_grouping;
+        m_protocol = p_protocol;
+        m_iteration = 0;
+
 
     }
 
@@ -229,19 +237,29 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
-        // TODO see old code in CEnvironment for other cases
-
-        this.beliefbase().add( l_group.update( this, l_comResult ) );
-
         // set inProgress and readyForElection to false in group
         l_group.reset();
 
-        // if grouping is coordinated, the group needs to be re-opened again
-
-        if ( "COORDINATED".equals( m_grouping ) )
+        if ( "BASIC".equals( m_protocol ) )
         {
-            m_environment.reopen( l_group );
+            this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
+
+        // for the iterative case, you need to differentiate between the final election and intermediate elections.
+
+        if ( "ITERATIVE".equals( m_protocol )  && ( l_group.readyForFinale() ) )
+        {
+
+            this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
+            m_iteration++;
+        }
+
+        // if grouping is coordinated, reopen group for further voters
+        if ( "COORDINATED".equals( m_grouping ) && !l_group.readyForFinale() )
+            m_environment.reopen( l_group );
+
+        // TODO watch out with case coordinated grouping and iterative voting
+
     }
 
 }

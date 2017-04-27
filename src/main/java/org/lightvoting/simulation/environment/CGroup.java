@@ -181,26 +181,51 @@ public class CGroup
     }
 
     /**
-     * update group literal for chair agent
+     * update group literal for chair agent ( for random grouping )
      * @param p_chairAgent chair agent
      * @param p_result election result
      * @return group literal for chair agent
      */
 
-    public ILiteral update( final CChairAgent p_chairAgent, final int[] p_result )
+    public ILiteral updateBasic( final CChairAgent p_chairAgent, final int[] p_result )
     {
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "election/result",
-                 CRawTerm.from( Arrays.toString( p_result ) )
-            )
+            CLiteral.from( "election/result",
+                          CRawTerm.from( p_chairAgent ),
+                          CRawTerm.from( Arrays.toString( p_result ) )
+                         )
         );
         // send result of election to all agents in the group
         m_agentList.stream().forEach( i -> i.trigger( l_trigger ) );
 
         m_result = p_result;
         return this.literal( p_chairAgent );
+    }
+
+    /**
+     * update group literal for chair agent ( for random grouping )
+     * @param p_chairAgent chair agent
+     * @param p_result election result
+     * @param p_iteration current iteration
+     * @return group literal for chair agent
+     */
+
+    public ILiteral updateIterative( final CChairAgent p_chairAgent, final int[] p_result, final int p_iteration )
+    {
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from( "election/result",
+                          CRawTerm.from( p_chairAgent ),
+                          CRawTerm.from( Arrays.toString( p_result ) ),
+                          CRawTerm.from( p_iteration ) )
+        );
+        // send result of election to all agents in the group
+        m_agentList.stream().forEach( i -> i.trigger( l_trigger ) );
+
+        m_result = p_result;
+        return this.literal( p_chairAgent );
+
     }
 
     /**
@@ -231,6 +256,12 @@ public class CGroup
     public int[] result()
     {
         return m_result;
+    }
+
+
+    public boolean readyForFinale()
+    {
+        return m_agentList.size() >= m_capacity;
     }
 }
 

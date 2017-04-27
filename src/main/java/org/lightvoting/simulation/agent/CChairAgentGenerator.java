@@ -53,14 +53,16 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
     private final AtomicLong m_agentcounter = new AtomicLong();
 
     private final String m_grouping;
+    private String m_protocol;
 
     /**
      * constructor of the generator
      * @param p_stream ASL code as any stream e.g. FileInputStream
      * @param p_grouping grouping algorithm
+     * @param p_protocol voting protocol
      * @throws Exception Thrown if something goes wrong while generating agents.
      */
-    public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping ) throws Exception
+    public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping, final String p_protocol ) throws Exception
     {
         super(
             // input ASL stream
@@ -87,6 +89,7 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
         );
         m_environment = p_environment;
         m_grouping = p_grouping;
+        m_protocol = p_protocol;
     }
 
     /**
@@ -102,7 +105,7 @@ public final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
             // create a string with the agent name "chair <number>"
             // get the value of the counter first and increment, build the agent
             // name with message format (see Java documentation)
-            MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping );
+            MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol );
         l_chairAgent.sleep( Integer.MAX_VALUE );
         return l_chairAgent;
     }
