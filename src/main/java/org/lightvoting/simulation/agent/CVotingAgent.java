@@ -423,7 +423,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             );
         p_chairAgent.trigger( l_trigger );
 
-        System.out.println( "Submitted diss" );
+        System.out.println( this.name() + " submitted diss" );
     }
 }
 

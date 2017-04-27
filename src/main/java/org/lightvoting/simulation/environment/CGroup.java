@@ -220,7 +220,11 @@ public class CGroup
                           CRawTerm.from( p_iteration ) )
         );
         // send result of election to all agents in the group
-        m_agentList.stream().forEach( i -> i.trigger( l_trigger ) );
+        m_agentList.stream().forEach( i ->
+        {
+            i.trigger( l_trigger );
+            System.out.println( "triggering agent " + i.name() );
+        } );
 
         m_result = p_result;
         return this.literal( p_chairAgent );
