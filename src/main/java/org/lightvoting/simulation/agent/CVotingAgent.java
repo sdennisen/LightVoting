@@ -406,12 +406,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         }
     }
 
-
     @IAgentActionFilter
     @IAgentActionName( name = "submit/dissatisfaction" )
-    private void submitDiss( final CChairAgent p_chairAgent, final int p_iteration, final int[] p_result )
+    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result )
     {
-        final double l_diss = this.computeDiss( p_result );
+
+        final Double l_diss = this.computeDiss( p_result );
 
         final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
@@ -422,6 +422,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 )
             );
         p_chairAgent.trigger( l_trigger );
+
+        System.out.println( "Submitted diss" );
     }
 }
 

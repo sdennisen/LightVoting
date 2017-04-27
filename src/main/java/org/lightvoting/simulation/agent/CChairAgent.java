@@ -29,6 +29,7 @@ import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
@@ -75,6 +76,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private int m_iteration;
     private String m_protocol;
+    private List<Double> m_dissList;
 
     /**
      * constructor of the agent
@@ -92,9 +94,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_name = p_name;
         m_environment = p_environment;
         m_votes = Collections.synchronizedList( new LinkedList<>() );
+        m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_grouping = p_grouping;
         m_protocol = p_protocol;
         m_iteration = 0;
+
 
 
     }
@@ -207,8 +211,43 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
     /**
-     * compute result of election
+     * store dissatisfaction value
+     * @param p_votingAgent voting agent
+     * @param p_diss dissatisfaction value
+     * @param p_iteration iteration number
      */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/diss" )
+
+    public void storeDiss( final CVotingAgent p_votingAgent, final Double p_diss, final Integer p_iteration )
+    {
+        final CGroup l_group = this.determineGroup();
+
+        m_dissList.add( p_diss );
+
+        System.out.println( "Storing diss " );
+
+        if ( m_dissList.size() == l_group.size() )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/dissValues/received",
+                    CRawTerm.from( p_iteration )
+                )
+
+            );
+
+            this.trigger( l_trigger );
+
+            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+        }
+    }
+
+
+        /**
+         * compute result of election
+         */
 
     // TODO Minisum via parameter
     // TODO Alternatives via parameter/environment
@@ -267,7 +306,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // TODO watch out with case coordinated grouping and iterative voting
 
     }
-
 }
 
 // XXXXXXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

@@ -24,15 +24,22 @@ iteration(0).
    store/vote(Traveller, Vote)
    .
 
++!diss/received(Traveller, Diss, Iteration) <-
+ //  generic/print("Receiving dissatisfaction" );
+   store/diss(Traveller, Diss, Iteration)
+   .
+
 +!all/votes/received() <-
   generic/print(" All voters submitted their votes" );
   compute/result()
  .
 
-+!diss/received(Traveller, Diss, Iteration) <-
-    generic/print("Receiving dissatisfaction" )
-//   store/diss(Traveller, Diss, Iteration)
-   .
++!all/dissValues/received(Iteration) <-
+    generic/print("Received all diss values")
+    .
+
+ // remove/voter(Iteration)
+//  .
 
 // XXXXX Old Code XXXXXXX
 
