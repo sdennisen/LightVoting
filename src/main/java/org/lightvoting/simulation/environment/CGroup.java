@@ -32,7 +32,6 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -193,7 +192,7 @@ public class CGroup
             ITrigger.EType.ADDGOAL,
             CLiteral.from( "election/result",
                           CRawTerm.from( p_chairAgent ),
-                          CRawTerm.from( Arrays.toString( p_result ) )
+                          CRawTerm.from( p_result )
                          )
         );
         // send result of election to all agents in the group
@@ -217,7 +216,7 @@ public class CGroup
             ITrigger.EType.ADDGOAL,
             CLiteral.from( "election/result",
                           CRawTerm.from( p_chairAgent ),
-                          CRawTerm.from( Arrays.toString( p_result ) ),
+                          CRawTerm.from( p_result  ),
                           CRawTerm.from( p_iteration ) )
         );
         // send result of election to all agents in the group

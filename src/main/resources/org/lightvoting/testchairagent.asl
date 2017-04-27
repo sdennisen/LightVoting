@@ -29,6 +29,11 @@ iteration(0).
   compute/result()
  .
 
++!diss/received(Traveller, Diss, Iteration) <-
+    generic/print("Receiving dissatisfaction" )
+//   store/diss(Traveller, Diss, Iteration)
+   .
+
 // XXXXX Old Code XXXXXXX
 
 //+group(Group) <-
