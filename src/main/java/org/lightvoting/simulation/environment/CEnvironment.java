@@ -106,16 +106,30 @@ public final class CEnvironment
 
 
     /**
-     * open new group
+     * open new group (for random grouping)
      * @param p_votingAgent voting agent opening group
-     * @return literal representation of group
+     * @return new group
      */
-    public CGroup openNewGroup( final CVotingAgent p_votingAgent )
+    public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
     {
-        final CGroup l_group = new CGroup( p_votingAgent );
+        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM" );
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
         this.wakeUpAgent();
+
+        return l_group;
+    }
+
+    /**
+     * open new group (for coordinated grouping)
+     * @param p_votingAgent voting agent opening group
+     * @return new group
+     */
+    public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
+    {
+        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED" );
+        m_groups.add( l_group );
+        System.out.println( "Created Group " + l_group );
 
         return l_group;
     }
@@ -128,7 +142,21 @@ public final class CEnvironment
 
     public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
     {
-        p_randomGroup.add( p_votingAgent );
+        p_randomGroup.addRandom( p_votingAgent );
+        this.wakeUpAgent();
+    }
+
+
+    /**
+     * add agent to group (for coordinated grouping)
+     * @param p_group group to join
+     * @param p_votingAgent joining agent
+     */
+
+
+    public void addAgentCoordinated( final CGroup p_group, final CVotingAgent p_votingAgent )
+    {
+        p_group.addCoordinated( p_votingAgent );
         this.wakeUpAgent();
     }
 
@@ -145,6 +173,19 @@ public final class CEnvironment
                 return l_group.literal( p_chairAgent );
         }
         return null;
+    }
+
+    // open group for further elections, unless the capacity is reached
+    // also, wake up the next agent
+
+    /**
+     * open group for further elections unless the capacity is reached. Also, wake up the next agent
+     * @param p_group group to be reopened
+     */
+    public void reopen( final CGroup p_group )
+    {
+        p_group.reopen();
+        this.wakeUpAgent();
     }
 
     private void wakeUpAgent()

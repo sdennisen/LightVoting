@@ -58,15 +58,19 @@ public class CGroup
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
+     * @param p_grouping grouping algorithm
      */
-    public CGroup( final CVotingAgent p_votingAgent )
+    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping )
     {
         m_agentList = new LinkedList<>();
         m_agentList.add( p_votingAgent );
         m_chair = p_votingAgent.getChair();
         m_open = true;
         m_result = null;
-        m_readyForElection = false;
+        if ( "RANDOM".equals( p_grouping ) )
+            m_readyForElection = false;
+        else
+            m_readyForElection = true;
         m_inProgress = false;
     }
 
@@ -107,10 +111,10 @@ public class CGroup
     }
 
     /**
-     * add voting agent
+     * add voting agent (for random grouping)
      * @param p_votingAgent joining voting agent
      */
-    public void add( final CVotingAgent p_votingAgent )
+    public void addRandom( final CVotingAgent p_votingAgent )
     {
         System.out.println( "Adding agent, old size is " + m_agentList.size() );
         m_agentList.add( p_votingAgent );
@@ -119,6 +123,20 @@ public class CGroup
             m_open = false;
             m_readyForElection = true;
         }
+    }
+
+    /**
+     * add voting agent (for coordinated grouping)
+     * @param p_votingAgent joining voting agent
+     */
+
+    public void addCoordinated( final CVotingAgent p_votingAgent )
+    {
+
+        System.out.println( "Adding agent, old size is " + m_agentList.size() );
+        m_agentList.add( p_votingAgent );
+        m_open = false;
+        m_readyForElection = true;
     }
 
     public boolean open()
@@ -183,6 +201,36 @@ public class CGroup
 
         m_result = p_result;
         return this.literal( p_chairAgent );
+    }
+
+    /**
+     * reset group
+     */
+    public void reset()
+    {
+        m_inProgress = false;
+        m_readyForElection = false;
+    }
+
+    /**
+     * reopen group unless capacity is reached
+     */
+    public void reopen()
+    {
+        if ( m_agentList.size() < m_capacity )
+        {
+            m_open = true;
+        }
+    }
+
+    /**
+     * return current result
+     * @return election result
+     */
+
+    public int[] result()
+    {
+        return m_result;
     }
 }
 

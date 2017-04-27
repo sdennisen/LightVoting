@@ -50,6 +50,7 @@ public final class CMain
 
     // TODO later via config
     private static int s_AltNum = 6;
+    private static String s_grouping = "COORDINATED";
 
     /**
      * Hidden constructor
@@ -85,9 +86,9 @@ public final class CMain
 
             s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum );
+            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment  )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment, s_grouping  )  )
                     .collect( Collectors.toSet() );
 
 

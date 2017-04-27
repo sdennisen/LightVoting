@@ -67,19 +67,27 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<AtomicIntegerArray> m_votes;
     private Arrays m_agents;
 
+    // TODO define via config file
+    /**
+     * grouping algorithm: "RANDOM" or "COORDINATED"
+     */
+    private String m_grouping;
+
     /**
      * constructor of the agent
      *
      * @param p_configuration agent configuration of the agent generator
+     * @param p_grouping grouping algorithm
      */
 
 
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment )
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping )
     {
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
         m_votes = Collections.synchronizedList( new LinkedList<>() );
+        m_grouping = p_grouping;
 
     }
 
@@ -225,6 +233,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         this.beliefbase().add( l_group.update( this, l_comResult ) );
 
+        // set inProgress and readyForElection to false in group
+        l_group.reset();
+
+        // if grouping is coordinated, the group needs to be re-opened again
+
+        if ( "COORDINATED".equals( m_grouping ) )
+        {
+            m_environment.reopen( l_group );
+        }
     }
 
 }

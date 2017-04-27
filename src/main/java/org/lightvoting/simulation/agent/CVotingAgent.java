@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.agent;
 
 import cern.colt.Arrays;
+import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
@@ -40,8 +41,12 @@ import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReference;
@@ -88,9 +93,19 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     // TODO define via config file
     /**
-     * grouping algorithm
+     * grouping algorithm: "RANDOM" or "COORDINATED"
      */
-    private String m_grouping = "RANDOM";
+    private String m_grouping;
+
+    /**
+     * variable indicating if agent already submitted its vote
+     */
+
+    private boolean m_voted;
+
+    // TODO define via config file
+
+    private Integer m_joinThreshold;
 
     /**
      * constructor of the agent
@@ -99,11 +114,13 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
+     * @param p_grouping grouping algorithm
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
-                         final int p_altNum
+                         final int p_altNum,
+                         final String p_grouping
     )
     {
         super( p_configuration );
@@ -127,6 +144,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
+        m_voted = false;
+        m_joinThreshold = 5;
+        m_grouping = p_grouping;
     }
 
     public CEnvironment getEnvironment()
@@ -201,21 +221,20 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void joinGroup()
     {
         if ( "RANDOM".equals( m_grouping ) )
-        this.joinRandomGroup();
+        this.joinGroupRandom();
+
+        if ( "COORDINATED".equals( m_grouping ) )
+            this.joinGroupCoordinated();
     }
 
-    private void joinRandomGroup()
+    private List<CGroup> determineActiveGroups()
     {
-
         final IBeliefbase l_bb = m_beliefbase.beliefbase();
         final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
         final Collection l_groups = l_bb.literal( "groups" );
         l_groups.stream().forEach( i->
-            {
-                l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
-            }
-        );
+            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
@@ -225,11 +244,31 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 l_activeGroups.add( l_groupList.get().get( i ) );
             }
 
+        return l_activeGroups;
+    }
+
+    private void openNewGroup()
+    {
+        final CGroup l_group;
+
+        if ( "RANDOM".equals( m_grouping ) )
+            l_group = m_environment.openNewGroupRandom( this );
+
+        else
+            l_group = m_environment.openNewGroupCoordinated( this );
+
+        this.beliefbase().add( l_group.literal( this ) );
+        System.out.println( "opened new group " + l_group );
+    }
+
+    private void joinGroupRandom()
+    {
+
+        final List<CGroup> l_activeGroups = this.determineActiveGroups();
+
         if ( l_activeGroups.isEmpty() )
         {
-            final CGroup l_group = m_environment.openNewGroup( this );
-            this.beliefbase().add( l_group.literal( this ) );
-            System.out.println( "opened new group " + l_group );
+            this.openNewGroup();
             return;
         }
 
@@ -240,6 +279,86 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         this.beliefbase().add( l_randomGroup.literal( this ) );
 
     }
+
+    private void joinGroupCoordinated()
+    {
+        System.out.println( "join group according to coordinated grouping algorithm" );
+
+        final List<CGroup> l_activeGroups = this.determineActiveGroups();
+
+        if ( l_activeGroups.isEmpty() )
+        {
+            this.openNewGroup();
+            return;
+        }
+
+        else
+            this.determineGroupCoordinated( l_activeGroups );
+    }
+
+    private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
+    {
+        final CGroup l_group;
+        // choose group to join
+        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
+        final AtomicIntegerArray l_vote = this.getVote();
+        System.out.println( "Vote: " + l_vote );
+        for ( int i = 0; i < p_activeGroups.size(); i++ )
+        {
+            final AtomicIntegerArray l_com = new AtomicIntegerArray( p_activeGroups.get( i ).result() );
+            System.out.println( "Committee: " + l_com );
+
+            // TODO own class for Hamming distance computation
+            final BitVector l_bitVote = new BitVector( l_vote.length() );
+            final BitVector l_bitCom = new BitVector( l_vote.length() );
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitVote.put( j, l_vote.get( j ) == 1 );
+            System.out.println( "Vote: " + l_bitVote );
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitCom.put( j, l_com.get( j ) == 1 );
+            System.out.println( "Committee: " + l_bitCom );
+            l_bitCom.xor( l_bitVote );
+            final int l_HD = l_bitCom.cardinality();
+            System.out.println( "Hamming distance: " + l_HD );
+            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
+        }
+        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
+        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
+        l_group = l_entry.getKey();
+
+        // if Hamming distance is above the threshold, do not join the chair but create a new group
+        if ( l_entry.getValue() > m_joinThreshold )
+        {
+            this.openNewGroup();
+            return;
+        }
+        m_environment.addAgentCoordinated( l_group, this );
+        this.beliefbase().add( l_group.literal( this ) );
+        System.out.println( this.name() + " joins group " + l_group );
+    }
+
+
+    private Map sortMapDESC( final Map<CGroup, Integer> p_valuesMap )
+    {
+        final List<Map.Entry<CGroup, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
+
+        /* Sorting the list based on values in descending order */
+
+        Collections.sort( l_list, ( p_first, p_second ) ->
+            p_second.getValue().compareTo( p_first.getValue() ) );
+
+        /* Maintaining insertion order with the help of LinkedList */
+
+        final Map<CGroup, Integer> l_sortedMap = new LinkedHashMap<>();
+        for ( final Map.Entry<CGroup, Integer> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
+    }
+
+
 
     /**
      * Get agent's name
@@ -270,18 +389,21 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
+        if ( !m_voted )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "vote/received",
+                    CLiteral.from( this.name() ),
+                    CRawTerm.from( this.getVote() )
+                )
+            );
 
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "vote/received",
-                CLiteral.from( this.name() ),
-                CRawTerm.from( this.getVote() )
-            )
-        );
+            p_chairAgent.trigger( l_trigger );
 
-        p_chairAgent.trigger( l_trigger );
-
+            m_voted = true;
+        }
     }
 
 }
