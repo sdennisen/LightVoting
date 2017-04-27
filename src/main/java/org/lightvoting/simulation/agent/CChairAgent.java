@@ -77,10 +77,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_iteration;
     private String m_protocol;
     private List<Double> m_dissList;
+    private List<CVotingAgent> m_dissVoters;
+    // TODO via config file
+    private double m_dissThreshold = 1.5;
 
     /**
      * constructor of the agent
-     *  @param p_configuration agent configuration of the agent generator
+     *
+     * @param p_configuration agent configuration of the agent generator
      * @param p_grouping grouping algorithm
      * @param p_protocol voting protocol
      */
@@ -95,12 +99,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_environment = p_environment;
         m_votes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
+        m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
         m_grouping = p_grouping;
         m_protocol = p_protocol;
         m_iteration = 0;
-
-
-
     }
 
     // overload agent-cycle
@@ -128,8 +130,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     public void perceiveGroup()
     {
         if ( !( m_environment.detectGroup( this ) == null ) )
-        this.beliefbase().add( m_environment.detectGroup( this ) );
+            this.beliefbase().add( m_environment.detectGroup( this ) );
     }
+
     /**
      * check conditions
      */
@@ -163,7 +166,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
         final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
-        l_groups.stream().forEach( i-> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        l_groups.stream().forEach( i -> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
         return l_groupAtomic.get();
     }
 
@@ -182,12 +185,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     /**
      * store vote
-     * @param p_votingAgent voting agent
+     *
      * @param p_vote vote
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final Object p_votingAgent, final AtomicIntegerArray p_vote )
+    public void storeVote( final AtomicIntegerArray p_vote )
     {
         final CGroup l_group = this.determineGroup();
 
@@ -212,14 +215,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     /**
      * store dissatisfaction value
-     * @param p_votingAgent voting agent
+     *
      * @param p_diss dissatisfaction value
      * @param p_iteration iteration number
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final CVotingAgent p_votingAgent, final Double p_diss, final Integer p_iteration )
+    public void storeDiss( final Double p_diss, final Integer p_iteration )
     {
         final CGroup l_group = this.determineGroup();
 
@@ -245,9 +248,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
 
-        /**
-         * compute result of election
-         */
+    /**
+     * compute result of election
+     */
 
     // TODO Minisum via parameter
     // TODO Alternatives via parameter/environment
@@ -256,7 +259,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public void computeResult( )
+    public void computeResult()
     {
         final CGroup l_group = this.determineGroup();
 
@@ -292,7 +295,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
-        if ( "ITERATIVE".equals( m_protocol )  && ( l_group.finale() ) )
+        if ( "ITERATIVE".equals( m_protocol ) && ( l_group.finale() ) )
         {
 
             this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
@@ -305,6 +308,49 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         // TODO watch out with case coordinated grouping and iterative voting
 
+    }
+
+    /**
+     * remove most dissatisfied voter
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "remove/voter" )
+    public void removeVoter()
+    {
+        final int l_maxIndex = this.getMaxIndex( m_dissList );
+        final double l_max = m_dissList.get( l_maxIndex );
+        System.out.println( " max diss is " + l_max );
+
+        if ( l_max > m_dissThreshold )
+        {
+            final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
+            // remove vote of most dissatisfied voter from list
+            m_votes.remove( l_maxDissAg.getVote() );
+            m_dissVoters.remove( l_maxDissAg );
+
+            System.out.println( "Removing " + l_maxDissAg.name() );
+
+            // remove diss Values for next iteration
+            m_dissList.clear();
+
+            final CGroup l_group = this.determineGroup();
+
+            l_group.makeReady();
+        }
+    }
+
+    private int getMaxIndex( final List<Double> p_dissValues )
+    {
+        int l_maxIndex = 0;
+        for ( int i = 0; i < p_dissValues.size(); i++ )
+        {
+            if ( p_dissValues.get( i ) > p_dissValues.get( l_maxIndex ) )
+            {
+                System.out.println( " changed max index to " + i + " diss: " + p_dissValues.get( i ) );
+                l_maxIndex = i;
+            }
+        }
+        return l_maxIndex;
     }
 }
 

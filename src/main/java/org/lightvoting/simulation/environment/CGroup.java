@@ -267,6 +267,10 @@ public class CGroup
         return m_agentList.size() >= m_capacity;
     }
 
+    public void makeReady()
+    {
+        m_readyForElection = true;
+    }
 }
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX

@@ -20,13 +20,13 @@ iteration(0).
     .
 
 +!vote/received(Traveller, Vote) <-
-   generic/print("Receiving vote from traveller ", Traveller);
-   store/vote(Traveller, Vote)
+   generic/print("Receiving vote from traveller ", Traveller );
+   store/vote(Vote)
    .
 
-+!diss/received(Traveller, Diss, Iteration) <-
- //  generic/print("Receiving dissatisfaction" );
-   store/diss(Traveller, Diss, Iteration)
++!diss/received(Diss, Iteration) <-
+   generic/print("Receiving dissatisfaction" );
+   store/diss(Diss, Iteration)
    .
 
 
@@ -36,7 +36,8 @@ iteration(0).
  .
 
 +!all/dissValues/received(Iteration) <-
-    generic/print("Received all diss values")
+    generic/print("Received all diss values");
+    remove/voter()
     .
 
  // remove/voter(Iteration)
