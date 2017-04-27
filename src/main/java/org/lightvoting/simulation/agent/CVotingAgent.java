@@ -417,26 +417,15 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         final Double l_diss = this.computeDiss( p_result );
 
-        //        final ITrigger l_trigger = CTrigger.from(
-        //                ITrigger.EType.ADDGOAL,
-        //                CLiteral.from( "diss/received",
-        //                               CRawTerm.from( this ),
-        //                               CRawTerm.from( l_diss ),
-        //                               CRawTerm.from( p_iteration )
-        //                )
-        //            );
-        //   p_chairAgent.trigger( l_trigger );
-
-
-        final ILiteral l_literal = CLiteral.from(
-            "diss/received",
-            CRawTerm.from( this ),
-            CRawTerm.from( l_diss ),
-            CRawTerm.from( p_iteration )
-
-        );
-
-        p_chairAgent.beliefbase().add( l_literal );
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from( "diss/received",
+                           CRawTerm.from( this ),
+                           CRawTerm.from( l_diss ),
+                           CRawTerm.from( p_iteration )
+                        )
+                    );
+        p_chairAgent.trigger( l_trigger );
 
         System.out.println( this.name() + " submitted diss" );
     }
@@ -573,3 +562,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //        if ( !( m_environment.detectResult( this ) == null ) )
 //            this.beliefbase().add( m_environment.detectResult( this ) );
 //    }
+
+//
+//    final ILiteral l_literal = CLiteral.from(
+//        "diss/received",
+//        CRawTerm.from( this ),
+//        CRawTerm.from( l_diss ),
+//        CRawTerm.from( p_iteration )
+//
+//    );
+//
+//        p_chairAgent.beliefbase().add( l_literal );
