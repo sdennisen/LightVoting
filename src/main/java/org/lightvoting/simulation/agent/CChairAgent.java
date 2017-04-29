@@ -66,7 +66,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private final CEnvironment m_environment;
     private List<AtomicIntegerArray> m_votes;
-    private Arrays m_agents;
+    private List<CVotingAgent> m_agents;
 
     // TODO define via config file
     /**
@@ -103,6 +103,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_grouping = p_grouping;
         m_protocol = p_protocol;
         m_iteration = 0;
+        m_agents = Collections.synchronizedList( new LinkedList<>() );
     }
 
     // overload agent-cycle
@@ -190,11 +191,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final AtomicIntegerArray p_vote )
+    public void storeVote( final String p_agentName, final AtomicIntegerArray p_vote )
     {
         final CGroup l_group = this.determineGroup();
 
-
+        m_agents.add( l_group.determineAgent( p_agentName ) );
         m_votes.add( p_vote );
 
         if ( m_votes.size() == l_group.size() )
@@ -222,12 +223,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final Object p_votingAgent, final Double p_diss, final Integer p_iteration )
+    public void storeDiss( final String p_name, final Double p_diss, final Integer p_iteration )
     {
         final CGroup l_group = this.determineGroup();
 
         m_dissList.add( p_diss );
-        m_dissVoters.add( (CVotingAgent) p_votingAgent );
+        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+        m_dissVoters.add( l_dissAg );
 
         System.out.println( "Storing diss " + p_diss );
 

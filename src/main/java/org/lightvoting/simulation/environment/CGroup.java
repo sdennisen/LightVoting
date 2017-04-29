@@ -271,6 +271,19 @@ public class CGroup
     {
         m_readyForElection = true;
     }
+
+    /**
+     * determine agent for given name
+     * @param p_agentName name
+     * @return corresponding voting agent
+     */
+    public CVotingAgent determineAgent( final String p_agentName )
+    {
+        for ( int i = 0; i < m_agentList.size(); i++ )
+            if ( p_agentName.equals( m_agentList.get( i ).name() ) )
+                return m_agentList.get( i );
+        return null;
+    }
 }
 
 // XXXXXXXXXXXXX Old code and TODOS XXXXXXXXXXXXXXXXXXXXXXX

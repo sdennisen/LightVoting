@@ -20,8 +20,8 @@ iteration(0).
     .
 
 +!vote/received(Traveller, Vote) <-
-   generic/print("Receiving vote from traveller ", Traveller );
-   store/vote(Vote)
+ //  generic/print("Receiving vote from traveller ", Traveller );
+   store/vote(Traveller, Vote)
    .
 
 +!diss/received(Traveller, Diss, Iteration) <-
