@@ -79,7 +79,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<Double> m_dissList;
     private List<CVotingAgent> m_dissVoters;
     // TODO via config file
-    private double m_dissThreshold = 1.5;
+    private double m_dissThreshold = 1.3;
 
     /**
      * constructor of the agent
@@ -222,11 +222,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final Double p_diss, final Integer p_iteration )
+    public void storeDiss( final Object p_votingAgent, final Double p_diss, final Integer p_iteration )
     {
         final CGroup l_group = this.determineGroup();
 
         m_dissList.add( p_diss );
+        m_dissVoters.add( (CVotingAgent) p_votingAgent );
 
         System.out.println( "Storing diss " + p_diss );
 
@@ -323,7 +324,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         if ( l_max > m_dissThreshold )
         {
+            System.out.println( " Determining most dissatisfied voter " );
             final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
+            System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
             m_votes.remove( l_maxDissAg.getVote() );
             m_dissVoters.remove( l_maxDissAg );

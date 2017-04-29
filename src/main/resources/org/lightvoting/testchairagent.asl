@@ -24,9 +24,9 @@ iteration(0).
    store/vote(Vote)
    .
 
-+!diss/received(Diss, Iteration) <-
++!diss/received(Traveller, Diss, Iteration) <-
    generic/print("Receiving dissatisfaction" );
-   store/diss(Diss, Iteration)
+   store/diss(Traveller, Diss, Iteration)
    .
 
 
