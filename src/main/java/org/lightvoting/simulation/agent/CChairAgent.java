@@ -303,27 +303,34 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
+        // if grouping is coordinated, reopen group for further voters
+        if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() )
+        {
+            m_environment.reopen( l_group );
+        }
 
         // for the iterative case, you need to differentiate between the final election and intermediate elections.
-
-        if ( "ITERATIVE".equals( m_protocol ) && ( !l_group.finale() && !m_iterative ) )
+        if ( "ITERATIVE".equals( m_protocol ) && ( l_group.finale() ) || m_iterative )
         {
+            System.out.println( " Update iterative " );
 
+            this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
+            return;
+            //        m_iteration++;
+        }
+
+
+        if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
+            // || !m_iterative ) )
+        {
+            System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
-        if ( "ITERATIVE".equals( m_protocol ) && ( l_group.finale() ) || m_iterative )
-        {
 
-            this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
-    //        m_iteration++;
-        }
-
-        // if grouping is coordinated, reopen group for further voters
-        if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() )
-            m_environment.reopen( l_group );
 
         // TODO watch out with case coordinated grouping and iterative voting
+
 
     }
 
