@@ -138,6 +138,11 @@ public class CGroup
         m_readyForElection = true;
     }
 
+    public void remove( final CVotingAgent p_votingAgent )
+    {
+        m_agentList.remove( p_votingAgent );
+    }
+
     public boolean open()
     {
         return m_open;

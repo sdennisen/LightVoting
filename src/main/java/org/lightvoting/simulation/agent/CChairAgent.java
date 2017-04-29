@@ -80,6 +80,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<CVotingAgent> m_dissVoters;
     // TODO via config file
     private double m_dissThreshold = 1.3;
+    private boolean m_iterative;
 
     /**
      * constructor of the agent
@@ -104,6 +105,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_protocol = p_protocol;
         m_iteration = 0;
         m_agents = Collections.synchronizedList( new LinkedList<>() );
+        m_iterative = false;
     }
 
     // overload agent-cycle
@@ -149,6 +151,17 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // if conditions for election are fulfilled, trigger goal start/criterion/fulfilled
 
         final ITrigger l_trigger;
+
+        // if m_iterative is true, we have the case of iterative voting, i.e. we already have the votes
+        // we only need to repeat the computation of the result
+
+        if  ( m_iterative && ( l_group.readyForElection() && !( l_group.electionInProgress() ) ) )
+        {
+            m_iteration++;
+            this.computeResult();
+            return;
+        }
+
 
         if ( l_group.readyForElection() && ( !( l_group.electionInProgress() ) ) )
         {
@@ -320,6 +333,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     @IAgentActionName( name = "remove/voter" )
     public void removeVoter()
     {
+        final CGroup l_group = this.determineGroup();
+
         final int l_maxIndex = this.getMaxIndex( m_dissList );
         final double l_max = m_dissList.get( l_maxIndex );
         System.out.println( " max diss is " + l_max );
@@ -332,16 +347,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             // remove vote of most dissatisfied voter from list
             m_votes.remove( l_maxDissAg.getVote() );
             m_dissVoters.remove( l_maxDissAg );
+            l_group.remove( l_maxDissAg );
 
             System.out.println( "Removing " + l_maxDissAg.name() );
 
             // remove diss Values for next iteration
             m_dissList.clear();
 
-            final CGroup l_group = this.determineGroup();
-
+            m_iterative = true;
             l_group.makeReady();
+            return;
         }
+
+        System.out.println( " No dissatisfied voter left, we are done " );
     }
 
     private int getMaxIndex( final List<Double> p_dissValues )
