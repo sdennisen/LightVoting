@@ -305,13 +305,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         // for the iterative case, you need to differentiate between the final election and intermediate elections.
 
-        if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
+        if ( "ITERATIVE".equals( m_protocol ) && ( !l_group.finale() && !m_iterative ) )
         {
 
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
-        if ( "ITERATIVE".equals( m_protocol ) && ( l_group.finale() ) )
+        if ( "ITERATIVE".equals( m_protocol ) && ( l_group.finale() ) || m_iterative )
         {
 
             this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
