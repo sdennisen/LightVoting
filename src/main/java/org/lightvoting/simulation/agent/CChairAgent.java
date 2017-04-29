@@ -304,8 +304,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
 
         // if grouping is coordinated, reopen group for further voters
-        if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() )
+        if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() && !m_iterative )
         {
+            System.out.println( " reopening group " );
             m_environment.reopen( l_group );
         }
 

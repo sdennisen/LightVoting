@@ -50,7 +50,7 @@ public final class CMain
 
     // TODO later via config
     private static int s_AltNum = 6;
-    private static String s_grouping = "RANDOM";
+    private static String s_grouping = "COORDINATED";
     private static String s_protocol = "ITERATIVE";
 
     /**
