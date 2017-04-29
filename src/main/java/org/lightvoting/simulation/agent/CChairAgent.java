@@ -79,7 +79,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<Double> m_dissList;
     private List<CVotingAgent> m_dissVoters;
     // TODO via config file
-    private double m_dissThreshold = 1.3;
+    private double m_dissThreshold = 1.1;
     private boolean m_iterative;
 
     /**
@@ -303,6 +303,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
+
         // for the iterative case, you need to differentiate between the final election and intermediate elections.
 
         if ( "ITERATIVE".equals( m_protocol ) && ( !l_group.finale() && !m_iterative ) )
@@ -315,7 +316,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         {
 
             this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
-            m_iteration++;
+    //        m_iteration++;
         }
 
         // if grouping is coordinated, reopen group for further voters
@@ -356,6 +357,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             m_iterative = true;
             l_group.makeReady();
+
+            if ( l_group.size() == 0 )
+                System.out.println( " Voter list is empty, we are done " );
+
             return;
         }
 
