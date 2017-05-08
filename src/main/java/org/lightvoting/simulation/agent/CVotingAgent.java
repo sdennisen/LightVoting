@@ -536,7 +536,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 // add the agent configuration
                 m_configuration,
                 // add the chair agent
-                ( (CChairAgentGenerator) p_data[0] ).generatesingle(),
+                ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
                 m_grouping

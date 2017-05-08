@@ -27,23 +27,31 @@ import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
+import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
+import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
+import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 
+import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -383,5 +391,78 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             }
         }
         return l_maxIndex;
+    }
+
+    public static final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
+    {
+
+        /**
+         * environment
+         */
+        private final CEnvironment m_environment;
+
+        /**
+         * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
+         */
+        private final AtomicLong m_agentcounter = new AtomicLong();
+
+        private final String m_grouping;
+        private String m_protocol;
+
+        /**
+         * constructor of the generator
+         * @param p_stream ASL code as any stream e.g. FileInputStream
+         * @param p_grouping grouping algorithm
+         * @param p_protocol voting protocol
+         * @throws Exception Thrown if something goes wrong while generating agents.
+         */
+        public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping, final String p_protocol ) throws Exception
+        {
+            super(
+                // input ASL stream
+                p_stream,
+
+                // a set with all possible actions for the agent
+                Stream.concat(
+                    // we use all build-in actions of LightJason
+                    CCommon.actionsFromPackage(),
+                    Stream.concat(
+                        // use the actions which are defined inside the agent class
+                        CCommon.actionsFromAgentClass( CChairAgent.class ),
+                        // add VotingAgent related external actions
+                        Stream.of(
+
+                        )
+                    )
+                    // build the set with a collector
+                ).collect( Collectors.toSet() ),
+
+                // aggregation function for the optimisation function, here
+                // we use an empty function
+                IAggregation.EMPTY
+            );
+            m_environment = p_environment;
+            m_grouping = p_grouping;
+            m_protocol = p_protocol;
+        }
+
+        /**
+         * generator method of the agent
+         * @param p_data any data which can be put from outside to the generator method
+         * @return returns an agent
+         */
+
+        @Override
+        public final CChairAgent generatesingle( final Object... p_data )
+        {
+            final CChairAgent l_chairAgent = new CChairAgent(
+                // create a string with the agent name "chair <number>"
+                // get the value of the counter first and increment, build the agent
+                // name with message format (see Java documentation)
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol );
+            l_chairAgent.sleep( Integer.MAX_VALUE );
+            return l_chairAgent;
+        }
+
     }
 }

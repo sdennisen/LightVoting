@@ -26,7 +26,7 @@ package org.lightvoting;
 import com.google.common.collect.Sets;
 import org.bytedeco.javacpp.hdf5.H5File;
 import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CChairAgentGenerator;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
 
@@ -90,7 +90,7 @@ public final class CMain
 
             l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol )  )
                     .collect( Collectors.toSet() );
 
 
