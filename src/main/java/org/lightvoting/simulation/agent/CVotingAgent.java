@@ -91,7 +91,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private final AtomicDoubleArray m_atomicPrefValues;
 
-    // TODO define via config file
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
      */
@@ -103,13 +102,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private boolean m_voted;
 
-    // TODO define via config file
-
+    /**
+     * threshold for joining a group in the case of coordinated grouping
+     */
     private Integer m_joinThreshold;
 
-    private String m_ack;
-
-    /**
+     /**
      * constructor of the agent
      *
      * @param p_name name of the agent
@@ -150,39 +148,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_voted = false;
         m_joinThreshold = 5;
         m_grouping = p_grouping;
-        m_ack = null;
-    }
-
-    public CEnvironment getEnvironment()
-    {
-        return m_environment;
-    }
-
-    private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
-    {
-        final int[] l_voteValues = new int[m_altNum];
-        for ( int i = 0; i < m_altNum; i++ )
-            if ( p_atomicPrefValues.get( i ) > 0.5 )
-                l_voteValues[i] = 1;
-            else
-                l_voteValues[i] = 0;
-        System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
-        return new AtomicIntegerArray( l_voteValues );
-    }
-
-    private AtomicDoubleArray generatePreferences( final int p_altNum )
-    {
-        final Random l_random = new Random();
-        final double[] l_prefValues = new double[m_altNum];
-        for ( int i = 0; i < m_altNum; i++ )
-            l_prefValues[i] = this.sigmoidValue( l_random.nextDouble() - 0.5 );
-        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
-        return new AtomicDoubleArray( l_prefValues );
-    }
-
-    private double sigmoidValue( double p_var )
-    {
-        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
     // overload agent-cycle
@@ -193,25 +158,35 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return super.call();
     }
 
+    // public methods
+
     /**
-     * compute dissatisfaction of voter with given committee
+     * Get agent's name
      *
-     * @param p_resultValues committee
-     * @return dissatisfaction with committee
+     * @return name of agent
      */
-
-    public double computeDiss( final int[] p_resultValues )
+    public final String name()
     {
-        double l_diss = 0;
-
-        for ( int i = 0; i < p_resultValues.length; i++ )
-        {
-            if ( p_resultValues[i] == 1 )
-                l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
-        }
-        return l_diss;
+        return m_name;
     }
 
+    /**
+     * get associated chair agent
+     *
+     * @return chair agent
+     */
+    public CChairAgent getChair()
+    {
+        return m_chair;
+    }
+
+
+    public AtomicIntegerArray getVote()
+    {
+        return m_vote;
+    }
+
+    // agent actions
 
     @IAgentActionFilter
     @IAgentActionName( name = "perceive/env" )
@@ -231,6 +206,78 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         if ( "COORDINATED".equals( m_grouping ) )
             this.joinGroupCoordinated();
     }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "submit/vote" )
+    private void submitVote( final CChairAgent p_chairAgent )
+    {
+        if ( !m_voted )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "vote/received",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.getVote() )
+                )
+            );
+
+            p_chairAgent.trigger( l_trigger );
+
+            m_voted = true;
+        }
+    }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "submit/dissatisfaction" )
+    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result ) throws InterruptedException
+    {
+
+        final Double l_diss = this.computeDiss( p_result );
+
+        System.out.println( this.name() + " tries to submit diss " + l_diss );
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "diss/received",
+                CRawTerm.from( this.name() ),
+                CRawTerm.from( l_diss ),
+                CRawTerm.from( p_iteration )
+            )
+        );
+        p_chairAgent.trigger( l_trigger );
+    }
+
+    // private methods
+
+    private AtomicDoubleArray generatePreferences( final int p_altNum )
+    {
+        final Random l_random = new Random();
+        final double[] l_prefValues = new double[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            l_prefValues[i] = this.sigmoidValue( l_random.nextDouble() - 0.5 );
+        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
+        return new AtomicDoubleArray( l_prefValues );
+    }
+
+    private double sigmoidValue( double p_var )
+    {
+        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
+    }
+
+
+    private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final int[] l_voteValues = new int[m_altNum];
+        for ( int i = 0; i < m_altNum; i++ )
+            if ( p_atomicPrefValues.get( i ) > 0.5 )
+                l_voteValues[i] = 1;
+            else
+                l_voteValues[i] = 0;
+        System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
+        return new AtomicIntegerArray( l_voteValues );
+    }
+
 
     private List<CGroup> determineActiveGroups()
     {
@@ -342,6 +389,26 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         System.out.println( this.name() + " joins group " + l_group );
     }
 
+    /**
+     * compute dissatisfaction of voter with given committee
+     *
+     * @param p_resultValues committee
+     * @return dissatisfaction with committee
+     */
+
+    private double computeDiss( final int[] p_resultValues )
+    {
+        double l_diss = 0;
+
+        for ( int i = 0; i < p_resultValues.length; i++ )
+        {
+            if ( p_resultValues[i] == 1 )
+                l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
+        }
+        return l_diss;
+    }
+
+
 
     private Map sortMapDESC( final Map<CGroup, Integer> p_valuesMap )
     {
@@ -361,76 +428,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         }
 
         return l_sortedMap;
-    }
-
-
-
-    /**
-     * Get agent's name
-     *
-     * @return name of agent
-     */
-    public final String name()
-    {
-        return m_name;
-    }
-
-    /**
-     * get associated chair agent
-     *
-     * @return chair agent
-     */
-    public CChairAgent getChair()
-    {
-        return m_chair;
-    }
-
-
-    public AtomicIntegerArray getVote()
-    {
-        return m_vote;
-    }
-
-
-    @IAgentActionFilter
-    @IAgentActionName( name = "submit/vote" )
-    private void submitVote( final CChairAgent p_chairAgent )
-    {
-        if ( !m_voted )
-        {
-            final ITrigger l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "vote/received",
-                    CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.getVote() )
-                )
-            );
-
-            p_chairAgent.trigger( l_trigger );
-
-            m_voted = true;
-        }
-    }
-
-    @IAgentActionFilter
-    @IAgentActionName( name = "submit/dissatisfaction" )
-    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result ) throws InterruptedException
-    {
-
-        final Double l_diss = this.computeDiss( p_result );
-
-        System.out.println( this.name() + " tries to submit diss " + l_diss );
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "diss/received",
-                CRawTerm.from( this.name() ),
-                CRawTerm.from( l_diss ),
-                CRawTerm.from( p_iteration )
-            )
-        );
-        p_chairAgent.trigger( l_trigger );
     }
 
 }
