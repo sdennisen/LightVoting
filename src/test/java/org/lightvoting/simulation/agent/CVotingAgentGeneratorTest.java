@@ -79,7 +79,7 @@ public final class CVotingAgentGeneratorTest extends TestCase
             /* TODO Check test */
             final Set<CVotingAgent> l_agents = new
 
-                CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, new hdf5.H5File() ), 10, "RANDOM" )
+                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, new hdf5.H5File() ), 10, "RANDOM" )
                     .generatemultiple( 23, new CChairAgentGenerator( l_aslstream, new CEnvironment( 23, new hdf5.H5File() ), "RANDOM", "BASIC" ) )
                     .collect( Collectors.toSet() );
 

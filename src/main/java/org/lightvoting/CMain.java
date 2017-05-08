@@ -28,7 +28,6 @@ import org.bytedeco.javacpp.hdf5.H5File;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgentGenerator;
 import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.FileInputStream;
@@ -37,6 +36,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+//import org.lightvoting.simulation.agent.CVotingAgentGenerator;
 
 /* TODO: each possibility for drawing active agentd from the pool of agents needs to be a own class  */
 
@@ -75,7 +76,7 @@ public final class CMain
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
         final Set<CVotingAgent> l_agents;
-        final CVotingAgentGenerator l_votingagentgenerator;
+        final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
 
         createHDF5();
@@ -87,7 +88,7 @@ public final class CMain
 
             s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
+            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol )  )
                     .collect( Collectors.toSet() );
