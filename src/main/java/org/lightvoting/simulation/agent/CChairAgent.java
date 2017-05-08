@@ -116,11 +116,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return super.call();
     }
 
+    // public methods
+
     public String name()
     {
         return m_name;
     }
 
+    // agent actions
 
     /**
      * perceive group
@@ -176,6 +179,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
     }
 
+    // private methods
+
     private CGroup determineGroup()
     {
         final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
@@ -228,49 +233,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
     /**
-     * store dissatisfaction value
-     *
-     * @param p_diss dissatisfaction value
-     * @param p_iteration iteration number
-     */
-    @IAgentActionFilter
-    @IAgentActionName( name = "store/diss" )
-
-    public void storeDiss( final String p_name, final Double p_diss, final Integer p_iteration )
-    {
-        final CGroup l_group = this.determineGroup();
-
-        m_dissList.add( p_diss );
-        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
-        m_dissVoters.add( l_dissAg );
-
-        System.out.println( "Storing diss " + p_diss );
-
-        if ( m_dissList.size() == l_group.size() )
-        {
-            final ITrigger l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "all/dissValues/received",
-                    CRawTerm.from( p_iteration )
-                )
-
-            );
-
-            this.trigger( l_trigger );
-
-            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
-        }
-    }
-
-
-    /**
      * compute result of election
      */
 
-    // TODO Minisum via parameter
-    // TODO Alternatives via parameter/environment
-    // TODO specify comsize via parameter
     // TODO see HDF5 structure in old code in CEnvironment
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
@@ -317,22 +282,53 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
             return;
-            //        m_iteration++;
         }
 
 
         if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
-            // || !m_iterative ) )
         {
             System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
 
+        // TODO test all cases
 
+    }
 
-        // TODO watch out with case coordinated grouping and iterative voting
+    /**
+     * store dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     * @param p_iteration iteration number
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/diss" )
 
+    public void storeDiss( final String p_name, final Double p_diss, final Integer p_iteration )
+    {
+        final CGroup l_group = this.determineGroup();
 
+        m_dissList.add( p_diss );
+        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+        m_dissVoters.add( l_dissAg );
+
+        System.out.println( "Storing diss " + p_diss );
+
+        if ( m_dissList.size() == l_group.size() )
+        {
+            final ITrigger l_trigger = CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "all/dissValues/received",
+                    CRawTerm.from( p_iteration )
+                )
+
+            );
+
+            this.trigger( l_trigger );
+
+            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+        }
     }
 
     /**
@@ -389,73 +385,3 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return l_maxIndex;
     }
 }
-
-// XXXXXXXXXXXXXXXXXXXXXXXX Old code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// TODO if necessary, reinsert into checkConditions()
-
-/*            System.out.println( ".................. print group  " + i );
-            System.out.println( "Contents of group " + ( (ILiteral) i ).values().findFirst().get().raw() );
-            System.out.println( "Class " + ( (ILiteral) i ).values().findFirst().get().raw().getClass() );*/
-
-
-/*    @IAgentActionFilter
-    @IAgentActionName( name = "start/election" )
-    public void startElection( )
-    {
-        m_environment.startElection( this );
-    }*/
-
-  /*  @IAgentActionFilter
-    @IAgentActionName( name = "store/vote" )
-    private void storeVote( final Object p_votingAgent, final AtomicIntegerArray p_vote )
-    {
-
-        System.out.println( " trying to add vote from agent " + p_votingAgent + ": " + p_vote );
-        m_environment.storeVote( this, p_votingAgent, p_vote );
-        System.out.println( " added vote from agent " + p_votingAgent );
-
-    }*/
-
-/*    @IAgentActionFilter
-    @IAgentActionName( name = "compute/result" )
-    private void computeResult( )
-    {
-
-        System.out.println( " compute result " );
-        m_environment.computeResult( this );
-//        System.out.println( " computed result " );
-
-    }*/
-
-  /*  @IAgentActionFilter
-    @IAgentActionName( name = "store/diss" )
-    private void storeDiss( final Object p_votingAgent, final Double p_diss, final int p_iteration )
-    {
-
-        System.out.println( " trying to add diss from agent " + p_votingAgent + ": " + p_diss + " next iteration " + p_iteration );
-        m_environment.storeDiss( this, p_diss, p_iteration );
-        System.out.println( " added diss from agent " + p_votingAgent );
-
-    }*/
-
-/*    @IAgentActionFilter
-    @IAgentActionName( name = "recompute/result" )
-    private void recomputeResult( final int p_iteration )
-    {
-
-        System.out.println( " recompute result " );
-        m_environment.recomputeResult( this, p_iteration );
-        //        System.out.println( " computed result " );
-
-    }*/
-
-//    final ITrigger l_ack = CTrigger.from(
-//        ITrigger.EType.ADDGOAL,
-//        CLiteral.from( "ack"
-//
-//        )
-//
-//    );
-//
-//        p_votingAgent.trigger( l_ack );
-
