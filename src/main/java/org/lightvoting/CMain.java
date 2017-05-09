@@ -25,6 +25,7 @@ package org.lightvoting;
 
 import com.google.common.collect.Sets;
 import org.bytedeco.javacpp.hdf5.H5File;
+import org.lightvoting.configuration.CLoadConfig;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
@@ -75,6 +76,9 @@ public final class CMain
         // 1. ASL file
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
+
+        CLoadConfig.readYaml();
+
         final Set<CVotingAgent> l_agents;
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
