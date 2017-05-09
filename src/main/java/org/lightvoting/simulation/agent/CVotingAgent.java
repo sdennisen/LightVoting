@@ -116,8 +116,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * threshold for joining a group in the case of coordinated grouping
      */
     private Integer m_joinThreshold;
+    private final BitVector m_bitVote;
 
-     /**
+    /**
      * constructor of the agent
      *
      * @param p_name name of the agent
@@ -155,6 +156,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
+        m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
         m_joinThreshold = 5;
         m_grouping = p_grouping;
@@ -286,6 +288,18 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 l_voteValues[i] = 0;
         System.out.println( "Vote: " + Arrays.toString( l_voteValues ) );
         return new AtomicIntegerArray( l_voteValues );
+    }
+
+    private BitVector convertPreferencesToBits( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final BitVector l_voteValues = new BitVector( m_altNum );
+        for ( int i = 0; i < m_altNum; i++ )
+            if ( p_atomicPrefValues.get( i ) > 0.5 )
+                l_voteValues.put( i, true );
+            else
+                l_voteValues.put( i, false );
+        System.out.println( "Vote as BitVector: " + l_voteValues  );
+        return l_voteValues;
     }
 
 
