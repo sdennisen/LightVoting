@@ -58,6 +58,10 @@ public class CMinimaxApproval
         /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
         final int[][] l_committees = this.computeComittees( p_alternatives.size(), p_comSize );
 
+        // alternative with committee as BitVector
+
+        final List<BitVector> l_bitCommittees = this.computeBitComittees( p_alternatives.size(), p_comSize );
+
         /* Hashmap for storing the maximal hamming distance to any vote for all committees */
 
         Map<Integer, Integer> l_maxMap = new HashMap<Integer, Integer>();
@@ -76,6 +80,34 @@ public class CMinimaxApproval
 
         return l_committees[l_winnerIndex];
 
+    }
+
+    private List<BitVector> computeBitComittees( final int p_altNum, final int p_comSize )
+    {
+        final CCombination l_combination = new CCombination();
+        final int[] l_arr = new int[p_altNum];
+
+        for ( int i = 0; i < p_altNum; i++ )
+            l_arr[i] = i;
+
+        l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
+
+        final List<int[]> l_resultList = l_combination.getResultList();
+        l_combination.clearList();
+
+        final List<BitVector> l_bitVectors = new LinkedList<>();
+
+        for ( int i = 0; i < l_resultList.size(); i++ )
+        {
+            final BitVector l_bitVector = new BitVector( p_altNum );
+
+            for ( int j = 0; j < p_comSize; j++ )
+            {
+                l_bitVector.put( l_resultList.get( i )[j], true );
+            }
+        }
+
+        return l_bitVectors;
     }
 
     /**
@@ -112,8 +144,6 @@ public class CMinimaxApproval
 
         return l_comVects;
     }
-
-
 
     private int determineMaxHD( final List<AtomicIntegerArray> p_votes, final int[] p_comVect, final int p_altNum )
     {
@@ -163,7 +193,6 @@ public class CMinimaxApproval
 
             if ( l_curHD > l_maxHD )
                 l_maxHD = l_curHD;
-
         }
 
         return l_maxHD;
