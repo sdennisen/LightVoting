@@ -52,10 +52,9 @@ public final class CMain
     private static CEnvironment s_environment;
     private static H5File s_h5file;
 
-    // TODO later via config
-    private static int s_AltNum = 6;
-    private static String s_grouping = "RANDOM";
-    private static String s_protocol = "ITERATIVE";
+    private static int s_altnum;
+    private static String s_grouping;
+    private static String s_protocol;
 
     /**
      * Hidden constructor
@@ -94,7 +93,7 @@ public final class CMain
 
             s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
 
-            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_AltNum, s_grouping );
+            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping );
             l_agents = l_votingagentgenerator
                     .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol )  )
                     .collect( Collectors.toSet() );
@@ -166,6 +165,14 @@ public final class CMain
             {
                 System.out.println( String.format( "\t%s = %s",
                                                    l_subValueKey, l_subValues.get( l_subValueKey ) ) );
+
+                // parse input
+                if ( "grouping".equals( l_subValueKey ) )
+                    s_grouping = l_subValues.get( l_subValueKey );
+                if ( "protocol".equals( l_subValueKey ) )
+                    s_protocol = l_subValues.get( l_subValueKey );
+                if ( "altnum".equals( l_subValueKey ) )
+                    s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
             }
         }
     }
