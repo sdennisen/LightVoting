@@ -55,12 +55,8 @@ public class CMinimaxApproval
 
     public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
     {
-        final List<String> l_alternatives = p_alternatives;
-        final List<AtomicIntegerArray> l_votes = p_votes;
-        final int l_comSize = p_comSize;
-
         /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
-        final int[][] l_committees = this.computeComittees( l_votes.size(), l_alternatives.size(), l_comSize );
+        final int[][] l_committees = this.computeComittees( p_alternatives.size(), p_comSize );
 
         /* Hashmap for storing the maximal hamming distance to any vote for all committees */
 
@@ -69,7 +65,7 @@ public class CMinimaxApproval
         for ( int i = 0; i < l_committees.length; i++ )
         {
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
-            l_maxMap.put( i, this.determineMaxHD( l_votes, l_committees[i], l_alternatives.size() ) );
+            l_maxMap.put( i, this.determineMaxHD( p_votes, l_committees[i], p_alternatives.size() ) );
         }
 
         l_maxMap = this.sortMapASC( l_maxMap );
@@ -85,13 +81,12 @@ public class CMinimaxApproval
     /**
      * compute all possible committees for given number of alternatives and committee size
      *
-     * @param p_votNum number of votes
      * @param p_altNum number of alternatives
      * @param p_comSize size of committee to be elected
      * @return all possible committees
      */
 
-    private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
+    private int[][] computeComittees( final int p_altNum, final int p_comSize )
     {
         final CCombination l_combination = new CCombination();
         final int[] l_arr = new int[p_altNum];
@@ -221,43 +216,3 @@ public class CMinimaxApproval
     }
 
 }
-
-// XXXXXXXXXXXXXXXXXX Old Code XXXXXXXXXXXXXXXXXXXXXXXX
-
-
-
-    /* m_alternatives list */
-//    private List<String> m_alternatives;
-    /* list of values*/
-//    private List<AtomicIntegerArray> m_votes;
-//    /* committee size */
-//    private int m_comSize;
-
-// ---- war in applyRule() -----
-// System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
-
-// ---- war in computeCommittees() -----
-
-// for ( int i = 0; i < l_resultList.size(); i++ )
-// {
-// System.out.println( Arrays.toString( l_resultList.get( i ) ) );
-// }
-// System.out.println( "Number of committees: " + l_resultList.size() );
-// System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
-// System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
-
-// --- war in determineMaxHD()
-// System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
-// System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
-
-
-
-
-
-
-
-
-
-
-
-
