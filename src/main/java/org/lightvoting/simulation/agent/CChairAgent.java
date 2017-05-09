@@ -393,6 +393,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return l_maxIndex;
     }
 
+    /**
+     * Class CChairAgentGenerator
+     */
+
     public static final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
     {
 

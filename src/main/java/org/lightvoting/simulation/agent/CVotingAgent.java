@@ -440,7 +440,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return l_sortedMap;
     }
 
-
+    /**
+     * Class CVotingAgentGenerator
+     */
     public static final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
     {
 
