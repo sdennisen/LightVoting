@@ -25,15 +25,17 @@ package org.lightvoting;
 
 import com.google.common.collect.Sets;
 import org.bytedeco.javacpp.hdf5.H5File;
-import org.lightvoting.configuration.CLoadConfig;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -77,7 +79,7 @@ public final class CMain
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
 
-        CLoadConfig.readYaml();
+        readYaml();
 
         final Set<CVotingAgent> l_agents;
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
@@ -143,6 +145,29 @@ public final class CMain
                     }
                 } );
             } );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private static void readYaml() throws FileNotFoundException
+    {
+        final Yaml l_yaml = new Yaml();
+
+        System.out.println( l_yaml.dump( l_yaml.load( new FileInputStream( "src/main/resources/org/lightvoting/configuration.yaml" ) ) ) );
+
+        final Map<String, Map<String, String>> l_values = (Map<String, Map<String, String>>) l_yaml
+            .load( new FileInputStream( "src/main/resources/org/lightvoting/configuration.yaml" ) );
+
+        for ( final String l_key : l_values.keySet() )
+        {
+            final Map<String, String> l_subValues = l_values.get( l_key );
+            System.out.println( l_key );
+
+            for ( final String l_subValueKey : l_subValues.keySet() )
+            {
+                System.out.println( String.format( "\t%s = %s",
+                                                   l_subValueKey, l_subValues.get( l_subValueKey ) ) );
+            }
+        }
     }
 
     private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
