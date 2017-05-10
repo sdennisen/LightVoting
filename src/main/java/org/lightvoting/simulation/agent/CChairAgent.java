@@ -90,6 +90,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     // TODO via config file
     private double m_dissThreshold = 1.1;
     private boolean m_iterative;
+    private List<BitVector> m_bitVotes;
 
     /**
      * constructor of the agent
@@ -108,6 +109,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_name = p_name;
         m_environment = p_environment;
         m_votes = Collections.synchronizedList( new LinkedList<>() );
+        m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
         m_grouping = p_grouping;
@@ -224,6 +226,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         m_agents.add( l_group.determineAgent( p_agentName ) );
         m_votes.add( p_vote );
+        m_bitVotes.add( this.toBV( p_vote ) );
 
         if ( m_votes.size() == l_group.size() )
         {
@@ -239,6 +242,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             this.trigger( l_trigger );
         }
+    }
+
+    private BitVector toBV( final AtomicIntegerArray p_vote )
+    {
+        final BitVector l_bitVector = new BitVector( p_vote.length() );
+        for ( int i = 0; i < p_vote.length(); i++ )
+            if ( p_vote.get( i ) == 1 )
+                l_bitVector.put( i, true );
+        return l_bitVector;
     }
 
     /**
@@ -267,7 +279,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
 
-        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_votes, 3 );
+        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
 
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
 
@@ -364,6 +376,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
             m_votes.remove( l_maxDissAg.getVote() );
+
+            // TODO use BitVectors instead
             m_dissVoters.remove( l_maxDissAg );
             l_group.remove( l_maxDissAg );
 
