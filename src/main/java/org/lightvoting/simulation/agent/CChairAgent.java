@@ -43,7 +43,6 @@ import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -74,7 +73,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
 
     private final CEnvironment m_environment;
-    private List<AtomicIntegerArray> m_votes;
+ //   private List<AtomicIntegerArray> m_votes;
     private List<CVotingAgent> m_agents;
 
     // TODO define via config file
@@ -108,7 +107,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
-        m_votes = Collections.synchronizedList( new LinkedList<>() );
+    //    m_votes = Collections.synchronizedList( new LinkedList<>() );
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
@@ -276,20 +275,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " Alternatives: " + l_alternatives );
 
-        System.out.println( " Votes: " + m_votes );
+        System.out.println( " Votes: " + m_bitVotes );
 
-        final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
+      //  final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
 
-        System.out.println( "! Useless ! Result of election: " + Arrays.toString( l_comResult ) );
+     //   System.out.println( "! Useless ! Result of election: " + Arrays.toString( l_comResult ) );
 
         System.out.println( " Result of election as BV: " + l_comResultBV );
 
         // set inProgress and readyForElection to false in group
         l_group.reset();
 
-        if ( "BASIC".equals( m_protocol ) )
+/*        if ( "BASIC".equals( m_protocol ) )
         {
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
         }
@@ -315,7 +314,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         {
             System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
-        }
+        }*/
 
         // TODO test all cases
 
@@ -376,7 +375,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
             System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
-            m_votes.remove( l_maxDissAg.getVote() );
+            m_bitVotes.remove( l_maxDissAg.getBitVote() );
 
             // TODO use BitVectors instead
             m_dissVoters.remove( l_maxDissAg );
