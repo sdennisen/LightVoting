@@ -293,7 +293,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( l_group.updateBasic( this, l_comResultBV ) );
         }
 
-        /*
 
         // if grouping is coordinated, reopen group for further voters
         if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() && !m_iterative )
@@ -316,7 +315,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         {
             System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this,  l_comResultBV ) );
-        }*/
+        }
 
         // TODO test all cases
 

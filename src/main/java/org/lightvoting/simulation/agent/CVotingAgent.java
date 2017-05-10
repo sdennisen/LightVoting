@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -378,6 +379,45 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
     {
+        final CGroup l_group;
+        // choose group to join
+        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
+        final AtomicIntegerArray l_vote = this.getVote();
+        System.out.println( "Vote: " + l_vote );
+        for ( int i = 0; i < p_activeGroups.size(); i++ )
+        {
+            final BitVector l_com =  p_activeGroups.get( i ).result();
+            System.out.println( "Committee: " + l_com );
+
+            // TODO own class for Hamming distance computation
+            final BitVector l_bitVote = new BitVector( l_vote.length() );
+            final BitVector l_bitCom = new BitVector( l_vote.length() );
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitVote.put( j, l_vote.get( j ) == 1 );
+            System.out.println( "Vote: " + l_bitVote );
+            for ( int j = 0; j < l_vote.length(); j++ )
+                l_bitCom.put( j, l_com.get( j ) );
+            System.out.println( "Committee: " + l_bitCom );
+            l_bitCom.xor( l_bitVote );
+            final int l_HD = l_bitCom.cardinality();
+            System.out.println( "Hamming distance: " + l_HD );
+            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
+        }
+        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
+        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
+        l_group = l_entry.getKey();
+
+        // if Hamming distance is above the threshold, do not join the chair but create a new group
+        if ( l_entry.getValue() > m_joinThreshold )
+        {
+            this.openNewGroup();
+            return;
+        }
+        m_environment.addAgentCoordinated( l_group, this );
+        this.beliefbase().add( l_group.literal( this ) );
+        System.out.println( this.name() + " joins group " + l_group );
+
+
  /*       final CGroup l_group;
         // choose group to join
         final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
