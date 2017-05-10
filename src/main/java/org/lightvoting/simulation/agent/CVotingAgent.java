@@ -198,6 +198,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return m_vote;
     }
 
+    public BitVector getBitVote()
+    {
+        return m_bitVote;
+    }
+
     // agent actions
 
     @IAgentActionFilter
@@ -230,7 +235,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 CLiteral.from(
                     "vote/received",
                     CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.getVote() )
+                    CRawTerm.from( this.getBitVote() )
                 )
             );
 

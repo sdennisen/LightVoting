@@ -220,15 +220,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final String p_agentName, final AtomicIntegerArray p_vote )
+    public void storeVote( final String p_agentName, final BitVector p_vote )
     {
         final CGroup l_group = this.determineGroup();
 
         m_agents.add( l_group.determineAgent( p_agentName ) );
-        m_votes.add( p_vote );
-        m_bitVotes.add( this.toBV( p_vote ) );
+     //   m_votes.add( p_vote );
+        // m_bitVotes.add( this.toBV( p_vote ) );
+        m_bitVotes.add( p_vote );
 
-        if ( m_votes.size() == l_group.size() )
+        if ( m_bitVotes.size() == l_group.size() )
         {
 
             final ITrigger l_trigger = CTrigger.from(
@@ -281,7 +282,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
 
-        System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+        System.out.println( "! Useless ! Result of election: " + Arrays.toString( l_comResult ) );
 
         System.out.println( " Result of election as BV: " + l_comResultBV );
 
