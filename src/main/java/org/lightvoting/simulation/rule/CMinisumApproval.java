@@ -26,6 +26,8 @@ package org.lightvoting.simulation.rule;
 
 //import java.util.Arrays;
 
+import cern.colt.bitvector.BitVector;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -54,6 +56,7 @@ public class CMinisumApproval
     /* committee */
     private int[] m_comVect;
 
+    private BitVector m_comBV;
 
     /**
      * compute the winning committee according to Minisum Approval
@@ -118,6 +121,70 @@ public class CMinisumApproval
         }
 
         return m_comVect;
+    }
+
+    /**
+     * compute the winning committee according to Minisum Approval
+     *
+     * @param p_alternatives available alternatives
+     * @param p_votes submitted votes
+     * @param p_comSize size of committee to be elected
+     * @return elected committee
+     */
+
+    public BitVector applyRuleBV( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
+    {
+        m_alternatives = p_alternatives;
+        m_votes = p_votes;
+        m_comSize = p_comSize;
+        m_comBV = new BitVector( m_alternatives.size() );
+
+        final int[] l_valuesVect = new int[m_alternatives.size()];
+
+        Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
+        for ( int i = 0; i < m_alternatives.size(); i++ )
+        {
+            for ( int j = 0; j < m_votes.size(); j++ )
+            {
+                if ( ( m_votes.get( j ) ).get( i ) == 1 )
+                {
+                    l_valuesVect[i]++;
+                }
+            }
+
+            /* create HashMap with index of alternative as key and score of alternative as value */
+
+            l_valuesMap.put( i, l_valuesVect[i] );
+        }
+
+        /* test print of HashMap  */
+
+        for ( int index : l_valuesMap.keySet() )
+        {
+            final int l_key = index;
+            final String l_value = l_valuesMap.get( index ).toString();
+        }
+
+        /* sort the HashMap in descending order according to values */
+
+        l_valuesMap = this.sortMapDESC( l_valuesMap );
+
+        /* create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.*/
+
+        int l_occupied = 0;
+
+        for ( final Entry<Integer, Integer> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_occupied < m_comSize )
+            {
+                m_comBV.put( l_entry.getKey(), true );
+                l_occupied++;
+            }
+            else
+                break;
+        }
+
+        return m_comBV;
     }
 
     /**
