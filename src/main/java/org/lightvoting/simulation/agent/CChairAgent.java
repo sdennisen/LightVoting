@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent;
 
+import cern.colt.bitvector.BitVector;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -266,7 +267,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
 
+        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_votes, 3 );
+
         System.out.println( " Result of election: " + Arrays.toString( l_comResult ) );
+
+        System.out.println( " Result of election as BV: " + l_comResultBV );
 
         // set inProgress and readyForElection to false in group
         l_group.reset();
