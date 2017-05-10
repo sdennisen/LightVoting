@@ -288,10 +288,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // set inProgress and readyForElection to false in group
         l_group.reset();
 
-/*        if ( "BASIC".equals( m_protocol ) )
+        if ( "BASIC".equals( m_protocol ) )
         {
-            this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
+            this.beliefbase().add( l_group.updateBasic( this, l_comResultBV ) );
         }
+
+        /*
 
         // if grouping is coordinated, reopen group for further voters
         if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() && !m_iterative )
@@ -305,7 +307,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         {
             System.out.println( " Update iterative " );
 
-            this.beliefbase().add( l_group.updateIterative( this, l_comResult, m_iteration ) );
+            this.beliefbase().add( l_group.updateIterative( this,  l_comResultBV, m_iteration ) );
             return;
         }
 
@@ -313,7 +315,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
         {
             System.out.println( " Update basic " );
-            this.beliefbase().add( l_group.updateBasic( this, l_comResult ) );
+            this.beliefbase().add( l_group.updateBasic( this,  l_comResultBV ) );
         }*/
 
         // TODO test all cases

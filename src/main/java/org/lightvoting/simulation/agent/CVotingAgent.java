@@ -49,7 +49,6 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -379,7 +378,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
     {
-        final CGroup l_group;
+ /*       final CGroup l_group;
         // choose group to join
         final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
         final AtomicIntegerArray l_vote = this.getVote();
@@ -415,7 +414,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         }
         m_environment.addAgentCoordinated( l_group, this );
         this.beliefbase().add( l_group.literal( this ) );
-        System.out.println( this.name() + " joins group " + l_group );
+        System.out.println( this.name() + " joins group " + l_group );*/
     }
 
     /**
