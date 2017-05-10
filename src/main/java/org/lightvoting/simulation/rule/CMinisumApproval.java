@@ -35,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 
@@ -49,12 +48,8 @@ public class CMinisumApproval
 
     /* m_alternatives list */
     private List<String> m_alternatives;
-    /* list of values*/
-    private List<AtomicIntegerArray> m_votes;
     /* committee size */
     private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
 
     private BitVector m_comBV;
 
@@ -70,7 +65,7 @@ public class CMinisumApproval
      * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
      */
 
-    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
+/*    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
     {
         m_alternatives = p_alternatives;
         m_votes = p_votes;
@@ -90,12 +85,12 @@ public class CMinisumApproval
                 }
             }
 
-            /* create HashMap with index of alternative as key and score of alternative as value */
+            *//* create HashMap with index of alternative as key and score of alternative as value *//*
 
             l_valuesMap.put( i, l_valuesVect[i] );
         }
 
-        /* test print of HashMap  */
+        *//* test print of HashMap  *//*
 
         for ( int index : l_valuesMap.keySet() )
         {
@@ -103,11 +98,11 @@ public class CMinisumApproval
             final String l_value = l_valuesMap.get( index ).toString();
         }
 
-        /* sort the HashMap in descending order according to values */
+        *//* sort the HashMap in descending order according to values *//*
 
         l_valuesMap = this.sortMapDESC( l_valuesMap );
 
-        /* create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.*/
+        *//* create committee vector according to sorted HashMap: For the first k entries, put a "1" in the position according to the index, i.e. the key.*//*
 
         int l_occupied = 0;
 
@@ -123,7 +118,7 @@ public class CMinisumApproval
         }
 
         return m_comVect;
-    }
+    }*/
 
     /**
      * compute the winning committee according to Minisum Approval

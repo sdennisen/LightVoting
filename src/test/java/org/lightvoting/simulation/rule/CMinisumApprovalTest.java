@@ -23,45 +23,47 @@
 
 package org.lightvoting.simulation.rule;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-
 /* TODO add test further cases for lexicographic tie-breaking */
+
+import junit.framework.TestCase;
+
 
 /**
  * Created by sophie on 01.02.17.
  */
+
 public class CMinisumApprovalTest extends TestCase
 {
 
-    /**
+
+/**
      * Create the test case
      *
      * @param p_testName name of the test case
-     */
+     *//*
+
     public CMinisumApprovalTest( final String p_testName )
     {
         super( p_testName );
     }
 
-    /**
+    */
+/**
      * Testsuite
      *
      * @return the suite of tests being tested
-     */
+     *//*
+
     public static Test suite()
     {
         return new TestSuite( CMinisumApprovalTest.class );
     }
 
-    /**
+    */
+/**
      * test MinisumApproval
-     */
+     *//*
+
     public void testCMinisumApproval()
     {
         final CMinisumApproval l_tester = new CMinisumApproval();
@@ -86,9 +88,11 @@ public class CMinisumApprovalTest extends TestCase
         assertEquals( l_result[2], 1 );
     }
 
-    /**
+    */
+/**
      * test MinisumApproval with tie-breaking for small instance
-     */
+     *//*
+
 
     public void testCMinisumApproval1()
     {
@@ -116,9 +120,11 @@ public class CMinisumApprovalTest extends TestCase
 
     }
 
-    /**
+    */
+/**
      * test MinisumApproval including tie-break for larger instance
-     */
+     *//*
+
 
     public void testCMinisumApproval3()
     {
@@ -155,5 +161,6 @@ public class CMinisumApprovalTest extends TestCase
         assertEquals( l_result[5], 0 );
     }
 
+*/
 }
 
