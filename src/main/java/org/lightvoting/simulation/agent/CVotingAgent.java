@@ -247,10 +247,10 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/dissatisfaction" )
-    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final int[] p_result ) throws InterruptedException
+    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final BitVector p_result ) throws InterruptedException
     {
 
-        final Double l_diss = this.computeDiss( p_result );
+        final Double l_diss = this.computeDissBV( p_result );
 
         System.out.println( this.name() + " tries to submit diss " + l_diss );
         final ITrigger l_trigger = CTrigger.from(
@@ -263,6 +263,18 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             )
         );
         p_chairAgent.trigger( l_trigger );
+    }
+
+    private Double computeDissBV( final BitVector p_result )
+    {
+        double l_diss = 0;
+
+        for ( int i = 0; i < p_result.size(); i++ )
+        {
+            if ( p_result.get( i ) )
+                l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
+        }
+        return l_diss;
     }
 
     // private methods
