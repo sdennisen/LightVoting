@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.environment;
 
+import cern.colt.bitvector.BitVector;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
@@ -49,7 +50,7 @@ public class CGroup
 
     private boolean m_open;
 
-    private int[] m_result;
+    private BitVector m_result;
 
     private boolean m_readyForElection;
     private boolean m_inProgress;
@@ -191,7 +192,7 @@ public class CGroup
      * @return group literal for chair agent
      */
 
-    public ILiteral updateBasic( final CChairAgent p_chairAgent, final int[] p_result )
+    public ILiteral updateBasic( final CChairAgent p_chairAgent, final BitVector p_result )
     {
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -215,7 +216,7 @@ public class CGroup
      * @return group literal for chair agent
      */
 
-    public ILiteral updateIterative( final CChairAgent p_chairAgent, final int[] p_result, final int p_iteration )
+    public ILiteral updateIterative( final CChairAgent p_chairAgent, final BitVector p_result, final int p_iteration )
     {
         final ITrigger l_trigger = CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -261,7 +262,7 @@ public class CGroup
      * @return election result
      */
 
-    public int[] result()
+    public BitVector result()
     {
         return m_result;
     }

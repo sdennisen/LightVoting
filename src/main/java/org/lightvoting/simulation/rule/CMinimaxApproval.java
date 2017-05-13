@@ -34,7 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 /**
@@ -44,32 +43,30 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 public class CMinimaxApproval
 {
 
-    /**
-     * compute the winning committee according to Minimax Approval
-     *
-     * @param p_alternatives available alternatives
-     * @param p_votes submitted votes
-     * @param p_comSize size of committee to be elected
-     * @return elected committee
-     */
+     /***
+         * compute the winning committee according to Minimax Approval
+         *
+         * @param p_alternatives available alternatives
+         * @param p_votes submitted votes
+         * @param p_comSize size of committee to be elected
+         * @return elected committee
+         */
 
-    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
+    public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
     {
         /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
-        final int[][] l_committees = this.computeComittees( p_alternatives.size(), p_comSize );
-
-        // alternative with committee as BitVector
 
         final List<BitVector> l_bitCommittees = this.computeBitComittees( p_alternatives.size(), p_comSize );
+        System.out.println( l_bitCommittees );
 
         /* Hashmap for storing the maximal hamming distance to any vote for all committees */
 
         Map<Integer, Integer> l_maxMap = new HashMap<Integer, Integer>();
 
-        for ( int i = 0; i < l_committees.length; i++ )
+        for ( int i = 0; i < l_bitCommittees.size(); i++ )
         {
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
-            l_maxMap.put( i, this.determineMaxHD( p_votes, l_committees[i], p_alternatives.size() ) );
+            l_maxMap.put( i, this.determineMaxHDBV( p_votes, l_bitCommittees.get( i ), p_alternatives.size() ) );
         }
 
         l_maxMap = this.sortMapASC( l_maxMap );
@@ -78,9 +75,16 @@ public class CMinimaxApproval
 
         final int l_winnerIndex = l_entry.getKey();
 
-        return l_committees[l_winnerIndex];
+        return l_bitCommittees.get( l_winnerIndex );
 
     }
+
+    /**
+     * compute possible committees
+     * @param p_altNum number of alternatives
+     * @param p_comSize committee size
+     * @return possible committees
+     */
 
     private List<BitVector> computeBitComittees( final int p_altNum, final int p_comSize )
     {
@@ -104,95 +108,30 @@ public class CMinimaxApproval
             {
                 l_bitVector.put( l_resultList.get( i )[j], true );
             }
+            l_bitVectors.add( l_bitVector );
         }
 
         return l_bitVectors;
     }
 
-    /**
-     * compute all possible committees for given number of alternatives and committee size
-     *
-     * @param p_altNum number of alternatives
-     * @param p_comSize size of committee to be elected
-     * @return all possible committees
-     */
-
-    private int[][] computeComittees( final int p_altNum, final int p_comSize )
+    private int determineMaxHDBV( final List<BitVector> p_votes, final BitVector p_comVect, final int p_altNum )
     {
-        final CCombination l_combination = new CCombination();
-        final int[] l_arr = new int[p_altNum];
-
-        for ( int i = 0; i < p_altNum; i++ )
-            l_arr[i] = i;
-
-        l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
-
-        final List<int[]> l_resultList = l_combination.getResultList();
-
-        final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
-
-        for ( int i = 0; i < l_resultList.size(); i++ )
-        {
-
-            for ( int j = 0; j < p_comSize; j++ )
-            {
-                l_comVects[i][l_resultList.get( i )[j]] = 1;
-            }
-        }
-
-        return l_comVects;
-    }
-
-    private int determineMaxHD( final List<AtomicIntegerArray> p_votes, final int[] p_comVect, final int p_altNum )
-    {
-        /* determine BitVector for committee */
-
-        final Boolean[] l_booleanCom = new Boolean[p_altNum ];
-
-        for ( int i = 0; i < p_altNum; i++ )
-            if ( p_comVect[i] == 1 )
-                l_booleanCom[i] = true;
-            else
-                l_booleanCom[i] = false;
-
-        final BitVector l_bitCom = new BitVector( p_altNum );
-
-        for ( int i = 0; i < p_altNum; i++ )
-        {
-            l_bitCom.put( i, l_booleanCom[i] );
-        }
-
         /* compute Hamming distances to all votes and determine the maximum */
 
         int l_maxHD = -1;
 
         for ( int i = 0; i < p_votes.size(); i++ )
         {
-            final Boolean[] l_booleanVote = new Boolean[p_altNum];
+            final BitVector l_curBitCom = p_comVect.copy();
 
-            for ( int j = 0; j < p_altNum; j++ )
-                if ( p_votes.get( i ).get( j ) == 1 )
-                    l_booleanVote[j] = true;
-                else
-                    l_booleanVote[j] = false;
-
-            final BitVector l_bitVote = new BitVector( p_altNum );
-
-            for ( int j = 0; j < p_altNum; j++ )
-            {
-                l_bitVote.put( j, l_booleanVote[j] );
-            }
-
-            final BitVector l_curBitCom = l_bitCom.copy();
-
-            l_curBitCom.xor( l_bitVote );
+            l_curBitCom.xor( p_votes.get( i ) );
 
             final int l_curHD = l_curBitCom.cardinality();
 
             if ( l_curHD > l_maxHD )
                 l_maxHD = l_curHD;
         }
-
+        System.out.println( " maximal HD for committee " + p_comVect + ": " + l_maxHD );
         return l_maxHD;
     }
 
@@ -243,3 +182,5 @@ public class CMinimaxApproval
     }
 
 }
+
+// TODO: refactor CCombination.combinations()

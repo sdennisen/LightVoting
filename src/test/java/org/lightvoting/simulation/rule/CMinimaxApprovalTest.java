@@ -23,13 +23,13 @@
 
 package org.lightvoting.simulation.rule;
 
+import cern.colt.bitvector.BitVector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 /**
@@ -74,14 +74,24 @@ public class CMinimaxApprovalTest extends TestCase
         l_alternatives.add( "POI5" );
         l_alternatives.add( "POI6" );
 
-        final List<AtomicIntegerArray> l_votes = new ArrayList<>();
+        final List<BitVector> l_votes = new ArrayList<>();
 
-        final AtomicIntegerArray l_vote1 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
-        final AtomicIntegerArray l_vote2 = new AtomicIntegerArray( new int[]{1, 1, 1, 1, 1, 0} );
-        final AtomicIntegerArray l_vote3 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
-        final AtomicIntegerArray l_vote4 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
-        final AtomicIntegerArray l_vote5 = new AtomicIntegerArray( new int[] {1, 1, 1, 1, 1, 0} );
-        final AtomicIntegerArray l_vote6 = new AtomicIntegerArray( new int[]{0, 0, 0, 1, 1, 1} );
+        final BitVector l_vote1 = new BitVector( 6 );
+        l_vote1.put( 0, true );
+        l_vote1.put( 1, true );
+        l_vote1.put( 2, true );
+        l_vote1.put( 3, true );
+        l_vote1.put( 4, true );
+
+        final BitVector l_vote2 = l_vote1.copy();
+        final BitVector l_vote3 =  l_vote1.copy();
+        final BitVector l_vote4 = l_vote1.copy();
+        final BitVector l_vote5 = l_vote1.copy();
+
+        final BitVector l_vote6 = new BitVector( 6 );
+        l_vote6.put( 3, true );
+        l_vote6.put( 4, true );
+        l_vote6.put( 5, true );
 
         l_votes.add( l_vote1 );
         l_votes.add( l_vote2 );
@@ -92,8 +102,10 @@ public class CMinimaxApprovalTest extends TestCase
 
         final int l_comSize = 3;
 
-        l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
-
+        final  BitVector l_bitVector = l_minimaxApproval.applyRuleBV( l_alternatives, l_votes, l_comSize );
+        System.out.println( l_bitVector );
     }
 
 }
+
+// TODO add more tests

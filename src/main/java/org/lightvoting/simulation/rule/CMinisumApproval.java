@@ -26,6 +26,8 @@ package org.lightvoting.simulation.rule;
 
 //import java.util.Arrays;
 
+import cern.colt.bitvector.BitVector;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 
 
@@ -47,13 +48,12 @@ public class CMinisumApproval
 
     /* m_alternatives list */
     private List<String> m_alternatives;
-    /* list of values*/
-    private List<AtomicIntegerArray> m_votes;
     /* committee size */
     private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
 
+    private BitVector m_comBV;
+
+    private List<BitVector> m_bitVotes;
 
     /**
      * compute the winning committee according to Minisum Approval
@@ -62,24 +62,23 @@ public class CMinisumApproval
      * @param p_votes submitted votes
      * @param p_comSize size of committee to be elected
      * @return elected committee
-     * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
      */
 
-    public int[] applyRule( final List<String> p_alternatives, final List<AtomicIntegerArray> p_votes, final int p_comSize )
+    public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
     {
         m_alternatives = p_alternatives;
-        m_votes = p_votes;
         m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
+        m_bitVotes = p_votes;
+        m_comBV = new BitVector( m_alternatives.size() );
 
         final int[] l_valuesVect = new int[m_alternatives.size()];
 
         Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
         for ( int i = 0; i < m_alternatives.size(); i++ )
         {
-            for ( int j = 0; j < m_votes.size(); j++ )
+            for ( int j = 0; j < m_bitVotes.size(); j++ )
             {
-                if ( ( m_votes.get( j ) ).get( i ) == 1 )
+                if ( ( m_bitVotes.get( j ) ).get( i ) )
                 {
                     l_valuesVect[i]++;
                 }
@@ -110,14 +109,14 @@ public class CMinisumApproval
         {
             if ( l_occupied < m_comSize )
             {
-                m_comVect[l_entry.getKey()] = 1;
+                m_comBV.put( l_entry.getKey(), true );
                 l_occupied++;
             }
             else
                 break;
         }
 
-        return m_comVect;
+        return m_comBV;
     }
 
     /**
