@@ -93,7 +93,6 @@ public class CMinimaxApproval
         l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
 
         final List<int[]> l_resultList = l_combination.getResultList();
-        l_combination.clearList();
 
         final List<BitVector> l_bitVectors = new LinkedList<>();
 
@@ -129,7 +128,6 @@ public class CMinimaxApproval
         l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
 
         final List<int[]> l_resultList = l_combination.getResultList();
-        l_combination.clearList();
 
         final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
 

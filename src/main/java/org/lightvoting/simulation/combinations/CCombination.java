@@ -44,15 +44,6 @@ public class CCombination
     }
 
     /**
-     * reset List
-     */
-
-    public void clearList()
-    {
-        m_resultList = new ArrayList<>();
-    }
-
-    /**
      * compute possible positions of the ones in the committee
      * @param p_arr int[] array
      * @param p_len number of ones
