@@ -159,7 +159,6 @@ public class CMinimaxApproval
 
         return l_sortedMap;
     }
-
 }
 
-// TODO: refactor CCombination.combinations()
+
