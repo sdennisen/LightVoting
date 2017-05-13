@@ -26,7 +26,6 @@ package org.lightvoting.simulation.rule;
 import cern.colt.bitvector.BitVector;
 import org.lightvoting.simulation.combinations.CCombination;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -134,26 +133,6 @@ public class CMinimaxApproval
         System.out.println( " maximal HD for committee " + p_comVect + ": " + l_maxHD );
         return l_maxHD;
     }
-
-    /**
-     * convert BitVector to (0,1) vector as String
-     *
-     * @param p_bitVector input BitVector
-     * @return (0, 1) vector representation as String
-     */
-
-    private String toBitString( final BitVector p_bitVector )
-    {
-        final int[] l_bitInt = new int[p_bitVector.size()];
-        for ( int i = 0; i < p_bitVector.size(); i++ )
-        {
-            if ( p_bitVector.get( i ) )
-                l_bitInt[i] = 1;
-        }
-
-        return Arrays.toString( l_bitInt );
-    }
-
 
     /**
      * sort HashMap according to its values in ascending order
