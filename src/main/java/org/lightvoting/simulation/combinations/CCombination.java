@@ -33,14 +33,14 @@ import java.util.List;
  *
  */
 
-public class CCombination
+public class CCombination extends Object
 {
 
     private List<int[]> m_resultList = new ArrayList<>();
 
     public List<int[]> getResultList()
     {
-        return m_resultList;
+        return new ArrayList<>( m_resultList );
     }
 
     /**
@@ -66,4 +66,5 @@ public class CCombination
             this.combinations( p_arr, p_len - 1, i + 1, p_result );
         }
     }
+
 }

@@ -65,7 +65,7 @@ public class CMinimaxApproval
         for ( int i = 0; i < l_bitCommittees.size(); i++ )
         {
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
-            l_maxMap.put( i, this.determineMaxHDBV( p_votes, l_bitCommittees.get( i ), p_alternatives.size() ) );
+            l_maxMap.put(  i, this.determineMaxHDBV( p_votes, l_bitCommittees.get( i ), p_alternatives.size() ) );
         }
 
         l_maxMap = this.sortMapASC( l_maxMap );
