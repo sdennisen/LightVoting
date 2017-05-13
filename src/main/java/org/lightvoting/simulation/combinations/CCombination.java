@@ -36,20 +36,11 @@ import java.util.List;
 public class CCombination
 {
 
-    private List<int[]> m_resultList = new ArrayList<int[]>();
+    private List<int[]> m_resultList = new ArrayList<>();
 
     public List<int[]> getResultList()
     {
         return m_resultList;
-    }
-
-    /**
-     * reset List
-     */
-
-    public void clearList()
-    {
-        m_resultList = new ArrayList<>();
     }
 
     /**
@@ -73,9 +64,6 @@ public class CCombination
         {
             p_result[p_result.length - p_len] = p_arr[i];
             this.combinations( p_arr, p_len - 1, i + 1, p_result );
-
         }
-
-
     }
 }
