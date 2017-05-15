@@ -55,8 +55,7 @@ public class CCombination extends Object
     {
         if ( p_len == 0 )
         {
-            final int[] l_tempResult = Arrays.copyOf( p_result, p_result.length );
-            m_resultList.add( l_tempResult );
+            m_resultList.add( Arrays.copyOf( p_result, p_result.length ) );
             return;
         }
 
