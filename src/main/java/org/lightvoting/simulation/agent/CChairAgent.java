@@ -109,7 +109,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
-    //    m_votes = Collections.synchronizedList( new LinkedList<>() );
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );

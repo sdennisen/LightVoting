@@ -26,7 +26,6 @@ package org.lightvoting;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
 
-
 /**
  * Created by sophie on 15.05.17.
  */
@@ -65,7 +64,7 @@ public final class CDataWriter
     public static void test( final String p_name )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
-        l_file.openFile( p_name, 0x0001 );
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
 
         final String l_DATASETNAME = "Results";
         final int l_DIM0 = 100;
