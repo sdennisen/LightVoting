@@ -26,7 +26,6 @@ package org.lightvoting.simulation.agent;
 import cern.colt.Arrays;
 import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
-import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -118,24 +117,24 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private Integer m_joinThreshold;
     private final BitVector m_bitVote;
-    private final hdf5.H5File m_h5file;
+    private final String m_fileName;
 
     /**
      * constructor of the agent
-     *  @param p_name name of the agent
+     * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
      * @param p_grouping grouping algorithm
-     * @param p_h5file h5 file
+     * @param p_fileName h5 file
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
                          final String p_grouping,
-                         final hdf5.H5File p_h5file
+                         final String p_fileName
     )
     {
         super( p_configuration );
@@ -163,7 +162,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_voted = false;
         m_joinThreshold = 5;
         m_grouping = p_grouping;
-        m_h5file = p_h5file;
+        m_fileName = p_fileName;
     }
 
     // overload agent-cycle
@@ -501,19 +500,19 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          */
         private final int m_altNum;
         private final String m_grouping;
-        private final hdf5.H5File m_h5file;
+        private final String m_fileName;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_altNum number of alternatives
          * @param p_grouping grouping algorithm
-         * @param p_h5file h5 file
+         * @param p_fileName h5 file
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
                                       final String p_grouping,
-                                      final hdf5.H5File p_h5file
+                                      final String p_fileName
         ) throws Exception
         {
 
@@ -548,7 +547,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             m_environment = p_environment;
             m_altNum = p_altNum;
             m_grouping = p_grouping;
-            m_h5file = p_h5file;
+            m_fileName = p_fileName;
         }
 
         // unregister an agent
@@ -581,7 +580,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 m_environment,
                 m_altNum,
                 m_grouping,
-                m_h5file
+                m_fileName
             );
 
             l_votingAgent.sleep( Integer.MAX_VALUE  );

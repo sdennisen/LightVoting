@@ -24,7 +24,6 @@
 package org.lightvoting;
 
 import com.google.common.collect.Sets;
-import org.bytedeco.javacpp.hdf5.H5File;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
@@ -46,8 +45,7 @@ import java.util.stream.IntStream;
 public final class CMain
 {
     private static CEnvironment s_environment;
-    private static H5File s_h5file;
-
+   //  private static H5File s_h5file;
     private static int s_altnum;
     private static String s_grouping;
     private static String s_protocol;
@@ -79,19 +77,20 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
-
-        createHDF5();
+       // final CDataWriter l_writer = new CDataWriter();
+        final String l_name = "results.h5";
+        CDataWriter.createHDF5( l_name );
 
         try
         {
             final FileInputStream l_stream = new FileInputStream( p_args[0] );
             final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
+            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
 
-            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, s_h5file );
+            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, s_h5file )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name )  )
                     .collect( Collectors.toSet() );
 
 
@@ -186,25 +185,6 @@ public final class CMain
                 p_agentIterator.remove();
 
             }
-        }
-
-    }
-
-    // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
-
-    private static void createHDF5()
-    {
-        final String l_fileName = "results.h5";
-
-        // Create a new file.
-        try
-        {
-            s_h5file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
-            s_h5file.close();
-        }
-        catch ( final Exception l_ex )
-        {
-            l_ex.printStackTrace();
         }
 
     }

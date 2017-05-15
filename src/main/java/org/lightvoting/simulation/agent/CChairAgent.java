@@ -24,7 +24,6 @@
 package org.lightvoting.simulation.agent;
 
 import cern.colt.bitvector.BitVector;
-import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -91,20 +90,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private double m_dissThreshold = 1.1;
     private boolean m_iterative;
     private List<BitVector> m_bitVotes;
-    private final hdf5.H5File m_h5file;
+    private final String m_fileName;
 
     /**
      * constructor of the agent
-     *  @param p_configuration agent configuration of the agent generator
+     * @param p_configuration agent configuration of the agent generator
      * @param p_grouping grouping algorithm
      * @param p_protocol voting protocol
-     * @param p_h5file h5 file
+     * @param p_fileName h5 file
      */
 
 
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping,
                         final String p_protocol,
-                        final hdf5.H5File p_h5file
+                        final String p_fileName
     )
     {
         super( p_configuration );
@@ -119,7 +118,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_iteration = 0;
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iterative = false;
-        m_h5file = p_h5file;
+        m_fileName = p_fileName;
     }
 
     // overload agent-cycle
@@ -429,18 +428,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         private final String m_grouping;
         private String m_protocol;
-        private final hdf5.H5File m_h5file;
+        private final String m_fileName;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_grouping grouping algorithm
          * @param p_protocol voting protocol
-         * @param p_h5file h5 file
+         * @param p_fileName h5 file
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping, final String p_protocol,
-                                     final hdf5.H5File p_h5file
+                                     final String p_fileName
         ) throws Exception
         {
             super(
@@ -469,7 +468,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_environment = p_environment;
             m_grouping = p_grouping;
             m_protocol = p_protocol;
-            m_h5file = p_h5file;
+            m_fileName = p_fileName;
         }
 
         /**
@@ -485,7 +484,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_h5file );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_fileName );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             return l_chairAgent;
         }
