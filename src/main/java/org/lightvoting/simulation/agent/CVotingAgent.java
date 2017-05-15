@@ -228,21 +228,22 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
-        if ( !m_voted )
-        {
-            p_chairAgent.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "vote/received",
-                        CRawTerm.from( this.name() ),
-                        CRawTerm.from( this.getBitVote() )
-                    )
-                )
-            );
+        if ( m_voted )
+            return;
 
-            m_voted = true;
-        }
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "vote/received",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.getBitVote() )
+                )
+            )
+        );
+
+        m_voted = true;
+
     }
 
     @IAgentActionFilter
