@@ -30,7 +30,6 @@ import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
-import org.lightjason.agentspeak.beliefbase.IBeliefbase;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
@@ -47,7 +46,6 @@ import org.lightvoting.simulation.environment.CGroup;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -195,7 +193,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return m_chair;
     }
 
-
     public AtomicIntegerArray getVote()
     {
         return m_vote;
@@ -233,16 +230,16 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         if ( !m_voted )
         {
-            final ITrigger l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "vote/received",
-                    CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.getBitVote() )
+            p_chairAgent.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "vote/received",
+                        CRawTerm.from( this.name() ),
+                        CRawTerm.from( this.getBitVote() )
+                    )
                 )
             );
-
-            p_chairAgent.trigger( l_trigger );
 
             m_voted = true;
         }
@@ -252,20 +249,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/dissatisfaction" )
     private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final BitVector p_result ) throws InterruptedException
     {
-
-        final Double l_diss = this.computeDissBV( p_result );
-
-        System.out.println( this.name() + " tries to submit diss " + l_diss );
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "diss/received",
-                CRawTerm.from( this.name() ),
-                CRawTerm.from( l_diss ),
-                CRawTerm.from( p_iteration )
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "diss/received",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.computeDissBV( p_result ) ),
+                    CRawTerm.from( p_iteration )
+                )
             )
         );
-        p_chairAgent.trigger( l_trigger );
     }
 
     private Double computeDissBV( final BitVector p_result )
@@ -297,7 +291,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
-
     private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
     {
         final int[] l_voteValues = new int[m_altNum];
@@ -325,12 +318,10 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private List<CGroup> determineActiveGroups()
     {
-        final IBeliefbase l_bb = m_beliefbase.beliefbase();
         final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
-        final Collection l_groups = l_bb.literal( "groups" );
-        l_groups.stream().forEach( i ->
-                                       l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
+            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
