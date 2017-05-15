@@ -27,31 +27,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/* TODO method for computing the committee vectors */
-
 /**
  * Created by sophie on 08.02.17.
  * uses http://stackoverflow.com/questions/127704/algorithm-to-return-all-combinations-of-k-elements-from-n
  *
  */
 
-public class CCombination
+public class CCombination extends Object
 {
 
-    private List<int[]> m_resultList = new ArrayList<int[]>();
+    private List<int[]> m_resultList = new ArrayList<>();
 
     public List<int[]> getResultList()
     {
-        return m_resultList;
-    }
-
-    /**
-     * reset List
-     */
-
-    public void clearList()
-    {
-        m_resultList = new ArrayList<>();
+        return new ArrayList<>( m_resultList );
     }
 
     /**
@@ -66,7 +55,6 @@ public class CCombination
     {
         if ( p_len == 0 )
         {
-           // System.out.println( Arrays.toString( p_result ) );
             final int[] l_tempResult = Arrays.copyOf( p_result, p_result.length );
             m_resultList.add( l_tempResult );
             return;
@@ -76,9 +64,7 @@ public class CCombination
         {
             p_result[p_result.length - p_len] = p_arr[i];
             this.combinations( p_arr, p_len - 1, i + 1, p_result );
-
         }
-
-
     }
+
 }

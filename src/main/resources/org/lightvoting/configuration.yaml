@@ -1,1 +1,6 @@
 # LightVoting Default Config
+
+variables:
+  grouping: RANDOM
+  protocol: BASIC
+  altnum: '6'

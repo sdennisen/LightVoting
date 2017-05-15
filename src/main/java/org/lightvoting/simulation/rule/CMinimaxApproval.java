@@ -26,17 +26,14 @@ package org.lightvoting.simulation.rule;
 import cern.colt.bitvector.BitVector;
 import org.lightvoting.simulation.combinations.CCombination;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/* TODO later, compute possible committees independently from used voting rule */
-/* TODO compute Hamming distance without BitVectorUtils */
-/* TODO put sorting function for Map in own class, with boolean parameter for ascending/descending*/
 
 /**
  * Created by sophie on 10.01.17.
@@ -45,71 +42,50 @@ import java.util.Map;
 public class CMinimaxApproval
 {
 
-    /* m_alternatives list */
-    private List<String> m_alternatives;
-    /* list of values*/
-    private List<int[]> m_votes;
-    /* committee size */
-    private int m_comSize;
-    /* committee */
-    private int[] m_comVect;
+     /***
+         * compute the winning committee according to Minimax Approval
+         *
+         * @param p_alternatives available alternatives
+         * @param p_votes submitted votes
+         * @param p_comSize size of committee to be elected
+         * @return elected committee
+         */
 
-
-    /**
-     * compute the winning committee according to Minimax Approval
-     *
-     * @param p_alternatives available alternatives
-     * @param p_votes submitted votes
-     * @param p_comSize size of committee to be elected
-     * @return elected committee
-     */
-
-    public int[] applyRule( final List<String> p_alternatives, final List<int[]> p_votes, final int p_comSize )
+    public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
     {
-        m_alternatives = p_alternatives;
-        m_votes = p_votes;
-        m_comSize = p_comSize;
-        m_comVect = new int[m_alternatives.size()];
+        /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
 
-        // compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones
-        final int[][] l_committees = this.computeComittees( m_votes.size(), m_alternatives.size(), m_comSize );
+        final List<BitVector> l_bitCommittees = this.computeBitComittees( p_alternatives.size(), p_comSize );
+        System.out.println( l_bitCommittees );
 
         /* Hashmap for storing the maximal hamming distance to any vote for all committees */
 
         Map<Integer, Integer> l_maxMap = new HashMap<Integer, Integer>();
 
-        for ( int i = 0; i < l_committees.length; i++ )
+        for ( int i = 0; i < l_bitCommittees.size(); i++ )
         {
-            final int l_maxHD = this.determineMaxHD( m_votes, l_committees[i] );
-            System.out.println( "Maximal Hamming distance for committee " + i + ": " + l_maxHD );
-
             /* Key: Committee ID, Value: maximal Hamming distance to any voter */
-            l_maxMap.put( i, l_maxHD );
-
+            l_maxMap.put(  i, this.determineMaxHDBV( p_votes, l_bitCommittees.get( i ), p_alternatives.size() ) );
         }
 
-        l_maxMap = this.sortMap( l_maxMap );
+        l_maxMap = this.sortMapASC( l_maxMap );
 
         final Map.Entry<Integer, Integer> l_entry = l_maxMap.entrySet().iterator().next();
 
         final int l_winnerIndex = l_entry.getKey();
 
-        System.out.println( "Winning Committee " + l_winnerIndex + ": "  + Arrays.toString( l_committees[l_winnerIndex] ) + " hd: " + l_entry.getValue() );
-
-        return l_committees[l_winnerIndex];
+        return l_bitCommittees.get( l_winnerIndex );
 
     }
 
     /**
-     * compute all possible committees for given number of alternatives and committee size
-     *
-     * @param p_votNum number of votes
+     * compute possible committees
      * @param p_altNum number of alternatives
-     * @param p_comSize size of committee to be elected
-     * @return all possible committees
+     * @param p_comSize committee size
+     * @return possible committees
      */
 
-    private int[][] computeComittees( final int p_votNum, final int p_altNum, final int p_comSize )
+    private List<BitVector> computeBitComittees( final int p_altNum, final int p_comSize )
     {
         final CCombination l_combination = new CCombination();
         final int[] l_arr = new int[p_altNum];
@@ -120,107 +96,43 @@ public class CMinimaxApproval
         l_combination.combinations( l_arr, p_comSize, 0, new int[p_comSize] );
 
         final List<int[]> l_resultList = l_combination.getResultList();
-        l_combination.clearList();
+
+        final List<BitVector> l_bitVectors = new LinkedList<>();
 
         for ( int i = 0; i < l_resultList.size(); i++ )
         {
-            System.out.println( Arrays.toString( l_resultList.get( i ) ) );
-        }
+            final BitVector l_bitVector = new BitVector( p_altNum );
 
-        System.out.println( "Number of committees: " + l_resultList.size() );
-
-        final int[][] l_comVects = new int[l_resultList.size()][l_arr.length];
-
-        for ( int i = 0; i < l_resultList.size(); i++ )
-        {
-
-            for ( int j = 0; j < 3; j++ )
+            for ( int j = 0; j < p_comSize; j++ )
             {
-                //System.out.println( " i: " + i + " j: " + j + " l_index: " + l_index + " value: " + l_resultList.get( i )[j]);
-                l_comVects[i][l_resultList.get( i )[j]] = 1;
+                l_bitVector.put( l_resultList.get( i )[j], true );
             }
-            System.out.println( "Committee " + i + ": " + Arrays.toString( l_comVects[i] ) );
+            l_bitVectors.add( l_bitVector );
         }
 
-        return l_comVects;
+        return l_bitVectors;
     }
 
-    /* TO DO refactor code, write methods for recurring parts */
-
-    private int determineMaxHD( final List<int[]> p_votes, final int[] p_comVect )
+    private int determineMaxHDBV( final List<BitVector> p_votes, final BitVector p_comVect, final int p_altNum )
     {
-        /* determine BitVector for committee */
-
-        final Boolean[] l_booleanCom = new Boolean[m_alternatives.size()];
-
-        for (  int i = 0; i < m_alternatives.size(); i++ )
-            if ( p_comVect[i] == 1 )
-                l_booleanCom[i] = true;
-            else l_booleanCom[i] = false;
-
-        final BitVector l_bitCom = new BitVector( m_alternatives.size() );
-
-        for ( int i = 0;  i < m_alternatives.size(); i++ )
-        {
-            l_bitCom.put( i, l_booleanCom[i] );
-        }
-
-        System.out.println( "Committee: " + this.toBitString( l_bitCom ) );
-
         /* compute Hamming distances to all votes and determine the maximum */
 
         int l_maxHD = -1;
 
         for ( int i = 0; i < p_votes.size(); i++ )
         {
-            final Boolean[] l_booleanVote = new Boolean[m_alternatives.size()];
+            final BitVector l_curBitCom = p_comVect.copy();
 
-            for (  int j = 0; j < m_alternatives.size(); j++ )
-                if ( p_votes.get( i )[j] == 1 )
-                    l_booleanVote[j] = true;
-                else l_booleanVote[j] = false;
-
-            final BitVector l_bitVote = new BitVector( m_alternatives.size() );
-
-            for ( int j = 0;  j < m_alternatives.size(); j++ )
-            {
-                l_bitVote.put( j, l_booleanVote[j] );
-            }
-
-            final BitVector l_curBitCom = l_bitCom.copy();
-
-            l_curBitCom.xor( l_bitVote );
+            l_curBitCom.xor( p_votes.get( i ) );
 
             final int l_curHD = l_curBitCom.cardinality();
 
-            System.out.println( "com " + Arrays.toString( p_comVect ) + " v " + Arrays.toString( p_votes.get( i ) ) + " hd " +  l_curBitCom.cardinality() );
-
             if ( l_curHD > l_maxHD )
                 l_maxHD = l_curHD;
-
         }
-
+        System.out.println( " maximal HD for committee " + p_comVect + ": " + l_maxHD );
         return l_maxHD;
     }
-
-    /**
-     * convert BitVector to (0,1) vector as String
-     * @param p_bitVector input BitVector
-     * @return (0,1) vector representation as String
-     */
-
-    private String toBitString( final BitVector p_bitVector )
-    {
-        final int[] l_bitInt = new int[p_bitVector.size()];
-        for ( int i = 0; i < p_bitVector.size(); i++ )
-        {
-            if ( p_bitVector.get( i ) )
-                l_bitInt[i] = 1;
-        }
-
-        return Arrays.toString( l_bitInt );
-    }
-
 
     /**
      * sort HashMap according to its values in ascending order
@@ -230,58 +142,15 @@ public class CMinimaxApproval
      */
 
 
-    public Map<Integer, Integer> sortMap( final Map<Integer, Integer> p_valuesMap )
+    public Map<Integer, Integer> sortMapASC( final Map<Integer, Integer> p_valuesMap )
 
     {
-        System.out.println( "Before sorting......" );
-        this.printMap( p_valuesMap );
+        final List<Map.Entry<Integer, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
-        System.out.println( "After sorting in ascending order......" );
-        final boolean l_DESC = true;
-        final Map<Integer, Integer> l_sortedMapDesc = this.sortByComparator( p_valuesMap, l_DESC );
-        this.printMap( l_sortedMapDesc );
+        // Sorting the list based on values in ascending order
+        Collections.sort( l_list, Comparator.comparing( Map.Entry::getValue ) );
 
-        return l_sortedMapDesc;
-
-    }
-
-    /**
-     * print out map
-     *
-     * @param p_map map to be printed
-     */
-
-    public void printMap( final Map<Integer, Integer> p_map )
-    {
-        for ( final Map.Entry<Integer, Integer> l_entry : p_map.entrySet() )
-        {
-            System.out.println( "Key : " + l_entry.getKey() + " Value : " + l_entry.getValue() );
-
-        }
-    }
-
-
-
-    private Map<Integer, Integer> sortByComparator( final Map<Integer, Integer> p_unsortMap, final boolean p_order )
-    {
-
-        final List<Map.Entry<Integer, Integer>> l_list = new LinkedList<>( p_unsortMap.entrySet() );
-
-        // Sorting the list based on values
-        Collections.sort( l_list, ( p_first, p_second ) ->
-        {
-            if ( p_order )
-            {
-                return p_first.getValue().compareTo( p_second.getValue() );
-            }
-            else
-            {
-                return p_second.getValue().compareTo( p_first.getValue() );
-
-            }
-        } );
-
-        // Maintaining insertion order with the help of LinkedList
+        /* Maintaining insertion order with the help of LinkedList */
         final Map<Integer, Integer> l_sortedMap = new LinkedHashMap<Integer, Integer>();
         for ( final Map.Entry<Integer, Integer> l_entry : l_list )
         {
@@ -290,9 +159,6 @@ public class CMinimaxApproval
 
         return l_sortedMap;
     }
-
 }
-
-
 
 

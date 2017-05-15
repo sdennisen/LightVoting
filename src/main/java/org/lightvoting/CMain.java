@@ -23,26 +23,35 @@
 
 package org.lightvoting;
 
-import org.lightjason.agentspeak.language.CLiteral;
-import org.lightjason.agentspeak.language.CRawTerm;
+import com.google.common.collect.Sets;
+import org.bytedeco.javacpp.hdf5.H5File;
 import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.agent.CVotingAgentGenerator;
-import org.lightvoting.simulation.rule.CMinimaxApproval;
+import org.lightvoting.simulation.environment.CEnvironment;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 
 /**
  * Main, providing runtime of LightVoting.
  */
 public final class CMain
 {
+    private static CEnvironment s_environment;
+    private static H5File s_h5file;
+
+    private static int s_altnum;
+    private static String s_grouping;
+    private static String s_protocol;
+
     /**
      * Hidden constructor
      */
@@ -64,92 +73,143 @@ public final class CMain
         // 1. ASL file
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
-        final Set<CVotingAgent> l_agents;
-        final CVotingAgentGenerator l_votingagentgenerator;
 
-        // we need to use a single send action instance to (un)register, i.e. keeping track of, agents.
-        final CSend l_sendaction = new CSend();
+        readYaml();
+
+        final Set<CVotingAgent> l_agents;
+        final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
+
+
+        createHDF5();
 
         try
-                (
-                        final FileInputStream l_stream = new FileInputStream( p_args[0] );
-                )
         {
+            final FileInputStream l_stream = new FileInputStream( p_args[0] );
+            final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            l_votingagentgenerator = new CVotingAgentGenerator( l_sendaction, l_stream );
+            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), s_h5file );
+
+            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, s_h5file );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[1] ) )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, s_h5file )  )
                     .collect( Collectors.toSet() );
 
-        } catch ( final Exception l_exception )
+
+            System.out.println( " Numbers of agents: " + l_agents.size() );
+
+
+        }
+        catch ( final Exception l_exception )
         {
             l_exception.printStackTrace();
             throw new RuntimeException();
         }
 
-        // add name as a belief to each agent
-        l_agents
-            .parallelStream()
-            .forEach(
-                    i -> i.beliefbase().add(
-                            CLiteral.from(
-                                    "myname", CRawTerm.from( i.name() )
-                            )
-                    )
-            );
+        // generate empty set of active agents
 
-        // runtime call (with parallel execution)
+        final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
+
+        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+
+        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+        System.out.println( " Will run " + p_args[3] + " cycles." );
+
         IntStream
             // define cycle range, i.e. number of cycles to run sequentially
-                .range(
-                        0,
-                        p_args.length < 3
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[2] )
-                )
-                .forEach( j -> l_agents.parallelStream().forEach( i ->
+            .range( 0,
+                    p_args.length < 4
+                    ? Integer.MAX_VALUE
+                    : Integer.parseInt( p_args[3] ) )
+            .forEach( j ->
+            {
+                System.out.println( "Global cycle: " + j );
+                l_agents.parallelStream().forEach( i ->
                 {
                     try
                     {
+                        // check if the conditions for triggering a new cycle are fulfilled in the environment
                         // call each agent, i.e. trigger a new agent cycle
                         i.call();
+                        //   i.getChair().sleep( 0 );
+                        i.getChair().call();
                     }
                     catch ( final Exception l_exception )
                     {
                         l_exception.printStackTrace();
                         throw new RuntimeException();
                     }
-                } ) );
-
-        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
-
-        final List<String> l_alternatives = new ArrayList<String>();
-
-        l_alternatives.add( "POI1" );
-        l_alternatives.add( "POI2" );
-        l_alternatives.add( "POI3" );
-        l_alternatives.add( "POI4" );
-        l_alternatives.add( "POI5" );
-        l_alternatives.add( "POI6" );
-
-        final List<int[]> l_votes = new ArrayList<int[]>();
-
-        final int[] l_vote1 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote2 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote3 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote4 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote5 = {1, 1, 1, 1, 1, 0};
-        final int[] l_vote6 = {0, 0, 0, 1, 1, 1};
-
-        l_votes.add( l_vote1 );
-        l_votes.add( l_vote2 );
-        l_votes.add( l_vote3 );
-        l_votes.add( l_vote4 );
-        l_votes.add( l_vote5 );
-        l_votes.add( l_vote6 );
-
-        final int l_comSize = 3;
-
-        l_minimaxApproval.applyRule( l_alternatives, l_votes, l_comSize );
+                } );
+            } );
     }
+
+    @SuppressWarnings( "unchecked" )
+    private static void readYaml() throws FileNotFoundException
+    {
+        final Yaml l_yaml = new Yaml();
+
+        System.out.println( l_yaml.dump( l_yaml.load( new FileInputStream( "src/main/resources/org/lightvoting/configuration.yaml" ) ) ) );
+
+        final Map<String, Map<String, String>> l_values = (Map<String, Map<String, String>>) l_yaml
+            .load( new FileInputStream( "src/main/resources/org/lightvoting/configuration.yaml" ) );
+
+        for ( final String l_key : l_values.keySet() )
+        {
+            final Map<String, String> l_subValues = l_values.get( l_key );
+            System.out.println( l_key );
+
+            for ( final String l_subValueKey : l_subValues.keySet() )
+            {
+                System.out.println( String.format( "\t%s = %s",
+                                                   l_subValueKey, l_subValues.get( l_subValueKey ) ) );
+
+                // parse input
+                if ( "grouping".equals( l_subValueKey ) )
+                    s_grouping = l_subValues.get( l_subValueKey );
+                if ( "protocol".equals( l_subValueKey ) )
+                    s_protocol = l_subValues.get( l_subValueKey );
+                if ( "altnum".equals( l_subValueKey ) )
+                    s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+            }
+        }
+    }
+
+    private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
+    {
+
+        for ( int i = 0; i < p_newAgNum; i++ )
+        {
+            if ( p_agentIterator.hasNext() )
+            {
+                final CVotingAgent l_curAg = p_agentIterator.next();
+                p_activeAgents.add( l_curAg );
+                System.out.println( "added Agent " + l_curAg.name() );
+                p_agentIterator.remove();
+
+            }
+        }
+
+    }
+
+    // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
+
+    private static void createHDF5()
+    {
+        final String l_fileName = "results.h5";
+
+        // Create a new file.
+        try
+        {
+            s_h5file = new H5File( l_fileName, org.bytedeco.javacpp.hdf5.H5F_ACC_TRUNC );
+            s_h5file.close();
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
+
+    }
+
+
 }
+
+// TODO read all necessary parameters from YAML file

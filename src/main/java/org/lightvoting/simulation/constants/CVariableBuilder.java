@@ -21,12 +21,47 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.grouping;
+package org.lightvoting.simulation.constants;
+
+import org.lightjason.agentspeak.agent.IAgent;
+import org.lightjason.agentspeak.language.execution.IVariableBuilder;
+import org.lightjason.agentspeak.language.instantiable.IInstantiable;
+import org.lightjason.agentspeak.language.variable.CConstant;
+import org.lightjason.agentspeak.language.variable.IVariable;
+import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.environment.CEnvironment;
+
+import java.util.stream.Stream;
+
 
 /**
- * Created by sophie on 10.01.17.
- * Class for "coordinated grouping".
+ * Created by sophie on 21.02.17.
  */
-public class CGrouping2
+
+public final class CVariableBuilder implements IVariableBuilder
 {
+
+    /**
+     * environment reference
+     */
+
+    private final CEnvironment m_environment;
+
+    /**
+     * constructor
+     *
+     * @param p_environment environment
+     */
+    public CVariableBuilder( final CEnvironment p_environment )
+    {
+        m_environment = p_environment;
+    }
+
+    @Override
+    public final Stream<IVariable<?>> generate( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
+    {
+        return Stream.of(
+            new CConstant<>( "MyName", p_agent.<CVotingAgent>raw().name() )
+        );
+    }
 }
