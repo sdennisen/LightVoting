@@ -42,7 +42,6 @@ import java.util.List;
 public class CMinisumApprovalTest extends TestCase
 {
 
-
 /**
      * Create the test case
      *
@@ -53,7 +52,6 @@ public class CMinisumApprovalTest extends TestCase
     {
         super( p_testName );
     }
-
 
 /**
      * Testsuite
