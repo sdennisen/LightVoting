@@ -80,6 +80,7 @@ public final class CMain
        // final CDataWriter l_writer = new CDataWriter();
         final String l_name = "results.h5";
         CDataWriter.createHDF5( l_name );
+        CDataWriter.test( l_name );
 
         try
         {

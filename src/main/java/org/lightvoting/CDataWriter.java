@@ -23,7 +23,9 @@
 
 package org.lightvoting;
 
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
+
 
 /**
  * Created by sophie on 15.05.17.
@@ -55,10 +57,16 @@ public final class CDataWriter
         }
     }
 
+    /**
+     * test for h5 file
+     * @param p_name name of h5 file
+     */
 
-/*    // test method
-    public static void write()
+    public static void test( final String p_name )
     {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, 0x0001 );
+
         final String l_DATASETNAME = "Results";
         final int l_DIM0 = 100;
         final int l_DIM1 = 20;
@@ -78,7 +86,7 @@ public final class CDataWriter
         final hdf5.DSetCreatPropList l_plist = new hdf5.DSetCreatPropList();
         l_plist.setChunk( 2, l_chunkDims );
 
-        final hdf5.DataSet l_dataset = new hdf5.DataSet( s_h5file.asCommonFG().createDataSet( l_DATASETNAME,
+        final hdf5.DataSet l_dataset = new hdf5.DataSet( l_file.asCommonFG().createDataSet( l_DATASETNAME,
                                                                                               new hdf5.DataType( hdf5.PredType.STD_I32BE() ), l_dataSpace, l_plist ) );
 
         for ( int i = 0; i <  l_DIM0; i++ )
@@ -91,7 +99,6 @@ public final class CDataWriter
         l_dataSpace.close();
         l_dataset.close();
         l_plist.close();
-
-    }*/
-
+        l_file._close();
+    }
 }
