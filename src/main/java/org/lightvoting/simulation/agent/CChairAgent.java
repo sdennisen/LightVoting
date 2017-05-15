@@ -261,7 +261,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * compute result of election
      */
 
-    // TODO see HDF5 structure in old code in CEnvironment
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
@@ -281,11 +280,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " Votes: " + m_bitVotes );
 
-      //  final int[] l_comResult = l_minisumApproval.applyRule( l_alternatives, m_votes, 3 );
-
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
-
-     //   System.out.println( "! Useless ! Result of election: " + Arrays.toString( l_comResult ) );
 
         System.out.println( " Result of election as BV: " + l_comResultBV );
 
@@ -381,8 +376,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
             m_bitVotes.remove( l_maxDissAg.getBitVote() );
-
-            // TODO use BitVectors instead
             m_dissVoters.remove( l_maxDissAg );
             l_group.remove( l_maxDissAg );
 

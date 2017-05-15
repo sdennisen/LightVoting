@@ -2,5 +2,5 @@
 
 variables:
   grouping: RANDOM
-  protocol: ITERATIVE
+  protocol: BASIC
   altnum: '6'

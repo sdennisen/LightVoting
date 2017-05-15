@@ -629,17 +629,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         }
     }
-
-
-
 }
 
-// TODO tip from Malte for filtering
 
-/*m_groups.parallelStream()
-    .filter( i -> i.open() )
-    .min( (g1, g2) -> Double.compare( g1.satisfaction(this), g2.satisfaction(this)) )
-    .get();*/
-
-// TODO tip from Malte for filtering
-// m_groups.get( l_random.nextInt( m_groups.size() ) );

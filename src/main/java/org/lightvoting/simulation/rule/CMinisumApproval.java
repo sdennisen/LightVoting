@@ -146,9 +146,3 @@ public class CMinisumApproval
     }
 
 }
-
-// XXXXXXXXXX Old Code XXXXXX
-// ---- was in applyRule() ----
-
-// System.out.println( "traveller" + ( l_key + 1 ) + " " + l_value );
-// System.out.println( "comVect:" + Arrays.toString( m_comVect ) );
