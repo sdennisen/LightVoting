@@ -90,12 +90,8 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-        final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
-
-        return l_literal;
-
+        return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
     }
-
 
     /**
      * open new group (for random grouping)
