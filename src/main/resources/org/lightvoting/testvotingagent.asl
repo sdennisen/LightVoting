@@ -1,4 +1,3 @@
-name("agent 0").
 lookForGroup.
 iteration(0).
 

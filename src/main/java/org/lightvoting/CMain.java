@@ -45,7 +45,6 @@ import java.util.stream.IntStream;
 public final class CMain
 {
     private static CEnvironment s_environment;
-   //  private static H5File s_h5file;
     private static int s_altnum;
     private static String s_grouping;
     private static String s_protocol;
@@ -192,5 +191,3 @@ public final class CMain
 
 
 }
-
-// TODO read all necessary parameters from YAML file

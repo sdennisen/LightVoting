@@ -73,10 +73,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
 
     private final CEnvironment m_environment;
- //   private List<AtomicIntegerArray> m_votes;
     private List<CVotingAgent> m_agents;
 
-    // TODO define via config file
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
      */
@@ -86,7 +84,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private String m_protocol;
     private List<Double> m_dissList;
     private List<CVotingAgent> m_dissVoters;
-    // TODO via config file
     private double m_dissThreshold = 1.1;
     private boolean m_iterative;
     private List<BitVector> m_bitVotes;
@@ -226,8 +223,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final CGroup l_group = this.determineGroup();
 
         m_agents.add( l_group.determineAgent( p_agentName ) );
-     //   m_votes.add( p_vote );
-        // m_bitVotes.add( this.toBV( p_vote ) );
         m_bitVotes.add( p_vote );
 
         if ( m_bitVotes.size() == l_group.size() )
