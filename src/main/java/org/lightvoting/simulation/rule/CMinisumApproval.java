@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 /**
  * Created by sophie on 10.01.17.
  * Computes result of election according to Minisum Approval voting rule.
+ * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
  */
 
 public class CMinisumApproval
