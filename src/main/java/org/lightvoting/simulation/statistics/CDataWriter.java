@@ -21,8 +21,10 @@
  * @endcond
  */
 
-package org.lightvoting;
+package org.lightvoting.simulation.statistics;
 
+import com.google.common.util.concurrent.AtomicDoubleArray;
+import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
 
@@ -99,5 +101,50 @@ public final class CDataWriter
         l_dataset.close();
         l_plist.close();
         l_file._close();
+    }
+
+    /**
+     * write dissatisfaction values to specified h5 file
+     * @param p_name name of h5 file
+     * @param p_dissVals dissatisfaction values
+     * @param p_chairName chair calling the method
+     */
+
+    public static void writeDissVals( final String p_name, final AtomicDoubleArray p_dissVals, final String p_chairName )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+
+        final double[] l_buf = new double[p_dissVals.length()];
+
+        for ( int i = 0; i < p_dissVals.length(); i++ )
+        {
+            l_buf[i] = p_dissVals.get( i );
+        }
+
+
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            l_file.asCommonFG().openGroup( p_chairName ).asCommonFG().createDataSet(
+                "diss values", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ), new hdf5.DataSpace( 2, new long[]{1, p_dissVals.length()} ), new hdf5.DSetCreatPropList()
+            )
+        );
+
+        l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+        l_file._close();
+
+    }
+
+    /**
+     * create group
+     * @param p_fileName name of h5 file
+     * @param p_chairName name of chair calling the method
+     */
+    public static void createGroup( final String p_fileName, final String p_chairName )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+        l_file.asCommonFG().createGroup( p_chairName );
+        l_file.close();
     }
 }

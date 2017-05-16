@@ -28,6 +28,7 @@ import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.statistics.CDataWriter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
