@@ -62,6 +62,7 @@ import java.util.stream.Stream;
 
 /**
  * BDI agent with voting capabilities.
+ * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
  */
 // annotation to mark the class that actions are inside
 @IAgentAction
