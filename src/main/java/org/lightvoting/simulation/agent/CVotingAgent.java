@@ -389,24 +389,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final CGroup l_group;
         // choose group to join
         final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
-        final AtomicIntegerArray l_vote = this.getVote();
+        final BitVector l_vote = this.getBitVote();
         System.out.println( "Vote: " + l_vote );
         for ( int i = 0; i < p_activeGroups.size(); i++ )
         {
             final BitVector l_com =  p_activeGroups.get( i ).result();
             System.out.println( "Committee: " + l_com );
 
-            // TODO own class for Hamming distance computation
-            final BitVector l_bitVote = new BitVector( l_vote.length() );
-            final BitVector l_bitCom = new BitVector( l_vote.length() );
-            for ( int j = 0; j < l_vote.length(); j++ )
-                l_bitVote.put( j, l_vote.get( j ) == 1 );
-            System.out.println( "Vote: " + l_bitVote );
-            for ( int j = 0; j < l_vote.length(); j++ )
-                l_bitCom.put( j, l_com.get( j ) );
-            System.out.println( "Committee: " + l_bitCom );
-            l_bitCom.xor( l_bitVote );
-            final int l_HD = l_bitCom.cardinality();
+            System.out.println( "Vote: " + l_vote );
+            System.out.println( "Committee: " + l_com );
+            l_com.xor( l_vote );
+            final int l_HD = l_com.cardinality();
             System.out.println( "Hamming distance: " + l_HD );
             l_groupDistances.put( p_activeGroups.get( i ), l_HD );
         }
