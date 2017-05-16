@@ -26,12 +26,10 @@ package org.lightvoting.simulation.agent;
 import cern.colt.Arrays;
 import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
-import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
-import org.lightjason.agentspeak.beliefbase.IBeliefbase;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
@@ -48,7 +46,6 @@ import org.lightvoting.simulation.environment.CGroup;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -118,24 +115,24 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private Integer m_joinThreshold;
     private final BitVector m_bitVote;
-    private final hdf5.H5File m_h5file;
+    private final String m_fileName;
 
     /**
      * constructor of the agent
-     *  @param p_name name of the agent
+     * @param p_name name of the agent
      * @param p_configuration agent configuration of the agent generator
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
      * @param p_grouping grouping algorithm
-     * @param p_h5file h5 file
+     * @param p_fileName h5 file
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
                          final String p_grouping,
-                         final hdf5.H5File p_h5file
+                         final String p_fileName
     )
     {
         super( p_configuration );
@@ -163,7 +160,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_voted = false;
         m_joinThreshold = 5;
         m_grouping = p_grouping;
-        m_h5file = p_h5file;
+        m_fileName = p_fileName;
     }
 
     // overload agent-cycle
@@ -195,7 +192,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         return m_chair;
     }
-
 
     public AtomicIntegerArray getVote()
     {
@@ -232,41 +228,39 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
-        if ( !m_voted )
-        {
-            final ITrigger l_trigger = CTrigger.from(
+        if ( m_voted )
+            return;
+
+        p_chairAgent.trigger(
+            CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "vote/received",
                     CRawTerm.from( this.name() ),
                     CRawTerm.from( this.getBitVote() )
                 )
-            );
+            )
+        );
 
-            p_chairAgent.trigger( l_trigger );
+        m_voted = true;
 
-            m_voted = true;
-        }
     }
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/dissatisfaction" )
     private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final BitVector p_result ) throws InterruptedException
     {
-
-        final Double l_diss = this.computeDissBV( p_result );
-
-        System.out.println( this.name() + " tries to submit diss " + l_diss );
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "diss/received",
-                CRawTerm.from( this.name() ),
-                CRawTerm.from( l_diss ),
-                CRawTerm.from( p_iteration )
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "diss/received",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.computeDissBV( p_result ) ),
+                    CRawTerm.from( p_iteration )
+                )
             )
         );
-        p_chairAgent.trigger( l_trigger );
     }
 
     private Double computeDissBV( final BitVector p_result )
@@ -298,7 +292,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
-
     private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
     {
         final int[] l_voteValues = new int[m_altNum];
@@ -326,12 +319,10 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     private List<CGroup> determineActiveGroups()
     {
-        final IBeliefbase l_bb = m_beliefbase.beliefbase();
         final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
-        final Collection l_groups = l_bb.literal( "groups" );
-        l_groups.stream().forEach( i ->
-                                       l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
+            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
@@ -398,24 +389,17 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         final CGroup l_group;
         // choose group to join
         final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
-        final AtomicIntegerArray l_vote = this.getVote();
+        final BitVector l_vote = this.getBitVote();
         System.out.println( "Vote: " + l_vote );
         for ( int i = 0; i < p_activeGroups.size(); i++ )
         {
             final BitVector l_com =  p_activeGroups.get( i ).result();
             System.out.println( "Committee: " + l_com );
 
-            // TODO own class for Hamming distance computation
-            final BitVector l_bitVote = new BitVector( l_vote.length() );
-            final BitVector l_bitCom = new BitVector( l_vote.length() );
-            for ( int j = 0; j < l_vote.length(); j++ )
-                l_bitVote.put( j, l_vote.get( j ) == 1 );
-            System.out.println( "Vote: " + l_bitVote );
-            for ( int j = 0; j < l_vote.length(); j++ )
-                l_bitCom.put( j, l_com.get( j ) );
-            System.out.println( "Committee: " + l_bitCom );
-            l_bitCom.xor( l_bitVote );
-            final int l_HD = l_bitCom.cardinality();
+            System.out.println( "Vote: " + l_vote );
+            System.out.println( "Committee: " + l_com );
+            l_com.xor( l_vote );
+            final int l_HD = l_com.cardinality();
             System.out.println( "Hamming distance: " + l_HD );
             l_groupDistances.put( p_activeGroups.get( i ), l_HD );
         }
@@ -501,19 +485,19 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          */
         private final int m_altNum;
         private final String m_grouping;
-        private final hdf5.H5File m_h5file;
+        private final String m_fileName;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_altNum number of alternatives
          * @param p_grouping grouping algorithm
-         * @param p_h5file h5 file
+         * @param p_fileName h5 file
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
                                       final String p_grouping,
-                                      final hdf5.H5File p_h5file
+                                      final String p_fileName
         ) throws Exception
         {
 
@@ -548,7 +532,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             m_environment = p_environment;
             m_altNum = p_altNum;
             m_grouping = p_grouping;
-            m_h5file = p_h5file;
+            m_fileName = p_fileName;
         }
 
         // unregister an agent
@@ -581,7 +565,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 m_environment,
                 m_altNum,
                 m_grouping,
-                m_h5file
+                m_fileName
             );
 
             l_votingAgent.sleep( Integer.MAX_VALUE  );

@@ -70,11 +70,7 @@ public class CMinimaxApproval
 
         l_maxMap = this.sortMapASC( l_maxMap );
 
-        final Map.Entry<Integer, Integer> l_entry = l_maxMap.entrySet().iterator().next();
-
-        final int l_winnerIndex = l_entry.getKey();
-
-        return l_bitCommittees.get( l_winnerIndex );
+        return l_bitCommittees.get( l_maxMap.entrySet().iterator().next().getKey() );
 
     }
 

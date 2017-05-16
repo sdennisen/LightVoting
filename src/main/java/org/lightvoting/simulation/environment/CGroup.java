@@ -36,7 +36,6 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
  * Created by sophie on 24.04.17.
  */
@@ -82,7 +81,6 @@ public class CGroup
 
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-
         return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
                               CRawTerm.from( m_agentList.contains( p_votingAgent ) ) );
     }
@@ -165,15 +163,16 @@ public class CGroup
      */
     public void triggerAgents( final CChairAgent p_chairAgent )
     {
-
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from(
-                "submit/vote",
-                CRawTerm.from( p_chairAgent ) )
+        m_agentList.forEach( i ->
+            i.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "submit/vote",
+                        CRawTerm.from( p_chairAgent ) )
+                )
+            )
         );
-
-        m_agentList.forEach( i -> i.trigger( l_trigger ) );
     }
 
     /**
@@ -194,15 +193,16 @@ public class CGroup
 
     public ILiteral updateBasic( final CChairAgent p_chairAgent, final BitVector p_result )
     {
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from( "election/result",
-                          CRawTerm.from( p_chairAgent ),
-                          CRawTerm.from( p_result )
-                         )
-        );
         // send result of election to all agents in the group
-        m_agentList.stream().forEach( i -> i.trigger( l_trigger ) );
+        m_agentList.stream().forEach( i ->
+            i.trigger( CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from( "election/result",
+                               CRawTerm.from( p_chairAgent ),
+                               CRawTerm.from( p_result ) )
+                       )
+            )
+        );
 
         m_result = p_result;
         return this.literal( p_chairAgent );
@@ -218,17 +218,17 @@ public class CGroup
 
     public ILiteral updateIterative( final CChairAgent p_chairAgent, final BitVector p_result, final int p_iteration )
     {
-        final ITrigger l_trigger = CTrigger.from(
-            ITrigger.EType.ADDGOAL,
-            CLiteral.from( "election/result",
-                          CRawTerm.from( p_chairAgent ),
-                          CRawTerm.from( p_result  ),
-                          CRawTerm.from( p_iteration ) )
-        );
         // send result of election to all agents in the group
         m_agentList.stream().forEach( i ->
         {
-            i.trigger( l_trigger );
+            i.trigger( CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from( "election/result",
+                               CRawTerm.from( p_chairAgent ),
+                               CRawTerm.from( p_result  ),
+                               CRawTerm.from( p_iteration ) )
+                       )
+            );
             System.out.println( "triggering agent " + i.name() );
         } );
 

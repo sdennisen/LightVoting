@@ -89,14 +89,6 @@ public class CMinisumApproval
             l_valuesMap.put( i, l_valuesVect[i] );
         }
 
-        /* test print of HashMap  */
-
-        for ( int index : l_valuesMap.keySet() )
-        {
-            final int l_key = index;
-            final String l_value = l_valuesMap.get( index ).toString();
-        }
-
         /* sort the HashMap in descending order according to values */
 
         l_valuesMap = this.sortMapDESC( l_valuesMap );
@@ -126,9 +118,7 @@ public class CMinisumApproval
      * @return sorted HashMap
      */
     public Map<Integer, Integer> sortMapDESC( final Map<Integer, Integer> p_valuesMap )
-
     {
-
         final List<Entry<Integer, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
         /* Sorting the list based on values in descending order */

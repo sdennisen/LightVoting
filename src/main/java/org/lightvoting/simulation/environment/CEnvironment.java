@@ -23,7 +23,6 @@
 
 package org.lightvoting.simulation.environment;
 
-import org.bytedeco.javacpp.hdf5;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
@@ -45,29 +44,22 @@ public final class CEnvironment
 
     private final List<CVotingAgent> m_agentList;
 
-    private hdf5.H5File m_h5File;
-
     // Index of the last activated agent
     private int m_currentIndex;
 
     private boolean m_firstActivated;
+    private final String m_fileName;
 
     /**
      * constructor
      * @param p_size number of agents
-     * @param p_h5file HDF5 file
+     * @param p_fileName HDF5 file
      */
-    public CEnvironment( final int p_size, final hdf5.H5File p_h5file )
+    public CEnvironment( final int p_size, final String p_fileName )
     {
-        m_h5File = p_h5file;
+        m_fileName = p_fileName;
         m_groups = Collections.synchronizedList( new LinkedList<>() );
         m_agentList = new LinkedList<>();
-    }
-
-
-    public hdf5.H5File getH5File()
-    {
-        return m_h5File;
     }
 
     /**
@@ -98,12 +90,8 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
-        final ILiteral l_literal = CLiteral.from( "groups", CRawTerm.from( m_groups ) );
-
-        return l_literal;
-
+        return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
     }
-
 
     /**
      * open new group (for random grouping)
