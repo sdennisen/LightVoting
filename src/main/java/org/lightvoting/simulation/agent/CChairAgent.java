@@ -122,7 +122,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     public final CChairAgent call() throws Exception
     {
         // run default cycle
-      //  this.perceiveGroup();
         this.checkConditions();
         return super.call();
     }
