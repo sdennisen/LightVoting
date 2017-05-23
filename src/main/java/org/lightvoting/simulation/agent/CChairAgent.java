@@ -122,6 +122,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     public final CChairAgent call() throws Exception
     {
         // run default cycle
+      //  this.perceiveGroup();
+        this.checkConditions();
         return super.call();
     }
 
@@ -148,47 +150,44 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
-    /**
-     * check conditions
-     */
-    @IAgentActionFilter
-    @IAgentActionName( name = "check/conditions" )
-    /**
-     * add literal for group of chair agent if it exists
-     */
-    public void checkConditions()
+    // private methods
+
+    private void checkConditions()
     {
+        System.out.println( this.name() + " checking conditions " );
         final CGroup l_group = this.determineGroup();
 
-        // if conditions for election are fulfilled, trigger goal start/criterion/fulfilled
+        if ( l_group != null )
 
-        final ITrigger l_trigger;
-
-        // if m_iterative is true, we have the case of iterative voting, i.e. we already have the votes
-        // we only need to repeat the computation of the result
-
-        if  ( m_iterative && ( l_group.readyForElection() && !( l_group.electionInProgress() ) ) )
         {
-            m_iteration++;
-            this.computeResult();
-            return;
-        }
+            // if conditions for election are fulfilled, trigger goal start/criterion/fulfilled
+
+            final ITrigger l_trigger;
+
+            // if m_iterative is true, we have the case of iterative voting, i.e. we already have the votes
+            // we only need to repeat the computation of the result
+
+            if ( m_iterative && ( l_group.readyForElection() && !( l_group.electionInProgress() ) ) )
+            {
+                m_iteration++;
+                this.computeResult();
+                return;
+            }
 
 
-        if ( l_group.readyForElection() && ( !( l_group.electionInProgress() ) ) )
-        {
-            l_group.startProgress();
+            if ( l_group.readyForElection() && ( !( l_group.electionInProgress() ) ) )
+            {
+                l_group.startProgress();
 
-            l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from( "start/criterion/fulfilled" )
-            );
+                l_trigger = CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from( "start/criterion/fulfilled" )
+                );
 
-            this.trigger( l_trigger );
+                this.trigger( l_trigger );
+            }
         }
     }
-
-    // private methods
 
     private CGroup determineGroup()
     {
@@ -225,6 +224,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_agents.add( l_group.determineAgent( p_agentName ) );
         m_bitVotes.add( p_vote );
 
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_agentName );
+
         if ( m_bitVotes.size() == l_group.size() )
         {
 
@@ -235,7 +236,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             );
 
-            System.out.println( " CChairAgent.java: all votes received " );
+            System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
 
             this.trigger( l_trigger );
         }
@@ -275,7 +276,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
 
-        System.out.println( " Result of election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
         // set inProgress and readyForElection to false in group
         l_group.reset();
@@ -474,12 +475,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         @Override
         public final CChairAgent generatesingle( final Object... p_data )
         {
+
             final CChairAgent l_chairAgent = new CChairAgent(
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_fileName );
             l_chairAgent.sleep( Integer.MAX_VALUE );
+            System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
         }
 

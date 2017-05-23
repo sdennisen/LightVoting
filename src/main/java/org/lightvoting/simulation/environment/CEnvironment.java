@@ -183,5 +183,7 @@ public final class CEnvironment
         l_wakingAgent.sleep( 0 );
         l_wakingAgent.getChair().sleep( 0 );
         System.out.println( "Waking up agent " + l_wakingAgent.name() );
+        System.out.println( "Waking up chair " + l_wakingAgent.getChair().name() );
+
     }
 }
