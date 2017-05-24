@@ -104,6 +104,35 @@ public final class CDataWriter
     }
 
     /**
+     * test for h5 file
+     * @param p_name name of h5 file
+     */
+
+    public static void test1( final String p_name )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+
+        final String l_DATASETNAME = "test1";
+
+        final int[] l_buf = new int[20];
+
+        final hdf5.DataSet l_dataset
+            = new hdf5.DataSet( l_file.asCommonFG().createDataSet(
+                "test1", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                new hdf5.DataSpace( 2, new long[]{1, 20} ), new hdf5.DSetCreatPropList() ) );
+
+        for ( int i = 0; i <  20; i++ )
+            l_buf[i] = i;
+
+        // Write data to dataset.
+        l_dataset.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+        l_dataset.close();
+        l_file._close();
+    }
+
+    /**
      * write dissatisfaction values to specified h5 file
      * @param p_name name of h5 file
      * @param p_dissVals dissatisfaction values
