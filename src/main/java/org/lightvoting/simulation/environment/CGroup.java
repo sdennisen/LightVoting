@@ -116,11 +116,22 @@ public class CGroup
     {
         System.out.println( "Adding agent, old size is " + m_agentList.size() );
         m_agentList.add( p_votingAgent );
+        System.out.println( " ==================  Group: " + m_chair.name() + this.printAgList( m_agentList ) + " " + m_chair.sleeping() );
+
         if ( m_agentList.size() >= m_capacity )
         {
             m_open = false;
             m_readyForElection = true;
         }
+    }
+
+    private String printAgList( final List<CVotingAgent> p_agentList )
+    {
+        String l_string = " ";
+        for ( int i = 0; i < p_agentList.size(); i++ )
+            l_string = l_string.concat( p_agentList.get( i ).name() + " " );
+
+        return l_string;
     }
 
     /**

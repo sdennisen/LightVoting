@@ -9,7 +9,6 @@ iteration(0).
 
 +!nextcycle <-
     perceive/group();
-    check/conditions();
     !nextcycle
     .
 
