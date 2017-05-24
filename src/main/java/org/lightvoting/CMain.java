@@ -78,7 +78,7 @@ public final class CMain
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
        // final CDataWriter l_writer = new CDataWriter();
-        final String l_name = "results.h5";
+        final String l_name = "test0.h5";
         CDataWriter.createHDF5( l_name );
         CDataWriter.test( l_name );
 

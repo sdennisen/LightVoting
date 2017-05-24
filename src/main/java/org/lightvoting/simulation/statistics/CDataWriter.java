@@ -68,7 +68,7 @@ public final class CDataWriter
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
 
-        final String l_DATASETNAME = "Results";
+        final String l_DATASETNAME = "test0";
         final int l_DIM0 = 100;
         final int l_DIM1 = 20;
 
