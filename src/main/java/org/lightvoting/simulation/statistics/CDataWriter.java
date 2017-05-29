@@ -275,7 +275,6 @@ public final class CDataWriter
 
             // Write data to dataset.
 
-            // TODO Watch out: rows of 3D matrix are columns in HDFView
             l_dataset.write(
                 new DoublePointer(
                     Doubles.concat(
