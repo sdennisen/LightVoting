@@ -87,6 +87,8 @@ public final class CMain
         CDataWriter.test2( "test2.h5" );
         CDataWriter.createHDF5( "test3.h5" );
         CDataWriter.test3( "test3.h5" );
+        CDataWriter.createHDF5( "test4.h5" );
+        CDataWriter.test4( "test4.h5" );
 
         try
         {
