@@ -23,6 +23,9 @@
 
 package org.lightvoting.simulation.statistics;
 
+import cern.colt.matrix.DoubleFactory2D;
+import cern.colt.matrix.DoubleMatrix2D;
+import com.google.common.primitives.Doubles;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -167,6 +170,65 @@ public final class CDataWriter
         l_file._close();
     }
 
+    /**
+     * test for h5 file
+     * colt matrix
+     *
+     * @param p_name name of h5 file
+     */
+
+    public static void test3( final String p_name )
+    {
+        final DoubleMatrix2D l_cmatrix = DoubleFactory2D.dense.random( 300, 200 );
+        // Try block to detect exceptions raised by any of the calls inside it
+        try
+        {
+            // Turn off the auto-printing when failure occurs so that we can
+            // handle the errors appropriately
+            org.bytedeco.javacpp.hdf5.Exception.dontPrint();
+
+            // Create a new file using the default property lists.
+            final hdf5.H5File l_file = new hdf5.H5File( p_name, hdf5.H5F_ACC_RDWR );
+            final hdf5.Group l_group = l_file.asCommonFG().createGroup( "foo" ).asCommonFG().createGroup( "bar" );
+
+            // Create the data space for the dataset.
+            final hdf5.DataSpace l_dataSpace = new hdf5.DataSpace( 2, new long[]{l_cmatrix.columns(), l_cmatrix.rows()} );
+
+            // Modify dataset creation property to enable chunking
+            final hdf5.DSetCreatPropList l_propList = new hdf5.DSetCreatPropList();
+            l_propList.setChunk( 2, new long[]{l_cmatrix.columns(), l_cmatrix.rows()} );
+
+
+            l_propList.setDeflate( 9 );
+            l_propList.setFletcher32();
+
+            // Create the dataset.
+            final hdf5.DataSet l_dataset = new hdf5.DataSet(
+                l_group.asCommonFG().createDataSet(
+                    "test3", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ), l_dataSpace, l_propList
+                )
+            );
+
+            // Write data to dataset.
+            l_dataset.write(
+                new DoublePointer(
+                    Doubles.concat( l_cmatrix.toArray() )
+                ),
+                new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() )
+            );
+
+            // Close objects and file.  Either approach will close the HDF5 item.
+            l_dataSpace.close();
+            l_dataset.close();
+            l_propList.close();
+            l_file.close();
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace( System.out );
+        }
+    }
+
 
     /**
      * write dissatisfaction values to specified h5 file
@@ -199,6 +261,8 @@ public final class CDataWriter
         l_file._close();
 
     }
+
+
 
     /**
      * create group
