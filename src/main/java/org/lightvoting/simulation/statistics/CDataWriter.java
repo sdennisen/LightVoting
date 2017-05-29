@@ -26,6 +26,7 @@ package org.lightvoting.simulation.statistics;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.javacpp.hdf5;
 
 /**
@@ -88,8 +89,9 @@ public final class CDataWriter
         l_plist.setChunk( 2, l_chunkDims );
 
         final hdf5.DataSet l_dataset = new hdf5.DataSet( l_file.asCommonFG().createDataSet( l_DATASETNAME,
-                                                                                              new hdf5.DataType( hdf5.PredType.STD_I32BE() ), l_dataSpace, l_plist ) );
-
+                                                                                              new hdf5.DataType( hdf5.PredType.NATIVE_INT()
+                                                                                                  // hdf5.PredType.STD_I32BE()
+                                                                                                                 ), l_dataSpace, l_plist ) );
         for ( int i = 0; i <  l_DIM0; i++ )
             for ( int j = 0; j < l_DIM1; j++ )
                 l_buf[i * l_DIM1 + j] = i + j;
@@ -105,6 +107,7 @@ public final class CDataWriter
 
     /**
      * test for h5 file
+     * 1 x 20
      * @param p_name name of h5 file
      */
 
@@ -131,6 +134,39 @@ public final class CDataWriter
         l_dataset.close();
         l_file._close();
     }
+
+    /**
+     * test for h5 file
+     * 2 x 20
+     * int[2][20]
+     * @param p_name name of h5 file
+     */
+
+    public static void test2( final String p_name )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+
+        final String l_DATASETNAME = "test2";
+
+        final int[][] l_buf = new int[2][20];
+
+        final hdf5.DataSet l_dataset
+            = new hdf5.DataSet( l_file.asCommonFG().createDataSet(
+            "test2", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+            new hdf5.DataSpace( 2, new long[]{1, 20} ), new hdf5.DSetCreatPropList() ) );
+
+        for ( int i = 0; i <  2; i++ )
+            for ( int j = 0; j < 20; j++ )
+            l_buf[i][j] = 1;
+
+        // Write data to dataset.
+        l_dataset.write( new PointerPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+        l_dataset.close();
+        l_file._close();
+    }
+
 
     /**
      * write dissatisfaction values to specified h5 file
@@ -176,4 +212,5 @@ public final class CDataWriter
         l_file.asCommonFG().createGroup( p_chairName );
         l_file.close();
     }
+
 }

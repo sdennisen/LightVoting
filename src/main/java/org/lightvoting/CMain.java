@@ -76,11 +76,15 @@ public final class CMain
 
         final Set<CVotingAgent> l_agents;
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
+        final String l_name = "results.h5";
 
        // final CDataWriter l_writer = new CDataWriter();
-        final String l_name = "test1.h5";
-        CDataWriter.createHDF5( l_name );
-        CDataWriter.test1( l_name );
+        CDataWriter.createHDF5( "test0.h5" );
+        CDataWriter.test( "test0.h5" );
+        CDataWriter.createHDF5( "test1.h5" );
+        CDataWriter.test1( "test1.h5" );
+        CDataWriter.createHDF5( "test2.h5" );
+        CDataWriter.test2( "test2.h5" );
 
         try
         {
@@ -91,7 +95,7 @@ public final class CMain
 
             l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
             l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name )  )
+                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name  )  )
                     .collect( Collectors.toSet() );
 
 
