@@ -46,8 +46,11 @@ public final class CMain
 {
     private static CEnvironment s_environment;
     private static int s_altnum;
+
+    private static int s_runs;
     private static String s_grouping;
     private static String s_protocol;
+
 
     /**
      * Hidden constructor
@@ -91,8 +94,6 @@ public final class CMain
 
 
             System.out.println( " Numbers of agents: " + l_agents.size() );
-
-
         }
         catch ( final Exception l_exception )
         {
@@ -100,41 +101,58 @@ public final class CMain
             throw new RuntimeException();
         }
 
-        // generate empty set of active agents
 
-        final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
+        for ( int r = 0; r < s_runs; r++ )
+        {
+            // generate empty set of active agents
 
-        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+            final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
 
-        System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-        System.out.println( " Will run " + p_args[3] + " cycles." );
+            System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
 
-        IntStream
-            // define cycle range, i.e. number of cycles to run sequentially
-            .range( 0,
+            System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+            System.out.println( " Will run " + p_args[3] + " cycles." );
+
+            IntStream
+                // define cycle range, i.e. number of cycles to run sequentially
+                .range(
+                    0,
                     p_args.length < 4
                     ? Integer.MAX_VALUE
-                    : Integer.parseInt( p_args[3] ) )
-            .forEach( j ->
-            {
-                System.out.println( "Global cycle: " + j );
-                l_agents.parallelStream().forEach( i ->
+                    : Integer.parseInt( p_args[3] )
+                )
+                .forEach( j ->
                 {
-                    try
+                    System.out.println( "Global cycle: " + j );
+                    l_agents.parallelStream().forEach( i ->
                     {
-                        // check if the conditions for triggering a new cycle are fulfilled in the environment
-                        // call each agent, i.e. trigger a new agent cycle
-                        i.call();
-                        //   i.getChair().sleep( 0 );
-                        i.getChair().call();
-                    }
-                    catch ( final Exception l_exception )
-                    {
-                        l_exception.printStackTrace();
-                        throw new RuntimeException();
-                    }
+                        try
+                        {
+                            // check if the conditions for triggering a new cycle are fulfilled in the environment
+                            // call each agent, i.e. trigger a new agent cycle
+                            i.call();
+                            //   i.getChair().sleep( 0 );
+                            i.getChair().call();
+                        }
+                        catch ( final Exception l_exception )
+                        {
+                            l_exception.printStackTrace();
+                            throw new RuntimeException();
+                        }
+                    } );
                 } );
+
+            System.out.println( " Next simulation run " );
+
+            l_agents.parallelStream().forEach( i ->
+            {
+                i.getChair().beliefbase().beliefbase().clear();
+                i.beliefbase().beliefbase().clear();
             } );
+
+            // TODO reset properties
+
+        }
     }
 
     @SuppressWarnings( "unchecked" )
@@ -158,6 +176,8 @@ public final class CMain
                                                    l_subValueKey, l_subValues.get( l_subValueKey ) ) );
 
                 // parse input
+                if ( "runs".equals( l_subValueKey ) )
+                    s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 if ( "grouping".equals( l_subValueKey ) )
                     s_grouping = l_subValues.get( l_subValueKey );
                 if ( "protocol".equals( l_subValueKey ) )
