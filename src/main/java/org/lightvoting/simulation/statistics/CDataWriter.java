@@ -46,7 +46,6 @@ import java.util.List;
 public final class CDataWriter
 {
     // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
-    // TODO Refactor
 
     private CDataWriter()
     {
@@ -188,7 +187,7 @@ public final class CDataWriter
 
     public static void test3( final String p_name )
     {
-        final DoubleMatrix2D l_cmatrix = DoubleFactory2D.dense.random( 300, 200 );
+        final DoubleMatrix2D l_cmatrix = DoubleFactory2D.dense.random( 300, 100 );
         // Try block to detect exceptions raised by any of the calls inside it
         try
         {
@@ -221,7 +220,7 @@ public final class CDataWriter
             // Write data to dataset.
             l_dataset.write(
                 new DoublePointer(
-                    Doubles.concat( l_cmatrix.toArray() )
+                    Doubles.concat(  l_cmatrix.toArray() )
                 ),
                 new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() )
             );
@@ -247,7 +246,7 @@ public final class CDataWriter
 
     public static void test4( final String p_name )
     {
-        final DoubleMatrix3D l_cmatrix = DoubleFactory3D.dense.random( 30, 20, 10 );
+        final DoubleMatrix3D l_cmatrix = DoubleFactory3D.dense.random( 300, 300, 300 );
         // Try block to detect exceptions raised by any of the calls inside it
         try
         {
@@ -282,11 +281,10 @@ public final class CDataWriter
             l_dataset.write(
                 new DoublePointer(
                     Doubles.concat(
-                        Arrays.stream( l_cmatrix.toArray() )
-                              .flatMap( Arrays::stream )
-                              .flatMapToDouble( Arrays::stream )
-                              .toArray()
-                    )
+                    Arrays.stream( l_cmatrix.toArray() )
+                          .flatMap( Arrays::stream )
+                          .flatMapToDouble( Arrays::stream )
+                          .toArray() )
                 ),
                 new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() )
             );
@@ -304,8 +302,6 @@ public final class CDataWriter
             l_ex.printStackTrace( System.out );
         }
     }
-
-
 
     /**
      * write dissatisfaction values to specified h5 file
@@ -339,8 +335,6 @@ public final class CDataWriter
 
     }
 
-
-
     /**
      * create group
      * @param p_fileName name of h5 file
@@ -365,22 +359,22 @@ public final class CDataWriter
      * @param p_dissVals dissatisfaction values
      */
 
-    public static void writeData( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
+    public static void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
                                   final List<CVotingAgent> p_agentList,
                                   final AtomicDoubleArray p_dissVals
     )
     {
-        // if iteration is 0, the group/dataset needs to be opened, otherwise it already exists
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+
         final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
-                                         .asCommonFG().createGroup( p_chair.name() );
+                            .asCommonFG().createGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
 
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-                  l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
-                                  new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
-            )
-        );
+                l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                                    new hdf5.DataSpace( 2, new long[]{p_agentList.size(), 1} ), new hdf5.DSetCreatPropList()
+                )
+            );
 
         final double[] l_buf = new double[p_dissVals.length()];
 
@@ -394,4 +388,5 @@ public final class CDataWriter
         l_file._close();
 
     }
+
 }

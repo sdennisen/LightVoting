@@ -40,38 +40,87 @@ import java.util.List;
 public class CDataWriterTest extends TestCase
 {
     /**
+     * test0
+     */
+    public static void test0()
+    {
+        CDataWriter.createHDF5( "test0.h5" );
+        CDataWriter.test( "test0.h5" );
+    }
+
+    /**
+     * test1
+     */
+
+    public static void test1()
+    {
+        CDataWriter.createHDF5( "test1.h5" );
+        CDataWriter.test1( "test1.h5" );
+    }
+
+    /**
+     * test2
+     */
+
+    public static void test2()
+    {
+        CDataWriter.createHDF5( "test2.h5" );
+        CDataWriter.test2( "test2.h5" );
+    }
+
+    /**
+     * test3
+     */
+
+    public static void test3()
+    {
+        CDataWriter.createHDF5( "test3.h5" );
+        CDataWriter.test3( "test3.h5" );
+    }
+
+    /**
+     * test4
+     */
+
+    public static void test4()
+    {
+        CDataWriter.createHDF5( "test4.h5" );
+        CDataWriter.test4( "test4.h5" );
+    }
+
+    /**
      * simple test for writing of dissatisfaction values
      */
 
-//    public static void testWriteDissVals()
-//    {
-//        CDataWriter.createHDF5( "test_simple.h5" );
-//
-//        final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
-//
-//        CDataWriter.createGroup( "test_simple.h5", "testchair" );
-//        CDataWriter.writeDissVals( "test_simple.h5", l_testDissVals, "testchair" );
-//    }
+    public static void testWriteDissVals()
+    {
+        CDataWriter.createHDF5( "test_simple.h5" );
+
+        final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
+
+        CDataWriter.createGroup( "test_simple.h5", "testchair" );
+        CDataWriter.writeDissVals( "test_simple.h5", l_testDissVals, "testchair" );
+    }
 
     /**
-     * test for writing of data
+     * test for writing data
      */
 
-    public static void testWriteData()
+    public static void testWriteDataVector()
     {
-        final String l_fileName = "test_data.h5";
+        final String l_fileName = "test_vector.h5";
         CDataWriter.createHDF5( l_fileName );
         final List<CVotingAgent> l_agentList = new LinkedList<>();
 
         for ( int i = 0; i < 3; i++ )
         {
             final CChairAgent l_chairAgent = new CChairAgent( "chair" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), new CEnvironment( 3, l_fileName ),
-                                                          "RANDOM",
-                                                          "BASIC",
-                                                          l_fileName );
+                                                              "RANDOM",
+                                                              "BASIC",
+                                                              l_fileName );
             l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName ), 10,
-                                           "RANDOM",
-                                           l_fileName )
+                                               "RANDOM",
+                                               l_fileName )
             );
         }
 
@@ -81,9 +130,7 @@ public class CDataWriterTest extends TestCase
         final int l_iteration = 0;
         final String l_config = "RANDOM_BASIC";
 
-        CDataWriter.writeData( l_fileName, l_run, l_config, l_agentList.get( 0 ).getChair(), l_iteration, l_agentList, l_testDissVals );
+        CDataWriter.writeDataVector( l_fileName, l_run, l_config, l_agentList.get( 0 ).getChair(), l_iteration, l_agentList, l_testDissVals );
+
     }
-
-
-
 }

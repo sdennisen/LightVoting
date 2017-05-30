@@ -28,7 +28,6 @@ import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.statistics.CDataWriter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
@@ -77,18 +76,6 @@ public final class CMain
         final Set<CVotingAgent> l_agents;
         final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
         final String l_name = "results.h5";
-
-       // final CDataWriter l_writer = new CDataWriter();
-        CDataWriter.createHDF5( "test0.h5" );
-        CDataWriter.test( "test0.h5" );
-        CDataWriter.createHDF5( "test1.h5" );
-        CDataWriter.test1( "test1.h5" );
-        CDataWriter.createHDF5( "test2.h5" );
-        CDataWriter.test2( "test2.h5" );
-        CDataWriter.createHDF5( "test3.h5" );
-        CDataWriter.test3( "test3.h5" );
-        CDataWriter.createHDF5( "test4.h5" );
-        CDataWriter.test4( "test4.h5" );
 
         try
         {
