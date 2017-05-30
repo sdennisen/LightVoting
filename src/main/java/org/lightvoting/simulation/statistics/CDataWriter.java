@@ -370,11 +370,28 @@ public final class CDataWriter
                                   final AtomicDoubleArray p_dissVals
     )
     {
-        // if iteration is 0, the group needs to be opened, otherwise it already exists
+        // if iteration is 0, the group/dataset needs to be opened, otherwise it already exists
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
         final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
                                          .asCommonFG().createGroup( p_chair.name() );
+
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+                  l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                  new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
+            )
+        );
+
+        final double[] l_buf = new double[p_dissVals.length()];
+
+        for ( int i = 0; i < p_dissVals.length(); i++ )
+        {
+            l_buf[i] = p_dissVals.get( i );
+        }
+
+        l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+        l_file._close();
 
     }
 }
