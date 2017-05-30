@@ -33,8 +33,11 @@ import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.javacpp.hdf5;
+import org.lightvoting.simulation.agent.CChairAgent;
+import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -43,6 +46,7 @@ import java.util.Arrays;
 public final class CDataWriter
 {
     // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
+    // TODO Refactor
 
     private CDataWriter()
     {
@@ -350,4 +354,27 @@ public final class CDataWriter
         l_file.close();
     }
 
+    /**
+     * write data to file
+     * @param p_fileName name of h5 file
+     * @param p_run number of simulation run
+     * @param p_config simulation config (grouping and protocol)
+     * @param p_chair chair calling the method
+     * @param p_iteration number of iteration
+     * @param p_agentList agents in group of chair
+     * @param p_dissVals dissatisfaction values
+     */
+
+    public static void writeData( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
+                                  final List<CVotingAgent> p_agentList,
+                                  final AtomicDoubleArray p_dissVals
+    )
+    {
+        // if iteration is 0, the group needs to be opened, otherwise it already exists
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+        final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
+                                         .asCommonFG().createGroup( p_chair.name() );
+
+    }
 }
