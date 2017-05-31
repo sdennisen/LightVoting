@@ -89,6 +89,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<BitVector> m_bitVotes;
     private final String m_fileName;
     private final int m_run;
+    private int m_conf;
 
     /**
      * constructor of the agent
@@ -135,6 +136,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     public String name()
     {
         return m_name;
+    }
+
+    /**
+     * set configuration
+     */
+
+    public void setConf( final int p_conf )
+    {
+        m_conf = p_conf;
     }
 
     /**

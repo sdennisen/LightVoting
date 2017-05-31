@@ -109,6 +109,13 @@ public final class CMain
             {
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
+                // set configuration
+
+                final int l_finalConf = c;
+                l_agents.parallelStream().forEach( i ->
+                    i.getChair().setConf( l_finalConf )
+                );
+
                 IntStream
                     // define cycle range, i.e. number of cycles to run sequentially
                     .range(
