@@ -1,9 +1,9 @@
 # LightVoting Default Config
 
 variables:
-  runs: '2'
+  runs: '1'
   configs: '1'
-  grouping: RANDOM
+  grouping: COORDINATED
   protocol: BASIC
   altnum: '6'
 

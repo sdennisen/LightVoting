@@ -334,8 +334,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             }
         }
 
+        if ( "COORDINATED".equals( m_grouping ) && l_group.finale() )
+        {
+            final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
 
+            // final String l_config = "RANDOM_BASIC";
 
+            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, 0, m_agents, l_testDissVals );
+
+        }
 
         // if grouping is coordinated, reopen group for further voters
         if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() && !m_iterative )
