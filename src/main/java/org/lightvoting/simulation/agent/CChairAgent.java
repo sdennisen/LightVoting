@@ -122,7 +122,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_iterative = false;
         m_fileName = p_fileName;
         m_run = p_run;
-
     }
 
     // overload agent-cycle
@@ -404,6 +403,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.trigger( l_trigger );
 
             System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+
+            final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
+            for ( int i = 0; i < m_dissList.size(); i++ )
+                l_dissVals.set( i, m_dissList.get( i ) );
+
+            // final String l_config = "RANDOM_BASIC";
+
+            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+
         }
     }
 

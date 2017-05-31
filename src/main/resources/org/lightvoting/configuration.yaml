@@ -3,8 +3,8 @@
 variables:
   runs: '1'
   configs: '1'
-  grouping: COORDINATED
-  protocol: BASIC
+  grouping: RANDOM
+  protocol: ITERATIVE
   altnum: '6'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold
