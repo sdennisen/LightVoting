@@ -50,6 +50,7 @@ public final class CMain
     private static int s_altnum;
 
     private static int s_runs;
+    private static int s_configs;
     private static String s_grouping;
     private static String s_protocol;
 
@@ -104,7 +105,7 @@ public final class CMain
         }
 
 
-        for ( int r = 0; r < s_runs; r++ )
+        for ( int c = 0; c < s_configs; c++ )
         {
             // generate empty set of active agents
 
@@ -144,7 +145,7 @@ public final class CMain
                     } );
                 } );
 
-            System.out.println( " Next simulation run " );
+            System.out.println( " Next configuration " );
 
             s_environment.reset();
 
@@ -196,6 +197,8 @@ public final class CMain
                 // parse input
                 if ( "runs".equals( l_subValueKey ) )
                     s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+                if ( "configs".equals( l_subValueKey ) )
+                    s_configs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 if ( "grouping".equals( l_subValueKey ) )
                     s_grouping = l_subValues.get( l_subValueKey );
                 if ( "protocol".equals( l_subValueKey ) )
