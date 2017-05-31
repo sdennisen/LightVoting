@@ -23,8 +23,6 @@
 
 package org.lightvoting;
 
-
-import com.google.common.collect.Sets;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
