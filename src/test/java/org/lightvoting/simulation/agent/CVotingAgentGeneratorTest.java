@@ -80,7 +80,7 @@ public final class CVotingAgentGeneratorTest extends TestCase
 
                 CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5" ), 10,  "RANDOM", "foo.h5" )
                     .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5" ), "RANDOM", "BASIC",
-                                                                                 "foo.h5"
+                                                                                 "foo.h5", 0
                     ) )
                     .collect( Collectors.toSet() );
 

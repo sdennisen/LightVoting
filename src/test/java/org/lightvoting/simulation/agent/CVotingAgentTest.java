@@ -70,7 +70,8 @@ public final class CVotingAgentTest extends TestCase
             final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, "foo.h5" ),
                                                               "RANDOM",
                                                               "BASIC",
-                                                              "foo.h5"
+                                                              "foo.h5",
+                                                              0
             );
             final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5" ), 10,
                                                            "RANDOM",

@@ -97,7 +97,7 @@ public final class CMain
                 l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
                 l_agents = l_votingagentgenerator
                     .generatemultiple(
-                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name ) )
+                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name, r ) )
                     .collect( Collectors.toSet() );
 
 

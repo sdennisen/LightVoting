@@ -88,6 +88,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private boolean m_iterative;
     private List<BitVector> m_bitVotes;
     private final String m_fileName;
+    private final int m_run;
 
     /**
      * constructor of the agent
@@ -95,12 +96,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_grouping grouping algorithm
      * @param p_protocol voting protocol
      * @param p_fileName h5 file
+     * @param p_run run number
      */
 
 
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping,
                         final String p_protocol,
-                        final String p_fileName
+                        final String p_fileName,
+                        final int p_run
     )
     {
         super( p_configuration );
@@ -115,6 +118,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iterative = false;
         m_fileName = p_fileName;
+        m_run = p_run;
     }
 
     // overload agent-cycle
@@ -445,6 +449,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         private final String m_grouping;
         private String m_protocol;
         private final String m_fileName;
+        private final int m_run;
 
         /**
          * constructor of the generator
@@ -452,10 +457,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          * @param p_grouping grouping algorithm
          * @param p_protocol voting protocol
          * @param p_fileName h5 file
+         * @param p_run run number
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping, final String p_protocol,
-                                     final String p_fileName
+                                     final String p_fileName,
+                                     final int p_run
         ) throws Exception
         {
             super(
@@ -485,6 +492,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_grouping = p_grouping;
             m_protocol = p_protocol;
             m_fileName = p_fileName;
+            m_run = p_run;
         }
 
         /**
@@ -501,7 +509,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_fileName );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_fileName, m_run );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
