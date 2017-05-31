@@ -26,6 +26,8 @@ package org.lightvoting.simulation.environment;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
@@ -40,9 +42,9 @@ import java.util.List;
  */
 public final class CEnvironment
 {
-    private final List<CGroup> m_groups;
+    private List<CGroup> m_groups;
 
-    private final List<CVotingAgent> m_agentList;
+    private List<CVotingAgent> m_agentList;
 
     // Index of the last activated agent
     private int m_currentIndex;
@@ -74,11 +76,12 @@ public final class CEnvironment
 
         if  ( !m_firstActivated )
         {
-
             final CVotingAgent l_firstAgent = m_agentList.get( 0 );
 
             l_firstAgent.sleep( 0 );
+            System.out.println( "waking up agent " + l_firstAgent.name() );
             l_firstAgent.getChair().sleep( 0 );
+            System.out.println( "waking up chair " + l_firstAgent.getChair().name() );
             m_firstActivated = true;
         }
     }
@@ -176,12 +179,34 @@ public final class CEnvironment
         this.wakeUpAgent();
     }
 
+    /**
+     * reset environment for next simulation run
+     */
+
+    public void reset()
+    {
+        m_groups = Collections.synchronizedList( new LinkedList<>() );
+        m_agentList = new LinkedList<>();
+        m_firstActivated = false;
+        m_agentList = new LinkedList<>();
+        m_currentIndex = 0;
+    }
+
     private void wakeUpAgent()
     {
         m_currentIndex++;
         final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
         l_wakingAgent.sleep( 0 );
         l_wakingAgent.getChair().sleep( 0 );
+
+        l_wakingAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "main"
+                )
+            )
+        );
         System.out.println( "Waking up agent " + l_wakingAgent.name() );
         System.out.println( "Waking up chair " + l_wakingAgent.getChair().name() );
 

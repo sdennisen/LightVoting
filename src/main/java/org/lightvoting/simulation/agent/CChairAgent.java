@@ -133,6 +133,28 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_name;
     }
 
+    /**
+     * reset chair agent for next simulation run
+     */
+
+    public void reset()
+    {
+
+        m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+        m_dissList = Collections.synchronizedList( new LinkedList<>() );
+        m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+        m_agents = Collections.synchronizedList( new LinkedList<>() );
+        m_iteration = 0;
+        m_iterative = false;
+
+        this.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "main" )
+                      )
+        );
+    }
+
     // agent actions
 
     /**
@@ -149,7 +171,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
-    // private methods
+     // private methods
 
     private void checkConditions()
     {

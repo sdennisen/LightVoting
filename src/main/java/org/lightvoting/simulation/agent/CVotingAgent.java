@@ -141,6 +141,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_environment = p_environment;
 
         m_chair = (CChairAgent) p_chairagent;
+
         m_storage.put( "chair", p_chairagent.raw() );
 
         m_beliefbase.add(
@@ -202,6 +203,24 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     public BitVector getBitVote()
     {
         return m_bitVote;
+    }
+
+    /**
+     * reset voting agent for next simulation run
+     */
+
+    public void reset()
+    {
+        m_voted = false;
+
+        this.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "main"
+                )
+            )
+        );
     }
 
     // agent actions

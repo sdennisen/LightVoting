@@ -24,6 +24,8 @@
 package org.lightvoting;
 
 import com.google.common.collect.Sets;
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
@@ -144,14 +146,30 @@ public final class CMain
 
             System.out.println( " Next simulation run " );
 
+            s_environment.reset();
+
             l_agents.parallelStream().forEach( i ->
             {
+                i.sleep( Integer.MAX_VALUE );
                 i.getChair().beliefbase().beliefbase().clear();
+                i.getChair().sleep( Integer.MAX_VALUE );
                 i.beliefbase().beliefbase().clear();
+                i.storage().put( "chair", i.getChair().raw() );
+
+                i.beliefbase().add(
+                    CLiteral.from(
+                        "chair",
+                        CRawTerm.from( i.getChair() )
+                    )
+                );
+
+                s_environment.initialset( i );
+                i.reset();
+                i.getChair().reset();
+
             } );
 
             // TODO reset properties
-
         }
     }
 
