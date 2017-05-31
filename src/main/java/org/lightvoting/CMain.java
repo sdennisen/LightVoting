@@ -79,98 +79,103 @@ public final class CMain
 
         readYaml();
 
-        final Set<CVotingAgent> l_agents;
-        final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
-        final String l_name = "results.h5";
-
-        try
+        for ( int r = 0; r < s_runs; r++ )
         {
-            final FileInputStream l_stream = new FileInputStream( p_args[0] );
-            final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-            s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
 
-            l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
-            l_agents = l_votingagentgenerator
-                    .generatemultiple( Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name  )  )
+            final Set<CVotingAgent> l_agents;
+            final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
+            final String l_name = "results.h5";
+
+            try
+            {
+                final FileInputStream l_stream = new FileInputStream( p_args[0] );
+                final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+
+                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
+
+                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
+                l_agents = l_votingagentgenerator
+                    .generatemultiple(
+                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name ) )
                     .collect( Collectors.toSet() );
 
 
-            System.out.println( " Numbers of agents: " + l_agents.size() );
-        }
-        catch ( final Exception l_exception )
-        {
-            l_exception.printStackTrace();
-            throw new RuntimeException();
-        }
-
-
-        for ( int c = 0; c < s_configs; c++ )
-        {
-            // generate empty set of active agents
-
-            final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
-
-            System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-
-            System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-            System.out.println( " Will run " + p_args[3] + " cycles." );
-
-            IntStream
-                // define cycle range, i.e. number of cycles to run sequentially
-                .range(
-                    0,
-                    p_args.length < 4
-                    ? Integer.MAX_VALUE
-                    : Integer.parseInt( p_args[3] )
-                )
-                .forEach( j ->
-                {
-                    System.out.println( "Global cycle: " + j );
-                    l_agents.parallelStream().forEach( i ->
-                    {
-                        try
-                        {
-                            // check if the conditions for triggering a new cycle are fulfilled in the environment
-                            // call each agent, i.e. trigger a new agent cycle
-                            i.call();
-                            //   i.getChair().sleep( 0 );
-                            i.getChair().call();
-                        }
-                        catch ( final Exception l_exception )
-                        {
-                            l_exception.printStackTrace();
-                            throw new RuntimeException();
-                        }
-                    } );
-                } );
-
-            System.out.println( " Next configuration " );
-
-            s_environment.reset();
-
-            l_agents.parallelStream().forEach( i ->
+                System.out.println( " Numbers of agents: " + l_agents.size() );
+            }
+            catch ( final Exception l_exception )
             {
-                i.sleep( Integer.MAX_VALUE );
-                i.getChair().beliefbase().beliefbase().clear();
-                i.getChair().sleep( Integer.MAX_VALUE );
-                i.beliefbase().beliefbase().clear();
-                i.storage().put( "chair", i.getChair().raw() );
+                l_exception.printStackTrace();
+                throw new RuntimeException();
+            }
 
-                i.beliefbase().add(
-                    CLiteral.from(
-                        "chair",
-                        CRawTerm.from( i.getChair() )
+
+            for ( int c = 0; c < s_configs; c++ )
+            {
+                // generate empty set of active agents
+
+                final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
+
+                System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+
+                System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
+                System.out.println( " Will run " + p_args[3] + " cycles." );
+
+                IntStream
+                    // define cycle range, i.e. number of cycles to run sequentially
+                    .range(
+                        0,
+                        p_args.length < 4
+                        ? Integer.MAX_VALUE
+                        : Integer.parseInt( p_args[3] )
                     )
-                );
+                    .forEach( j ->
+                    {
+                        System.out.println( "Global cycle: " + j );
+                        l_agents.parallelStream().forEach( i ->
+                        {
+                            try
+                            {
+                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                                // call each agent, i.e. trigger a new agent cycle
+                                i.call();
+                                //   i.getChair().sleep( 0 );
+                                i.getChair().call();
+                            }
+                            catch ( final Exception l_exception )
+                            {
+                                l_exception.printStackTrace();
+                                throw new RuntimeException();
+                            }
+                        } );
+                    } );
 
-                s_environment.initialset( i );
-                i.reset();
-                i.getChair().reset();
+                System.out.println( " Next configuration " );
 
-            } );
+                // reset properties for next configuration
 
-            // TODO reset properties
+                s_environment.reset();
+
+                l_agents.parallelStream().forEach( i ->
+                {
+                    i.sleep( Integer.MAX_VALUE );
+                    i.getChair().beliefbase().beliefbase().clear();
+                    i.getChair().sleep( Integer.MAX_VALUE );
+                    i.beliefbase().beliefbase().clear();
+                    i.storage().put( "chair", i.getChair().raw() );
+                    i.beliefbase().add(
+                        CLiteral.from(
+                            "chair",
+                            CRawTerm.from( i.getChair() )
+                        )
+                    );
+                    s_environment.initialset( i );
+                    i.reset();
+                    i.getChair().reset();
+                } );
+            }
+
+            System.out.println( "Next simulation run " );
         }
     }
 
