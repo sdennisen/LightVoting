@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.agent;
 
 import cern.colt.bitvector.BitVector;
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -40,6 +41,7 @@ import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+import org.lightvoting.simulation.statistics.CDataWriter;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -319,7 +321,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( "BASIC".equals( m_protocol ) )
         {
             this.beliefbase().add( l_group.updateBasic( this, l_comResultBV ) );
+
+            if ( "RANDOM".equals( m_grouping ) )
+            {
+                final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
+
+                final String l_config = "RANDOM_BASIC";
+
+                CDataWriter.writeDataVector( m_fileName, m_run, l_config, this, 0, m_agents, l_testDissVals );
+            }
         }
+
+
 
 
         // if grouping is coordinated, reopen group for further voters

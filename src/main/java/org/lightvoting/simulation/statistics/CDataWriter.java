@@ -364,28 +364,38 @@ public final class CDataWriter
                                   final AtomicDoubleArray p_dissVals
     )
     {
-        final hdf5.H5File l_file = new hdf5.H5File();
-        l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+        try
+        {
 
-        final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
-                            .asCommonFG().createGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
+            final hdf5.H5File l_file = new hdf5.H5File();
+            l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
-        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + p_chair.name() + "/" + p_iteration );
+
+            final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
+                                             .asCommonFG().createGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
+
+            final hdf5.DataSet l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
                                                     new hdf5.DataSpace( 2, new long[]{p_agentList.size(), 1} ), new hdf5.DSetCreatPropList()
                 )
             );
 
-        final double[] l_buf = new double[p_dissVals.length()];
+            final double[] l_buf = new double[p_dissVals.length()];
 
-        for ( int i = 0; i < p_dissVals.length(); i++ )
-        {
-            l_buf[i] = p_dissVals.get( i );
+            for ( int i = 0; i < p_dissVals.length(); i++ )
+            {
+                l_buf[i] = p_dissVals.get( i );
+            }
+
+            l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+            l_file._close();
         }
-
-        l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
-
-        l_file._close();
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
 
     }
 
