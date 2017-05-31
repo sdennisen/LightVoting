@@ -129,7 +129,8 @@ public class CDataWriterTest extends TestCase
 
         final int l_run = 0;
         final int l_iteration = 0;
-        final String l_config = "RANDOM_BASIC";
+        //final String l_config = "RANDOM_BASIC";
+        final int l_config = 0;
 
         CDataWriter.writeDataVector( l_fileName, l_run, l_config, l_agentList.get( 0 ).getChair(), l_iteration, l_agentList, l_testDissVals );
 

@@ -84,6 +84,8 @@ public final class CMain
             final String l_name = "results.h5";
 
             CDataWriter.createHDF5( l_name );
+            // create run group in hdf5
+            CDataWriter.setRun( l_name, r );
 
             try
             {
@@ -113,6 +115,7 @@ public final class CMain
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
                 // set configuration
+                CDataWriter.setConf( l_name, r,  c );
 
                 final int l_finalConf = c;
                 l_agents.parallelStream().forEach( i ->

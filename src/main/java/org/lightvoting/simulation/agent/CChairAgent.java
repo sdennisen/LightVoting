@@ -122,6 +122,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_iterative = false;
         m_fileName = p_fileName;
         m_run = p_run;
+
     }
 
     // overload agent-cycle
@@ -142,6 +143,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     /**
      * set configuration
+     * @param p_conf config id
      */
 
     public void setConf( final int p_conf )
@@ -326,9 +328,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             {
                 final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
 
-                final String l_config = "RANDOM_BASIC";
+                // final String l_config = "RANDOM_BASIC";
 
-                CDataWriter.writeDataVector( m_fileName, m_run, l_config, this, 0, m_agents, l_testDissVals );
+                CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, 0, m_agents, l_testDissVals );
             }
         }
 
@@ -451,6 +453,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
         return l_maxIndex;
     }
+
 
     /**
      * Class CChairAgentGenerator

@@ -359,9 +359,9 @@ public final class CDataWriter
      * @param p_dissVals dissatisfaction values
      */
 
-    public static void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
-                                  final List<CVotingAgent> p_agentList,
-                                  final AtomicDoubleArray p_dissVals
+    public static void writeDataVector( final String p_fileName, final int p_run, final int p_config, final CChairAgent p_chair, final int p_iteration,
+                                        final List<CVotingAgent> p_agentList,
+                                        final AtomicDoubleArray p_dissVals
     )
     {
         try
@@ -372,8 +372,10 @@ public final class CDataWriter
 
             System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + p_chair.name() + "/" + p_iteration );
 
-            final hdf5.Group l_group = l_file.asCommonFG().createGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_config )
-                                             .asCommonFG().createGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
+            final hdf5.Group l_group;
+
+            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( String.valueOf( p_config ) )
+                               .asCommonFG().createGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
 
             final hdf5.DataSet l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
@@ -396,7 +398,34 @@ public final class CDataWriter
         {
             l_ex.printStackTrace();
         }
+    }
+
+    /**
+     * create group in hdf5 for run
+     * @param p_name name of hdf5 file
+     * @param p_run run id
+     */
+
+    public static void setRun( final String p_name, final int p_run )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+        l_file.asCommonFG().createGroup( String.valueOf( p_run ) );
 
     }
 
+    /**
+     * set group for configuration in hdf5 file
+     * @param p_fileName name of hdf5 file
+     * @param p_run run id
+     * @param p_conf config id
+     */
+
+    public static void setConf( final String p_fileName, final int p_run, final int p_conf )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( String.valueOf( p_conf ) );
+
+    }
 }
