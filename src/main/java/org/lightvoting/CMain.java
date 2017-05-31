@@ -23,6 +23,7 @@
 
 package org.lightvoting;
 
+
 import com.google.common.collect.Sets;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
@@ -34,8 +35,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,8 +80,6 @@ public final class CMain
 
         for ( int r = 0; r < s_runs; r++ )
         {
-
-
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
             final String l_name = "results.h5";
@@ -112,13 +109,6 @@ public final class CMain
 
             for ( int c = 0; c < s_configs; c++ )
             {
-                // generate empty set of active agents
-
-                final Set<CVotingAgent> l_activeAgents = Sets.newConcurrentHashSet();
-
-                System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
-
-                System.out.println( " Numbers of active agents: " + l_activeAgents.size() );
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
                 IntStream
@@ -213,23 +203,5 @@ public final class CMain
             }
         }
     }
-
-    private static void addAgents( final Collection<CVotingAgent> p_activeAgents, final int p_newAgNum, final Iterator<CVotingAgent> p_agentIterator  )
-    {
-
-        for ( int i = 0; i < p_newAgNum; i++ )
-        {
-            if ( p_agentIterator.hasNext() )
-            {
-                final CVotingAgent l_curAg = p_agentIterator.next();
-                p_activeAgents.add( l_curAg );
-                System.out.println( "added Agent " + l_curAg.name() );
-                p_agentIterator.remove();
-
-            }
-        }
-
-    }
-
 
 }
