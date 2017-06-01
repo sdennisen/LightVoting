@@ -324,22 +324,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             if ( "RANDOM".equals( m_grouping ) )
             {
-                final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
-
-                // final String l_config = "RANDOM_BASIC";
-
-                CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, 0, m_agents, l_testDissVals );
+                // ask all agents in group to submit their dissatisfaction value
+                System.out.println( "Ask agents to submit final diss " );
+                this.beliefbase().add( l_group.submitDiss( this, l_comResultBV, m_iteration ) );
             }
-        }
 
-        if ( "COORDINATED".equals( m_grouping ) && l_group.finale() )
-        {
-            final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
-
-            // final String l_config = "RANDOM_BASIC";
-
-            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, 0, m_agents, l_testDissVals );
-
+            if ( "COORDINATED".equals( m_grouping ) && l_group.finale() )
+            {
+                System.out.println( "Ask agents to submit final diss " );
+                this.beliefbase().add( l_group.submitDiss( this, l_comResultBV, m_iteration ) );
+            }
         }
 
         // if grouping is coordinated, reopen group for further voters
@@ -411,6 +405,36 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
 
+        }
+    }
+
+    /**
+     * store final dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/final/diss" )
+
+    public void storeFinalDiss( final String p_name, final Double p_diss, final Integer p_iteration )
+    {
+        final CGroup l_group = this.determineGroup();
+
+        m_dissList.add( p_diss );
+        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+        m_dissVoters.add( l_dissAg );
+
+        System.out.println( "Storing diss " + p_diss );
+
+        if ( m_dissList.size() == l_group.size() )
+        {
+            System.out.println( " All voters submitted their dissatisfaction value" );
+
+            final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
+            for ( int i = 0; i < m_dissList.size(); i++ )
+                l_dissVals.set( i, m_dissList.get( i ) );
+
+            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
         }
     }
 

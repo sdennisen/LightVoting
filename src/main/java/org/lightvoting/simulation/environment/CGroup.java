@@ -36,6 +36,7 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
  * Created by sophie on 24.04.17.
  */
@@ -216,6 +217,32 @@ public class CGroup
         );
 
         m_result = p_result;
+        return this.literal( p_chairAgent );
+    }
+
+    /**
+     * ask agents in group to submit diss for
+     * @param p_chairAgent chair agent
+     * @param p_comResultBV election result
+     * @param p_iteration iteration number
+     * @return group literal for chair agent
+     */
+
+    public ILiteral submitDiss( final CChairAgent p_chairAgent, final BitVector p_comResultBV, final int p_iteration )
+    {
+        // send result of election to all agents in the group
+        m_agentList.stream().forEach( i ->
+                                          i.trigger( CTrigger.from(
+                                              ITrigger.EType.ADDGOAL,
+                                              CLiteral.from( "submit/final/diss",
+                                                             CRawTerm.from( p_chairAgent ),
+                                                             CRawTerm.from( p_comResultBV ),
+                                                             CRawTerm.from( p_iteration ) )
+                                                     )
+                                          )
+        );
+
+        m_result = p_comResultBV;
         return this.literal( p_chairAgent );
     }
 

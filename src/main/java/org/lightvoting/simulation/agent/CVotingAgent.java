@@ -285,6 +285,23 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         );
     }
 
+    @IAgentActionFilter
+    @IAgentActionName( name = "submit/final/diss" )
+    private void submitFinalDiss( final CChairAgent p_chairAgent, final BitVector p_result, final Integer p_iteration ) throws InterruptedException
+    {
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "final/diss/received",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.computeDissBV( p_result ) ),
+                    CRawTerm.from( p_iteration )
+                )
+            )
+        );
+    }
+
     private Double computeDissBV( final BitVector p_result )
     {
         double l_diss = 0;
