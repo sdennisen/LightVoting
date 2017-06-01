@@ -125,14 +125,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
-     * @param p_grouping grouping algorithm
      * @param p_fileName h5 file
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
-                         final String p_grouping,
                          final String p_fileName
     )
     {
@@ -161,7 +159,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
         m_joinThreshold = 5;
-        m_grouping = p_grouping;
         m_fileName = p_fileName;
     }
 
@@ -509,19 +506,16 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          * number of alternatives
          */
         private final int m_altNum;
-        private final String m_grouping;
         private final String m_fileName;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_altNum number of alternatives
-         * @param p_grouping grouping algorithm
          * @param p_fileName h5 file
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
-                                      final String p_grouping,
                                       final String p_fileName
         ) throws Exception
         {
@@ -556,7 +550,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             m_send = p_send;
             m_environment = p_environment;
             m_altNum = p_altNum;
-            m_grouping = p_grouping;
             m_fileName = p_fileName;
         }
 
@@ -589,7 +582,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
-                m_grouping,
                 m_fileName
             );
 

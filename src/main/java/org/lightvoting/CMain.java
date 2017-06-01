@@ -98,11 +98,10 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
 
-                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_groupings.get( 0 ), l_name );
+                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name );
                 l_agents = l_votingagentgenerator
                     .generatemultiple(
-                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_groupings.get( 0 ),
-                                                                                             s_protocols.get( 0 ), l_name, r ) )
+                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r ) )
                     .collect( Collectors.toSet() );
 
 
