@@ -2,7 +2,6 @@
 
 variables:
   runs: '1'
-  cfgs: '1'
   config: 'RANDOM_BASIC'
   altnum: '6'
 

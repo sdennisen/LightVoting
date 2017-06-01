@@ -50,9 +50,6 @@ public final class CMain
     private static int s_altnum;
 
     private static int s_runs;
-    private static int s_configs;
-    private static String s_grouping;
-    private static String s_protocol;
     private static List<String> s_configStrs = new ArrayList<>();
     private static List<String> s_groupings = new ArrayList<>();
     private static List<String> s_protocols = new ArrayList<>();
@@ -113,8 +110,7 @@ public final class CMain
                 throw new RuntimeException();
             }
 
-
-            for ( int c = 0; c < s_configs; c++ )
+            for ( int c = 0; c < s_configStrs.size(); c++ )
             {
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
@@ -211,8 +207,6 @@ public final class CMain
                 // parse input
                 if ( "runs".equals( l_subValueKey ) )
                     s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
-                if ( "cfgs".equals( l_subValueKey ) )
-                    s_configs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 if ( "altnum".equals( l_subValueKey ) )
                     s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
