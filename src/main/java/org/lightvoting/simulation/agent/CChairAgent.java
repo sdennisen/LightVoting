@@ -45,6 +45,7 @@ import org.lightvoting.simulation.statistics.CDataWriter;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -92,6 +93,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private final String m_fileName;
     private final int m_run;
     private String m_conf;
+    private boolean m_dissStored;
 
     /**
      * constructor of the agent
@@ -162,6 +164,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
+        m_dissStored = false;
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -352,15 +355,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             return;
         }
 
-
         if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
         {
             System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this,  l_comResultBV ) );
         }
 
-        // TODO test all cases
+        m_dissStored = false;
 
+        // TODO test all cases
     }
 
     /**
@@ -383,8 +386,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( "Storing diss " + p_diss );
 
-        if ( m_dissList.size() == l_group.size() )
+        if ( ( m_dissList.size() == l_group.size() ) && (!m_dissStored) )
         {
+            m_dissStored = true;
             System.out.println( this.name() + " Size of group " + m_dissVoters.size()  );
 
             final ITrigger l_trigger = CTrigger.from(
@@ -398,7 +402,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             this.trigger( l_trigger );
 
-            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+            System.out.println( p_iteration + " All " + m_dissList.size() + " voters submitted their dissatisfaction value" );
+            System.out.println( Arrays.toString( m_dissList.toArray() ) );
 
             final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
             for ( int i = 0; i < m_dissList.size(); i++ )
@@ -429,15 +434,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( "Storing diss " + p_diss );
 
-        if ( m_dissList.size() == l_group.size() )
+        if ( ( m_dissList.size() == l_group.size() ) && (!m_dissStored) )
         {
-            System.out.println( " All voters submitted their dissatisfaction value" );
+            m_dissStored = true;
+            System.out.println( p_iteration + " All " + m_dissList.size() + " voters submitted their dissatisfaction value" );
+            System.out.println( Arrays.toString( m_dissList.toArray() ) );
 
             final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
             for ( int i = 0; i < m_dissList.size(); i++ )
                 l_dissVals.set( i, m_dissList.get( i ) );
 
             CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+
         }
     }
 

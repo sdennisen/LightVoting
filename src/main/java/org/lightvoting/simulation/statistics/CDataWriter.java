@@ -366,13 +366,12 @@ public final class CDataWriter
     {
         try
         {
+            System.out.println( "CDataWriter: " + p_dissVals  );
 
             final hdf5.H5File l_file = new hdf5.H5File();
             l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
             System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + p_chair.name() + "/" + p_iteration );
-
-
 
             if ( p_iteration == 0 )
                 l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
@@ -385,14 +384,15 @@ public final class CDataWriter
 
             final hdf5.DataSet l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
-                                                    new hdf5.DataSpace( 2, new long[]{p_agentList.size(), 1} ), new hdf5.DSetCreatPropList()
+                                                    new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
                 )
             );
 
-            final double[] l_buf = new double[p_dissVals.length()];
+a            final double[] l_buf = new double[p_dissVals.length()];
 
             for ( int i = 0; i < p_dissVals.length(); i++ )
             {
+                System.out.println( " Setting buf[" + i + "] to " + p_dissVals.get( i ) );
                 l_buf[i] = p_dissVals.get( i );
             }
 
