@@ -34,6 +34,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,7 +53,9 @@ public final class CMain
     private static int s_configs;
     private static String s_grouping;
     private static String s_protocol;
-
+    private static List<String> s_configStrs = new ArrayList<>();
+    private static List<String> s_groupings = new ArrayList<>();
+    private static List<String> s_protocols = new ArrayList<>();
 
     /**
      * Hidden constructor
@@ -94,10 +98,11 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
 
-                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_grouping, l_name );
+                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, s_groupings.get( 0 ), l_name );
                 l_agents = l_votingagentgenerator
                     .generatemultiple(
-                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_grouping, s_protocol, l_name, r ) )
+                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, s_groupings.get( 0 ),
+                                                                                             s_protocols.get( 0 ), l_name, r ) )
                     .collect( Collectors.toSet() );
 
 
@@ -115,12 +120,14 @@ public final class CMain
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
                 // set configuration
-                CDataWriter.setConf( l_name, r,  c );
+                CDataWriter.setConf( l_name, r,  s_configStrs.get( c ) );
 
-                final int l_finalConf = c;
+                final int l_finalC = c;
                 l_agents.parallelStream().forEach( i ->
-                    i.getChair().setConf( l_finalConf )
-                );
+                {
+                    i.setConf( s_groupings.get( l_finalC ) );
+                    i.getChair().setConf( s_configStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
+                } );
 
                 IntStream
                     // define cycle range, i.e. number of cycles to run sequentially
@@ -152,6 +159,8 @@ public final class CMain
                     } );
 
                 System.out.println( " Next configuration " );
+
+
 
                 // reset properties for next configuration
 
@@ -203,14 +212,19 @@ public final class CMain
                 // parse input
                 if ( "runs".equals( l_subValueKey ) )
                     s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
-                if ( "configs".equals( l_subValueKey ) )
+                if ( "cfgs".equals( l_subValueKey ) )
                     s_configs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
-                if ( "grouping".equals( l_subValueKey ) )
-                    s_grouping = l_subValues.get( l_subValueKey );
-                if ( "protocol".equals( l_subValueKey ) )
-                    s_protocol = l_subValues.get( l_subValueKey );
                 if ( "altnum".equals( l_subValueKey ) )
                     s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+
+
+                if ( l_subValueKey.contains( "config" ) )
+                {
+                    s_configStrs.add( l_subValues.get( l_subValueKey ) );
+                    final String[] l_confStr = l_subValues.get( l_subValueKey ).split( "_" );
+                    s_groupings.add( l_confStr[0] );
+                    s_protocols.add( l_confStr[1] );
+                }
             }
         }
     }

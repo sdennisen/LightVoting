@@ -359,7 +359,7 @@ public final class CDataWriter
      * @param p_dissVals dissatisfaction values
      */
 
-    public static void writeDataVector( final String p_fileName, final int p_run, final int p_config, final CChairAgent p_chair, final int p_iteration,
+    public static void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
                                         final List<CVotingAgent> p_agentList,
                                         final AtomicDoubleArray p_dissVals
     )
@@ -375,12 +375,12 @@ public final class CDataWriter
 
 
             if ( p_iteration == 0 )
-                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( String.valueOf( p_config ) )
+                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
                       .asCommonFG().createGroup( p_chair.name() );
 
             final hdf5.Group l_group;
 
-            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( String.valueOf( p_config ) )
+            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
                                           .asCommonFG().openGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
 
             final hdf5.DataSet l_dataSet = new hdf5.DataSet(
@@ -427,26 +427,12 @@ public final class CDataWriter
      * @param p_conf config id
      */
 
-    public static void setConf( final String p_fileName, final int p_run, final int p_conf )
+    public static void setConf( final String p_fileName, final int p_run, final String p_conf )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
-        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( String.valueOf( p_conf ) );
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_conf );
 
     }
 
-    /**
-     * set group for chair in hdf5 file
-     * @param p_fileName name of hdf5 file
-     * @param p_run run id
-     * @param p_conf config id
-     * @param p_chairAgent chair agent
-     */
-    public static void setChair( final String p_fileName, final int p_run, final int p_conf, final CChairAgent p_chairAgent )
-    {
-        final hdf5.H5File l_file = new hdf5.H5File();
-        l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
-        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( String.valueOf( p_conf ) ).asCommonFG()
-              .createGroup( p_chairAgent.name() );
-    }
 }

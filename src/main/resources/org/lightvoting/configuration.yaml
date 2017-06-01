@@ -2,9 +2,8 @@
 
 variables:
   runs: '1'
-  configs: '1'
-  grouping: RANDOM
-  protocol: ITERATIVE
+  cfgs: '1'
+  config: 'RANDOM_BASIC'
   altnum: '6'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold

@@ -223,6 +223,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         );
     }
 
+    public void setConf( final String p_grouping )
+    {
+        m_grouping = p_grouping;
+    }
+
     // agent actions
 
     @IAgentActionFilter

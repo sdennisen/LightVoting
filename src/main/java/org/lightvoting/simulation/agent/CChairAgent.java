@@ -91,7 +91,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<BitVector> m_bitVotes;
     private final String m_fileName;
     private final int m_run;
-    private int m_conf;
+    private String m_conf;
 
     /**
      * constructor of the agent
@@ -115,8 +115,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
-        m_grouping = p_grouping;
-        m_protocol = p_protocol;
         m_iteration = 0;
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iterative = false;
@@ -143,11 +141,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     /**
      * set configuration
      * @param p_conf config id
+     * @param p_grouping grouping method
+     * @param p_protocol protocol
      */
 
-    public void setConf( final int p_conf )
+    public void setConf( final String p_conf, final String p_grouping, final String p_protocol )
     {
         m_conf = p_conf;
+        m_grouping = p_grouping;
+        m_protocol = p_protocol;
     }
 
     /**
