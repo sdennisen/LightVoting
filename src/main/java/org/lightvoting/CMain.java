@@ -78,13 +78,15 @@ public final class CMain
 
         readYaml();
 
+        final String l_name = "results.h5";
+        CDataWriter.createHDF5( l_name );
+
         for ( int r = 0; r < s_runs; r++ )
         {
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
-            final String l_name = "results.h5";
 
-            CDataWriter.createHDF5( l_name );
+
             // create run group in hdf5
             CDataWriter.setRun( l_name, r );
 

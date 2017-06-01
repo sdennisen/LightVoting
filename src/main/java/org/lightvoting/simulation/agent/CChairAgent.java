@@ -386,7 +386,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( "Storing diss " + p_diss );
 
-        if ( ( m_dissList.size() == l_group.size() ) && (!m_dissStored) )
+        if ( ( m_dissList.size() == l_group.size() ) && ( !m_dissStored ) )
         {
             m_dissStored = true;
             System.out.println( this.name() + " Size of group " + m_dissVoters.size()  );
@@ -434,7 +434,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( "Storing diss " + p_diss );
 
-        if ( ( m_dissList.size() == l_group.size() ) && (!m_dissStored) )
+        if ( ( m_dissList.size() == l_group.size() ) && ( !m_dissStored ) )
         {
             m_dissStored = true;
             System.out.println( p_iteration + " All " + m_dissList.size() + " voters submitted their dissatisfaction value" );

@@ -388,7 +388,7 @@ public final class CDataWriter
                 )
             );
 
-a            final double[] l_buf = new double[p_dissVals.length()];
+            final double[] l_buf = new double[p_dissVals.length()];
 
             for ( int i = 0; i < p_dissVals.length(); i++ )
             {
