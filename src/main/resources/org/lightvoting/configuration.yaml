@@ -2,7 +2,7 @@
 
 variables:
   runs: '1'
-  config: 'RANDOM_BASIC'
+  config: 'RANDOM_ITERATIVE'
   altnum: '6'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold

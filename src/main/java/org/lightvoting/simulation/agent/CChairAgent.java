@@ -380,10 +380,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
         m_dissVoters.add( l_dissAg );
 
+
         System.out.println( "Storing diss " + p_diss );
 
         if ( m_dissList.size() == l_group.size() )
         {
+            System.out.println( this.name() + " Size of group " + m_dissVoters.size()  );
+
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
@@ -458,12 +461,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
             m_bitVotes.remove( l_maxDissAg.getBitVote() );
-            m_dissVoters.remove( l_maxDissAg );
             l_group.remove( l_maxDissAg );
 
             System.out.println( "Removing " + l_maxDissAg.name() );
+           // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+            System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
 
             // remove diss Values for next iteration
+            m_dissVoters.clear();
             m_dissList.clear();
 
             m_iterative = true;
