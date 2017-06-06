@@ -411,9 +411,9 @@ public final class CDataWriter
 
             final hdf5.DataSet l_countDataSet = l_countGroup.asCommonFG().openDataSet( "group count" );
 
-            final double[] l_countBuf = new double[1];
+            final int[] l_countBuf = new int[1];
             l_countBuf[0] = s_groups;
-            l_countDataSet.write( new DoublePointer( l_countBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+            l_countDataSet.write( new IntPointer( l_countBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
 
             l_file._close();
         }
@@ -452,7 +452,7 @@ public final class CDataWriter
         s_groups = 0;
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().createGroup( "groups" );
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().openGroup( "groups" ).asCommonFG()
-              .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
+              .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
                               new hdf5.DSetCreatPropList()
         );
     }
