@@ -81,11 +81,13 @@ public final class CMain
         final String l_name = "results.h5";
         CDataWriter.createHDF5( l_name );
 
+        // set run num in hdf5
+        CDataWriter.setRunNum( l_name,  s_runs );
+
         for ( int r = 0; r < s_runs; r++ )
         {
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
-
 
             // create run group in hdf5
             CDataWriter.setRun( l_name, r, s_configStrs.size() );

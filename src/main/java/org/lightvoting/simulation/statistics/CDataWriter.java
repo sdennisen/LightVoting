@@ -465,4 +465,25 @@ public final class CDataWriter
         );
     }
 
+    /**
+     * set # runs
+     * @param p_name name of hdf5 file
+     * @param p_runs number of runs
+     */
+
+    public static void setRunNum( final String p_name, final int p_runs )
+    {
+
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+        l_file.asCommonFG().createGroup( "runs" );
+        final hdf5.DataSet l_runDataSet =  l_file.asCommonFG().openGroup( String.valueOf( "runs" ) ).asCommonFG()
+                                                 .createDataSet( "run num", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ) );
+
+        final int[] l_runBuf = new int[1];
+        l_runBuf[0] = p_runs;
+        l_runDataSet.write( new IntPointer( l_runBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+    }
 }
