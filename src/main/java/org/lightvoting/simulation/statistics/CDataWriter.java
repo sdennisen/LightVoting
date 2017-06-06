@@ -45,6 +45,7 @@ import java.util.List;
  */
 public final class CDataWriter
 {
+    private static int s_groups;
     // source: https://github.com/bytedeco/javacpp-presets/tree/master/hdf5#the-srcmainjavah5tutrcmprssjava-source-file
 
     private CDataWriter()
@@ -374,8 +375,12 @@ public final class CDataWriter
             System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + p_chair.name() + "/" + p_iteration );
 
             if ( p_iteration == 0 )
-                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
+            {
+                s_groups++;
+                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
                       .asCommonFG().createGroup( p_chair.name() );
+
+            }
 
             final hdf5.Group l_group;
 
@@ -397,6 +402,16 @@ public final class CDataWriter
             }
 
             l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+            // write # groups
+
+            final hdf5.Group l_countGroup = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  ).asCommonFG().openGroup( "groups" );
+
+            final hdf5.DataSet l_countDataSet = l_countGroup.asCommonFG().openDataSet( "group count" );
+
+            final double[] l_countBuf = new double[1];
+            l_countBuf[0] = s_groups;
+            l_countDataSet.write( new DoublePointer( l_countBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
 
             l_file._close();
         }
@@ -432,7 +447,12 @@ public final class CDataWriter
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_conf );
-
+        s_groups = 0;
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().createGroup( "groups" );
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().openGroup( "groups" ).asCommonFG()
+              .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
+                              new hdf5.DSetCreatPropList()
+        );
     }
 
 }
