@@ -367,25 +367,27 @@ public final class CDataWriter
     {
         try
         {
+            final String l_currentGroup = "group " + String.valueOf( s_groups );
+
             System.out.println( "CDataWriter: " + p_dissVals  );
 
             final hdf5.H5File l_file = new hdf5.H5File();
             l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
-            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + p_chair.name() + "/" + p_iteration );
+            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + "group " + l_currentGroup + "/" + p_iteration );
 
             if ( p_iteration == 0 )
             {
                 s_groups++;
                 l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
-                      .asCommonFG().createGroup( p_chair.name() );
+                      .asCommonFG().createGroup( l_currentGroup );
 
             }
 
             final hdf5.Group l_group;
 
             l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
-                                          .asCommonFG().openGroup( p_chair.name() ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
+                                          .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
 
             final hdf5.DataSet l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
