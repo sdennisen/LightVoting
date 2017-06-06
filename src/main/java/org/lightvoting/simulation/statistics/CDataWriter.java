@@ -429,11 +429,19 @@ public final class CDataWriter
      * @param p_run run id
      */
 
-    public static void setRun( final String p_name, final int p_run )
+    public static void setRun( final String p_name, final int p_run, final int p_configNum )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
         l_file.asCommonFG().createGroup( String.valueOf( p_run ) );
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( "configs" );
+        final hdf5.DataSet l_configDataSet =  l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( "configs" ).asCommonFG()
+                                              .createDataSet( "config num", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                                                              new hdf5.DataSpace( 2, new long[]{1, 1} ) );
+
+        final int[] l_configBuf = new int[1];
+        l_configBuf[0] = p_configNum;
+        l_configDataSet.write( new IntPointer( l_configBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
 
     }
 

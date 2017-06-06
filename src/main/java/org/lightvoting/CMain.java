@@ -88,7 +88,7 @@ public final class CMain
 
 
             // create run group in hdf5
-            CDataWriter.setRun( l_name, r );
+            CDataWriter.setRun( l_name, r, s_configStrs.size() );
 
             try
             {
