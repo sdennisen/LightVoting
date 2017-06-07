@@ -37,7 +37,6 @@ import org.bytedeco.javacpp.hdf5;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +48,6 @@ import java.util.List;
 public final class CDataWriter
 {
     private static int s_groups;
-    private static List<String> s_groupList = new ArrayList<>();
 
     private CDataWriter()
     {
@@ -379,14 +377,6 @@ public final class CDataWriter
 
             System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
 
-//            if ( !s_groupList.contains( l_currentGroup ) )
-//            {
-//                s_groups++;
-//                s_groupList.add( l_currentGroup );
-//                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
-//                      .asCommonFG().createGroup( l_currentGroup );
-//            }
-
             final hdf5.Group l_group;
 
             l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
@@ -459,8 +449,6 @@ public final class CDataWriter
         l_configNamesDataSet.write( new BytePointer( p_configStr ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
 
         s_groups = 0;
-        s_groupList = new ArrayList<>();
-
     }
 
     /**
@@ -477,7 +465,6 @@ public final class CDataWriter
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_conf );
 
         s_groups = 0;
-        s_groupList = new ArrayList<String>();
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().createGroup( "groups" );
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().openGroup( "groups" ).asCommonFG()
               .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
