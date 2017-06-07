@@ -1,8 +1,8 @@
 # LightVoting Default Config
 
 variables:
-  runs: '2'
-  config: 'RANDOM_ITERATIVE'
+  runs: '1'
+  config: 'COORDINATED_BASIC'
   altnum: '6'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold
