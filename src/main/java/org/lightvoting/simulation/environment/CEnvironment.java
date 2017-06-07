@@ -210,6 +210,7 @@ public final class CEnvironment
     {
         m_run = p_run;
         m_config = p_config;
+        m_groupNum = 0;
     }
 
     private void wakeUpAgent()
