@@ -54,13 +54,15 @@ public class CGroup
 
     private boolean m_readyForElection;
     private boolean m_inProgress;
+    private int m_ID;
 
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
      * @param p_grouping grouping algorithm
+     * @param p_groupNum group number
      */
-    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping )
+    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum )
     {
         m_agentList = new LinkedList<>();
         m_agentList.add( p_votingAgent );
@@ -72,6 +74,7 @@ public class CGroup
         else
             m_readyForElection = true;
         m_inProgress = false;
+        m_ID = p_groupNum;
     }
 
     /**
@@ -327,5 +330,10 @@ public class CGroup
             if ( p_agentName.equals( m_agentList.get( i ).name() ) )
                 return m_agentList.get( i );
         return null;
+    }
+
+    public int getID()
+    {
+        return m_ID;
     }
 }

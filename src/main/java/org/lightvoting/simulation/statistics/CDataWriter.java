@@ -37,6 +37,7 @@ import org.bytedeco.javacpp.hdf5;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,6 +49,7 @@ import java.util.List;
 public final class CDataWriter
 {
     private static int s_groups;
+    private static List<String> s_groupList = new ArrayList<>();
 
     private CDataWriter()
     {
@@ -368,22 +370,22 @@ public final class CDataWriter
     {
         try
         {
-            final String l_currentGroup = "group " + String.valueOf( s_groups );
+            final String l_currentGroup = "group " + p_chair.getGroupID();
 
             System.out.println( "CDataWriter: " + p_dissVals  );
 
             final hdf5.H5File l_file = new hdf5.H5File();
             l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
-            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + "group " + l_currentGroup + "/" + p_iteration );
+            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
 
-            if ( p_iteration == 0 )
-            {
-                s_groups++;
-                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
-                      .asCommonFG().createGroup( l_currentGroup );
-
-            }
+//            if ( !s_groupList.contains( l_currentGroup ) )
+//            {
+//                s_groups++;
+//                s_groupList.add( l_currentGroup );
+//                l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
+//                      .asCommonFG().createGroup( l_currentGroup );
+//            }
 
             final hdf5.Group l_group;
 
@@ -456,6 +458,9 @@ public final class CDataWriter
 
         l_configNamesDataSet.write( new BytePointer( p_configStr ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
 
+        s_groups = 0;
+        s_groupList = new ArrayList<>();
+
     }
 
     /**
@@ -472,6 +477,7 @@ public final class CDataWriter
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_conf );
 
         s_groups = 0;
+        s_groupList = new ArrayList<String>();
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().createGroup( "groups" );
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().openGroup( "groups" ).asCommonFG()
               .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
@@ -498,6 +504,29 @@ public final class CDataWriter
         final int[] l_runBuf = new int[1];
         l_runBuf[0] = p_runs;
         l_runDataSet.write( new IntPointer( l_runBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+    }
+
+    /**
+     * set info on new traveller group in h5
+     * @param p_run run number
+     * @param p_config config name
+     * @param p_name file name
+     * @param p_groupNum group ID
+     */
+
+    public static void setGroup( final int p_run, final String p_config, final String p_name, final int p_groupNum )
+    {
+        final hdf5.H5File l_file = new hdf5.H5File();
+        l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
+
+        final String l_currentGroup = "group " + p_groupNum;
+        System.out.println( "XXXXX creating new group " + l_currentGroup );
+
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
+              .asCommonFG().createGroup( l_currentGroup );
+
+        s_groups++;
 
     }
 }

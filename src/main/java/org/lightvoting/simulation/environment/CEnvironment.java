@@ -30,6 +30,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.statistics.CDataWriter;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ import java.util.List;
 public final class CEnvironment
 {
     private List<CGroup> m_groups;
+    private int m_groupNum;
 
     private List<CVotingAgent> m_agentList;
 
@@ -51,6 +53,8 @@ public final class CEnvironment
 
     private boolean m_firstActivated;
     private final String m_fileName;
+    private int m_run;
+    private String m_config;
 
     /**
      * constructor
@@ -62,6 +66,7 @@ public final class CEnvironment
         m_fileName = p_fileName;
         m_groups = Collections.synchronizedList( new LinkedList<>() );
         m_agentList = new LinkedList<>();
+        m_groupNum = 0;
     }
 
     /**
@@ -103,10 +108,13 @@ public final class CEnvironment
      */
     public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
     {
-        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM" );
+        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum );
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
         this.wakeUpAgent();
+
+        CDataWriter.setGroup( m_run, m_config, m_fileName, m_groupNum );
+        m_groupNum++;
 
         return l_group;
     }
@@ -118,7 +126,7 @@ public final class CEnvironment
      */
     public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
     {
-        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED" );
+        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum );
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
 
@@ -190,6 +198,18 @@ public final class CEnvironment
         m_firstActivated = false;
         m_agentList = new LinkedList<>();
         m_currentIndex = 0;
+    }
+
+    /**
+     * set config
+     * @param p_run run number
+     * @param p_config config number
+     */
+
+    public void setConf( final int p_run, final String p_config )
+    {
+        m_run = p_run;
+        m_config = p_config;
     }
 
     private void wakeUpAgent()

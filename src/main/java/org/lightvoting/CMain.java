@@ -119,6 +119,7 @@ public final class CMain
             {
                 System.out.println( " Will run " + p_args[3] + " cycles." );
 
+                s_environment.setConf( r, s_configStrs.get( c ) );
                 // set configuration
                 CDataWriter.setConf( l_name, r,  s_configStrs.get( c ) );
 
@@ -222,7 +223,9 @@ public final class CMain
                     s_configStr = s_configStr.concat( " " + l_subValues.get( l_subValueKey ) );
                     final String[] l_confStr = l_subValues.get( l_subValueKey ).split( "_" );
                     s_groupings.add( l_confStr[0] );
+                    System.out.println( l_confStr[0] );
                     s_protocols.add( l_confStr[1] );
+                    System.out.println( l_confStr[1] );
                 }
             }
         }
