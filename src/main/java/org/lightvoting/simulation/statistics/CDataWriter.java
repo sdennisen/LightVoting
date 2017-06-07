@@ -29,6 +29,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.DoubleMatrix3D;
 import com.google.common.primitives.Doubles;
 import com.google.common.util.concurrent.AtomicDoubleArray;
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.PointerPointer;
@@ -47,7 +48,6 @@ import java.util.List;
 public final class CDataWriter
 {
     private static int s_groups;
- //   private static List<String> m_configNames;
 
     private CDataWriter()
     {
@@ -428,9 +428,10 @@ public final class CDataWriter
      * create group in hdf5 for run
      * @param p_name name of hdf5 file
      * @param p_run run id
+     * @param p_configStr config string
      */
 
-    public static void setRun( final String p_name, final int p_run, final int p_configNum )
+    public static void setRun( final String p_name, final int p_run, final int p_configNum, final String p_configStr )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -440,16 +441,20 @@ public final class CDataWriter
                                               .createDataSet( "config num", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
                                                               new hdf5.DataSpace( 2, new long[]{1, 1} ) );
 
-/*        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( "confignames" );
-        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( "confignames" ).asCommonFG()
-                                                    .createDataSet( "config names", new hdf5.DataType( hdf5.PredType.C_S1() ),
-                                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ) );
-        m_configNames = new ArrayList<>();*/
-
-
         final int[] l_configBuf = new int[1];
         l_configBuf[0] = p_configNum;
         l_configDataSet.write( new IntPointer( l_configBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+
+        l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( "confignames" );
+        final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+        l_predType.setSize( 256 );
+
+        final hdf5.DataSet l_configNamesDataSet = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( "confignames" ).asCommonFG()
+                                                    .createDataSet( "config names", l_predType,
+                                                                    new hdf5.DataSpace( 1, new long[]{1} ) );
+
+        l_configNamesDataSet.write( new BytePointer( p_configStr ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
 
     }
 
@@ -465,16 +470,6 @@ public final class CDataWriter
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().createGroup( p_conf );
-
-   /*     final hdf5.DataSet l_configNamesDataSet = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( "confignames" ).asCommonFG()
-              .openDataSet( "config names" );
-        m_configNames.add( p_conf );
-        final String[] l_buf = new String[m_configNames.size()];
-        for ( int i = 0; i < m_configNames.size(); i++ )
-            l_buf[i] = m_configNames.get( i );
-
-        l_configNamesDataSet.write( new BytePointer( p_conf ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
-*/
 
         s_groups = 0;
         l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf ).asCommonFG().createGroup( "groups" );

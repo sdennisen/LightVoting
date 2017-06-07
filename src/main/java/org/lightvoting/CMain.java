@@ -53,6 +53,7 @@ public final class CMain
     private static List<String> s_configStrs = new ArrayList<>();
     private static List<String> s_groupings = new ArrayList<>();
     private static List<String> s_protocols = new ArrayList<>();
+    private static String s_configStr = "";
 
     /**
      * Hidden constructor
@@ -90,7 +91,7 @@ public final class CMain
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
             // create run group in hdf5
-            CDataWriter.setRun( l_name, r, s_configStrs.size() );
+            CDataWriter.setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
             {
@@ -218,6 +219,7 @@ public final class CMain
                 if ( l_subValueKey.contains( "config" ) )
                 {
                     s_configStrs.add( l_subValues.get( l_subValueKey ) );
+                    s_configStr = s_configStr.concat( " " + l_subValues.get( l_subValueKey ) );
                     final String[] l_confStr = l_subValues.get( l_subValueKey ).split( "_" );
                     s_groupings.add( l_confStr[0] );
                     s_protocols.add( l_confStr[1] );
