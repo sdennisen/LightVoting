@@ -324,16 +324,16 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
         {
-            System.out.println(" ------------- Adding group " + i.values().findFirst().get().raw() );
+            System.out.println( " ------------- Adding group " + i.values().findFirst().get().raw() );
             l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
             System.out.println( "Size of group list: " + l_groupList.get().size() );
-        });
+        } );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
         for ( int i = 0; i < l_groupList.get().size(); i++ )
             // disregard groups which did not hold an election yet
-            if ( ( l_groupList.get().get( i ).open() )  && (l_groupList.get().get(i).result() != null ) )
+            if ( ( l_groupList.get().get( i ).open() )  && ( l_groupList.get().get( i ).result() != null ) )
             {
                 l_activeGroups.add( l_groupList.get().get( i ) );
             }
@@ -402,8 +402,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             final BitVector l_com =  p_activeGroups.get( i ).result();
             System.out.println( "Committee: " + l_com );
 
-            System.out.println( "Vote: " + l_vote );
-            System.out.println( "Committee: " + l_com );
             l_com.xor( l_vote );
             final int l_HD = l_com.cardinality();
             System.out.println( "Hamming distance: " + l_HD );

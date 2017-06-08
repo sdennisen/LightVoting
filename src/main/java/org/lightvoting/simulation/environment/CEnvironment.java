@@ -90,6 +90,7 @@ public final class CEnvironment
      */
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
+        System.out.println( "xxxxxxxxxxxxxx m_groups: " + m_groups );
         return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
     }
 
