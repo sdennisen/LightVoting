@@ -1,8 +1,9 @@
 # LightVoting Default Config
 
 variables:
-  grouping: COORDINATED
-  protocol: BASIC
+  runs: '1'
+  grouping: 'RANDOM'
+  protocol: 'BASIC'
   altnum: '6'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold, (number of) alternatives
