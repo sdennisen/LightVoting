@@ -116,7 +116,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private double m_joinThreshold;
     private final BitVector m_bitVote;
-    private final String m_fileName;
 
     /**
      * constructor of the agent
@@ -125,14 +124,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_chairagent corresponding chair agent
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
-     * @param p_fileName h5 file
      * @param p_joinThr join threshold
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
-                         final String p_fileName,
                          final double p_joinThr
     )
     {
@@ -161,7 +158,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
         m_joinThreshold = p_joinThr;
-        m_fileName = p_fileName;
     }
 
     // overload agent-cycle
@@ -604,7 +600,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
-                m_fileName,
                 m_joinThr
             );
 

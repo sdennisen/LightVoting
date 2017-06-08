@@ -76,7 +76,6 @@ public final class CVotingAgentTest extends TestCase
                                                                                                                                         3
             ), 10,
 
-                                                           "foo.h5",
                                                            5
             );
             l_agent.call();

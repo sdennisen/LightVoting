@@ -124,7 +124,7 @@ public class CDataWriterTest extends TestCase
             l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
                                                                                                                                                   3
                              ), 10,
-                                               l_fileName, 5
+                                               5
                              )
             );
         }
