@@ -153,7 +153,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private void checkConditions()
     {
-        System.out.println( this.name() + " checking conditions " );
+      //  System.out.println( this.name() + " checking conditions " );
         final CGroup l_group = this.determineGroup();
 
         if ( l_group != null )
