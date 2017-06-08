@@ -53,6 +53,12 @@ iteration(0).
    generic/print(MyName, " heard result ", Result, " from chair ", Chair)
    .
 
+// plan for submitting dissatisfaction regarding final result
++!submit/final/diss(Chair, Result, Iteration) <-
+   generic/print(MyName, " Submit final Dissatisfaction");
+   submit/final/diss(Chair, Result, Iteration)
+   .
+
 // plan for iterative voting
 +!election/result(Chair, Result, Iteration) <-
     generic/print(MyName, " Submit Dissatisfaction");

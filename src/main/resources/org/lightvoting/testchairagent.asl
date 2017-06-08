@@ -27,6 +27,10 @@ iteration(0).
    store/diss(Traveller, Diss, Iteration)
    .
 
++!final/diss/received(Traveller, Diss, Iteration) <-
+   generic/print("Receiving final dissatisfaction" );
+   store/final/diss(Traveller, Diss, Iteration)
+   .
 
 +!all/votes/received() <-
    generic/print(" All voters submitted their votes" );

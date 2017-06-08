@@ -36,6 +36,7 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
  * Created by sophie on 24.04.17.
  */
@@ -53,13 +54,15 @@ public class CGroup
 
     private boolean m_readyForElection;
     private boolean m_inProgress;
+    private int m_ID;
 
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
      * @param p_grouping grouping algorithm
+     * @param p_groupNum group number
      */
-    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping )
+    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum )
     {
         m_agentList = new LinkedList<>();
         m_agentList.add( p_votingAgent );
@@ -71,6 +74,7 @@ public class CGroup
         else
             m_readyForElection = true;
         m_inProgress = false;
+        m_ID = p_groupNum;
     }
 
     /**
@@ -220,6 +224,32 @@ public class CGroup
     }
 
     /**
+     * ask agents in group to submit diss for
+     * @param p_chairAgent chair agent
+     * @param p_comResultBV election result
+     * @param p_iteration iteration number
+     * @return group literal for chair agent
+     */
+
+    public ILiteral submitDiss( final CChairAgent p_chairAgent, final BitVector p_comResultBV, final int p_iteration )
+    {
+        // send result of election to all agents in the group
+        m_agentList.stream().forEach( i ->
+                                          i.trigger( CTrigger.from(
+                                              ITrigger.EType.ADDGOAL,
+                                              CLiteral.from( "submit/final/diss",
+                                                             CRawTerm.from( p_chairAgent ),
+                                                             CRawTerm.from( p_comResultBV ),
+                                                             CRawTerm.from( p_iteration ) )
+                                                     )
+                                          )
+        );
+
+        m_result = p_comResultBV;
+        return this.literal( p_chairAgent );
+    }
+
+    /**
      * update group literal for chair agent ( for random grouping )
      * @param p_chairAgent chair agent
      * @param p_result election result
@@ -300,5 +330,10 @@ public class CGroup
             if ( p_agentName.equals( m_agentList.get( i ).name() ) )
                 return m_agentList.get( i );
         return null;
+    }
+
+    public int getID()
+    {
+        return m_ID;
     }
 }

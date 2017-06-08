@@ -24,6 +24,7 @@
 package org.lightvoting.simulation.agent;
 
 import cern.colt.bitvector.BitVector;
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -40,9 +41,11 @@ import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+import org.lightvoting.simulation.statistics.CDataWriter;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -88,19 +91,21 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private boolean m_iterative;
     private List<BitVector> m_bitVotes;
     private final String m_fileName;
+    private final int m_run;
+    private String m_conf;
+    private boolean m_dissStored;
 
     /**
      * constructor of the agent
      * @param p_configuration agent configuration of the agent generator
-     * @param p_grouping grouping algorithm
-     * @param p_protocol voting protocol
      * @param p_fileName h5 file
+     * @param p_run run number
      */
 
 
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final String p_grouping,
-                        final String p_protocol,
-                        final String p_fileName
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment,
+                        final String p_fileName,
+                        final int p_run
     )
     {
         super( p_configuration );
@@ -109,12 +114,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
-        m_grouping = p_grouping;
-        m_protocol = p_protocol;
         m_iteration = 0;
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iterative = false;
         m_fileName = p_fileName;
+        m_run = p_run;
     }
 
     // overload agent-cycle
@@ -133,6 +137,43 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_name;
     }
 
+    /**
+     * set configuration
+     * @param p_conf config id
+     * @param p_grouping grouping method
+     * @param p_protocol protocol
+     */
+
+    public void setConf( final String p_conf, final String p_grouping, final String p_protocol )
+    {
+        m_conf = p_conf;
+        m_grouping = p_grouping;
+        m_protocol = p_protocol;
+    }
+
+    /**
+     * reset chair agent for next simulation run
+     */
+
+    public void reset()
+    {
+
+        m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+        m_dissList = Collections.synchronizedList( new LinkedList<>() );
+        m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+        m_agents = Collections.synchronizedList( new LinkedList<>() );
+        m_iteration = 0;
+        m_iterative = false;
+        m_dissStored = false;
+
+        this.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "main" )
+                      )
+        );
+    }
+
     // agent actions
 
     /**
@@ -149,7 +190,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
-    // private methods
+     // private methods
 
     private void checkConditions()
     {
@@ -283,8 +324,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( "BASIC".equals( m_protocol ) )
         {
             this.beliefbase().add( l_group.updateBasic( this, l_comResultBV ) );
-        }
 
+            if ( "RANDOM".equals( m_grouping ) )
+            {
+                // ask all agents in group to submit their dissatisfaction value
+                System.out.println( "Ask agents to submit final diss " );
+                this.beliefbase().add( l_group.submitDiss( this, l_comResultBV, m_iteration ) );
+            }
+
+            if ( "COORDINATED".equals( m_grouping ) && l_group.finale() )
+            {
+                System.out.println( "Ask agents to submit final diss " );
+                this.beliefbase().add( l_group.submitDiss( this, l_comResultBV, m_iteration ) );
+            }
+        }
 
         // if grouping is coordinated, reopen group for further voters
         if ( "COORDINATED".equals( m_grouping ) && !l_group.finale() && !m_iterative )
@@ -302,15 +355,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             return;
         }
 
-
         if ( "ITERATIVE".equals( m_protocol ) && !l_group.finale() )
         {
             System.out.println( " Update basic " );
             this.beliefbase().add( l_group.updateBasic( this,  l_comResultBV ) );
         }
 
-        // TODO test all cases
+        m_dissStored = false;
 
+        // TODO test all cases
     }
 
     /**
@@ -330,10 +383,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
         m_dissVoters.add( l_dissAg );
 
+
         System.out.println( "Storing diss " + p_diss );
 
         if ( m_dissList.size() == l_group.size() )
+            // && ( !m_dissStored ) )
         {
+       //     m_dissStored = true;
+            System.out.println( this.name() + " Size of group " + m_dissVoters.size()  );
+
             final ITrigger l_trigger = CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
@@ -345,7 +403,50 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             this.trigger( l_trigger );
 
-            System.out.println( p_iteration + " All voters submitted their dissatisfaction value" );
+            System.out.println( p_iteration + " All " + m_dissList.size() + " voters submitted their dissatisfaction value" );
+            System.out.println( Arrays.toString( m_dissList.toArray() ) );
+
+            final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
+            for ( int i = 0; i < m_dissList.size(); i++ )
+                l_dissVals.set( i, m_dissList.get( i ) );
+
+            // final String l_config = "RANDOM_BASIC";
+
+            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+
+        }
+    }
+
+    /**
+     * store final dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/final/diss" )
+
+    public void storeFinalDiss( final String p_name, final Double p_diss, final Integer p_iteration )
+    {
+        final CGroup l_group = this.determineGroup();
+
+        m_dissList.add( p_diss );
+        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+        m_dissVoters.add( l_dissAg );
+
+        System.out.println( "Storing diss " + p_diss );
+
+        if ( ( m_dissList.size() == l_group.size() ) && ( !m_dissStored ) )
+        {
+            m_dissStored = true;
+            System.out.println( p_iteration + " All " + m_dissList.size() + " voters submitted their dissatisfaction value" );
+            System.out.println( Arrays.toString( m_dissList.toArray() ) );
+
+            final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
+            for ( int i = 0; i < m_dissList.size(); i++ )
+                l_dissVals.set( i, m_dissList.get( i ) );
+
+            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+
         }
     }
 
@@ -369,12 +470,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
             // remove vote of most dissatisfied voter from list
             m_bitVotes.remove( l_maxDissAg.getBitVote() );
-            m_dissVoters.remove( l_maxDissAg );
             l_group.remove( l_maxDissAg );
 
             System.out.println( "Removing " + l_maxDissAg.name() );
+           // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+            System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
 
             // remove diss Values for next iteration
+            m_dissVoters.clear();
             m_dissList.clear();
 
             m_iterative = true;
@@ -403,6 +506,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return l_maxIndex;
     }
 
+    public int getGroupID()
+    {
+        return this.determineGroup().getID();
+    }
+
+
     /**
      * Class CChairAgentGenerator
      */
@@ -420,20 +529,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          */
         private final AtomicLong m_agentcounter = new AtomicLong();
 
-        private final String m_grouping;
-        private String m_protocol;
         private final String m_fileName;
+        private final int m_run;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
-         * @param p_grouping grouping algorithm
-         * @param p_protocol voting protocol
          * @param p_fileName h5 file
+         * @param p_run run number
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment, final String p_grouping, final String p_protocol,
-                                     final String p_fileName
+        public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
+                                     final String p_fileName,
+                                     final int p_run
         ) throws Exception
         {
             super(
@@ -460,9 +568,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 IAggregation.EMPTY
             );
             m_environment = p_environment;
-            m_grouping = p_grouping;
-            m_protocol = p_protocol;
             m_fileName = p_fileName;
+            m_run = p_run;
         }
 
         /**
@@ -479,7 +586,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_grouping, m_protocol, m_fileName );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
