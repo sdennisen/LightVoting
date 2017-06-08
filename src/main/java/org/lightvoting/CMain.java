@@ -56,6 +56,7 @@ public final class CMain
     private static String s_configStr = "";
     private static double s_dissthr;
     private static int s_capacity;
+    private static double s_joinThr;
 
     /**
      * Hidden constructor
@@ -102,7 +103,7 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name );
+                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr );
                 l_agents = l_votingagentgenerator
                     .generatemultiple(
                         Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr ) )
@@ -235,6 +236,9 @@ public final class CMain
 
                 if ( "capacity".equals( l_subValues.get( l_subValueKey ) ) )
                     s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+
+                if ( "jointhr".equals( l_subValues.get( l_subValueKey ) ) )
+                    s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
             }
         }
     }

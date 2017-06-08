@@ -114,7 +114,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * threshold for joining a group in the case of coordinated grouping
      */
-    private Integer m_joinThreshold;
+    private double m_joinThreshold;
     private final BitVector m_bitVote;
     private final String m_fileName;
 
@@ -126,12 +126,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
      * @param p_fileName h5 file
+     * @param p_joinThr join threshold
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
-                         final String p_fileName
+                         final String p_fileName,
+                         final double p_joinThr
     )
     {
         super( p_configuration );
@@ -158,7 +160,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_vote = this.convertPreferences( m_atomicPrefValues );
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
-        m_joinThreshold = 5;
+        m_joinThreshold = p_joinThr;
         m_fileName = p_fileName;
     }
 
@@ -523,16 +525,19 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          */
         private final int m_altNum;
         private final String m_fileName;
+        private double m_joinThr;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_altNum number of alternatives
          * @param p_fileName h5 file
+         * @param p_joinThr join threshold
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
-                                      final String p_fileName
+                                      final String p_fileName,
+                                      final double p_joinThr
         ) throws Exception
         {
 
@@ -567,6 +572,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             m_environment = p_environment;
             m_altNum = p_altNum;
             m_fileName = p_fileName;
+            m_joinThr = p_joinThr;
         }
 
         // unregister an agent
@@ -598,7 +604,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
-                m_fileName
+                m_fileName,
+                m_joinThr
             );
 
             l_votingAgent.sleep( Integer.MAX_VALUE  );
