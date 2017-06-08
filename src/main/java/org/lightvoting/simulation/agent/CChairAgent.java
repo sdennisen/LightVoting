@@ -87,7 +87,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private String m_protocol;
     private List<Double> m_dissList;
     private List<CVotingAgent> m_dissVoters;
-    private double m_dissThreshold = 1.1;
+    private double m_dissThreshold;
     private boolean m_iterative;
     private List<BitVector> m_bitVotes;
     private final String m_fileName;
@@ -100,12 +100,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_configuration agent configuration of the agent generator
      * @param p_fileName h5 file
      * @param p_run run number
+     * @param p_dissthr dissatisfaction threshold
      */
 
 
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment,
                         final String p_fileName,
-                        final int p_run
+                        final int p_run,
+                        final double p_dissthr
     )
     {
         super( p_configuration );
@@ -119,6 +121,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_iterative = false;
         m_fileName = p_fileName;
         m_run = p_run;
+        m_dissThreshold = p_dissthr;
     }
 
     // overload agent-cycle
@@ -531,17 +534,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         private final String m_fileName;
         private final int m_run;
+        private double m_dissthr;
 
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
          * @param p_fileName h5 file
          * @param p_run run number
+         * @param p_dissthr dissatisfaction threshold
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
                                      final String p_fileName,
-                                     final int p_run
+                                     final int p_run,
+                                     final double p_dissthr
         ) throws Exception
         {
             super(
@@ -570,6 +576,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_environment = p_environment;
             m_fileName = p_fileName;
             m_run = p_run;
+            m_dissthr = p_dissthr;
         }
 
         /**
@@ -586,7 +593,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;

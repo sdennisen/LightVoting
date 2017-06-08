@@ -4,5 +4,6 @@ variables:
   runs: '1'
   config: 'RANDOM_BASIC'
   altnum: '6'
+  dissthr:  '1.1'
 
 # TODO set other parameters here -> capacity, diss threshold, join threshold

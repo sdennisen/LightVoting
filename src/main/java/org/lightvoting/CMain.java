@@ -54,6 +54,7 @@ public final class CMain
     private static List<String> s_groupings = new ArrayList<>();
     private static List<String> s_protocols = new ArrayList<>();
     private static String s_configStr = "";
+    private static double s_dissthr;
 
     /**
      * Hidden constructor
@@ -103,7 +104,7 @@ public final class CMain
                 l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name );
                 l_agents = l_votingagentgenerator
                     .generatemultiple(
-                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r ) )
+                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr ) )
                     .collect( Collectors.toSet() );
 
 
@@ -227,6 +228,9 @@ public final class CMain
                     s_protocols.add( l_confStr[1] );
                     System.out.println( l_confStr[1] );
                 }
+
+                if ( "dissthr".equals( l_subValues.get( l_subValueKey ) ) )
+                    s_dissthr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
             }
         }
     }
