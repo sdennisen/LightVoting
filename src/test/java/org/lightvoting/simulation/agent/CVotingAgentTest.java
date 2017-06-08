@@ -67,12 +67,14 @@ public final class CVotingAgentTest extends TestCase
     {
         try
         {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, "foo.h5" ),
+            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, "foo.h5", 3 ),
                                                                                                                "foo.h5",
                                                               0,
                                                               1
             );
-            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5" ), 10,
+            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5",
+                                                                                                                                        3
+            ), 10,
 
                                                            "foo.h5"
             );

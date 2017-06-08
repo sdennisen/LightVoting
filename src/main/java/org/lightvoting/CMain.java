@@ -55,6 +55,7 @@ public final class CMain
     private static List<String> s_protocols = new ArrayList<>();
     private static String s_configStr = "";
     private static double s_dissthr;
+    private static int s_capacity;
 
     /**
      * Hidden constructor
@@ -99,7 +100,7 @@ public final class CMain
                 final FileInputStream l_stream = new FileInputStream( p_args[0] );
                 final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
-                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name );
+                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
                 l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name );
                 l_agents = l_votingagentgenerator
@@ -231,6 +232,9 @@ public final class CMain
 
                 if ( "dissthr".equals( l_subValues.get( l_subValueKey ) ) )
                     s_dissthr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
+
+                if ( "capacity".equals( l_subValues.get( l_subValueKey ) ) )
+                    s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
             }
         }
     }

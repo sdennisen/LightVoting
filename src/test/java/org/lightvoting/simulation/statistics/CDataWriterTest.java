@@ -114,12 +114,16 @@ public class CDataWriterTest extends TestCase
 
         for ( int i = 0; i < 3; i++ )
         {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), new CEnvironment( 3, l_fileName ),
+            final CChairAgent l_chairAgent = new CChairAgent( "chair" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), new CEnvironment( 3, l_fileName,
+                                                                                                                                                   3
+            ),
 
                                                               l_fileName, 0,
                                                               1
             );
-            l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName ), 10,
+            l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
+                                                                                                                                                  3
+                             ), 10,
                                                l_fileName )
             );
         }

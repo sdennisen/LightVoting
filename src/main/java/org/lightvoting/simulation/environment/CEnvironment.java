@@ -55,18 +55,21 @@ public final class CEnvironment
     private final String m_fileName;
     private int m_run;
     private String m_config;
+    private int m_capacity;
 
     /**
      * constructor
      * @param p_size number of agents
      * @param p_fileName HDF5 file
+     * @param p_capacity group capacity
      */
-    public CEnvironment( final int p_size, final String p_fileName )
+    public CEnvironment( final int p_size, final String p_fileName, final int p_capacity )
     {
         m_fileName = p_fileName;
         m_groups = Collections.synchronizedList( new LinkedList<>() );
         m_agentList = new LinkedList<>();
         m_groupNum = 0;
+        m_capacity = p_capacity;
     }
 
     /**
@@ -109,7 +112,7 @@ public final class CEnvironment
      */
     public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
     {
-        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum );
+        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum, m_capacity );
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
         this.wakeUpAgent();
@@ -127,7 +130,7 @@ public final class CEnvironment
      */
     public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
     {
-        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum );
+        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum, m_capacity );
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
 

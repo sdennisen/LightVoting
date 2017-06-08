@@ -44,7 +44,7 @@ public class CGroup
 {
     private final List<CVotingAgent> m_agentList;
 
-    private final int m_capacity = 3;
+    private final int m_capacity;
 
     private final CChairAgent m_chair;
 
@@ -61,8 +61,9 @@ public class CGroup
      * @param p_votingAgent voting agent creating the group
      * @param p_grouping grouping algorithm
      * @param p_groupNum group number
+     * @param p_capacity group capacity
      */
-    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum )
+    public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum, final int p_capacity )
     {
         m_agentList = new LinkedList<>();
         m_agentList.add( p_votingAgent );
@@ -75,6 +76,7 @@ public class CGroup
             m_readyForElection = true;
         m_inProgress = false;
         m_ID = p_groupNum;
+        m_capacity = p_capacity;
     }
 
     /**

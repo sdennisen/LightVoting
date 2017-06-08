@@ -78,8 +78,8 @@ public final class CVotingAgentGeneratorTest extends TestCase
             /* TODO Check test */
             final Set<CVotingAgent> l_agents = new
 
-                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5" ), 10,   "foo.h5" )
-                    .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5" ),
+                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5" )
+                    .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5", 3 ),
                                                                                  "foo.h5", 0,
                                                                                  1
                     ) )
