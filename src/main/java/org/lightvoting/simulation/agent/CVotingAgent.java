@@ -356,25 +356,38 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
 
-    private List<CGroup> determineActiveGroups()
+    private List<CGroup> determineActiveGroups( final String p_grouping )
     {
         final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
 
         m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
         {
-            System.out.println(" ------------- Adding group " + i.values().findFirst().get().raw() );
+            System.out.println( " ------------- Adding group " + i.values().findFirst().get().raw() );
             l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
             System.out.println( "Size of group list: " + l_groupList.get().size() );
-        });
+        } );
 
         final List<CGroup> l_activeGroups = new LinkedList<>();
 
-        for ( int i = 0; i < l_groupList.get().size(); i++ )
-            // disregard groups which did not hold an election yet
-            if ( ( l_groupList.get().get( i ).open() )  && (l_groupList.get().get(i).result() != null ) )
-            {
-                l_activeGroups.add( l_groupList.get().get( i ) );
-            }
+        if ( "RANDOM".equals( p_grouping ) )
+        {
+
+            for ( int i = 0; i < l_groupList.get().size(); i++ )
+                if ( l_groupList.get().get( i ).open() )
+                {
+                    l_activeGroups.add( l_groupList.get().get( i ) );
+                }
+        }
+        else
+        {
+
+            for ( int i = 0; i < l_groupList.get().size(); i++ )
+                // disregard groups which did not hold an election yet
+                if ( ( l_groupList.get().get( i ).open() ) && ( l_groupList.get().get( i ).result() != null ) )
+                {
+                    l_activeGroups.add( l_groupList.get().get( i ) );
+                }
+        }
 
         return l_activeGroups;
     }
@@ -396,7 +409,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private void joinGroupRandom()
     {
 
-        final List<CGroup> l_activeGroups = this.determineActiveGroups();
+        final List<CGroup> l_activeGroups = this.determineActiveGroups( "RANDOM" );
 
         if ( l_activeGroups.isEmpty() )
         {
@@ -416,7 +429,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         System.out.println( "join group according to coordinated grouping algorithm" );
 
-        final List<CGroup> l_activeGroups = this.determineActiveGroups();
+        final List<CGroup> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
 
         if ( l_activeGroups.isEmpty() )
         {
