@@ -367,29 +367,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             System.out.println( "Size of group list: " + l_groupList.get().size() );
         } );
 
-        final List<CGroup> l_activeGroups = new LinkedList<>();
+        return l_groupList.get()
+                   .stream()
+                   .parallel()
+                   .filter( i -> "RANDOM".equals( p_grouping ) ? i.open() : i.open() && i.result() != null )
+                   .collect( Collectors.toList() );
 
-        if ( "RANDOM".equals( p_grouping ) )
-        {
-
-            for ( int i = 0; i < l_groupList.get().size(); i++ )
-                if ( l_groupList.get().get( i ).open() )
-                {
-                    l_activeGroups.add( l_groupList.get().get( i ) );
-                }
-        }
-        else
-        {
-
-            for ( int i = 0; i < l_groupList.get().size(); i++ )
-                // disregard groups which did not hold an election yet
-                if ( ( l_groupList.get().get( i ).open() ) && ( l_groupList.get().get( i ).result() != null ) )
-                {
-                    l_activeGroups.add( l_groupList.get().get( i ) );
-                }
-        }
-
-        return l_activeGroups;
     }
 
     private void openNewGroup()
