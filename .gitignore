@@ -7,13 +7,12 @@
 !*.py
 !*.asl
 !*.md
-!*.yaml
+
 
 !src/analysis/**/*.xml
 !src/analysis/**/*.txt
 
 !src/main/resources/**/*.properties
-!src/main/resources/**/*.yaml
 !src/main/resources/**/*.xml
 !src/main/resources/**/*.asl
 
