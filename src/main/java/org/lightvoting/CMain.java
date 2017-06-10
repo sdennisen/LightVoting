@@ -35,6 +35,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,7 +83,7 @@ public final class CMain
 
         readYaml();
 
-        final String l_name = "results.h5";
+        final String l_name = new Date() + "_results.h5";
         CDataWriter.createHDF5( l_name );
 
         // set run num in hdf5
