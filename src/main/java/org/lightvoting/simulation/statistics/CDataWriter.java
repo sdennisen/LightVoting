@@ -49,8 +49,9 @@ public final class CDataWriter
 
     /**
      * create HDF5 file
+     * @return this
      */
-    public final void createHDF5( final String p_filename )
+    public final CDataWriter createHDF5( final String p_filename )
     {
 
         // Create a new file.
@@ -63,6 +64,8 @@ public final class CDataWriter
         {
             l_ex.printStackTrace();
         }
+
+        return this;
     }
 
 //    /**
@@ -303,9 +306,10 @@ public final class CDataWriter
      * @param p_name name of h5 file
      * @param p_dissVals dissatisfaction values
      * @param p_chairName chair calling the method
+     * @return this
      */
 
-    public final void writeDissVals( final String p_name, final AtomicDoubleArray p_dissVals, final String p_chairName )
+    public final CDataWriter writeDissVals( final String p_name, final AtomicDoubleArray p_dissVals, final String p_chairName )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -328,19 +332,24 @@ public final class CDataWriter
 
         l_file._close();
 
+        return this;
+
     }
 
     /**
      * create group
      * @param p_fileName name of h5 file
      * @param p_chairName name of chair calling the method
+     * @return this
      */
-    public final void createGroup( final String p_fileName, final String p_chairName )
+    public final CDataWriter createGroup( final String p_fileName, final String p_chairName )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
         l_file.asCommonFG().createGroup( p_chairName );
         l_file.close();
+
+        return this;
     }
 
     /**
@@ -352,9 +361,10 @@ public final class CDataWriter
      * @param p_iteration number of iteration
      * @param p_agentList agents in group of chair
      * @param p_dissVals dissatisfaction values
+     * @return this
      */
 
-    public final void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
+    public final CDataWriter writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
                                         final List<CVotingAgent> p_agentList,
                                         final AtomicDoubleArray p_dissVals
     )
@@ -407,6 +417,8 @@ public final class CDataWriter
         {
             l_ex.printStackTrace();
         }
+
+        return this;
     }
 
     /**
@@ -414,9 +426,10 @@ public final class CDataWriter
      * @param p_name name of hdf5 file
      * @param p_run run id
      * @param p_configStr config string
+     * @return this
      */
 
-    public final void setRun( final String p_name, final int p_run, final int p_configNum, final String p_configStr )
+    public final CDataWriter setRun( final String p_name, final int p_run, final int p_configNum, final String p_configStr )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -442,6 +455,8 @@ public final class CDataWriter
         l_configNamesDataSet.write( new BytePointer( p_configStr ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
 
         s_groups = 0;
+
+        return this;
     }
 
     /**
@@ -449,9 +464,10 @@ public final class CDataWriter
      * @param p_fileName name of hdf5 file
      * @param p_run run id
      * @param p_conf config id
+     * @return this
      */
 
-    public final void setConf( final String p_fileName, final int p_run, final String p_conf )
+    public final CDataWriter setConf( final String p_fileName, final int p_run, final String p_conf )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
@@ -463,15 +479,18 @@ public final class CDataWriter
               .createDataSet( "group count", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ), new hdf5.DataSpace( 2, new long[]{1, 1}  ),
                               new hdf5.DSetCreatPropList()
         );
+
+        return this;
     }
 
     /**
      * set # runs
      * @param p_name name of hdf5 file
      * @param p_runs number of runs
+     * @return this
      */
 
-    public final void setRunNum( final String p_name, final int p_runs )
+    public final CDataWriter setRunNum( final String p_name, final int p_runs )
     {
 
         final hdf5.H5File l_file = new hdf5.H5File();
@@ -485,6 +504,7 @@ public final class CDataWriter
         l_runBuf[0] = p_runs;
         l_runDataSet.write( new IntPointer( l_runBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
 
+        return this;
     }
 
     /**
@@ -493,9 +513,10 @@ public final class CDataWriter
      * @param p_config config name
      * @param p_name file name
      * @param p_groupNum group ID
+     * @return this
      */
 
-    public final void setGroup( final int p_run, final String p_config, final String p_name, final int p_groupNum )
+    public final CDataWriter setGroup( final int p_run, final String p_config, final String p_name, final int p_groupNum )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -507,6 +528,8 @@ public final class CDataWriter
               .asCommonFG().createGroup( l_currentGroup );
 
         s_groups++;
+
+        return this;
 
     }
 }
