@@ -39,54 +39,54 @@ import java.util.List;
  */
 public class CDataWriterTest extends TestCase
 {
-    /**
-     * test0
-     */
-    public static void test0()
-    {
-        new CDataWriter().createHDF5( "test0.h5" );
-        new CDataWriter().test( "test0.h5" );
-    }
-
-    /**
-     * test1
-     */
-
-    public static void test1()
-    {
-        new CDataWriter().createHDF5( "test1.h5" );
-        new CDataWriter().test1( "test1.h5" );
-    }
-
-    /**
-     * test2
-     */
-
-    public static void test2()
-    {
-        new CDataWriter().createHDF5( "test2.h5" );
-        new CDataWriter().test2( "test2.h5" );
-    }
-
-    /**
-     * test3
-     */
-
-    public static void test3()
-    {
-        new CDataWriter().createHDF5( "test3.h5" );
-        new CDataWriter().test3( "test3.h5" );
-    }
-
-    /**
-     * test4
-     */
-
-    public static void test4()
-    {
-        new CDataWriter().createHDF5( "test4.h5" );
-        new CDataWriter().test4( "test4.h5" );
-    }
+//    /**
+//     * test0
+//     */
+//    public static void test0()
+//    {
+//        new CDataWriter().createHDF5( "test0.h5" );
+//        new CDataWriter().test( "test0.h5" );
+//    }
+//
+//    /**
+//     * test1
+//     */
+//
+//    public static void test1()
+//    {
+//        new CDataWriter().createHDF5( "test1.h5" );
+//        new CDataWriter().test1( "test1.h5" );
+//    }
+//
+//    /**
+//     * test2
+//     */
+//
+//    public static void test2()
+//    {
+//        new CDataWriter().createHDF5( "test2.h5" );
+//        new CDataWriter().test2( "test2.h5" );
+//    }
+//
+//    /**
+//     * test3
+//     */
+//
+//    public static void test3()
+//    {
+//        new CDataWriter().createHDF5( "test3.h5" );
+//        new CDataWriter().test3( "test3.h5" );
+//    }
+//
+//    /**
+//     * test4
+//     */
+//
+//    public static void test4()
+//    {
+//        new CDataWriter().createHDF5( "test4.h5" );
+//        new CDataWriter().test4( "test4.h5" );
+//    }
 
     /**
      * simple test for writing of dissatisfaction values
