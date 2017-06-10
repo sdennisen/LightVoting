@@ -232,10 +232,10 @@ public final class CMain
                     System.out.println( l_confStr[1] );
                 }
 
-                if ( "dissthr".equals( l_subValues.get( l_subValueKey ) ) )
+                if ( "dissthr".equals( l_subValueKey  ) )
                     s_dissthr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
-                if ( "capacity".equals( l_subValues.get( l_subValueKey ) ) )
+                if ( "capacity".equals( l_subValueKey ) )
                     s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
                 if ( "jointhr".equals( l_subValues.get( l_subValueKey ) ) )
