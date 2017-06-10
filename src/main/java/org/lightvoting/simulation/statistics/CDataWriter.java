@@ -49,7 +49,7 @@ public final class CDataWriter
 {
     private static int s_groups;
 
-    private CDataWriter()
+    public CDataWriter()
     {
 
     }
@@ -57,7 +57,7 @@ public final class CDataWriter
     /**
      * create HDF5 file
      */
-    public static void createHDF5( final String p_filename )
+    public final void createHDF5( final String p_filename )
     {
 
         // Create a new file.
@@ -77,7 +77,7 @@ public final class CDataWriter
      * @param p_name name of h5 file
      */
 
-    public static void test( final String p_name )
+    public final void test( final String p_name )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -124,7 +124,7 @@ public final class CDataWriter
      * @param p_name name of h5 file
      */
 
-    public static void test1( final String p_name )
+    public final void test1( final String p_name )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -155,7 +155,7 @@ public final class CDataWriter
      * @param p_name name of h5 file
      */
 
-    public static void test2( final String p_name )
+    public final void test2( final String p_name )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -187,7 +187,7 @@ public final class CDataWriter
      * @param p_name name of h5 file
      */
 
-    public static void test3( final String p_name )
+    public final void test3( final String p_name )
     {
         final DoubleMatrix2D l_cmatrix = DoubleFactory2D.dense.random( 300, 100 );
         // Try block to detect exceptions raised by any of the calls inside it
@@ -246,7 +246,7 @@ public final class CDataWriter
      * @param p_name name of h5 file
      */
 
-    public static void test4( final String p_name )
+    public final void test4( final String p_name )
     {
         final DoubleMatrix3D l_cmatrix = DoubleFactory3D.dense.random( 300, 300, 300 );
         // Try block to detect exceptions raised by any of the calls inside it
@@ -312,7 +312,7 @@ public final class CDataWriter
      * @param p_chairName chair calling the method
      */
 
-    public static void writeDissVals( final String p_name, final AtomicDoubleArray p_dissVals, final String p_chairName )
+    public final void writeDissVals( final String p_name, final AtomicDoubleArray p_dissVals, final String p_chairName )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -342,7 +342,7 @@ public final class CDataWriter
      * @param p_fileName name of h5 file
      * @param p_chairName name of chair calling the method
      */
-    public static void createGroup( final String p_fileName, final String p_chairName )
+    public final void createGroup( final String p_fileName, final String p_chairName )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
@@ -361,7 +361,7 @@ public final class CDataWriter
      * @param p_dissVals dissatisfaction values
      */
 
-    public static void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
+    public final void writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
                                         final List<CVotingAgent> p_agentList,
                                         final AtomicDoubleArray p_dissVals
     )
@@ -423,7 +423,7 @@ public final class CDataWriter
      * @param p_configStr config string
      */
 
-    public static void setRun( final String p_name, final int p_run, final int p_configNum, final String p_configStr )
+    public final void setRun( final String p_name, final int p_run, final int p_configNum, final String p_configStr )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -458,7 +458,7 @@ public final class CDataWriter
      * @param p_conf config id
      */
 
-    public static void setConf( final String p_fileName, final int p_run, final String p_conf )
+    public final void setConf( final String p_fileName, final int p_run, final String p_conf )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
@@ -478,7 +478,7 @@ public final class CDataWriter
      * @param p_runs number of runs
      */
 
-    public static void setRunNum( final String p_name, final int p_runs )
+    public final void setRunNum( final String p_name, final int p_runs )
     {
 
         final hdf5.H5File l_file = new hdf5.H5File();
@@ -502,7 +502,7 @@ public final class CDataWriter
      * @param p_groupNum group ID
      */
 
-    public static void setGroup( final int p_run, final String p_config, final String p_name, final int p_groupNum )
+    public final void setGroup( final int p_run, final String p_config, final String p_name, final int p_groupNum )
     {
         final hdf5.H5File l_file = new hdf5.H5File();
         l_file.openFile( p_name, hdf5.H5F_ACC_RDWR );

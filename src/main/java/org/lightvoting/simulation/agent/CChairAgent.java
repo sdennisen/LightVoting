@@ -415,7 +415,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             // final String l_config = "RANDOM_BASIC";
 
-            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+            new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
 
         }
     }
@@ -448,7 +448,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             for ( int i = 0; i < m_dissList.size(); i++ )
                 l_dissVals.set( i, m_dissList.get( i ) );
 
-            CDataWriter.writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+            new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
 
         }
     }
