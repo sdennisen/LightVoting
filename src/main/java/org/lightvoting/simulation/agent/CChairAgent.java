@@ -65,6 +65,10 @@ import java.util.stream.Stream;
 @IAgentAction
 public final class CChairAgent extends IBaseAgent<CChairAgent>
 {
+    /**
+     * serialUID
+     */
+    private static final long serialVersionUID = -4459675039048514445L;
 
     /**
      * name of chair

@@ -50,6 +50,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class CSend extends IBaseAction
 {
     /**
+     * serialUID
+     */
+
+    private static final long serialVersionUID = 1967930733823348568L;
+
+    /**
      * thread-safe map for storing name and agent object
      */
     private final Map<String, CVotingAgent> m_agents = new ConcurrentHashMap<>();

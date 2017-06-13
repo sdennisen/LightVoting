@@ -70,6 +70,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 {
 
     /**
+     * serialUID
+     */
+
+    private static final long serialVersionUID = 8515283969360402946L;
+
+    /**
      * name of the agent
      */
     private final String m_name;
