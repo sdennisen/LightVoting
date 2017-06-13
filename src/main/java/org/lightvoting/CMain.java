@@ -238,7 +238,7 @@ public final class CMain
                 if ( "capacity".equals( l_subValueKey ) )
                     s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
-                if ( "jointhr".equals( l_subValues.get( l_subValueKey ) ) )
+                if ( "jointhr".equals( l_subValueKey  ) )
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
             }
         }
