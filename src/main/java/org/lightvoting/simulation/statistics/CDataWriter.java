@@ -369,12 +369,14 @@ public final class CDataWriter
                                         final AtomicDoubleArray p_dissVals
     )
     {
+
+        final String l_currentGroup = "group " + p_chair.getGroupID();
+
+        System.out.println( "CDataWriter: " + p_dissVals  );
+
+
         try
         {
-            final String l_currentGroup = "group " + p_chair.getGroupID();
-
-            System.out.println( "CDataWriter: " + p_dissVals  );
-
             final hdf5.H5File l_file = new hdf5.H5File();
             l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
@@ -385,11 +387,19 @@ public final class CDataWriter
             l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
                                           .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( String.valueOf( p_iteration ) );
 
-            final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            final hdf5.DataSet l_dataSet;
+
+            if ( l_group.asCommonFG().getNumObjs() == 0 )
+             l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
                                                     new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
                 )
             );
+            else
+                l_dataSet = new hdf5.DataSet(
+                    l_group.asCommonFG().openDataSet( "dissVals" )
+                );
+
 
             final double[] l_buf = new double[p_dissVals.length()];
 
@@ -411,10 +421,12 @@ public final class CDataWriter
             l_countBuf[0] = s_groups;
             l_countDataSet.write( new IntPointer( l_countBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
 
-            l_file._close();
+            l_file.close();
+
         }
         catch ( final Exception l_ex )
         {
+        System.out.println( "Error occurred at group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
             l_ex.printStackTrace();
         }
 
