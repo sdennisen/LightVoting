@@ -38,7 +38,7 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightjason.agentspeak.language.score.IAggregation;
+//import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -558,7 +558,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
                 // aggregation function for the optimization function, here
                 // we use an empty function
-                IAggregation.EMPTY,
+       //         IAggregation.EMPTY,
 
                 // variable builder
                 new CVariableBuilder( p_environment )

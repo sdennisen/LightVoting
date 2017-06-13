@@ -37,7 +37,7 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightjason.agentspeak.language.score.IAggregation;
+// import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
@@ -567,11 +567,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                         )
                     )
                     // build the set with a collector
-                ).collect( Collectors.toSet() ),
+                ).collect( Collectors.toSet() )
+                //,
 
                 // aggregation function for the optimisation function, here
                 // we use an empty function
-                IAggregation.EMPTY
+         //       IAggregation.EMPTY
             );
             m_environment = p_environment;
             m_fileName = p_fileName;

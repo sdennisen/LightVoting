@@ -58,10 +58,11 @@ public final class CVariableBuilder implements IVariableBuilder
     }
 
     @Override
-    public final Stream<IVariable<?>> generate( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
+    public final Stream<IVariable<?>> apply( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
     {
         return Stream.of(
             new CConstant<>( "MyName", p_agent.<CVotingAgent>raw().name() )
         );
     }
+
 }

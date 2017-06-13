@@ -25,13 +25,6 @@ package org.lightvoting.simulation.statistics;
 
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import junit.framework.TestCase;
-import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
-import org.lightvoting.simulation.agent.CChairAgent;
-import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.environment.CEnvironment;
-
-import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -106,36 +99,36 @@ public class CDataWriterTest extends TestCase
      * test for writing data
      */
 
-    public static void testWriteDataVector()
-    {
-        final String l_fileName = "test_vector.h5";
-        new CDataWriter().createHDF5( l_fileName );
-        final List<CVotingAgent> l_agentList = new LinkedList<>();
-
-        for ( int i = 0; i < 3; i++ )
-        {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), new CEnvironment( 3, l_fileName,
-                                                                                                                                                   3
-            ),
-
-                                                              l_fileName, 0,
-                                                              1
-            );
-            l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
-                                                                                                                                                  3
-                             ), 10,
-                                               5
-                             )
-            );
-        }
-
-        final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
-
-        final int l_run = 0;
-        final int l_iteration = 0;
-        final String l_config = "RANDOM_BASIC";
-
-        new CDataWriter().writeDataVector( l_fileName, l_run, l_config, l_agentList.get( 0 ).getChair(), l_iteration, l_agentList, l_testDissVals );
-
-    }
+//    public static void testWriteDataVector()
+//    {
+//        final String l_fileName = "test_vector.h5";
+//        new CDataWriter().createHDF5( l_fileName );
+//        final List<CVotingAgent> l_agentList = new LinkedList<>();
+//
+//        for ( int i = 0; i < 3; i++ )
+//        {
+//            final CChairAgent l_chairAgent = new CChairAgent( "chair" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), new CEnvironment( 3, l_fileName,
+//                                                                                                                                                   3
+//            ),
+//
+//                                                              l_fileName, 0,
+//                                                              1
+//            );
+//            l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
+//                                                                                                                                                  3
+//                             ), 10,
+//                                               5
+//                             )
+//            );
+//        }
+//
+//        final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
+//
+//        final int l_run = 0;
+//        final int l_iteration = 0;
+//        final String l_config = "RANDOM_BASIC";
+//
+//        new CDataWriter().writeDataVector( l_fileName, l_run, l_config, l_agentList.get( 0 ).getChair(), l_iteration, l_agentList, l_testDissVals );
+//
+//    }
 }
