@@ -359,14 +359,12 @@ public final class CDataWriter
      * @param p_config simulation config (grouping and protocol)
      * @param p_chair chair calling the method
      * @param p_iteration number of iteration
-     * @param p_agentList agents in group of chair
      * @param p_dissVals dissatisfaction values
      * @return this
      */
 
     public final CDataWriter writeDataVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair, final int p_iteration,
-                                        final List<CVotingAgent> p_agentList,
-                                        final AtomicDoubleArray p_dissVals
+                                              final AtomicDoubleArray p_dissVals
     )
     {
 
@@ -380,7 +378,7 @@ public final class CDataWriter
             final hdf5.H5File l_file = new hdf5.H5File();
             l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
 
-            System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
+       //     System.out.println( "Name of group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
 
             final hdf5.Group l_group;
 
@@ -390,7 +388,7 @@ public final class CDataWriter
             final hdf5.DataSet l_dataSet;
 
             if ( l_group.asCommonFG().getNumObjs() == 0 )
-             l_dataSet = new hdf5.DataSet(
+                l_dataSet = new hdf5.DataSet(
                 l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
                                                     new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
                 )
@@ -426,7 +424,90 @@ public final class CDataWriter
         }
         catch ( final Exception l_ex )
         {
-        System.out.println( "Error occurred at group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
+            System.out.println( "Error occurred at group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
+            l_ex.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
+     *
+     * write data of intermediate election to file
+     * @param p_fileName name of h5 file
+     * @param p_run number of simulation run
+     * @param p_config simulation config (grouping and protocol)
+     * @param p_chair chair calling the method
+     * @param p_iteration number of iteration
+     * @param p_agentList agents in group of chair
+     * @param p_dissVals dissatisfaction values
+     * @return this
+     */
+
+    public CDataWriter writeIntermediateVector( final String p_fileName, final int p_run, final String p_config, final CChairAgent p_chair,
+                                          final Integer p_iteration,
+                                          final List<CVotingAgent> p_agentList,
+                                          final AtomicDoubleArray p_dissVals
+    )
+    {
+
+        final String l_currentGroup = "group " + p_chair.getGroupID();
+
+        System.out.println( "CDataWriter: " + p_dissVals  );
+
+
+        try
+        {
+            final hdf5.H5File l_file = new hdf5.H5File();
+            l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+
+      //      System.out.println( "Intermediate election - name of group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
+
+            final hdf5.Group l_group;
+
+            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  )
+                            .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( "im_" + p_iteration );
+
+            final hdf5.DataSet l_dataSet;
+
+            if ( l_group.asCommonFG().getNumObjs() == 0 )
+                l_dataSet = new hdf5.DataSet(
+                    l_group.asCommonFG().createDataSet( "dissVals", new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                                        new hdf5.DataSpace( 2, new long[]{p_dissVals.length(), 1} ), new hdf5.DSetCreatPropList()
+                    )
+                );
+            else
+                l_dataSet = new hdf5.DataSet(
+                    l_group.asCommonFG().openDataSet( "dissVals" )
+                );
+
+
+            final double[] l_buf = new double[p_dissVals.length()];
+
+            for ( int i = 0; i < p_dissVals.length(); i++ )
+            {
+                System.out.println( " Setting buf[" + i + "] to " + p_dissVals.get( i ) );
+                l_buf[i] = p_dissVals.get( i );
+            }
+
+            l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+            // write # groups
+
+            final hdf5.Group l_countGroup = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config  ).asCommonFG().openGroup( "groups" );
+
+            final hdf5.DataSet l_countDataSet = l_countGroup.asCommonFG().openDataSet( "group count" );
+
+            final int[] l_countBuf = new int[1];
+            l_countBuf[0] = s_groups;
+            l_countDataSet.write( new IntPointer( l_countBuf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+            l_file.close();
+
+        }
+        catch ( final Exception l_ex )
+        {
+       //   System.out.println( "Error occurred at group: " + p_run + "/" +  p_config + "/" + l_currentGroup + "/" + p_iteration );
             l_ex.printStackTrace();
         }
 
@@ -544,4 +625,6 @@ public final class CDataWriter
         return this;
 
     }
+
+
 }

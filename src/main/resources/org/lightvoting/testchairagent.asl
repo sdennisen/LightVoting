@@ -39,5 +39,5 @@ iteration(0).
 
 +!all/dissValues/received(Iteration) <-
    generic/print("Received all diss values");
-   remove/voter()
+   remove/voter(Iteration)
    .
