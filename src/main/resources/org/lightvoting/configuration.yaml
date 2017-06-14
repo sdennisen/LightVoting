@@ -2,7 +2,7 @@
 
 variables:
   runs: '1'
-  config: 'RANDOM_ITERATIVE'
+  config: 'COORDINATED_ITERATIVE'
   altnum: '6'
   dissthr:  '1.4'
   capacity: '3'

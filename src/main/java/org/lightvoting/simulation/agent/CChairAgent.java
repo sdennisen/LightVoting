@@ -453,7 +453,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 l_dissVals.set( i, m_dissList.get( i ) );
 
             new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+            new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
         }
+
+
     }
 
     /**
