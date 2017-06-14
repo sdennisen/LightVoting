@@ -420,13 +420,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             // final String l_config = "RANDOM_BASIC";
 
-
-            if ( "BASIC".equals( m_protocol ) )
-                new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
-
-            else
-                new CDataWriter().writeIntermediateVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
-
+            new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
         }
     }
 
@@ -458,11 +452,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             for ( int i = 0; i < m_dissList.size(); i++ )
                 l_dissVals.set( i, m_dissList.get( i ) );
 
-            if ( "BASIC".equals( m_protocol ) )
-                new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
-
-            else
-                new CDataWriter().writeIntermediateVector( m_fileName, m_run, m_conf, this, p_iteration, m_dissVoters, l_dissVals );
+            new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
         }
     }
 
@@ -496,16 +486,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             if ( l_group.size() == 0 )
             {
                 System.out.println( " Voter list is empty, we are done " );
-                System.out.println( "Size of m_dissList: " + m_dissList.size() );
-                final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
-                for ( int i = 0; i < m_dissList.size(); i++ )
-                    l_dissVals.set( i, m_dissList.get( i ) );
-
-                final List<CVotingAgent> l_oldDissVoters =  Collections.synchronizedList( new LinkedList<>() );
-                for ( int i = 0; i < m_dissVoters.size(); i++ )
-                    l_oldDissVoters.set( i, m_dissVoters.get( i ) );
-                System.out.println( "Write last iteration" );
-                new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+                new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
 
             }
 
@@ -520,16 +501,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
 
         System.out.println( " No dissatisfied voter left, we are done " );
-        System.out.println( "Size of m_dissList: " + m_dissList.size() );
-        final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
-        for ( int i = 0; i < m_dissList.size(); i++ )
-        {
-            System.out.println( m_dissList.get( i ) );
-            l_dissVals.set( i, m_dissList.get( i ) );
-        }
-
-        System.out.println( "Write last iteration" );
-        new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+        new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
 
     }
 
