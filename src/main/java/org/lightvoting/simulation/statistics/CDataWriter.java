@@ -645,12 +645,10 @@ public final class CDataWriter
             final hdf5.Group l_group;
 
             l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
-                            .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( "lastIt" );
+                                       .asCommonFG().openGroup( l_currentGroup ).asCommonFG().openGroup( "lastIt" );
 
             final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-                l_group.asCommonFG().createDataSet( "lastIt", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
-                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
-                )
+                l_group.asCommonFG().openDataSet( "lastIt" )
             );
 
             final int[] l_buf = new int[1];
@@ -665,5 +663,49 @@ public final class CDataWriter
             l_ex.printStackTrace();
         }
         return this;
+    }
+
+    /**
+     * write default number of last iteration (-1)
+     * @param p_fileName name of h5 file
+     * @param p_run number of simulation run
+     * @param p_config simulation config (grouping and protocol)
+     * @param p_groupNum group number
+     * @return this
+     */
+
+    public CDataWriter writeDefaultLastIteration( final String p_fileName, final int p_run, final String p_config, final int p_groupNum )
+    {
+        final String l_currentGroup = "group " + p_groupNum;
+
+        try
+        {
+            final hdf5.H5File l_file = new hdf5.H5File();
+            l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+
+            final hdf5.Group l_group;
+
+            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_config )
+                            .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( "lastIt" );
+
+            final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+                l_group.asCommonFG().createDataSet( "lastIt", new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+                )
+            );
+
+            final int[] l_buf = new int[1];
+
+            l_buf[0] = -1;
+
+            l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
+        return this;
+
     }
 }

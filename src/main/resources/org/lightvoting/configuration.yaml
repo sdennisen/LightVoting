@@ -2,8 +2,8 @@
 
 variables:
   runs: '1'
-  config: 'COORDINATED_ITERATIVE'
+  config: 'RANDOM_BASIC'
   altnum: '6'
   dissthr:  '1.4'
   capacity: '3'
-  jointhr: '5'
+  jointhr: '3'

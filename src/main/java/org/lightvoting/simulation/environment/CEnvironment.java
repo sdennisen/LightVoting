@@ -118,6 +118,7 @@ public final class CEnvironment
         this.wakeUpAgent();
 
         new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
         m_groupNum++;
 
         return l_group;
@@ -135,6 +136,7 @@ public final class CEnvironment
         System.out.println( "Created Group " + l_group );
 
         new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
         m_groupNum++;
         return l_group;
     }
