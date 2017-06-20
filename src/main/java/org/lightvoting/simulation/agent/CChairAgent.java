@@ -99,6 +99,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private final int m_run;
     private String m_conf;
     private boolean m_dissStored;
+    // counter for intermediate elections in coordinated grouping
+    private int m_coorNum;
 
     /**
      * constructor of the agent
@@ -329,6 +331,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // set inProgress and readyForElection to false in group
         l_group.reset();
 
+        // write resulting committee for coordinated grouping
+        if ( "COORDINATED".equals( m_grouping ) )
+        {
+            new CDataWriter().writeCommitteeCoordinated( m_fileName, m_run, m_conf, this, l_comResultBV, m_coorNum );
+            m_coorNum++;
+        }
         if ( "BASIC".equals( m_protocol ) )
         {
             this.beliefbase().add( l_group.updateBasic( this, l_comResultBV ) );

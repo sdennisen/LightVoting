@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.statistics;
 
+import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;
@@ -699,6 +700,54 @@ public final class CDataWriter
             l_buf[0] = -1;
 
             l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+
+        }
+        catch ( final Exception l_ex )
+        {
+            l_ex.printStackTrace();
+        }
+        return this;
+
+    }
+
+    /**
+     * write (intermediate) election results for coordinated grouping to h5 file
+     * @param p_fileName name of h5 file
+     * @param p_run run number
+     * @param p_conf configuration
+     * @param p_chairAgent chair agent
+     * @param p_comResultBV election result
+     * @param p_coorNum number of (intermediate) election
+     * @return this
+     */
+    public CDataWriter writeCommitteeCoordinated( final String p_fileName, final int p_run, final String p_conf, final CChairAgent p_chairAgent,
+                                           final BitVector p_comResultBV,
+                                           final int p_coorNum
+    )
+    {
+        final String l_currentGroup = "group " + p_chairAgent.getGroupID();
+
+        try
+        {
+            final hdf5.H5File l_file = new hdf5.H5File();
+            l_file.openFile( p_fileName, hdf5.H5F_ACC_RDWR );
+
+            final hdf5.Group l_group;
+
+            final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+            l_predType.setSize( 256 );
+
+
+            l_group = l_file.asCommonFG().openGroup( String.valueOf( p_run ) ).asCommonFG().openGroup( p_conf )
+                            .asCommonFG().openGroup( l_currentGroup ).asCommonFG().createGroup( "im_" + p_coorNum );
+
+
+            final hdf5.DataSet l_dataSet = l_group.asCommonFG().createDataSet( "committee", l_predType,
+                                                                            new hdf5.DataSpace( 1, new long[]{1} ) );
+
+            final int[] l_buf = new int[1];
+
+            l_dataSet.write( new BytePointer( p_comResultBV.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
 
         }
         catch ( final Exception l_ex )
