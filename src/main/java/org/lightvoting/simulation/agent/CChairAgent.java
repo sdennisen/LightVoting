@@ -272,20 +272,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " --------------------- " + this.name() + " received vote from " + p_agentName );
 
-        if ( m_bitVotes.size() == l_group.size() )
-        {
+        if ( m_bitVotes.size() != l_group.size() )
+            return;
 
-            final ITrigger l_trigger = CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "all/votes/received" )
+        final ITrigger l_trigger = CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "all/votes/received" )
 
-            );
+        );
 
-            System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
+        System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
 
-            this.trigger( l_trigger );
-        }
+        this.trigger( l_trigger );
     }
 
     private BitVector toBV( final AtomicIntegerArray p_vote )
