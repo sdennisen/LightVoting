@@ -182,7 +182,7 @@ public final class CEnvironment
     {
         for ( final CGroup l_group : m_groups )
         {
-            if ( !( ( l_group.literal( p_chairAgent ) ) == null ) )
+            if ( !( l_group.literal( p_chairAgent ).emptyValues() ) )
                 return l_group.literal( p_chairAgent );
         }
         return CLiteral.from( "" );

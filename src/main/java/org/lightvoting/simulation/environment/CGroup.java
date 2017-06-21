@@ -109,7 +109,7 @@ public class CGroup
 
         if ( ( this.m_chair ).equals( p_chairAgent ) )
             return CLiteral.from( "group", CRawTerm.from( this ) );
-        else return null;
+        else return CLiteral.from( "" );
     }
 
     public boolean readyForElection()
