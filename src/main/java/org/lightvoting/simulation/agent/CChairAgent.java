@@ -469,41 +469,38 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         final double l_max = m_dissList.get( l_maxIndex );
         System.out.println( " max diss is " + l_max );
 
-        if ( l_max > m_dissThreshold )
+        if ( l_max <= m_dissThreshold )
         {
-            System.out.println( " Determining most dissatisfied voter " );
-            final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
-            System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
-            // remove vote of most dissatisfied voter from list
-            m_bitVotes.remove( l_maxDissAg.getBitVote() );
-            l_group.remove( l_maxDissAg );
-
-            System.out.println( "Removing " + l_maxDissAg.name() );
-           // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
-            System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
-
-            if ( l_group.size() == 0 )
-            {
-                System.out.println( " Voter list is empty, we are done " );
-                EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
+            System.out.println( " No dissatisfied voter left, we are done " );
+            EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
             //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
-
-            }
-
-            // remove diss Values for next iteration
-            m_dissVoters.clear();
-            m_dissList.clear();
-
-            m_iterative = true;
-            l_group.makeReady();
-
             return;
         }
 
-        System.out.println( " No dissatisfied voter left, we are done " );
-        EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
-    //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
+        System.out.println( " Determining most dissatisfied voter " );
+        final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
+        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+        // remove vote of most dissatisfied voter from list
+        m_bitVotes.remove( l_maxDissAg.getBitVote() );
+        l_group.remove( l_maxDissAg );
 
+        System.out.println( "Removing " + l_maxDissAg.name() );
+        // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+        System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
+
+        if ( l_group.size() == 0 )
+        {
+            System.out.println( " Voter list is empty, we are done " );
+            EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
+            //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
+        }
+
+        // remove diss Values for next iteration
+        m_dissVoters.clear();
+        m_dissList.clear();
+
+        m_iterative = true;
+        l_group.makeReady();
     }
 
     private int getMaxIndex( final List<Double> p_dissValues )
