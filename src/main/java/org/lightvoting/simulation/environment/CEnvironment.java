@@ -185,7 +185,7 @@ public final class CEnvironment
             if ( !( ( l_group.literal( p_chairAgent ) ) == null ) )
                 return l_group.literal( p_chairAgent );
         }
-        return null;
+        return CLiteral.from( "" );
     }
 
     // open group for further elections, unless the capacity is reached

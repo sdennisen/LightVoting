@@ -193,7 +193,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     private void perceiveGroup()
     {
-        if ( !( m_environment.detectGroup( this ) == null ) )
+        if ( !( m_environment.detectGroup( this ).emptyValues() ) )
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
