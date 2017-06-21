@@ -47,7 +47,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -285,15 +284,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
 
         this.trigger( l_trigger );
-    }
-
-    private BitVector toBV( final AtomicIntegerArray p_vote )
-    {
-        final BitVector l_bitVector = new BitVector( p_vote.length() );
-        for ( int i = 0; i < p_vote.length(); i++ )
-            if ( p_vote.get( i ) == 1 )
-                l_bitVector.put( i, true );
-        return l_bitVector;
     }
 
     /**
