@@ -34,8 +34,8 @@ import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -101,7 +101,7 @@ public class CGroup
      */
     public ILiteral literal( final CChairAgent p_chairAgent )
     {
-        final List<ITerm> l_terms = new LinkedList<>();
+        final Set<ITerm> l_terms = new HashSet<>();
 
         for ( int i = 0; i < m_agentMap.size(); i++ )
             l_terms.add( CRawTerm.from( m_agentMap.get( i ) ) );
