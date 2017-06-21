@@ -33,6 +33,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import java.util.List;
  */
 public class CGroup
 {
-    private final List<CVotingAgent> m_agentList;
+    private final HashMap<Integer, CVotingAgent> m_agentMap = new HashMap<>();
 
     private final int m_capacity;
 
@@ -55,6 +56,7 @@ public class CGroup
     private boolean m_readyForElection;
     private boolean m_inProgress;
     private int m_ID;
+    private int m_currentAg;
 
     /**
      * constructor
@@ -65,8 +67,9 @@ public class CGroup
      */
     public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum, final int p_capacity )
     {
-        m_agentList = new LinkedList<>();
-        m_agentList.add( p_votingAgent );
+        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_currentAg++;
+
         m_chair = p_votingAgent.getChair();
         m_open = true;
         m_result = null;
@@ -88,7 +91,7 @@ public class CGroup
     public ILiteral literal( final CVotingAgent p_votingAgent )
     {
         return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
-                              CRawTerm.from( m_agentList.contains( p_votingAgent ) ) );
+                              CRawTerm.from( m_agentMap.values().contains( p_votingAgent ) ) );
     }
 
     /**
@@ -100,8 +103,8 @@ public class CGroup
     {
         final List<ITerm> l_terms = new LinkedList<>();
 
-        for ( int i = 0; i < m_agentList.size(); i++ )
-            l_terms.add( CRawTerm.from( m_agentList.get( i ) ) );
+        for ( int i = 0; i < m_agentMap.size(); i++ )
+            l_terms.add( CRawTerm.from( m_agentMap.get( i ) ) );
 
 
         if ( ( this.m_chair ).equals( p_chairAgent ) )
@@ -120,24 +123,18 @@ public class CGroup
      */
     public void addRandom( final CVotingAgent p_votingAgent )
     {
-        System.out.println( "Adding agent, old size is " + m_agentList.size() );
-        m_agentList.add( p_votingAgent );
-        System.out.println( " ==================  Group: " + m_chair.name() + this.printAgList( m_agentList ) + " " + m_chair.sleeping() );
+        System.out.println( "Adding agent, old size is " + m_agentMap.size() );
+    //    m_agentList.add( p_votingAgent );
+        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_currentAg++;
 
-        if ( m_agentList.size() >= m_capacity )
+        System.out.println( " ==================  Group: " + m_chair.name() + m_agentMap + " " + m_chair.sleeping() );
+
+        if ( m_agentMap.size() >= m_capacity )
         {
             m_open = false;
             m_readyForElection = true;
         }
-    }
-
-    private String printAgList( final List<CVotingAgent> p_agentList )
-    {
-        String l_string = " ";
-        for ( int i = 0; i < p_agentList.size(); i++ )
-            l_string = l_string.concat( p_agentList.get( i ).name() + " " );
-
-        return l_string;
     }
 
     /**
@@ -148,15 +145,17 @@ public class CGroup
     public void addCoordinated( final CVotingAgent p_votingAgent )
     {
 
-        System.out.println( "Adding agent, old size is " + m_agentList.size() );
-        m_agentList.add( p_votingAgent );
+        System.out.println( "Adding agent, old size is " + m_agentMap.size() );
+        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_currentAg++;
+
         m_open = false;
         m_readyForElection = true;
     }
 
     public void remove( final CVotingAgent p_votingAgent )
     {
-        m_agentList.remove( p_votingAgent );
+        m_agentMap.values().remove( p_votingAgent );
     }
 
     public boolean open()
@@ -180,8 +179,8 @@ public class CGroup
      */
     public void triggerAgents( final CChairAgent p_chairAgent )
     {
-        m_agentList.forEach( i ->
-            i.trigger(
+        m_agentMap.entrySet().parallelStream().forEach( i ->
+            i.getValue().trigger(
                 CTrigger.from(
                     ITrigger.EType.ADDGOAL,
                     CLiteral.from(
@@ -198,7 +197,7 @@ public class CGroup
      */
     public int size()
     {
-        return m_agentList.size();
+        return m_agentMap.size();
     }
 
     /**
@@ -211,8 +210,8 @@ public class CGroup
     public ILiteral updateBasic( final CChairAgent p_chairAgent, final BitVector p_result )
     {
         // send result of election to all agents in the group
-        m_agentList.stream().forEach( i ->
-            i.trigger( CTrigger.from(
+        m_agentMap.entrySet().parallelStream().forEach( i ->
+            i.getValue().trigger( CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from( "election/result",
                                CRawTerm.from( p_chairAgent ),
@@ -236,8 +235,8 @@ public class CGroup
     public ILiteral submitDiss( final CChairAgent p_chairAgent, final BitVector p_comResultBV, final int p_iteration )
     {
         // send result of election to all agents in the group
-        m_agentList.stream().forEach( i ->
-                                          i.trigger( CTrigger.from(
+        m_agentMap.entrySet().parallelStream().forEach( i ->
+                                          i.getValue().trigger( CTrigger.from(
                                               ITrigger.EType.ADDGOAL,
                                               CLiteral.from( "submit/final/diss",
                                                              CRawTerm.from( p_chairAgent ),
@@ -262,9 +261,9 @@ public class CGroup
     public ILiteral updateIterative( final CChairAgent p_chairAgent, final BitVector p_result, final int p_iteration )
     {
         // send result of election to all agents in the group
-        m_agentList.stream().forEach( i ->
+        m_agentMap.entrySet().parallelStream().forEach( i ->
         {
-            i.trigger( CTrigger.from(
+            i.getValue().trigger( CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from( "election/result",
                                CRawTerm.from( p_chairAgent ),
@@ -272,7 +271,7 @@ public class CGroup
                                CRawTerm.from( p_iteration ) )
                        )
             );
-            System.out.println( "triggering agent " + i.name() );
+            System.out.println( "triggering agent " + i.getValue().name() );
         } );
 
         m_result = p_result;
@@ -294,7 +293,7 @@ public class CGroup
      */
     public void reopen()
     {
-        if ( m_agentList.size() < m_capacity )
+        if ( m_agentMap.size() < m_capacity )
         {
             m_open = true;
         }
@@ -313,7 +312,7 @@ public class CGroup
 
     public boolean finale()
     {
-        return m_agentList.size() >= m_capacity;
+        return m_agentMap.size() >= m_capacity;
     }
 
     public void makeReady()
@@ -328,9 +327,9 @@ public class CGroup
      */
     public CVotingAgent determineAgent( final String p_agentName )
     {
-        for ( int i = 0; i < m_agentList.size(); i++ )
-            if ( p_agentName.equals( m_agentList.get( i ).name() ) )
-                return m_agentList.get( i );
+        for ( int i = 0; i < m_agentMap.size(); i++ )
+            if ( p_agentName.equals( m_agentMap.get( i ).name() ) )
+                return m_agentMap.get( i );
         return null;
     }
 
