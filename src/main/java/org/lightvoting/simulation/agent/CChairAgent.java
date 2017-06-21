@@ -82,24 +82,26 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
 
     private final CEnvironment m_environment;
-    private List<CVotingAgent> m_agents;
 
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
      */
+
     private String m_grouping;
 
+    private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+    private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
+    private List<CVotingAgent> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     private int m_iteration;
-    private String m_protocol;
-    private List<Double> m_dissList;
-    private List<CVotingAgent> m_dissVoters;
-    private double m_dissThreshold;
+    private List<CVotingAgent> m_agents = Collections.synchronizedList( new LinkedList<>() );
     private boolean m_iterative;
-    private List<BitVector> m_bitVotes;
+    private String m_protocol;
+    private double m_dissThreshold;
     private final String m_fileName;
     private final int m_run;
     private String m_conf;
     private boolean m_dissStored;
+
     // counter for intermediate elections in coordinated grouping
     private int m_coorNum;
 
@@ -121,12 +123,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
-        m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
-        m_dissList = Collections.synchronizedList( new LinkedList<>() );
-        m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
-        m_iteration = 0;
-        m_agents = Collections.synchronizedList( new LinkedList<>() );
-        m_iterative = false;
         m_fileName = p_fileName;
         m_run = p_run;
         m_dissThreshold = p_dissthr;
