@@ -34,19 +34,16 @@ import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
-import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 import org.lightvoting.simulation.statistics.EDataWriter;
-// import org.lightvoting.simulation.statistics.CDataWriter;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +52,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+// import org.lightvoting.simulation.statistics.CDataWriter;
 
 // import org.lightjason.agentspeak.language.score.IAggregation;
 
@@ -239,8 +238,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private CGroup determineGroup()
     {
         final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
-        final Collection l_groups = this.beliefbase().beliefbase().literal( "group" );
-        l_groups.stream().forEach( i -> l_groupAtomic.set( ( (ILiteral) i ).values().findFirst().get().raw() ) );
+        this.beliefbase().beliefbase().literal( "group" ).stream().forEach(
+            i -> l_groupAtomic.set( i .values().findFirst().get().raw() ) );
         return l_groupAtomic.get();
     }
 
