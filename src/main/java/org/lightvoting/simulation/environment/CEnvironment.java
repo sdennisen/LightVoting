@@ -45,10 +45,9 @@ import java.util.List;
  */
 public final class CEnvironment
 {
-    private List<CGroup> m_groups;
+    private List<CGroup>  m_groups = Collections.synchronizedList( new LinkedList<>() );
     private int m_groupNum;
-
-    private List<CVotingAgent> m_agentList;
+    private List<CVotingAgent> m_agentList = new LinkedList<>();
 
     // Index of the last activated agent
     private int m_currentIndex;
@@ -68,9 +67,6 @@ public final class CEnvironment
     public CEnvironment( final int p_size, final String p_fileName, final int p_capacity )
     {
         m_fileName = p_fileName;
-        m_groups = Collections.synchronizedList( new LinkedList<>() );
-        m_agentList = new LinkedList<>();
-        m_groupNum = 0;
         m_capacity = p_capacity;
     }
 
