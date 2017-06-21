@@ -124,17 +124,18 @@ public class CGroup
     public void addRandom( final CVotingAgent p_votingAgent )
     {
         System.out.println( "Adding agent, old size is " + m_agentMap.size() );
-    //    m_agentList.add( p_votingAgent );
         m_agentMap.put( m_currentAg, p_votingAgent );
         m_currentAg++;
 
         System.out.println( " ==================  Group: " + m_chair.name() + m_agentMap + " " + m_chair.sleeping() );
 
-        if ( m_agentMap.size() >= m_capacity )
-        {
-            m_open = false;
-            m_readyForElection = true;
-        }
+        if ( m_agentMap.size() < m_capacity )
+
+            return;
+
+        m_open = false;
+        m_readyForElection = true;
+
     }
 
     /**
