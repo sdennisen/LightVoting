@@ -114,6 +114,8 @@ public final class CMain
                         Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr ) )
                     .collect( Collectors.toSet() );
 
+                l_stream.close();
+                l_chairstream.close();
 
                 System.out.println( " Numbers of agents: " + l_agents.size() );
             }
