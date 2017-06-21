@@ -191,7 +191,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     /**
      * add literal for group of chair agent if it exists
      */
-    public void perceiveGroup()
+    private void perceiveGroup()
     {
         if ( !( m_environment.detectGroup( this ) == null ) )
             this.beliefbase().add( m_environment.detectGroup( this ) );
