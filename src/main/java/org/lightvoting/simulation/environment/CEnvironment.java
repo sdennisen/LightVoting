@@ -30,11 +30,13 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.statistics.CDataWriter;
+import org.lightvoting.simulation.statistics.EDataWriter;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+// import org.lightvoting.simulation.statistics.CDataWriter;
 
 
 /**
@@ -117,8 +119,10 @@ public final class CEnvironment
         System.out.println( "Created Group " + l_group );
         this.wakeUpAgent();
 
-        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
-        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+        EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
+        EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
+//        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+//        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
         m_groupNum++;
 
         return l_group;
@@ -135,8 +139,10 @@ public final class CEnvironment
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
 
-        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
-        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+        EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
+        EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
+//        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+//        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
         m_groupNum++;
         return l_group;
     }

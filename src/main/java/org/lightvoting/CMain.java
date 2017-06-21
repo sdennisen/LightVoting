@@ -29,7 +29,7 @@ import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.statistics.CDataWriter;
+import org.lightvoting.simulation.statistics.EDataWriter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
@@ -84,10 +84,13 @@ public final class CMain
         readYaml();
 
         final String l_name = new Date() + "_results.h5";
-        new CDataWriter().createHDF5( l_name );
+
+        EDataWriter.INSTANCE.createHDF5( l_name );
+        //    new CDataWriter().createHDF5( l_name );
 
         // set run num in hdf5
-        new CDataWriter().setRunNum( l_name,  s_runs );
+        EDataWriter.INSTANCE.setRunNum( s_runs );
+    //    new CDataWriter().setRunNum( l_name,  s_runs );
 
         for ( int r = 0; r < s_runs; r++ )
         {
@@ -95,7 +98,8 @@ public final class CMain
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
             // create run group in hdf5
-            new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
+            EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
+    //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
             {
@@ -125,7 +129,8 @@ public final class CMain
 
                 s_environment.setConf( r, s_configStrs.get( c ) );
                 // set configuration
-                new CDataWriter().setConf( l_name, r,  s_configStrs.get( c ) );
+                EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
+        //        new CDataWriter().setConf( l_name, r,  s_configStrs.get( c ) );
 
                 final int l_finalC = c;
                 l_agents.parallelStream().forEach( i ->
@@ -192,6 +197,8 @@ public final class CMain
 
             System.out.println( "Next simulation run " );
         }
+
+        EDataWriter.INSTANCE.closeHDF5( l_name );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -242,6 +249,7 @@ public final class CMain
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
             }
         }
+
     }
 
 }

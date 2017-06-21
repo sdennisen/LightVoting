@@ -87,12 +87,12 @@ public class CDataWriterTest extends TestCase
 
     public static void testWriteDissVals()
     {
-        new CDataWriter().createHDF5( "test_simple.h5" );
+    //    new CDataWriter().createHDF5( "test_simple.h5" );
 
         final AtomicDoubleArray l_testDissVals = new AtomicDoubleArray( new double[]{0.1, 0.5, 0.6} );
 
-        new CDataWriter().createGroup( "test_simple.h5", "testchair" );
-        new CDataWriter().writeDissVals( "test_simple.h5", l_testDissVals, "testchair" );
+    //    new CDataWriter().createGroup( "test_simple.h5", "testchair" );
+    //    new CDataWriter().writeDissVals( "test_simple.h5", l_testDissVals, "testchair" );
     }
 
     /**
