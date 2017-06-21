@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class CGroup
 {
-    private final HashMap<Integer, CVotingAgent> m_agentMap = new HashMap<>();
+    private final HashMap<String, CVotingAgent> m_agentMap = new HashMap<>();
 
     private final int m_capacity;
 
@@ -67,7 +67,7 @@ public class CGroup
      */
     public CGroup( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum, final int p_capacity )
     {
-        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
 
         m_chair = p_votingAgent.getChair();
@@ -124,7 +124,7 @@ public class CGroup
     public void addRandom( final CVotingAgent p_votingAgent )
     {
         System.out.println( "Adding agent, old size is " + m_agentMap.size() );
-        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
 
         System.out.println( " ==================  Group: " + m_chair.name() + m_agentMap + " " + m_chair.sleeping() );
@@ -147,7 +147,7 @@ public class CGroup
     {
 
         System.out.println( "Adding agent, old size is " + m_agentMap.size() );
-        m_agentMap.put( m_currentAg, p_votingAgent );
+        m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
 
         m_open = false;
@@ -328,10 +328,7 @@ public class CGroup
      */
     public CVotingAgent determineAgent( final String p_agentName )
     {
-        for ( int i = 0; i < m_agentMap.size(); i++ )
-            if ( p_agentName.equals( m_agentMap.get( i ).name() ) )
-                return m_agentMap.get( i );
-        return null;
+        return m_agentMap.get( p_agentName );
     }
 
     public int getID()
