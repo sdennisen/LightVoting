@@ -43,6 +43,7 @@ import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -102,6 +103,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private boolean m_dissStored;
     // counter for intermediate elections in coordinated grouping
     private int m_coorNum;
+
+    private List<String> m_paths = new ArrayList();
+    private List<Object> m_data = new ArrayList();
 
     /**
      * constructor of the agent
@@ -185,6 +189,26 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         );
     }
 
+    /**
+     * return path list
+     * @return m_paths
+     */
+    public List<String> pathList()
+    {
+        return m_paths;
+    }
+
+
+    /**
+     * return data list
+     * @return m_data
+     */
+    public List<Object> dataList()
+    {
+        return m_data;
+    }
+
+
     // agent actions
 
     /**
@@ -201,7 +225,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
-     // private methods
+    // private methods
 
     private void checkConditions()
     {

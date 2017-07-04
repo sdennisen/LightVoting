@@ -195,6 +195,9 @@ public final class CMain
                     s_environment.initialset( i );
                     i.reset();
                     i.getChair().reset();
+                    // retrieve data collected by the chairs
+                    s_paths.addAll( i.getChair().pathList() );
+                    s_data.addAll( i.getChair().dataList() );
                 } );
             }
 
