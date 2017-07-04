@@ -59,6 +59,9 @@ public final class CMain
     private static int s_capacity;
     private static double s_joinThr;
 
+    private static List<String> s_paths = new ArrayList<>();
+    private static List<Object> s_data = new ArrayList<>();
+
     /**
      * Hidden constructor
      */
@@ -85,11 +88,11 @@ public final class CMain
 
         final String l_name = new Date() + "_results.h5";
 
-        EDataWriter.INSTANCE.createHDF5( l_name );
+      //  EDataWriter.INSTANCE.createHDF5( l_name );
         //    new CDataWriter().createHDF5( l_name );
 
         // set run num in hdf5
-        EDataWriter.INSTANCE.setRunNum( s_runs );
+    //    EDataWriter.INSTANCE.setRunNum( s_runs );
     //    new CDataWriter().setRunNum( l_name,  s_runs );
 
         for ( int r = 0; r < s_runs; r++ )
@@ -98,7 +101,7 @@ public final class CMain
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
             // create run group in hdf5
-            EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
+    //        EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
     //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
@@ -129,7 +132,7 @@ public final class CMain
 
                 s_environment.setConf( r, s_configStrs.get( c ) );
                 // set configuration
-                EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
+        //        EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
         //        new CDataWriter().setConf( l_name, r,  s_configStrs.get( c ) );
 
                 final int l_finalC = c;
@@ -198,7 +201,7 @@ public final class CMain
             System.out.println( "Next simulation run " );
         }
 
-        EDataWriter.INSTANCE.closeHDF5( l_name );
+        EDataWriter.INSTANCE.store( l_name, s_paths, s_data );
     }
 
     @SuppressWarnings( "unchecked" )
