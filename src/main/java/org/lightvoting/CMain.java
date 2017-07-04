@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,8 @@ public final class CMain
 
     private static List<String> s_paths = new ArrayList<>();
     private static List<Object> s_data = new ArrayList<>();
+
+    private static HashMap<String, Object> s_map =  new HashMap<>();
 
     /**
      * Hidden constructor
@@ -195,16 +198,15 @@ public final class CMain
                     s_environment.initialset( i );
                     i.reset();
                     i.getChair().reset();
-                    // retrieve data collected by the chairs
-                    s_paths.addAll( i.getChair().pathList() );
-                    s_data.addAll( i.getChair().dataList() );
+
+                    s_map.putAll( i.getChair().map() );
                 } );
             }
 
             System.out.println( "Next simulation run " );
         }
 
-        EDataWriter.INSTANCE.store( l_name, s_paths, s_data );
+        EDataWriter.INSTANCE.storeMap( l_name, s_map );
     }
 
     @SuppressWarnings( "unchecked" )

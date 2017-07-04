@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -106,6 +108,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private List<String> m_paths = new ArrayList();
     private List<Object> m_data = new ArrayList();
+    private Map<String, Object> m_map = new HashMap<>();
 
     /**
      * constructor of the agent
@@ -223,6 +226,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     {
         if ( !( m_environment.detectGroup( this ) == null ) )
             this.beliefbase().add( m_environment.detectGroup( this ) );
+    }
+
+    public Map<String, Object> map()
+    {
+        return m_map;
     }
 
     // private methods
@@ -359,9 +367,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // write resulting committee for coordinated grouping
         if ( "COORDINATED".equals( m_grouping ) )
         {
-            // TODO write data to list instead
-        //    EDataWriter.INSTANCE.writeCommitteeCoordinated( m_run, m_conf, this, l_comResultBV, m_coorNum );
-            //   new CDataWriter().writeCommitteeCoordinated( m_fileName, m_run, m_conf, this, l_comResultBV, m_coorNum );
+            final String l_path = m_run + "/" + m_conf + "/" + "group " + this.getGroupID() + "/" + "im_" + m_coorNum + "/" + "committee";
+
+            m_map.put( l_path, l_comResultBV );
+
+            // old code
+            // EDataWriter.INSTANCE.writeCommitteeCoordinated( m_run, m_conf, this, l_comResultBV, m_coorNum );
+            // new CDataWriter().writeCommitteeCoordinated( m_fileName, m_run, m_conf, this, l_comResultBV, m_coorNum );
             m_coorNum++;
         }
         if ( "BASIC".equals( m_protocol ) )

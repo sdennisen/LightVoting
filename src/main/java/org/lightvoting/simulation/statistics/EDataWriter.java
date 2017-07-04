@@ -23,9 +23,13 @@
 
 package org.lightvoting.simulation.statistics;
 
+import cern.colt.bitvector.BitVector;
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.hdf5;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -41,17 +45,85 @@ public enum EDataWriter
     /**
      * write data from data list to h5
      * @param p_name name of h5 file
-     * @param p_paths list of path names
-     * @param p_data list of data
+     * @param p_map map to be written to h5
      */
-    public void store( final String p_name, final List<String> p_paths, final List<Object> p_data )
+    public void storeMap( final String p_name, final HashMap<String, Object> p_map )
     {
         s_file = new hdf5.H5File( p_name, hdf5.H5F_ACC_TRUNC );
         s_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
 
-        // TODO store data
+        final Iterator l_iterator = p_map.entrySet().iterator();
+
+        while ( l_iterator.hasNext() )
+        {
+            final Map.Entry l_entry = (Map.Entry)l_iterator.next();
+            this.writeDataSet( (String) l_entry.getKey(), l_entry.getValue() );
+        }
 
         s_file.close();
+    }
+
+    private void writeDataSet( final String p_path, final Object p_data )
+    {
+        String[] l_path;
+
+        System.out.println( "String: " + p_path );
+        l_path = p_path.split( "/" );
+        // last name in path is dataset name
+        final String l_datasetName = l_path[l_path.length - 1];
+
+        hdf5.Group l_group = null;
+
+        try
+        {
+            l_group = s_file.asCommonFG().openGroup( l_path[0] );
+        }
+        catch ( final Exception l_ex )
+        {
+        }
+        finally
+        {
+            if ( l_group == null )
+                l_group = s_file.asCommonFG().createGroup( l_path[0] );
+        }
+
+
+        for ( int i = 0; i < l_path.length - 1; i++ )
+        {
+            hdf5.Group l_newGroup = null;
+
+            try
+            {
+                l_newGroup = l_group.asCommonFG().openGroup( l_path[i] );
+            }
+            catch ( final Exception l_ex )
+            {
+            }
+            finally
+            {
+                if ( l_newGroup == null )
+                    l_newGroup = l_group.asCommonFG().createGroup( l_path[i] );
+            }
+
+
+            l_group = l_newGroup;
+
+        }
+
+        // TODO write method writeBitVector
+        if ( p_data instanceof BitVector )
+        {
+
+            final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+            l_predType.setSize( 256 );
+
+            final hdf5.DataSet l_dataSet = l_group.asCommonFG().createDataSet( l_datasetName, l_predType,
+                                                                               new hdf5.DataSpace( 1, new long[]{1} )
+            );
+
+            l_dataSet.write( new BytePointer( p_data.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
+        }
+
     }
 
     //    /**

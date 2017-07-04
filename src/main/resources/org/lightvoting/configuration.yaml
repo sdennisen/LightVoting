@@ -1,8 +1,8 @@
 # LightVoting Default Config
 
 variables:
-  runs: '1'
-  config: 'RANDOM_BASIC'
+  runs: '100'
+  config: 'COORDINATED_BASIC'
   altnum: '6'
   dissthr:  '1.4'
   capacity: '3'
