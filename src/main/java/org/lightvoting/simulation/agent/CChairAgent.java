@@ -512,9 +512,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             final String l_slash = "/";
 
-            final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+            final String l_groupStr = "group ";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
             m_map.put( l_path, l_dissVals );
+
+            final String l_pathIt = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+            m_map.put( l_pathIt, p_iteration );
 
             // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
@@ -556,6 +562,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             {
                 System.out.println( " Voter list is empty, we are done " );
                 // TODO write data to list instead
+
+                final String l_slash = "/";
+
+                final String l_groupStr = "group ";
+
+                final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+                m_map.put( l_path, p_iteration );
+
+
             //    EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
             //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
 
@@ -573,6 +589,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " No dissatisfied voter left, we are done " );
         // TODO write data to list instead
+
+        final String l_slash = "/";
+
+        final String l_groupStr = "group ";
+
+        final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+        m_map.put( l_path, p_iteration );
+
       //  EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
     //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
 

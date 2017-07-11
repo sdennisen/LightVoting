@@ -27,6 +27,7 @@ import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.hdf5;
 
 import java.util.HashMap;
@@ -149,6 +150,21 @@ public enum EDataWriter
 
             l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
 
+        }
+
+        if ( p_data instanceof Integer )
+        {
+            final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+                l_group.asCommonFG().createDataSet( l_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+                )
+            );
+
+            final int[] l_buf = new int[1];
+
+            l_buf[0] = (Integer) p_data;
+
+            l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
         }
 
 
