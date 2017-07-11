@@ -101,7 +101,6 @@ public final class CMain
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
 
-
         for ( int r = 0; r < s_runs; r++ )
         {
             final Set<CVotingAgent> l_agents;
@@ -112,6 +111,9 @@ public final class CMain
 
             final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
             s_map.put( l_pathConfNr, s_configStrs.size() );
+            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
+
+            s_map.put( l_pathConfStr, s_configStr );
 
     //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
@@ -129,7 +131,7 @@ public final class CMain
                     .collect( Collectors.toSet() );
 
 
-                System.out.println( " Numbers of agents: " + l_agents.size() );
+           //     System.out.println( " Numbers of agents: " + l_agents.size() );
             }
             catch ( final Exception l_exception )
             {

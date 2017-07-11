@@ -114,63 +114,89 @@ public enum EDataWriter
         }
 
         if ( p_data instanceof BitVector )
-        {
+            this.writeBitVector( l_group, l_datasetName, (BitVector) p_data);
 
-            final hdf5.PredType l_predType = hdf5.PredType.C_S1();
-            l_predType.setSize( 256 );
-
-            final hdf5.DataSet l_dataSet = l_group.asCommonFG().createDataSet( l_datasetName, l_predType,
-                                                                               new hdf5.DataSpace( 1, new long[]{1} )
-            );
-
-            l_dataSet.write( new BytePointer( p_data.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
-        }
 
         if ( p_data instanceof AtomicDoubleArray )
-        {
-
-            final hdf5.PredType l_predType = hdf5.PredType.C_S1();
-            l_predType.setSize( 256 );
-
-            final int l_length = ( (AtomicDoubleArray) p_data ).length();
-            final AtomicDoubleArray l_array = (AtomicDoubleArray) p_data;
-
-            final hdf5.DataSet l_dataSet =  l_group.asCommonFG().createDataSet( l_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
-                                                                                new hdf5.DataSpace( 2, new long[]{l_length, 1} ), new hdf5.DSetCreatPropList()
-
-            );
-
-            final double[] l_buf = new double[l_length];
-
-            for ( int i = 0; i < l_length; i++ )
-            {
-                System.out.println( " Setting buf[" + i + "] to " + l_array.get( i ) );
-                l_buf[i] = l_array.get( i );
-            }
-
-            l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
-
-        }
+            this.writeAtomicDoubleArray( l_group, l_datasetName, (AtomicDoubleArray) p_data);
 
         if ( p_data instanceof Integer )
+            this.writeInteger( l_group, l_datasetName, (Integer) p_data );
+
+        if ( p_data instanceof String )
+            this.writeString( l_group, l_datasetName, (String) p_data );
+    }
+
+    private void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
+    {
+
+        final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+        l_predType.setSize( 256 );
+
+        final int l_length = ( p_data ).length();
+        final AtomicDoubleArray l_array = p_data;
+
+        final hdf5.DataSet l_dataSet =  p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                                                            new hdf5.DataSpace( 2, new long[]{l_length, 1} ), new hdf5.DSetCreatPropList()
+
+        );
+
+        final double[] l_buf = new double[l_length];
+
+        for ( int i = 0; i < l_length; i++ )
         {
-            final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-                l_group.asCommonFG().createDataSet( l_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
-                                                    new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
-                )
-            );
-
-            final int[] l_buf = new int[1];
-
-            l_buf[0] = (Integer) p_data;
-
-            l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+            System.out.println( " Setting buf[" + i + "] to " + l_array.get( i ) );
+            l_buf[i] = l_array.get( i );
         }
 
-
+        l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
 
     }
 
+
+    private void writeBitVector( final hdf5.Group p_group, final String p_datasetName, final BitVector p_data )
+    {
+
+        final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+        l_predType.setSize( 256 );
+
+        final hdf5.DataSet l_dataSet = p_group.asCommonFG().createDataSet( p_datasetName, l_predType,
+                                                                           new hdf5.DataSpace( 1, new long[]{1} )
+        );
+
+        l_dataSet.write( new BytePointer( p_data.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
+    }
+
+    private void writeInteger( final hdf5.Group p_group, final String p_datasetName, final Integer p_data )
+
+    {
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+                                                new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+            )
+        );
+
+        final int[] l_buf = new int[1];
+
+        l_buf[0] = p_data;
+
+        l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+    }
+
+
+
+    private void writeString( final hdf5.Group p_group, final String p_datasetName, final String p_data )
+    {
+
+        final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+        l_predType.setSize( 256 );
+        final hdf5.DataSet l_configNamesDataSet =  p_group.asCommonFG().createDataSet( p_datasetName, l_predType,
+                                                                                       new hdf5.DataSpace( 1, new long[]{1} )
+        );
+
+        l_configNamesDataSet.write( new BytePointer( p_data ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
+
+    }
     //    /**
 //     * create h5 file
 //     * @param p_filename name of file
