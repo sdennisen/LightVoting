@@ -2,7 +2,7 @@
 
 variables:
   runs: '100'
-  config: 'COORDINATED_BASIC'
+  config: 'RANDOM_BASIC'
   altnum: '6'
   dissthr:  '1.4'
   capacity: '3'

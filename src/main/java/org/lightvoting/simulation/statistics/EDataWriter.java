@@ -24,7 +24,9 @@
 package org.lightvoting.simulation.statistics;
 
 import cern.colt.bitvector.BitVector;
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.hdf5;
 
 import java.util.HashMap;
@@ -110,7 +112,6 @@ public enum EDataWriter
 
         }
 
-        // TODO write method writeBitVector
         if ( p_data instanceof BitVector )
         {
 
@@ -123,6 +124,34 @@ public enum EDataWriter
 
             l_dataSet.write( new BytePointer( p_data.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
         }
+
+        if ( p_data instanceof AtomicDoubleArray )
+        {
+
+            final hdf5.PredType l_predType = hdf5.PredType.C_S1();
+            l_predType.setSize( 256 );
+
+            final int l_length = ( (AtomicDoubleArray) p_data ).length();
+            final AtomicDoubleArray l_array = (AtomicDoubleArray) p_data;
+
+            final hdf5.DataSet l_dataSet =  l_group.asCommonFG().createDataSet( l_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                                                                new hdf5.DataSpace( 2, new long[]{l_length, 1} ), new hdf5.DSetCreatPropList()
+
+            );
+
+            final double[] l_buf = new double[l_length];
+
+            for ( int i = 0; i < l_length; i++ )
+            {
+                System.out.println( " Setting buf[" + i + "] to " + l_array.get( i ) );
+                l_buf[i] = l_array.get( i );
+            }
+
+            l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+
+        }
+
+
 
     }
 

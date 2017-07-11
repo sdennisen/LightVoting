@@ -1,12 +1,14 @@
 lookForGroup.
 iteration(0).
+nogroup(1).
 
 // initial-goal
 !main.
 
 // initial plan (triggered by the initial goal)
 
-+!main <-
++!main
+<-
 
    generic/print(MyName, "Hello World!");
    >>chair(Chair);

@@ -367,7 +367,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // write resulting committee for coordinated grouping
         if ( "COORDINATED".equals( m_grouping ) )
         {
-            final String l_path = m_run + "/" + m_conf + "/" + "group " + this.getGroupID() + "/" + "im_" + m_coorNum + "/" + "committee";
+            final String l_slash = "/";
+
+            final String l_path = m_run + l_slash  + m_conf + l_slash + "group " + this.getGroupID() + l_slash + "im_" + m_coorNum + l_slash + "committee";
 
             m_map.put( l_path, l_comResultBV );
 
@@ -467,6 +469,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             // final String l_config = "RANDOM_BASIC";
 
+            // TODO refactor string building
+            final String l_slash = "/";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+            m_map.put( l_path, l_dissVals );
+
             // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
@@ -500,6 +509,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             final AtomicDoubleArray l_dissVals = new AtomicDoubleArray( new double[m_dissList.size()] );
             for ( int i = 0; i < m_dissList.size(); i++ )
                 l_dissVals.set( i, m_dissList.get( i ) );
+
+            final String l_slash = "/";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+            m_map.put( l_path, l_dissVals );
 
             // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
