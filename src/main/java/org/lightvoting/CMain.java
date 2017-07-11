@@ -98,6 +98,10 @@ public final class CMain
     //    EDataWriter.INSTANCE.setRunNum( s_runs );
     //    new CDataWriter().setRunNum( l_name,  s_runs );
 
+        final String l_path = "runs" + "/" + "run num";
+        s_map.put( l_path, s_runs );
+
+
         for ( int r = 0; r < s_runs; r++ )
         {
             final Set<CVotingAgent> l_agents;
@@ -105,6 +109,8 @@ public final class CMain
 
             // create run group in hdf5
     //        EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
+
+
     //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
