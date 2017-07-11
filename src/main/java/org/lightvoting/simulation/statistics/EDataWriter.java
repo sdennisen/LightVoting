@@ -113,19 +113,27 @@ public enum EDataWriter
 
         }
 
+        this.writeData( l_group, l_datasetName, p_data );
+
+    }
+
+    private void writeData( final hdf5.Group p_group, final String p_datasetName, final Object p_data )
+    {
+
         if ( p_data instanceof BitVector )
-            this.writeBitVector( l_group, l_datasetName, (BitVector) p_data);
+            this.writeBitVector( p_group, p_datasetName, (BitVector) p_data );
 
 
         if ( p_data instanceof AtomicDoubleArray )
-            this.writeAtomicDoubleArray( l_group, l_datasetName, (AtomicDoubleArray) p_data);
+            this.writeAtomicDoubleArray( p_group, p_datasetName, (AtomicDoubleArray) p_data );
 
         if ( p_data instanceof Integer )
-            this.writeInteger( l_group, l_datasetName, (Integer) p_data );
+            this.writeInteger( p_group, p_datasetName, (Integer) p_data );
 
         if ( p_data instanceof String )
-            this.writeString( l_group, l_datasetName, (String) p_data );
+            this.writeString( p_group, p_datasetName, (String) p_data );
     }
+
 
     private void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
     {
@@ -133,7 +141,7 @@ public enum EDataWriter
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
         l_predType.setSize( 256 );
 
-        final int l_length = ( p_data ).length();
+        final int l_length = p_data.length();
         final AtomicDoubleArray l_array = p_data;
 
         final hdf5.DataSet l_dataSet =  p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
