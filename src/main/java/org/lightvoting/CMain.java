@@ -110,6 +110,8 @@ public final class CMain
             // create run group in hdf5
     //        EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
 
+            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
+            s_map.put( l_pathConfNr, s_configStrs.size() );
 
     //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
