@@ -91,7 +91,7 @@ public enum EDataWriter
         }
 
 
-        for ( int i = 0; i < l_path.length - 1; i++ )
+        for ( int i = 1; i < l_path.length - 1; i++ )
         {
             hdf5.Group l_newGroup = null;
 
