@@ -110,6 +110,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<Object> m_data = new ArrayList();
     private Map<String, Object> m_map = new HashMap<>();
     private final int m_comsize;
+    private int m_altnum;
 
     /**
      * constructor of the agent
@@ -125,7 +126,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                         final String p_fileName,
                         final int p_run,
                         final double p_dissthr,
-                        final int p_comsize
+                        final int p_comsize,
+                        final int p_altnum
     )
     {
         super( p_configuration );
@@ -135,6 +137,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_run = p_run;
         m_dissThreshold = p_dissthr;
         m_comsize = p_comsize;
+        m_altnum = p_altnum;
     }
 
     // overload agent-cycle
@@ -337,9 +340,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final List<String> l_alternatives = new LinkedList<>();
 
-        for ( char l_char : "ABCD".toCharArray() )
+     //   for ( char l_char : "ABCD".toCharArray() )
 
-            l_alternatives.add( String.valueOf( l_char ) );
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+         //   l_alternatives.add( String.valueOf( l_char ) );
 
         System.out.println( " Alternatives: " + l_alternatives );
 
@@ -623,6 +629,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         private final int m_run;
         private double m_dissthr;
         private int m_comsize;
+        private int m_altnum;
 
         /**
          * constructor of the generator
@@ -636,7 +643,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
                                      final String p_fileName,
                                      final int p_run,
-                                     final double p_dissthr, final int p_comsize
+                                     final double p_dissthr, final int p_comsize, final int p_altnum
         ) throws Exception
         {
             super(
@@ -668,6 +675,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_run = p_run;
             m_dissthr = p_dissthr;
             m_comsize = p_comsize;
+            m_altnum = p_altnum;
         }
 
         /**
@@ -684,7 +692,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;

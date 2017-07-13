@@ -77,9 +77,6 @@ public class CMinisumApproval
 
         Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
 
-        System.out.println( l_valuesMap );
-
-
         for ( int i = 0; i < m_alternatives.size(); i++ )
         {
             for ( int j = 0; j < m_bitVotes.size(); j++ )
