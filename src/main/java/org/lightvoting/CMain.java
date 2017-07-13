@@ -94,13 +94,6 @@ public final class CMain
 
         final String l_name = new Date() + "_results.h5";
 
-      //  EDataWriter.INSTANCE.createHDF5( l_name );
-        //    new CDataWriter().createHDF5( l_name );
-
-        // set run num in hdf5
-    //    EDataWriter.INSTANCE.setRunNum( s_runs );
-    //    new CDataWriter().setRunNum( l_name,  s_runs );
-
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
 
@@ -109,16 +102,11 @@ public final class CMain
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
-            // create run group in hdf5
-    //        EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
-
             final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
             s_map.put( l_pathConfNr, s_configStrs.size() );
             final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
 
             s_map.put( l_pathConfStr, s_configStr );
-
-    //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
             {
@@ -135,8 +123,6 @@ public final class CMain
 
                 l_stream.close();
                 l_chairstream.close();
-
-           //     System.out.println( " Numbers of agents: " + l_agents.size() );
             }
             catch ( final Exception l_exception )
             {
@@ -146,12 +132,8 @@ public final class CMain
 
             for ( int c = 0; c < s_configStrs.size(); c++ )
             {
-             //   System.out.println( " Will run " + p_args[3] + " cycles." );
 
                 s_environment.setConf( r, s_configStrs.get( c ) );
-                // set configuration
-        //        EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
-        //        new CDataWriter().setConf( l_name, r,  s_configStrs.get( c ) );
 
                 final int l_finalC = c;
                 l_agents.parallelStream().forEach( i ->
@@ -170,7 +152,6 @@ public final class CMain
                     )
                     .forEach( j ->
                     {
-                   //     System.out.println( "Global cycle: " + j );
                         l_agents.parallelStream().forEach( i ->
                         {
                             try
@@ -190,8 +171,6 @@ public final class CMain
                     } );
 
                 System.out.println( " Next configuration " );
-
-
 
                 // reset properties for next configuration
 
