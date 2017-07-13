@@ -23,6 +23,7 @@
 
 package org.lightvoting;
 
+import cern.colt.Arrays;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
@@ -40,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -67,6 +69,7 @@ public final class CMain
     private static HashMap<String, Object> s_map =  new HashMap<>();
     private static boolean s_manualPref;
     private static List<AtomicDoubleArray> s_prefList = new ArrayList<>();
+    private static int s_agNum;
 
     /**
      * Hidden constructor
@@ -89,6 +92,8 @@ public final class CMain
         // 1. ASL file
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
+
+        s_agNum = Integer.parseInt( p_args[2] );
 
         readYaml();
 
@@ -170,8 +175,6 @@ public final class CMain
                         } );
                     } );
 
-                System.out.println( " Next configuration " );
-
                 // reset properties for next configuration
 
                 s_environment.reset();
@@ -251,13 +254,36 @@ public final class CMain
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
                 if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
-                        s_manualPref = true;
+                    readPreferences();
+                if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
+                    createPreferencesSigmoid();
             }
         }
 
-        if ( s_manualPref )
-            readPreferences();
+    }
 
+    private static void createPreferencesSigmoid()
+    {
+        s_prefList.clear();
+
+        for ( int i = 0; i < s_agNum; i++ )
+            s_prefList.add( generatePreferencesSigmoid() );
+
+    }
+
+    private static AtomicDoubleArray generatePreferencesSigmoid()
+    {
+        final Random l_random = new Random();
+        final double[] l_prefValues = new double[s_altnum];
+        for ( int i = 0; i < s_altnum; i++ )
+            l_prefValues[i] = sigmoidValue( l_random.nextDouble() - 0.5 );
+        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
+        return new AtomicDoubleArray( l_prefValues );
+    }
+
+    private static double sigmoidValue( double p_var )
+    {
+        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
     private static void readPreferences() throws FileNotFoundException

@@ -332,21 +332,6 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_atomicPrefValues = p_atomicDoubleArray;
     }
 
-    private AtomicDoubleArray generatePreferences( final int p_altNum )
-    {
-        final Random l_random = new Random();
-        final double[] l_prefValues = new double[m_altNum];
-        for ( int i = 0; i < m_altNum; i++ )
-            l_prefValues[i] = this.sigmoidValue( l_random.nextDouble() - 0.5 );
-        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
-        return new AtomicDoubleArray( l_prefValues );
-    }
-
-    private double sigmoidValue( double p_var )
-    {
-        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
-    }
-
     private AtomicIntegerArray convertPreferences( final AtomicDoubleArray p_atomicPrefValues )
     {
         final int[] l_voteValues = new int[m_altNum];
