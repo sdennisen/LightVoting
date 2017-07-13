@@ -109,6 +109,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<String> m_paths = new ArrayList();
     private List<Object> m_data = new ArrayList();
     private Map<String, Object> m_map = new HashMap<>();
+    private final int m_comsize;
 
     /**
      * constructor of the agent
@@ -116,13 +117,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_fileName h5 file
      * @param p_run run number
      * @param p_dissthr dissatisfaction threshold
+     * @param p_comsize size of committee to be elected
      */
 
 
     public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment,
                         final String p_fileName,
                         final int p_run,
-                        final double p_dissthr
+                        final double p_dissthr,
+                        final int p_comsize
     )
     {
         super( p_configuration );
@@ -131,6 +134,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_fileName = p_fileName;
         m_run = p_run;
         m_dissThreshold = p_dissthr;
+        m_comsize = p_comsize;
     }
 
     // overload agent-cycle
@@ -341,7 +345,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " Votes: " + m_bitVotes );
 
-        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, 3 );
+        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 
         System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
@@ -618,6 +622,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         private final String m_fileName;
         private final int m_run;
         private double m_dissthr;
+        private int m_comsize;
 
         /**
          * constructor of the generator
@@ -625,12 +630,13 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          * @param p_fileName h5 file
          * @param p_run run number
          * @param p_dissthr dissatisfaction threshold
+         * @param p_comsize size of committee to be elected
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
                                      final String p_fileName,
                                      final int p_run,
-                                     final double p_dissthr
+                                     final double p_dissthr, final int p_comsize
         ) throws Exception
         {
             super(
@@ -661,6 +667,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_fileName = p_fileName;
             m_run = p_run;
             m_dissthr = p_dissthr;
+            m_comsize = p_comsize;
         }
 
         /**
@@ -677,7 +684,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;

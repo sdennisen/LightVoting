@@ -4,6 +4,7 @@ variables:
   runs: '1'
   config: 'RANDOM_BASIC'
   altnum: '4'
+  comsize: '3'
   dissthr:  '1.4'
   capacity: '3'
   jointhr: '3'
