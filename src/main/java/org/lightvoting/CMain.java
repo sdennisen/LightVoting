@@ -23,6 +23,7 @@
 
 package org.lightvoting;
 
+import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
@@ -64,6 +65,8 @@ public final class CMain
     private static List<Object> s_data = new ArrayList<>();
 
     private static HashMap<String, Object> s_map =  new HashMap<>();
+    private static boolean s_manualPref;
+    private static List<AtomicDoubleArray> s_prefList = new ArrayList<>();
 
     /**
      * Hidden constructor
@@ -267,9 +270,38 @@ public final class CMain
 
                 if ( "jointhr".equals( l_subValueKey  ) )
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
+
+                if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
+                        s_manualPref = true;
             }
         }
 
+        if ( s_manualPref )
+            readPreferences();
+
     }
 
+    private static void readPreferences() throws FileNotFoundException
+    {
+        final Yaml l_yaml = new Yaml();
+
+        final Map<String, ArrayList<ArrayList<Double>>> l_values = (Map<String, ArrayList<ArrayList<Double>>>) l_yaml
+            .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
+
+        System.out.println( l_values.get( "preferences" ) );
+
+        final ArrayList<ArrayList<Double>> l_list = l_values.get( "preferences" );
+
+        for ( int i = 0; i < l_list.size(); i++ )
+        {
+            System
+                .out.println( l_list.get( i ) );
+            final double[] l_double =  new double[l_list.get( i ).size()];
+
+            for ( int j = 0; j < l_list.get( i ).size(); j++ )
+                l_double[j] = l_list.get( i ).get( j );
+
+            s_prefList.add( new AtomicDoubleArray( l_double ) );
+        }
+    }
 }
