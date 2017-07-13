@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +59,11 @@ public final class CMain
     private static double s_dissthr;
     private static int s_capacity;
     private static double s_joinThr;
+
+    private static List<String> s_paths = new ArrayList<>();
+    private static List<Object> s_data = new ArrayList<>();
+
+    private static HashMap<String, Object> s_map =  new HashMap<>();
 
     /**
      * Hidden constructor
@@ -85,12 +91,15 @@ public final class CMain
 
         final String l_name = new Date() + "_results.h5";
 
-        EDataWriter.INSTANCE.createHDF5( l_name );
+      //  EDataWriter.INSTANCE.createHDF5( l_name );
         //    new CDataWriter().createHDF5( l_name );
 
         // set run num in hdf5
-        EDataWriter.INSTANCE.setRunNum( s_runs );
+    //    EDataWriter.INSTANCE.setRunNum( s_runs );
     //    new CDataWriter().setRunNum( l_name,  s_runs );
+
+        final String l_path = "runs" + "/" + "run num";
+        s_map.put( l_path, s_runs );
 
         for ( int r = 0; r < s_runs; r++ )
         {
@@ -98,7 +107,14 @@ public final class CMain
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
             // create run group in hdf5
-            EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
+    //        EDataWriter.INSTANCE.setRun( r, s_configStrs.size(), s_configStr );
+
+            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
+            s_map.put( l_pathConfNr, s_configStrs.size() );
+            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
+
+            s_map.put( l_pathConfStr, s_configStr );
+
     //      new CDataWriter().setRun( l_name, r, s_configStrs.size(), s_configStr );
 
             try
@@ -117,7 +133,7 @@ public final class CMain
                 l_stream.close();
                 l_chairstream.close();
 
-                System.out.println( " Numbers of agents: " + l_agents.size() );
+           //     System.out.println( " Numbers of agents: " + l_agents.size() );
             }
             catch ( final Exception l_exception )
             {
@@ -127,11 +143,11 @@ public final class CMain
 
             for ( int c = 0; c < s_configStrs.size(); c++ )
             {
-                System.out.println( " Will run " + p_args[3] + " cycles." );
+             //   System.out.println( " Will run " + p_args[3] + " cycles." );
 
                 s_environment.setConf( r, s_configStrs.get( c ) );
                 // set configuration
-                EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
+        //        EDataWriter.INSTANCE.setConf( r,  s_configStrs.get( c ) );
         //        new CDataWriter().setConf( l_name, r,  s_configStrs.get( c ) );
 
                 final int l_finalC = c;
@@ -151,7 +167,7 @@ public final class CMain
                     )
                     .forEach( j ->
                     {
-                        System.out.println( "Global cycle: " + j );
+                   //     System.out.println( "Global cycle: " + j );
                         l_agents.parallelStream().forEach( i ->
                         {
                             try
@@ -194,13 +210,15 @@ public final class CMain
                     s_environment.initialset( i );
                     i.reset();
                     i.getChair().reset();
+
+                    s_map.putAll( i.getChair().map() );
                 } );
             }
 
             System.out.println( "Next simulation run " );
         }
 
-        EDataWriter.INSTANCE.closeHDF5( l_name );
+        EDataWriter.INSTANCE.storeMap( l_name, s_map );
     }
 
     @SuppressWarnings( "unchecked" )

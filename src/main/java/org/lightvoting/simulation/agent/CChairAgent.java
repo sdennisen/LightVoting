@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent;
 
+
 import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
@@ -39,14 +40,16 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
 import org.lightvoting.simulation.rule.CMinisumApproval;
-import org.lightvoting.simulation.statistics.EDataWriter;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -102,6 +105,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     // counter for intermediate elections in coordinated grouping
     private int m_coorNum;
+
+    private List<String> m_paths = new ArrayList();
+    private List<Object> m_data = new ArrayList();
+    private Map<String, Object> m_map = new HashMap<>();
 
     /**
      * constructor of the agent
@@ -179,6 +186,26 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         );
     }
 
+    /**
+     * return path list
+     * @return m_paths
+     */
+    public List<String> pathList()
+    {
+        return m_paths;
+    }
+
+
+    /**
+     * return data list
+     * @return m_data
+     */
+    public List<Object> dataList()
+    {
+        return m_data;
+    }
+
+
     // agent actions
 
     /**
@@ -195,7 +222,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             this.beliefbase().add( m_environment.detectGroup( this ) );
     }
 
-     // private methods
+    public Map<String, Object> map()
+    {
+        return m_map;
+    }
+
+    // private methods
 
     private void checkConditions()
     {
@@ -319,8 +351,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         // write resulting committee for coordinated grouping
         if ( "COORDINATED".equals( m_grouping ) )
         {
-            EDataWriter.INSTANCE.writeCommitteeCoordinated( m_run, m_conf, this, l_comResultBV, m_coorNum );
-            //   new CDataWriter().writeCommitteeCoordinated( m_fileName, m_run, m_conf, this, l_comResultBV, m_coorNum );
+            final String l_slash = "/";
+
+            final String l_path = m_run + l_slash  + m_conf + l_slash + "group " + this.getGroupID() + l_slash + "im_" + m_coorNum + l_slash + "committee";
+
+            m_map.put( l_path, l_comResultBV );
+
+            // old code
+            // EDataWriter.INSTANCE.writeCommitteeCoordinated( m_run, m_conf, this, l_comResultBV, m_coorNum );
+            // new CDataWriter().writeCommitteeCoordinated( m_fileName, m_run, m_conf, this, l_comResultBV, m_coorNum );
             m_coorNum++;
         }
         if ( "BASIC".equals( m_protocol ) )
@@ -414,7 +453,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             // final String l_config = "RANDOM_BASIC";
 
-            EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+            // TODO refactor string building
+            final String l_slash = "/";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+            m_map.put( l_path, l_dissVals );
+
+            // TODO write data to list instead
+        //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
         }
     }
@@ -447,8 +494,21 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             for ( int i = 0; i < m_dissList.size(); i++ )
                 l_dissVals.set( i, m_dissList.get( i ) );
 
-            EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
-            EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
+            final String l_slash = "/";
+
+            final String l_groupStr = "group ";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+            m_map.put( l_path, l_dissVals );
+
+            final String l_pathIt = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+            m_map.put( l_pathIt, p_iteration );
+
+            // TODO write data to list instead
+        //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+        //    EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
         }
@@ -472,11 +532,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( l_max <= m_dissThreshold )
         {
             System.out.println( " No dissatisfied voter left, we are done " );
-            EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
+
+            final String l_slash = "/";
+
+            final String l_groupStr = "group ";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+            m_map.put( l_path, p_iteration );
+
+           // EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
             //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
             return;
         }
-
         System.out.println( " Determining most dissatisfied voter " );
         final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
         System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
@@ -491,8 +559,15 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         if ( l_group.size() == 0 )
         {
             System.out.println( " Voter list is empty, we are done " );
-            EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
-            //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
+            // TODO write data to list instead
+
+            final String l_slash = "/";
+
+            final String l_groupStr = "group ";
+
+            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+
+            m_map.put( l_path, p_iteration );
         }
 
         // remove diss Values for next iteration
