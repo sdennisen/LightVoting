@@ -67,6 +67,7 @@ public class CMinisumApproval
 
     public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
     {
+
         m_alternatives = p_alternatives;
         m_comSize = p_comSize;
         m_bitVotes = p_votes;
@@ -75,6 +76,10 @@ public class CMinisumApproval
         final int[] l_valuesVect = new int[m_alternatives.size()];
 
         Map<Integer, Integer> l_valuesMap = new HashMap<Integer, Integer>();
+
+        System.out.println( l_valuesMap );
+
+
         for ( int i = 0; i < m_alternatives.size(); i++ )
         {
             for ( int j = 0; j < m_bitVotes.size(); j++ )
@@ -89,6 +94,8 @@ public class CMinisumApproval
 
             l_valuesMap.put( i, l_valuesVect[i] );
         }
+
+
 
         /* sort the HashMap in descending order according to values */
 

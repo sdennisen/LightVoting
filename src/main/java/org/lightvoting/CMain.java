@@ -127,9 +127,9 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr );
+                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                 l_agents = l_votingagentgenerator
-                    .generatemultiple(
+                    .generatemultiplenew(
                         Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr ) )
                     .collect( Collectors.toSet() );
 

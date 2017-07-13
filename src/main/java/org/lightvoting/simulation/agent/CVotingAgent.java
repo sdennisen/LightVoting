@@ -38,7 +38,6 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-//import org.lightjason.agentspeak.language.score.IAggregation;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -46,18 +45,22 @@ import org.lightvoting.simulation.environment.CGroup;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+//import org.lightjason.agentspeak.language.score.IAggregation;
 
 
 /**
@@ -104,7 +107,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * agent's preferences
      */
-    private final AtomicDoubleArray m_atomicPrefValues;
+    private AtomicDoubleArray m_atomicPrefValues;
 
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
@@ -131,12 +134,14 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_environment environment reference
      * @param p_altNum number of alternatives
      * @param p_joinThr join threshold
+     * @param p_preferences preferences
      */
 
     public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
                          final CEnvironment p_environment,
                          final int p_altNum,
-                         final double p_joinThr
+                         final double p_joinThr,
+                         final AtomicDoubleArray p_preferences
     )
     {
         super( p_configuration );
@@ -159,7 +164,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         m_altNum = p_altNum;
 
-        m_atomicPrefValues = this.generatePreferences( m_altNum );
+        m_atomicPrefValues = p_preferences;
+        System.out.println( p_preferences );
+     //   m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
@@ -319,6 +326,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
     // private methods
+
+    private void setPreference( final AtomicDoubleArray p_atomicDoubleArray )
+    {
+        m_atomicPrefValues = p_atomicDoubleArray;
+    }
 
     private AtomicDoubleArray generatePreferences( final int p_altNum )
     {
@@ -528,6 +540,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         private final int m_altNum;
         private final String m_fileName;
         private double m_joinThr;
+        private final List<AtomicDoubleArray> m_prefList;
+        private int m_count;
 
         /**
          * constructor of the generator
@@ -535,11 +549,13 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          * @param p_altNum number of alternatives
          * @param p_fileName h5 file
          * @param p_joinThr join threshold
+         * @param p_preferences preferences
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
                                       final String p_fileName,
-                                      final double p_joinThr
+                                      final double p_joinThr,
+                                      final List<AtomicDoubleArray> p_preferences
         ) throws Exception
         {
 
@@ -575,6 +591,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             m_altNum = p_altNum;
             m_fileName = p_fileName;
             m_joinThr = p_joinThr;
+            m_prefList = p_preferences;
         }
 
         // unregister an agent
@@ -583,6 +600,26 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         {
             m_send.unregister( p_agent );
         }
+
+
+        /**
+         * generator method to create agents successively
+         * @param p_number number of agents
+         * @param p_data any data which can be put from outside to the generator method
+         * @return stream of voting agents
+         */
+        public final Stream<CVotingAgent> generatemultiplenew( final int p_number, final Object... p_data )
+        {
+            final ArrayList<CVotingAgent> l_list = new ArrayList();
+
+            for ( int i = 0; i < p_number; i++ )
+            {
+                l_list.add( this.generatesingle( p_data ) );
+            }
+
+            return l_list.stream().filter( Objects::nonNull );
+        }
+
 
         // generator method of the agent
         // @param p_data any data which can be put from outside to the generator method
@@ -598,7 +635,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 // create a string with the agent name "agent <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "agent {0}", m_agentcounter.getAndIncrement() ),
+                MessageFormat.format( "agent {0}", m_agentcounter.incrementAndGet() ),
 
                 // add the agent configuration
                 m_configuration,
@@ -606,12 +643,15 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
-                m_joinThr
+                m_joinThr,
+                m_prefList.get( m_count )
             );
 
+            m_count++;
             l_votingAgent.sleep( Integer.MAX_VALUE  );
             m_environment.initialset( l_votingAgent );
             return m_send.register( l_votingAgent );
+
 
         }
     }

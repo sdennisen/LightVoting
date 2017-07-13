@@ -333,7 +333,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         final List<String> l_alternatives = new LinkedList<>();
 
-        for ( char l_char : "ABCDEF".toCharArray() )
+        for ( char l_char : "ABCD".toCharArray() )
 
             l_alternatives.add( String.valueOf( l_char ) );
 

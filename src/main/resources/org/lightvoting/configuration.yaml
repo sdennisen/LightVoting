@@ -3,7 +3,7 @@
 variables:
   runs: '1'
   config: 'RANDOM_BASIC'
-  altnum: '6'
+  altnum: '4'
   dissthr:  '1.4'
   capacity: '3'
   jointhr: '3'

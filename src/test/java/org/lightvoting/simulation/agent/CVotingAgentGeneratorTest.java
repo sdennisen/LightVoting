@@ -33,6 +33,7 @@ import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public final class CVotingAgentGeneratorTest extends TestCase
             /* TODO Check test */
             final Set<CVotingAgent> l_agents = new
 
-                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5", 5 )
+                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList() )
                     .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5", 3 ),
                                                                                  "foo.h5", 0,
                                                                                  1
