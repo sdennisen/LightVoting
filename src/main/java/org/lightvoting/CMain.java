@@ -230,12 +230,12 @@ public final class CMain
                 // parse input
                 if ( "runs".equals( l_subValueKey ) )
                     s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
-                if ( "altnum".equals( l_subValueKey ) )
+                else if ( "altnum".equals( l_subValueKey ) )
                     s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
-                if ( "comsize".equals( l_subValueKey ) )
+                else if ( "comsize".equals( l_subValueKey ) )
                     s_comsize = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
-                if ( l_subValueKey.contains( "config" ) )
+                else if ( l_subValueKey.contains( "config" ) )
                 {
                     s_configStrs.add( l_subValues.get( l_subValueKey ) );
                     s_configStr = s_configStr.concat( " " + l_subValues.get( l_subValueKey ) );
@@ -246,18 +246,18 @@ public final class CMain
                     System.out.println( l_confStr[1] );
                 }
 
-                if ( "dissthr".equals( l_subValueKey  ) )
+                else if ( "dissthr".equals( l_subValueKey  ) )
                     s_dissthr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
-                if ( "capacity".equals( l_subValueKey ) )
+                else if ( "capacity".equals( l_subValueKey ) )
                     s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
-                if ( "jointhr".equals( l_subValueKey  ) )
+                else if ( "jointhr".equals( l_subValueKey  ) )
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
-                if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
                     readPreferences();
-                if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
                     createPreferencesSigmoid();
             }
         }
