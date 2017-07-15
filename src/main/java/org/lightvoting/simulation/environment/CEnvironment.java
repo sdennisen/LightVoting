@@ -32,6 +32,7 @@ import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +57,7 @@ public final class CEnvironment
     private int m_run;
     private String m_config;
     private int m_capacity;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
     /**
      * constructor
@@ -119,7 +121,14 @@ public final class CEnvironment
    //     EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
 //        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
 //        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+
         m_groupNum++;
+
+        final String l_slash = "/";
+
+        final String l_path = m_run + l_slash  + m_config + l_slash + "groups" + l_slash + "group num";
+
+        m_map.put( l_path, m_groupNum );
 
         return l_group;
     }
@@ -141,6 +150,13 @@ public final class CEnvironment
 //        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
 //        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
         m_groupNum++;
+
+        final String l_slash = "/";
+
+        final String l_path = m_run + l_slash  + m_config + l_slash + "groups" + l_slash + "group num";
+
+        m_map.put( l_path, m_groupNum );
+
         return l_group;
     }
 
@@ -222,6 +238,11 @@ public final class CEnvironment
         m_run = p_run;
         m_config = p_config;
         m_groupNum = 0;
+    }
+
+    public HashMap<String, Object> map()
+    {
+        return m_map;
     }
 
     private void wakeUpAgent()

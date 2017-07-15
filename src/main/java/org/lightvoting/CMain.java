@@ -196,13 +196,13 @@ public final class CMain
                     s_environment.initialset( i );
                     i.reset();
                     i.getChair().reset();
-
                     s_map.putAll( i.getChair().map() );
                 } );
             }
 
-            System.out.println( "Next simulation run " );
+         //   System.out.println( "Next simulation run " );
         }
+        s_map.putAll( s_environment.map() );
 
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
     }

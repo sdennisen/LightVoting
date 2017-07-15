@@ -3,7 +3,8 @@
 variables:
   runs: '1'
   config: 'RANDOM_BASIC'
-  altnum: '4'
+  config1: 'RANDOM_ITERATIVE'
+  altnum: '10'
   comsize: '3'
   dissthr:  '1.4'
   capacity: '3'
