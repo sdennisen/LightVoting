@@ -585,6 +585,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
 
             m_map.put( l_path, p_iteration );
+
+            m_environment.incrementGroupCount( m_run, m_conf );
         }
 
         // remove diss Values for next iteration
