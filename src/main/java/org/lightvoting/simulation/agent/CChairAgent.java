@@ -111,6 +111,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private Map<String, Object> m_map = new HashMap<>();
     private final int m_comsize;
     private int m_altnum;
+    private int m_groupNum;
 
     /**
      * constructor of the agent
@@ -184,6 +185,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_iteration = 0;
         m_iterative = false;
         m_dissStored = false;
+        m_groupNum = 0;
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDGOAL,
@@ -516,6 +518,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
             m_map.put( l_pathIt, p_iteration );
 
+            m_environment.incrementGroupCount( m_run, m_conf );
+
             // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
@@ -550,6 +554,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
 
             m_map.put( l_path, p_iteration );
+
+            m_environment.incrementGroupCount( m_run, m_conf );
+
 
            // EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
             //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );

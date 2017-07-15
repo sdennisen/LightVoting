@@ -58,6 +58,7 @@ public final class CEnvironment
     private String m_config;
     private int m_capacity;
     private HashMap<String, Object> m_map = new HashMap<>();
+    private int m_finalGroupNum;
 
     /**
      * constructor
@@ -116,19 +117,11 @@ public final class CEnvironment
         System.out.println( "Created Group " + l_group );
         this.wakeUpAgent();
 
-        // TODO write data to list instead
    //     EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
    //     EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
 //        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
 //        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
-
         m_groupNum++;
-
-        final String l_slash = "/";
-
-        final String l_path = m_run + l_slash  + m_config + l_slash + "groups" + l_slash + "group num";
-
-        m_map.put( l_path, m_groupNum );
 
         return l_group;
     }
@@ -144,18 +137,12 @@ public final class CEnvironment
         m_groups.add( l_group );
         System.out.println( "Created Group " + l_group );
 
-        // TODO write data to list instead
-  //      EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
+   //      EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
   //      EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
 //        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
 //        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+
         m_groupNum++;
-
-        final String l_slash = "/";
-
-        final String l_path = m_run + l_slash  + m_config + l_slash + "groups" + l_slash + "group num";
-
-        m_map.put( l_path, m_groupNum );
 
         return l_group;
     }
@@ -238,11 +225,29 @@ public final class CEnvironment
         m_run = p_run;
         m_config = p_config;
         m_groupNum = 0;
+        m_finalGroupNum = 0;
     }
 
     public HashMap<String, Object> map()
     {
         return m_map;
+    }
+
+    /**
+     * count group if final diss values are stored
+     * @param p_run run nr
+     * @param p_conf config name
+     */
+
+    public void incrementGroupCount( final int p_run, final String p_conf )
+    {
+        m_finalGroupNum++;
+
+        final String l_slash = "/";
+
+        final String l_path = p_run + l_slash  + p_conf + l_slash + "groups" + l_slash + "group count";
+
+        m_map.put( l_path, m_finalGroupNum );
     }
 
     private void wakeUpAgent()
