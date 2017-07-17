@@ -41,7 +41,7 @@ import java.util.Set;
 /**
  * Created by sophie on 24.04.17.
  */
-public class CGroup_old
+public class CGroupOld
 {
     private final HashMap<String, CVotingAgent> m_agentMap = new HashMap<>();
 
@@ -65,7 +65,7 @@ public class CGroup_old
      * @param p_groupNum group number
      * @param p_capacity group capacity
      */
-    public CGroup_old( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum, final int p_capacity )
+    public CGroupOld( final CVotingAgent p_votingAgent, final String p_grouping, final int p_groupNum, final int p_capacity )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;

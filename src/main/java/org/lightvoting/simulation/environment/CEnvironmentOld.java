@@ -43,7 +43,7 @@ import java.util.List;
  * Created by sophie on 22.02.17.
  * Environment class
  */
-public final class CEnvironment_old
+public final class CEnvironmentOld
 {
     private List<CGroup>  m_groups = Collections.synchronizedList( new LinkedList<>() );
     private int m_groupNum;
@@ -66,7 +66,7 @@ public final class CEnvironment_old
      * @param p_fileName HDF5 file
      * @param p_capacity group capacity
      */
-    public CEnvironment_old( final int p_size, final String p_fileName, final int p_capacity )
+    public CEnvironmentOld( final int p_size, final String p_fileName, final int p_capacity )
     {
         m_fileName = p_fileName;
         m_capacity = p_capacity;

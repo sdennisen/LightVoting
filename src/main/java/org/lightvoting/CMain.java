@@ -71,6 +71,7 @@ public final class CMain
     private static List<AtomicDoubleArray> s_prefList = new ArrayList<>();
     private static int s_agNum;
     private static int s_comsize;
+    private static boolean s_sigmoidPref;
 
     /**
      * Hidden constructor
@@ -105,6 +106,8 @@ public final class CMain
 
         for ( int r = 0; r < s_runs; r++ )
         {
+            setPreferences();
+
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
@@ -180,31 +183,49 @@ public final class CMain
 
                 s_environment.reset();
 
-                l_agents.parallelStream().forEach( i ->
-                {
-                    i.sleep( Integer.MAX_VALUE );
-                    i.getChair().beliefbase().beliefbase().clear();
-                    i.getChair().sleep( Integer.MAX_VALUE );
-                    i.beliefbase().beliefbase().clear();
-                    i.storage().put( "chair", i.getChair().raw() );
-                    i.beliefbase().add(
-                        CLiteral.from(
-                            "chair",
-                            CRawTerm.from( i.getChair() )
-                        )
-                    );
-                    s_environment.initialset( i );
-                    i.reset();
-                    i.getChair().reset();
-                    s_map.putAll( i.getChair().map() );
-                } );
-                s_map.putAll( s_environment.map() );
+                storeResults( l_agents );
+
             }
          //   System.out.println( "Next simulation run " );
         }
 
 
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
+    }
+
+    private static void storeResults( final Set<CVotingAgent> p_agents )
+    {
+        p_agents.parallelStream().forEach( i ->
+        {
+            i.sleep( Integer.MAX_VALUE );
+            i.getChair().beliefbase().beliefbase().clear();
+            i.getChair().sleep( Integer.MAX_VALUE );
+            i.beliefbase().beliefbase().clear();
+            i.storage().put( "chair", i.getChair().raw() );
+            i.beliefbase().add(
+                CLiteral.from(
+                    "chair",
+                    CRawTerm.from( i.getChair() )
+                )
+            );
+            s_environment.initialset( i );
+            i.reset();
+            i.getChair().reset();
+            s_map.putAll( i.getChair().map() );
+        } );
+        s_map.putAll( s_environment.map() );
+    }
+
+    private static void setPreferences() throws FileNotFoundException
+    {
+        if ( s_sigmoidPref )
+        {
+            generatePreferencesSigmoid();
+        }
+        if ( s_manualPref )
+        {
+            readPreferences();
+        }
     }
 
     @SuppressWarnings( "unchecked" )
@@ -256,9 +277,12 @@ public final class CMain
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
                 else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
-                    readPreferences();
+                    //readPreferences();
+                    s_manualPref = true;
                 else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
-                    createPreferencesSigmoid();
+                    //createPreferencesSigmoid();
+                    s_sigmoidPref = true;
+
             }
         }
 
