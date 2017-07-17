@@ -37,7 +37,7 @@ X = X+1;
 
 // store received vote in Java datastructure
 +vote/received(Traveller, Vote)
-: >>( fill(F), capacity(C), F < C )
+: >>( fill(F), capacity(C), F < C ) && >>(wait/time/vote(X), max/time/vote(Y) && X < Y)
 <- store/vote(Traveller, Vote);
 F = F+1.
 
@@ -50,7 +50,7 @@ compute/result().
 
 // store received diss value in Java datastructure
 +diss/received(Traveller, Diss)
-: >>( diss(D), fill(F), D < F )
+: >>( diss(D), fill(F), D < F ) && >>(wait/time/diss(X), max/time/diss(Y) && X < Y)
 <- store/diss(Traveller, Diss);
 D = D+1.
 
