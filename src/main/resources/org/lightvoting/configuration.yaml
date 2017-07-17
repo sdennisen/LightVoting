@@ -1,9 +1,8 @@
 # LightVoting Default Config
 
 variables:
-  runs: '100'
-  config1: 'RANDOM_BASIC'
-  config2: 'RANDOM_ITERATIVE'
+  runs: '1'
+  config: 'RANDOM_BASIC'
   altnum: '10'
   comsize: '3'
   dissthr:  '1.4'
