@@ -25,10 +25,17 @@ voted(0).
   submit/vote(Chair).
 
 // TODO implement action submit/diss
-//+!request/diss(Chair)
+//+!submit/diss()
+//: >>result(Chair)
 //<-
-//  submit/diss(Chair).
+//submit/diss(Chair)
 
-+!leave/group(Chair)
++!leave/group()
+: >>leave/group(Broker)
 <-
-  +group(0).
++group(0).
+
++!stay()
+: >>stay(Broker)
+<-
+generic/print("I'm staying in the group").
