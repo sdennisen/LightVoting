@@ -169,6 +169,16 @@ public final class CMain
                     )
                     .forEach( j ->
                     {
+
+                        try
+                        {
+                            s_broker.call();
+                        }
+                        catch ( final Exception l_ex )
+                        {
+                            l_ex.printStackTrace();
+                        }
+
                         l_agents.parallelStream().forEach( i ->
                         {
                             try

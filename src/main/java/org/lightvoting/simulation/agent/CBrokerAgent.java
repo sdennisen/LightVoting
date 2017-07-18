@@ -32,6 +32,7 @@ import org.lightvoting.simulation.action.message.CSend;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,9 +45,10 @@ public class CBrokerAgent extends IBaseAgent
     /**
      * ctor
      *
+     * @param p_broker broker name
      * @param p_configuration agent configuration
      */
-    public CBrokerAgent( @Nonnull final IAgentConfiguration p_configuration )
+    public CBrokerAgent( final String p_broker, @Nonnull final IAgentConfiguration p_configuration )
     {
         super( p_configuration );
     }
@@ -56,6 +58,12 @@ public class CBrokerAgent extends IBaseAgent
      */
     public static class CBrokerAgentGenerator extends IBaseAgentGenerator
     {
+
+        /**
+         * Store reference to send action to registered agents upon creation.
+         */
+        private final CSend m_send;
+
         /**
          * constructor of CBrokerAgentGenerator
          * @param p_send external actions
@@ -86,6 +94,7 @@ public class CBrokerAgent extends IBaseAgent
             // aggregation function for the optimization function, here
             // we use an empty function
             //         IAggregation.EMPTY,
+            m_send = p_send;
 
         }
 
@@ -93,7 +102,18 @@ public class CBrokerAgent extends IBaseAgent
         @Override
         public CBrokerAgent generatesingle( @Nullable final Object... p_data )
         {
-            return null;
+            final CBrokerAgent l_broker = new CBrokerAgent(
+
+                // create a string with the agent name "agent <number>"
+                // get the value of the counter first and increment, build the agent
+                // name with message format (see Java documentation)
+                MessageFormat.format( "broker", 0 ),
+
+                // add the agent configuration
+                m_configuration
+            );
+
+            return l_broker;
         }
     }
 
