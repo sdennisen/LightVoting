@@ -29,7 +29,6 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CBrokerAgent;
-import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.statistics.EDataWriter;
@@ -44,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -132,11 +130,11 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
-                l_agents = l_votingagentgenerator
-                    .generatemultiplenew(
-                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
-                    .collect( Collectors.toSet() );
+            //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+            //    l_agents = l_votingagentgenerator
+            //        .generatemultiplenew(
+            //            Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
+            //        .collect( Collectors.toSet() );
 
                 l_stream.close();
                 l_chairstream.close();
@@ -153,11 +151,11 @@ public final class CMain
                 s_environment.setConf( r, s_configStrs.get( c ) );
 
                 final int l_finalC = c;
-                l_agents.parallelStream().forEach( i ->
-                {
-                    i.setConf( s_groupings.get( l_finalC ) );
-                    i.getChair().setConf( s_configStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
-                } );
+//                l_agents.parallelStream().forEach( i ->
+//                {
+//                    i.setConf( s_groupings.get( l_finalC ) );
+//                    i.getChair().setConf( s_configStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
+//                } );
 
                 IntStream
                     // define cycle range, i.e. number of cycles to run sequentially
@@ -179,29 +177,30 @@ public final class CMain
                             l_ex.printStackTrace();
                         }
 
-                        l_agents.parallelStream().forEach( i ->
-                        {
-                            try
-                            {
-                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                // call each agent, i.e. trigger a new agent cycle
-                                i.call();
-                                //   i.getChair().sleep( 0 );
-                                i.getChair().call();
-                            }
-                            catch ( final Exception l_exception )
-                            {
-                                l_exception.printStackTrace();
-                                throw new RuntimeException();
-                            }
-                        } );
+//                        l_agents.parallelStream().forEach( i ->
+//                        {
+//                            try
+//                            {
+//                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+//                                // call each agent, i.e. trigger a new agent cycle
+//                                i.call();
+//                                //   i.getChair().sleep( 0 );
+//                                i.getChair().call();
+//                            }
+//                            catch ( final Exception l_exception )
+//                            {
+//                                l_exception.printStackTrace();
+//                                throw new RuntimeException();
+//                            }
+//                        } );
                     } );
 
                 // reset properties for next configuration
 
                 s_environment.reset();
 
-                storeResults( l_agents );
+            // TODO reinsert
+            //    storeResults( l_agents );
 
             }
          //   System.out.println( "Next simulation run " );
