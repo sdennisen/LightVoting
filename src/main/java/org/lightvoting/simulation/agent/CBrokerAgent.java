@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +43,9 @@ import java.util.stream.Stream;
  */
 public class CBrokerAgent extends IBaseAgent
 {
+    private HashSet<CVotingAgent> m_voters = new HashSet<>();
+    private HashSet<CChairAgent> m_chairs = new HashSet<>();
+
     /**
      * ctor
      *
@@ -51,6 +55,18 @@ public class CBrokerAgent extends IBaseAgent
     public CBrokerAgent( final String p_broker, @Nonnull final IAgentConfiguration p_configuration )
     {
         super( p_configuration );
+    }
+
+    /**
+     * return stream over agents
+     * @return agent stream
+     */
+    public Stream<IBaseAgent> agentstream()
+    {
+        return Stream.concat(
+            m_voters.stream(),
+            m_chairs.stream()
+        );
     }
 
     /**

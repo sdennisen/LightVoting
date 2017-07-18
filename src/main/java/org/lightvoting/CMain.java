@@ -171,6 +171,18 @@ public final class CMain
                         try
                         {
                             s_broker.call();
+                            s_broker.agentstream().forEach( k ->
+                            {
+                                try
+                                {
+                                    k.call();
+                                }
+                                catch ( final Exception l_ex )
+                                {
+                                    l_ex.printStackTrace();
+                                }
+                            } );
+
                         }
                         catch ( final Exception l_ex )
                         {
