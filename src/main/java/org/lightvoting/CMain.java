@@ -28,6 +28,7 @@ import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.agent.CBrokerAgent;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -72,6 +73,8 @@ public final class CMain
     private static int s_agNum;
     private static int s_comsize;
     private static boolean s_sigmoidPref;
+    private static CBrokerAgent s_broker;
+    private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
 
     /**
      * Hidden constructor
@@ -94,6 +97,10 @@ public final class CMain
         // 1. ASL file
         // 2. number of agents
         // 3. number of iterations (if not set maximum)
+
+        // creater BrokerAgent
+
+        createBroker( p_args[4] );
 
         s_agNum = Integer.parseInt( p_args[2] );
 
@@ -121,6 +128,7 @@ public final class CMain
             {
                 final FileInputStream l_stream = new FileInputStream( p_args[0] );
                 final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
@@ -191,6 +199,16 @@ public final class CMain
 
 
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
+    }
+
+    private static void createBroker( final String p_arg ) throws Exception
+    {
+        final FileInputStream l_brokerStream = new FileInputStream( p_arg );
+
+        // TODO modify parameters
+        s_brokerGenerator = new CBrokerAgent.CBrokerAgentGenerator( new CSend(), l_brokerStream );
+
+        s_broker = s_brokerGenerator.generatesingle();
     }
 
     private static void storeResults( final Set<CVotingAgent> p_agents )
