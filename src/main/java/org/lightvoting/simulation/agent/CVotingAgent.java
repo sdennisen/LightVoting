@@ -81,12 +81,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * name of the agent
      */
-    private final String m_name;
+    private String m_name;
 
     /**
      * environment
      */
-    private final CEnvironment m_environment;
+    private CEnvironment m_environment;
 
     /**
      * associated chair agent;
@@ -102,7 +102,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * number of alternatives
      */
-    private final int m_altNum;
+    private int m_altNum;
 
     /**
      * agent's preferences
@@ -124,7 +124,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * threshold for joining a group in the case of coordinated grouping
      */
     private double m_joinThreshold;
-    private final BitVector m_bitVote;
+    private BitVector m_bitVote;
+
+    // TODO refactor ctors
 
     /**
      * constructor of the agent
@@ -171,6 +173,26 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
         m_joinThreshold = p_joinThr;
+    }
+
+    /**
+     * constructor
+     * @param p_name name
+     * @param p_configuration configuration
+     * @param p_environment environment
+     * @param p_altNum number of alternatives
+     * @param p_joinThr join threshold
+     * @param p_atomicDoubleArray preferences
+     */
+    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final CEnvironment p_environment, final int p_altNum,
+                         final double p_joinThr,
+                         final AtomicDoubleArray p_atomicDoubleArray
+    )
+    {
+        super( p_configuration );
+        m_name = p_name;
+
+        System.out.println( this );
     }
 
     // overload agent-cycle
@@ -638,6 +660,28 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             return m_send.register( l_votingAgent );
 
 
+        }
+
+        final CVotingAgent generatesinglenew()
+        {
+            System.out.println( "creating new voter, m_count is " + m_agentcounter );
+
+            final CVotingAgent l_votingAgent = new CVotingAgent(
+
+                // create a string with the agent name "agent <number>"
+                // get the value of the counter first and increment, build the agent
+                // name with message format (see Java documentation)
+                MessageFormat.format( "agent {0}", m_agentcounter.incrementAndGet() ),
+
+                // add the agent configuration
+                m_configuration,
+                m_environment,
+                m_altNum,
+                m_joinThr,
+                m_prefList.get( m_count )
+            );
+
+            return m_send.register( l_votingAgent );
         }
     }
 }
