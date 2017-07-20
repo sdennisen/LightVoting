@@ -109,6 +109,11 @@ public class CGroup
         }
     }
 
+    public CChairAgent chair()
+    {
+        return m_chair;
+    }
+
     //    /**
 //     * returns literal representation for voting agent
 //     * @param p_votingAgent voting agent

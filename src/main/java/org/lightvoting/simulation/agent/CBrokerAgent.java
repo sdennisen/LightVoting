@@ -174,6 +174,8 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             {
                 l_group.add( p_votingAgent, this.cycle() );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" );
+                p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
+                p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
                 return;
             }
         }
@@ -181,8 +183,13 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         final CChairAgent l_chairAgent = m_chairagentgenerator.generatesinglenew();
 
         // if there was no available group, create a new group
-        m_groups.add( new CGroup( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout ) );
+
+        final CGroup l_group = new CGroup( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
+        m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() );
+
+        p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
+        p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
     }
 
     @IAgentActionFilter

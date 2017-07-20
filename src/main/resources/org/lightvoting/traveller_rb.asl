@@ -3,11 +3,15 @@ voted(0).
 
 !start.
 
-+!start
-: >>( group(N), N==0 )
++!start <-
+generic/print("Test Traveller" );
+!nextcycle.
+
++!nextcycle
 <-
-!search/group();
-!start.
+!submit/vote;
+!nextcycle.
+
 
 // asks broker for a group
 // broker knows group protocol
@@ -18,9 +22,10 @@ voted(0).
 // <-
 // ask/for/group().
 
-+!submit/vote()
++!submit/vote
 : >>my/group(Group) && >>(voted(N), N==0) && >>my/chair(Chair)
 <-
+  generic/print( "submit vote ");
   -voted(0);
   submit/vote(Chair).
 
