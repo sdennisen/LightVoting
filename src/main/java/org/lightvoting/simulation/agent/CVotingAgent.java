@@ -282,23 +282,23 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
+        System.out.println( "my name is " + this.name() );
         System.out.println( "my vote is " + this.getBitVote() );
-
-        if ( m_voted )
-            return;
+        System.out.println( "my chair: " + p_chairAgent.name() );
 
         p_chairAgent.trigger(
             CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "vote/received",
-                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this ),
                     CRawTerm.from( this.getBitVote() )
                 )
             )
         );
 
-        m_voted = true;
+ //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+
 
     }
 

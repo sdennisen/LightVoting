@@ -16,14 +16,13 @@ max/time/diss(10).
 
 // as soon as group is opened, wait for votes
 +!start
-<-
-generic/print( "Test Chair" );
-!nextcycle.
+<- generic/print("Test Chair").
+  // !wait/for/vote;
+//  !nextcycle.
 
-+!nextcycle
-<-
-!wait/for/vote.
-!nextcycle.
+//+!nextcycle
+//<- !store/vote;
+//   !nextcycle.
 
 // vote clean-up is started if group capacity or timeout is reached
 +!wait/for/vote
@@ -42,10 +41,19 @@ X = X+1;
 	clean/up/vote().
 
 // store received vote in Java datastructure
-+vote/received(Traveller, Vote)
-: >>( fill(F), capacity(C), F < C ) && >>(wait/time/vote(X), max/time/vote(Y) && X < Y)
-<- store/vote(Traveller, Vote);
-F = F+1.
++!vote/received(Traveller, Vote)
+<- generic/print( "received vote" ).
+
+// ----------------------------------------
+
+//: >>fill(F) && >>capacity(C) && F < C && >>wait/time/vote(X) & >>max/time/vote(Y) && X < Y
+//<- generic/print( "received vote" );
+//store/vote(Traveller, Vote);
+//F = F+1.
+
+//+!store/vote:
+//	>>vote(Traveller,Vote)
+//	<- generic/print( "received vote" ).
 
 +!start/voting
 : >>clean/up/vote/done

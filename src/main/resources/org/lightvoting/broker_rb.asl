@@ -28,8 +28,9 @@ generic/print("Test Broker" );
 
 +!assign/group:
 >>newag(Ag)
-<- assign/group(Ag);
-   -newag(Ag).
+<-  -newag(Ag);
+    assign/group(Ag).
+
 
 +!update/groups
 <- update/groups().

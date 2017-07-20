@@ -26,6 +26,8 @@ package org.lightvoting.simulation.agent;
 
 import cern.colt.bitvector.BitVector;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
+import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
+import org.lightjason.agentspeak.action.binding.IAgentActionName;
 import org.lightjason.agentspeak.agent.IBaseAgent;
 import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
@@ -137,9 +139,17 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_altnum = p_altnum;
     }
 
-    public CChairAgent( final String p_format, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final int p_altnum )
+    /**
+     * ctor
+     * @param p_name chair name
+     * @param p_configuration configuration
+     * @param p_environment environment
+     * @param p_altnum number of alternatives
+     */
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final int p_altnum )
     {
         super( p_configuration );
+        m_name = p_name;
     }
 
 
@@ -298,22 +308,23 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        l_group.triggerAgents( this );
 //    }
 
-//    /**
-//     * store vote
-//     *
-//     * @param p_vote vote
-//     */
-//    @IAgentActionFilter
-//    @IAgentActionName( name = "store/vote" )
-//    public void storeVote( final String p_agentName, final BitVector p_vote )
-//    {
-//        final CGroup l_group = this.determineGroup();
-//
-//        m_agents.add( l_group.determineAgent( p_agentName ) );
-//        m_bitVotes.add( p_vote );
-//
-//        System.out.println( " --------------------- " + this.name() + " received vote from " + p_agentName );
-//
+    /**
+     * store vote
+     *
+     * @param p_vote vote
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/vote" )
+    public void storeVote( final String p_name, final BitVector p_vote )
+    {
+    //    final CGroup l_group = this.determineGroup();
+
+    //    m_agents.add( l_group.determineAgent( p_agentName ) );
+
+        m_bitVotes.add( p_vote );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_name );
+
 //        if ( m_bitVotes.size() != l_group.size() )
 //            return;
 //
@@ -327,7 +338,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
 //
 //        this.trigger( l_trigger );
-//    }
+    }
 
 //    /**
 //     * compute result of election
