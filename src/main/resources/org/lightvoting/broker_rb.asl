@@ -12,14 +12,20 @@ generic/print("Test Broker" );
 +!nextcycle
 <-
 !create/ags;
+!assign/group;
 !nextcycle.
 
 +!create/ags:
 >>created(C) && >>agnum(N) && C < N
 <-  generic/print( "C:", C );
-    create/ag(C);
+    NewAg = create/ag(C);
+    +newag(NewAg);
     NewC = C+1;
     -created(C);
     +created(NewC).
 
 
++!assign/group:
+>>newag(Ag)
+<- assign/group(Ag);
+   -newag(Ag).

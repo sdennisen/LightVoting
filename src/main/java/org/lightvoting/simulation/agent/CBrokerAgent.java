@@ -132,7 +132,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "create/ag" )
-    private void createAgent( final Number p_createdNum ) throws Exception
+    private CVotingAgent createAgent( final Number p_createdNum ) throws Exception
     {
 
         System.out.println( "voters generated so far: " + p_createdNum );
@@ -143,6 +143,15 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 
         m_voters.add( l_testvoter );
 
+        return l_testvoter;
+
+    }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "assign/group" )
+    private void assignGroup( final CVotingAgent p_votingAgent ) throws Exception
+    {
+        System.out.println( "Assigning group to " + p_votingAgent.name() );
     }
 
 
