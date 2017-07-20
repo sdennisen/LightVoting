@@ -9,15 +9,21 @@ wait/time/vote(0).
 // instead of 10 it can be any other (random) value
 max/time/vote(10).
 
-+wait/time/diss(0).
-+max/time/diss(10).
+wait/time/diss(0).
+max/time/diss(10).
 
 !start.
 
 // as soon as group is opened, wait for votes
 +!start
 <-
+generic/print( "Test Chair" );
+!nextcycle.
+
++!nextcycle
+<-
 !wait/for/vote.
+!nextcycle.
 
 // vote clean-up is started if group capacity or timeout is reached
 +!wait/for/vote
