@@ -1,4 +1,3 @@
-group(0).
 voted(0).
 
 !start.
@@ -11,16 +10,6 @@ generic/print("Test Traveller" );
 <-
 !submit/vote;
 !nextcycle.
-
-
-// asks broker for a group
-// broker knows group protocol
-// remove belief group(0) and add belief my/group when done
-
-// TODO implement action ask/for/group
-// +!search/group()
-// <-
-// ask/for/group().
 
 +!submit/vote
 : >>my/group(Group) && >>(voted(N), N==0) && >>my/chair(Chair)

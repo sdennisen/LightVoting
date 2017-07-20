@@ -89,6 +89,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
      * @param p_stream agent stream
      * @param p_chairstream chair stream
      * @param p_environment enviroment
+     * @param p_altnum number of alternatives
      * @param p_name name
      * @param p_joinThr join threshold
      * @param p_prefList preference list
@@ -99,6 +100,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                          final int p_agNum,
                          final InputStream p_stream,
                          final InputStream p_chairstream, final CEnvironment p_environment,
+                         final int p_altnum,
                          final String p_name,
                          final double p_joinThr,
                          final List<AtomicDoubleArray> p_prefList
@@ -110,6 +112,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         m_stream = p_stream;
         m_chairstream = p_chairstream;
         m_environment = p_environment;
+        m_altnum = p_altnum;
         m_name = p_name;
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
@@ -225,6 +228,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         private final double m_joinThr;
         private final List<AtomicDoubleArray> m_prefList;
         private final InputStream m_chairstream;
+        private int m_altnum;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -281,6 +285,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             m_stream = p_stream;
             m_chairstream = p_chairStream;
             m_environment = p_environment;
+            m_altnum = p_altnum;
             m_name = p_name;
             m_joinThr = p_joinThr;
             m_prefList = p_prefList;
@@ -306,6 +311,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                     m_stream,
                     m_chairstream,
                     m_environment,
+                    m_altnum,
                     m_name,
                     m_joinThr,
                     m_prefList

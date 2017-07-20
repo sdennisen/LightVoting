@@ -127,7 +127,7 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                createBroker( p_args[4], l_chairstream, s_agNum, new CSend(), l_stream, s_environment,  l_name, s_joinThr, s_prefList );
+                createBroker( p_args[4], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 
             //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
             //    l_agents = l_votingagentgenerator
@@ -225,7 +225,7 @@ public final class CMain
     private static void createBroker( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
                                       final FileInputStream p_stream,
                                       final CEnvironment p_environment,
-                                      final String p_name,
+                                      final int p_altnum, final String p_name,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList
     ) throws Exception

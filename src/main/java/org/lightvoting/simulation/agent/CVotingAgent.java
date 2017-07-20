@@ -187,6 +187,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     {
         super( p_configuration );
         m_name = p_name;
+        m_altNum = p_altNum;
+        m_atomicPrefValues = p_atomicDoubleArray;
+        m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
 
         System.out.println( this );
     }
@@ -279,6 +282,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgent p_chairAgent )
     {
+        System.out.println( "my vote is " + this.getBitVote() );
+
         if ( m_voted )
             return;
 
@@ -660,21 +665,23 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         final CVotingAgent generatesinglenew()
         {
-            System.out.println( "creating new voter, m_count is " + m_agentcounter );
+            System.out.println( "creating new voter, m_count is " + m_count );
+            final AtomicDoubleArray l_preferences = m_prefList.get( m_count );
+            System.out.println( "Preferences: " + l_preferences );
 
             final CVotingAgent l_votingAgent = new CVotingAgent(
 
                 // create a string with the agent name "agent <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "agent {0}", m_agentcounter.incrementAndGet() ),
+                MessageFormat.format( "agent {0}", m_count ),
 
                 // add the agent configuration
                 m_configuration,
                 m_environment,
                 m_altNum,
                 m_joinThr,
-                m_prefList.get( m_count )
+                m_prefList.get( m_count++ )
             );
 
             return m_send.register( l_votingAgent );
