@@ -28,7 +28,6 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.Collections;
@@ -105,101 +104,101 @@ public final class CEnvironment
         return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
     }
 
-    /**
-     * open new group (for random grouping)
-     * @param p_votingAgent voting agent opening group
-     * @return new group
-     */
-    public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
-    {
-        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum, m_capacity );
-        m_groups.add( l_group );
-        System.out.println( "Created Group " + l_group );
-        this.wakeUpAgent();
+//    /**
+//     * open new group (for random grouping)
+//     * @param p_votingAgent voting agent opening group
+//     * @return new group
+//     */
+//    public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
+//    {
+//        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum, m_capacity );
+//        m_groups.add( l_group );
+//        System.out.println( "Created Group " + l_group );
+//        this.wakeUpAgent();
+//
+//   //     EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
+//   //     EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
+////        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+////        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+//        m_groupNum++;
+//
+//        return l_group;
+//    }
 
-   //     EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
-   //     EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
-//        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
-//        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
-        m_groupNum++;
+//    /**
+//     * open new group (for coordinated grouping)
+//     * @param p_votingAgent voting agent opening group
+//     * @return new group
+//     */
+//    public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
+//    {
+//        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum, m_capacity );
+//        m_groups.add( l_group );
+//        System.out.println( "Created Group " + l_group );
+//
+//   //      EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
+//  //      EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
+////        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
+////        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
+//
+//        m_groupNum++;
+//
+//        return l_group;
+//    }
 
-        return l_group;
-    }
-
-    /**
-     * open new group (for coordinated grouping)
-     * @param p_votingAgent voting agent opening group
-     * @return new group
-     */
-    public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
-    {
-        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum, m_capacity );
-        m_groups.add( l_group );
-        System.out.println( "Created Group " + l_group );
-
-   //      EDataWriter.INSTANCE.setGroup( m_run, m_config, m_groupNum );
-  //      EDataWriter.INSTANCE.writeDefaultLastIteration( m_run, m_config, m_groupNum );
-//        new CDataWriter().setGroup( m_run, m_config, m_fileName, m_groupNum );
-//        new CDataWriter().writeDefaultLastIteration( m_fileName, m_run, m_config, m_groupNum );
-
-        m_groupNum++;
-
-        return l_group;
-    }
-
-    /**
-     * add agent to group (for random grouping)
-     * @param p_randomGroup random group to join
-     * @param p_votingAgent joining agent
-     */
-
-    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
-    {
-        p_randomGroup.addRandom( p_votingAgent );
-        this.wakeUpAgent();
-    }
-
-
-    /**
-     * add agent to group (for coordinated grouping)
-     * @param p_group group to join
-     * @param p_votingAgent joining agent
-     */
+//    /**
+//     * add agent to group (for random grouping)
+//     * @param p_randomGroup random group to join
+//     * @param p_votingAgent joining agent
+//     */
+//
+//    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
+//    {
+//        p_randomGroup.addRandom( p_votingAgent );
+//        this.wakeUpAgent();
+//    }
 
 
-    public void addAgentCoordinated( final CGroup p_group, final CVotingAgent p_votingAgent )
-    {
-        p_group.addCoordinated( p_votingAgent );
-        this.wakeUpAgent();
-    }
+//    /**
+//     * add agent to group (for coordinated grouping)
+//     * @param p_group group to join
+//     * @param p_votingAgent joining agent
+//     */
+//
+//
+//    public void addAgentCoordinated( final CGroup p_group, final CVotingAgent p_votingAgent )
+//    {
+//        p_group.addCoordinated( p_votingAgent );
+//        this.wakeUpAgent();
+//    }
 
-    /**
-     * detect group of chair agent
-     * @param p_chairAgent chair agent
-     * @return literal representation of group if chair is assigned to a group
-     */
-    public ILiteral detectGroup( final CChairAgent p_chairAgent )
-    {
-        for ( final CGroup l_group : m_groups )
-        {
-            if ( !( l_group.literal( p_chairAgent ).emptyValues() ) )
-                return l_group.literal( p_chairAgent );
-        }
-        return CLiteral.from( "" );
-    }
+//    /**
+//     * detect group of chair agent
+//     * @param p_chairAgent chair agent
+//     * @return literal representation of group if chair is assigned to a group
+//     */
+//    public ILiteral detectGroup( final CChairAgent p_chairAgent )
+//    {
+//        for ( final CGroup l_group : m_groups )
+//        {
+//            if ( !( l_group.literal( p_chairAgent ).emptyValues() ) )
+//                return l_group.literal( p_chairAgent );
+//        }
+//        return CLiteral.from( "" );
+//    }
 
     // open group for further elections, unless the capacity is reached
     // also, wake up the next agent
 
-    /**
-     * open group for further elections unless the capacity is reached. Also, wake up the next agent
-     * @param p_group group to be reopened
-     */
-    public void reopen( final CGroup p_group )
-    {
-        p_group.reopen();
-        this.wakeUpAgent();
-    }
+//    /**
+//     * open group for further elections unless the capacity is reached. Also, wake up the next agent
+//     * @param p_group group to be reopened
+//     */
+//    public void reopen( final CGroup p_group )
+//    {
+//        p_group.reopen();
+//        this.wakeUpAgent();
+//    }
 
     /**
      * reset environment for next simulation run

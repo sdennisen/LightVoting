@@ -35,7 +35,6 @@ import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
-import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.action.message.CSend;
@@ -47,16 +46,13 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -268,16 +264,16 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         System.out.println( this.name() + " perceived environment " );
     }
 
-    @IAgentActionFilter
-    @IAgentActionName( name = "join/group" )
-    private void joinGroup()
-    {
-        if ( "RANDOM".equals( m_grouping ) )
-            this.joinGroupRandom();
-
-        if ( "COORDINATED".equals( m_grouping ) )
-            this.joinGroupCoordinated();
-    }
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "join/group" )
+//    private void joinGroup()
+//    {
+//        if ( "RANDOM".equals( m_grouping ) )
+//            this.joinGroupRandom();
+//
+//        if ( "COORDINATED".equals( m_grouping ) )
+//            this.joinGroupCoordinated();
+//    }
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/vote" )
@@ -379,105 +375,105 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
 
-    private List<CGroup> determineActiveGroups( final String p_grouping )
-    {
-        final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
+//    private List<CGroup> determineActiveGroups( final String p_grouping )
+//    {
+//        final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
+//
+//        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
+//        {
+//            System.out.println( " ------------- Adding group " + i.values().findFirst().get().raw() );
+//            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
+//            System.out.println( "Size of group list: " + l_groupList.get().size() );
+//        } );
+//
+//        return l_groupList.get()
+//                   .stream()
+//                   .parallel()
+//                   .filter( i -> "RANDOM".equals( p_grouping ) ? i.open() : i.open() && i.result() != null )
+//                   .collect( Collectors.toList() );
+//
+//    }
 
-        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
-        {
-            System.out.println( " ------------- Adding group " + i.values().findFirst().get().raw() );
-            l_groupList.set( ( (ILiteral) i ).values().findFirst().get().raw() );
-            System.out.println( "Size of group list: " + l_groupList.get().size() );
-        } );
+//    private void openNewGroup()
+//    {
+//        final CGroup l_group;
+//
+//        if ( "RANDOM".equals( m_grouping ) )
+//            l_group = m_environment.openNewGroupRandom( this );
+//
+//        else
+//            l_group = m_environment.openNewGroupCoordinated( this );
+//
+//        this.beliefbase().add( l_group.literal( this ) );
+//        System.out.println( "opened new group " + l_group );
+//    }
 
-        return l_groupList.get()
-                   .stream()
-                   .parallel()
-                   .filter( i -> "RANDOM".equals( p_grouping ) ? i.open() : i.open() && i.result() != null )
-                   .collect( Collectors.toList() );
+//    private void joinGroupRandom()
+//    {
+//
+//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "RANDOM" );
+//
+//        if ( l_activeGroups.isEmpty() )
+//        {
+//            this.openNewGroup();
+//            return;
+//        }
+//
+//        final Random l_rand = new Random();
+//
+//        final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
+//        m_environment.addAgentRandom( l_randomGroup, this );
+//        this.beliefbase().add( l_randomGroup.literal( this ) );
+//
+//    }
 
-    }
+//    private void joinGroupCoordinated()
+//    {
+//        System.out.println( "join group according to coordinated grouping algorithm" );
+//
+//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
+//
+//        if ( l_activeGroups.isEmpty() )
+//        {
+//            this.openNewGroup();
+//            return;
+//        }
+//
+//        else
+//            this.determineGroupCoordinated( l_activeGroups );
+//    }
 
-    private void openNewGroup()
-    {
-        final CGroup l_group;
-
-        if ( "RANDOM".equals( m_grouping ) )
-            l_group = m_environment.openNewGroupRandom( this );
-
-        else
-            l_group = m_environment.openNewGroupCoordinated( this );
-
-        this.beliefbase().add( l_group.literal( this ) );
-        System.out.println( "opened new group " + l_group );
-    }
-
-    private void joinGroupRandom()
-    {
-
-        final List<CGroup> l_activeGroups = this.determineActiveGroups( "RANDOM" );
-
-        if ( l_activeGroups.isEmpty() )
-        {
-            this.openNewGroup();
-            return;
-        }
-
-        final Random l_rand = new Random();
-
-        final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
-        m_environment.addAgentRandom( l_randomGroup, this );
-        this.beliefbase().add( l_randomGroup.literal( this ) );
-
-    }
-
-    private void joinGroupCoordinated()
-    {
-        System.out.println( "join group according to coordinated grouping algorithm" );
-
-        final List<CGroup> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
-
-        if ( l_activeGroups.isEmpty() )
-        {
-            this.openNewGroup();
-            return;
-        }
-
-        else
-            this.determineGroupCoordinated( l_activeGroups );
-    }
-
-    private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
-    {
-        final CGroup l_group;
-        // choose group to join
-        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
-        final BitVector l_vote = this.getBitVote();
-        System.out.println( "Vote: " + l_vote );
-        for ( int i = 0; i < p_activeGroups.size(); i++ )
-        {
-            final BitVector l_com =  p_activeGroups.get( i ).result();
-            System.out.println( "Committee: " + l_com );
-
-            l_com.xor( l_vote );
-            final int l_HD = l_com.cardinality();
-            System.out.println( "Hamming distance: " + l_HD );
-            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
-        }
-        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
-        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
-        l_group = l_entry.getKey();
-
-        // if Hamming distance is above the threshold, do not join the chair but create a new group
-        if ( l_entry.getValue() > m_joinThreshold )
-        {
-            this.openNewGroup();
-            return;
-        }
-        m_environment.addAgentCoordinated( l_group, this );
-        this.beliefbase().add( l_group.literal( this ) );
-        System.out.println( this.name() + " joins group " + l_group );
-    }
+//    private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
+//    {
+//        final CGroup l_group;
+//        // choose group to join
+//        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
+//        final BitVector l_vote = this.getBitVote();
+//        System.out.println( "Vote: " + l_vote );
+//        for ( int i = 0; i < p_activeGroups.size(); i++ )
+//        {
+//            final BitVector l_com =  p_activeGroups.get( i ).result();
+//            System.out.println( "Committee: " + l_com );
+//
+//            l_com.xor( l_vote );
+//            final int l_HD = l_com.cardinality();
+//            System.out.println( "Hamming distance: " + l_HD );
+//            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
+//        }
+//        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
+//        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
+//        l_group = l_entry.getKey();
+//
+//        // if Hamming distance is above the threshold, do not join the chair but create a new group
+//        if ( l_entry.getValue() > m_joinThreshold )
+//        {
+//            this.openNewGroup();
+//            return;
+//        }
+//        m_environment.addAgentCoordinated( l_group, this );
+//        this.beliefbase().add( l_group.literal( this ) );
+//        System.out.println( this.name() + " joins group " + l_group );
+//    }
 
     /**
      * compute dissatisfaction of voter with given committee

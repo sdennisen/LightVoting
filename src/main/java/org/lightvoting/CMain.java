@@ -127,7 +127,7 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                createBroker( p_args[4], s_agNum, new CSend(), l_stream, s_environment,  l_name, s_joinThr, s_prefList );
+                createBroker( p_args[4], l_chairstream, s_agNum, new CSend(), l_stream, s_environment,  l_name, s_joinThr, s_prefList );
 
             //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
             //    l_agents = l_votingagentgenerator
@@ -222,17 +222,27 @@ public final class CMain
     //    EDataWriter.INSTANCE.storeMap( l_name, s_map );
     }
 
-    private static void createBroker( final String p_arg, final int p_agNum, final CSend p_send, final FileInputStream p_stream,
+    private static void createBroker( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
+                                      final FileInputStream p_stream,
                                       final CEnvironment p_environment,
                                       final String p_name,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList
     ) throws Exception
     {
-        final FileInputStream l_brokerStream = new FileInputStream( p_arg );
+        final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
         // TODO modify parameters
-        s_brokerGenerator = new CBrokerAgent.CBrokerAgentGenerator( p_send, l_brokerStream, p_agNum, p_stream, s_environment, s_altnum, p_name, s_joinThr, s_prefList );
+        s_brokerGenerator = new CBrokerAgent.CBrokerAgentGenerator( p_send,
+                                                                    l_bkStr,
+                                                                    p_agNum,
+                                                                    p_stream,
+                                                                    p_chrStream,
+                                                                    s_environment,
+                                                                    s_altnum,
+                                                                    p_name,
+                                                                    s_joinThr,
+                                                                    s_prefList );
 
         s_broker = s_brokerGenerator.generatesingle();
     }

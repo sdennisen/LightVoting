@@ -38,6 +38,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CVotingAgent.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.environment.CGroup;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,6 +59,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 {
     private HashSet<CVotingAgent> m_voters = new HashSet<>();
     private HashSet<CChairAgent> m_chairs = new HashSet<>();
+    private HashSet<CGroup> m_groups = new HashSet<>();
     private final String m_name;
     private final int m_agNum;
     private int m_count;
@@ -69,6 +71,15 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     private List<AtomicDoubleArray> m_prefList;
     private final String m_broker;
     private CVotingAgentGenerator m_votingagentgenerator;
+    private int m_groupNum;
+    // TODO read via yaml
+    private int m_capacity;
+    // TODO read via yaml
+    private long m_timeout;
+    private Object m_fileName;
+    private int m_chairNum;
+    private CChairAgent.CChairAgentGenerator m_chairagentgenerator;
+    private final InputStream m_chairstream;
 
     /**
      * ctor
@@ -76,6 +87,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
      * @param p_configuration agent configuration
      * @param p_agNum number of voters
      * @param p_stream agent stream
+     * @param p_chairstream chair stream
      * @param p_environment enviroment
      * @param p_name name
      * @param p_joinThr join threshold
@@ -86,7 +98,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                          @Nonnull final IAgentConfiguration p_configuration,
                          final int p_agNum,
                          final InputStream p_stream,
-                         final CEnvironment p_environment,
+                         final InputStream p_chairstream, final CEnvironment p_environment,
                          final String p_name,
                          final double p_joinThr,
                          final List<AtomicDoubleArray> p_prefList
@@ -96,13 +108,17 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         m_broker = p_broker;
         m_agNum = p_agNum;
         m_stream = p_stream;
+        m_chairstream = p_chairstream;
         m_environment = p_environment;
         m_name = p_name;
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
+        m_capacity = 3;
+        m_timeout = 10;
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSend(), m_stream, m_environment, m_altnum, m_name,
                                                                                   m_joinThr, m_prefList );
+        m_chairagentgenerator = new CChairAgent.CChairAgentGenerator(  m_chairstream, m_environment, m_name, m_altnum );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -152,8 +168,33 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     private void assignGroup( final CVotingAgent p_votingAgent ) throws Exception
     {
         System.out.println( "Assigning group to " + p_votingAgent.name() );
+        for ( final CGroup l_group : m_groups )
+        {
+            if ( l_group.open() )
+            {
+                l_group.add( p_votingAgent, this.cycle() );
+                System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" );
+                return;
+            }
+        }
+
+        final CChairAgent l_chairAgent = m_chairagentgenerator.generatesinglenew();
+
+        // if there was no available group, create a new group
+        m_groups.add( new CGroup( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout ) );
+        System.out.println( "Creating new group with agent " + p_votingAgent.name() );
     }
 
+    @IAgentActionFilter
+    @IAgentActionName( name = "update/groups" )
+    private void updateGroups() throws Exception
+    {
+        for ( final CGroup l_group : m_groups )
+        {
+            if ( l_group.open() )
+                l_group.updateCycle( this.cycle() );
+        }
+    }
 
     /**
      * Class CBrokerAgentGenerator
@@ -172,6 +213,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         private final String m_name;
         private final double m_joinThr;
         private final List<AtomicDoubleArray> m_prefList;
+        private final InputStream m_chairstream;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -179,17 +221,19 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
          * @param p_brokerStream broker stream
          * @param p_agNum number of voters
          * @param p_stream input stream
+         * @param p_chairStream chair stream
          * @param p_environment environment
          * @param p_altnum number of alternatives
          * @param p_name name
          * @param p_joinThr join threshold
          * @param p_prefList preference list
          * @throws Exception exception
-         * */
+         */
         public CBrokerAgentGenerator( final CSend p_send,
                                       final FileInputStream p_brokerStream,
                                       final int p_agNum,
-                                      @Nonnull final InputStream p_stream,
+                                      final InputStream p_stream,
+                                      final InputStream p_chairStream,
                                       final CEnvironment p_environment,
                                       final int p_altnum, final String p_name,
                                       final double p_joinThr,
@@ -224,6 +268,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             m_send = p_send;
             m_agNum = p_agNum;
             m_stream = p_stream;
+            m_chairstream = p_chairStream;
             m_environment = p_environment;
             m_name = p_name;
             m_joinThr = p_joinThr;
@@ -248,6 +293,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                     m_configuration,
                     m_agNum,
                     m_stream,
+                    m_chairstream,
                     m_environment,
                     m_name,
                     m_joinThr,

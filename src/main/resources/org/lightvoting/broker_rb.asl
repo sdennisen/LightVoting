@@ -13,6 +13,7 @@ generic/print("Test Broker" );
 <-
 !create/ags;
 !assign/group;
+!update/groups;
 !nextcycle.
 
 +!create/ags:
@@ -29,3 +30,6 @@ generic/print("Test Broker" );
 >>newag(Ag)
 <- assign/group(Ag);
    -newag(Ag).
+
++!update/groups
+<- update/groups().
