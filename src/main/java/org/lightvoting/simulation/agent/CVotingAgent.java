@@ -297,7 +297,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             )
         );
 
- //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+        //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
 
     }
