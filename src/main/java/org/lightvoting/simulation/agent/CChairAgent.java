@@ -402,6 +402,31 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     }
 
+    /**
+     * store dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/diss" )
+
+    public void storeDiss( final CVotingAgent p_votingAgent, final Double p_diss )
+    {
+        m_dissList.add( p_diss );
+
+        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent.name() );
+
+        //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+        //   m_map.put( l_path, l_dissVals );
+
+        // TODO write data to list instead
+        //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+        //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+
+    }
+
+
     //    /**
 //     * compute result of election
 //     */

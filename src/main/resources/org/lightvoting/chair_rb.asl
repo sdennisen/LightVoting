@@ -79,28 +79,28 @@ started(0).
     : >>(dissatisfaction(D, F), D < F-1)
     <-
         generic/print( "store diss" );
-      //  store/diss(Traveller, Diss);
+        store/diss(Traveller, Diss);
         NewD = D+1;
         -dissatisfaction(D, F);
         +dissatisfaction(NewD, F)
     : >>(dissatisfaction(D, F), D == F-1)
     <-
-       // store/diss(Traveller, Diss);
+        store/diss(Traveller, Diss);
         !done
     .
 
 // as soon as result is computed, chair sends it to the voters and waits for dissatisfaction values
 
-//+!wait/for/diss
-//    : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
-//    <-
-//        X = X+1;
-//        !wait/for/diss
-//    :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
-//    <-
-//        !done
-//        //!clean/up/diss
-//    .
++!wait/for/diss
+    : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
+    <-
+        X = X+1;
+        !wait/for/diss
+    :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
+    <-
+        !done
+        //!clean/up/diss
+    .
 
 //+!clean/up/diss
 //    <-
@@ -110,10 +110,10 @@ started(0).
 //        // clean/up/diss()
 //    .
 
-//+!done
-//    <-
-//        generic/print( "write h5" )
-//        // write/h5()
-//    .
++!done
+    <-
+        generic/print( "write h5" )
+        // write/h5()
+    .
 
 
