@@ -20,8 +20,8 @@ generic/print("Test Traveller" );
 
 +!submit/diss(Chair, Result)
     <-
-        generic/print("submit diss for result", Result)
-        // submit/diss(Chair)
+        generic/print("submit diss for result", Result);
+        submit/diss(Chair, Result)
     .
 
 +!leave/group()
