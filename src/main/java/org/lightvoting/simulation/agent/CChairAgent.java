@@ -388,6 +388,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 )
             )
         );
+
+        this.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "wait/for/diss"
+
+                )
+            )
+        );
         // m_dissStored = false;
 
     }
