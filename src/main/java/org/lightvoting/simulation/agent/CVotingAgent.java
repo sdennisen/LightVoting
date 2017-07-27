@@ -291,7 +291,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "vote/received",
-                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this ),
                     CRawTerm.from( this.getBitVote() )
                 )
             )
