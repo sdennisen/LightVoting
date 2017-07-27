@@ -75,10 +75,10 @@ started(0).
     .
 
 // store received diss value in Java datastructure
-+!diss/received(Traveller, Diss)
++!dissatisfaction/received(Traveller, Diss)
     : >>(dissatisfaction(D, F), D < F-1)
     <-
-        generic/print( "store diss" );
+        generic/print( "store diss", "fill", F);
         store/diss(Traveller, Diss);
         NewD = D+1;
         -dissatisfaction(D, F);
@@ -89,7 +89,7 @@ started(0).
         !done
     .
 
-// as soon as result is computed, chair sends it to the voters and waits for dissatisfaction values
+// as soon as result is computed, chair sends it to the voters and waits for diss values
 
 +!wait/for/diss
     : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
