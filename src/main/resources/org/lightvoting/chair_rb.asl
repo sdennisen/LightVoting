@@ -75,7 +75,7 @@ started(0).
     .
 
 // store received diss value in Java datastructure
-+!dissatisfaction/received(Traveller, Diss)
++!diss/received(Traveller, Diss)
     : >>(dissatisfaction(D, F), D < F-1)
     <-
         generic/print( "store diss", "fill", F);

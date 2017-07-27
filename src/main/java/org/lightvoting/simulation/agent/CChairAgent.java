@@ -410,11 +410,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final CVotingAgent p_votingAgent, final Double p_diss )
+    public void storeDiss( final String p_votingAgent, final Double p_diss )
     {
         m_dissList.add( p_diss );
 
-        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent.name() );
+        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent );
 
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 

@@ -311,7 +311,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "diss/received",
-                    CRawTerm.from( this ),
+                    CRawTerm.from( this.name() ),
                     CRawTerm.from( this.computeDissBV( p_result ) )
                 )
             )
