@@ -37,6 +37,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.environment.CGroup;
+import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -97,7 +98,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private String m_fileName;
     private int m_run;
     private String m_conf;
-    private boolean m_dissStored;
+    // private boolean m_dissStored;
 
     // counter for intermediate elections in coordinated grouping
     private int m_coorNum;
@@ -145,11 +146,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_configuration configuration
      * @param p_environment environment
      * @param p_altnum number of alternatives
+     * @param p_comsize committee size
      */
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final int p_altnum )
+    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final int p_altnum,
+                        final int p_comsize
+    )
     {
         super( p_configuration );
         m_name = p_name;
+        m_altnum = p_altnum;
+        m_comsize = p_comsize;
     }
 
 
@@ -196,7 +202,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
-        m_dissStored = false;
+        // m_dissStored = false;
         m_groupNum = 0;
 
         this.trigger( CTrigger.from(
@@ -340,7 +346,39 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        this.trigger( l_trigger );
     }
 
-//    /**
+    /**
+     * compute result of election
+     */
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "compute/result" )
+
+    public void computeResult()
+    {
+        final CGroup l_group = this.determineGroup();
+
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_bitVotes );
+
+        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+
+        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+
+        // m_dissStored = false;
+
+    }
+
+    //    /**
 //     * compute result of election
 //     */
 //
@@ -709,7 +747,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironment p_environment, final String p_name, final int p_altnum )
+        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironment p_environment, final String p_name, final int p_altnum, final int p_comsize )
         throws Exception
         {
             super(
@@ -740,6 +778,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             m_environment = p_environment;
             m_fileName = p_name;
             m_altnum = p_altnum;
+            m_comsize = p_comsize;
         }
 
         /**
@@ -773,7 +812,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize );
             return l_chairAgent;
         }
     }

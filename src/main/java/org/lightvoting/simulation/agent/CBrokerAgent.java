@@ -80,6 +80,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     private int m_chairNum;
     private CChairAgent.CChairAgentGenerator m_chairagentgenerator;
     private final InputStream m_chairstream;
+    private final int m_comsize;
 
     /**
      * ctor
@@ -93,17 +94,20 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
      * @param p_name name
      * @param p_joinThr join threshold
      * @param p_prefList preference list
+     * @param p_comsize committee size
      * @throws Exception exception
      */
     public CBrokerAgent( final String p_broker,
                          @Nonnull final IAgentConfiguration p_configuration,
                          final int p_agNum,
                          final InputStream p_stream,
-                         final InputStream p_chairstream, final CEnvironment p_environment,
+                         final InputStream p_chairstream,
+                         final CEnvironment p_environment,
                          final int p_altnum,
                          final String p_name,
                          final double p_joinThr,
-                         final List<AtomicDoubleArray> p_prefList
+                         final List<AtomicDoubleArray> p_prefList,
+                         final int p_comsize
     ) throws Exception
     {
         super( p_configuration );
@@ -118,10 +122,11 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         m_prefList = p_prefList;
         m_capacity = 3;
         m_timeout = 10;
+        m_comsize = p_comsize;
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSend(), m_stream, m_environment, m_altnum, m_name,
                                                                                   m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgent.CChairAgentGenerator(  m_chairstream, m_environment, m_name, m_altnum );
+        m_chairagentgenerator = new CChairAgent.CChairAgentGenerator(  m_chairstream, m_environment, m_name, m_altnum, m_comsize );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -229,6 +234,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         private final List<AtomicDoubleArray> m_prefList;
         private final InputStream m_chairstream;
         private int m_altnum;
+        private int m_comsize;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -242,6 +248,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
          * @param p_name name
          * @param p_joinThr join threshold
          * @param p_prefList preference list
+         * @param p_comsize committee size
          * @throws Exception exception
          */
         public CBrokerAgentGenerator( final CSend p_send,
@@ -250,9 +257,11 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                                       final InputStream p_stream,
                                       final InputStream p_chairStream,
                                       final CEnvironment p_environment,
-                                      final int p_altnum, final String p_name,
+                                      final int p_altnum,
+                                      final String p_name,
                                       final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_prefList
+                                      final List<AtomicDoubleArray> p_prefList,
+                                      final int p_comsize
         ) throws Exception
         {
             super(
@@ -289,6 +298,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             m_name = p_name;
             m_joinThr = p_joinThr;
             m_prefList = p_prefList;
+            m_comsize = p_comsize;
         }
 
         @Nullable
@@ -314,7 +324,8 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                     m_altnum,
                     m_name,
                     m_joinThr,
-                    m_prefList
+                    m_prefList,
+                    m_comsize
                 );
             }
             catch ( final Exception l_ex )

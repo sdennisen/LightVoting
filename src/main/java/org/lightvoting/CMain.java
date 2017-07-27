@@ -242,7 +242,9 @@ public final class CMain
                                                                     s_altnum,
                                                                     p_name,
                                                                     s_joinThr,
-                                                                    s_prefList );
+                                                                    s_prefList,
+                                                                    s_comsize
+        );
 
         s_broker = s_brokerGenerator.generatesingle();
     }

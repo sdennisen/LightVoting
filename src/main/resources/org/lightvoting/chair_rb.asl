@@ -1,25 +1,24 @@
-// group capacity, instead of 3 it can be any other value defined by config file
-capacity(3).
-// initial fill level
-fill(0).
+// initial fill level is 0, capacity is 3, can be any other value defined by config file
+fill(0, 3).
 // initial number of submitted diss vals
 diss(0).
 
-wait/time/vote(0).
+wait/time/vote(0, 10).
 // instead of 10 it can be any other (random) value
-max/time/vote(10).
+//max/time/vote(10).
 
-wait/time/diss(0).
-max/time/diss(10).
+wait/time/diss(0, 10).
+//max/time/diss(10).
+started(0).
 
 !start.
 
 // as soon as group is opened, wait for votes
 +!start
     <-
-        generic/print("Test Chair")
-        // !wait/for/vote;
-        // !nextcycle.
+        generic/print("Test Chair");
+        !wait/for/vote
+        // !nextcycle
     .
 
 //+!nextcycle
@@ -28,19 +27,35 @@ max/time/diss(10).
 
 // vote clean-up is started if group capacity or timeout is reached
 +!wait/for/vote
-    : >>wait/time/vote(X) && >>max/time/vote(Y) && X < Y && >>fill(F) && >>capacity(C) && F < C
+    : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
-        X = X+1;
+        NewX = X+1;
+        // generic/print( "don't start election:", "time" , X, "fill", F );
+        -wait/time/vote(X,Y);
+        +wait/time/vote(NewX,Y);
         !wait/for/vote
-    : >>wait/time/vote(X) && >>max/time/vote(Y) && X == Y || >>fill( F ) && >>capacity( C ) && F==C
+    : >>(wait/time/vote(X,Y), Y == X) || >>fill(F, C)
     <-
-        !clean/up/vote.
+       generic/print( "start election:","time" , X, "fill", F );
+        // !clean/up/vote
+        !start/voting
+    .
 
 // store received vote in Java datastructure
 +!vote/received(Traveller, Vote)
+     : >>(fill(F, C), F < C-1)
      <-
          generic/print("received vote");
-         store/vote(Traveller, Vote)
+         store/vote(Traveller, Vote);
+         NewF = F+1;
+         generic/print( "New fill", NewF );
+         -fill(F,C);
+         +fill(NewF, C)
+     : >>(fill(F, C), F == C-1)
+     <-
+         generic/print("received vote, start election, fill:", F+1 );
+         store/vote(Traveller, Vote);
+         !start/voting
      .
 
 +!clean/up/vote
@@ -63,11 +78,13 @@ max/time/diss(10).
 //	<- generic/print( "received vote" ).
 
 +!start/voting
+    : >>(started(S), S == 0)
     <-
+        -started(S);
         // compute result of election according to given voting rule
         // add belief result/computed when done
-        generic/print( "compute result" )
-        // compute/result()
+        generic/print( "compute result" );
+        compute/result()
     .
 
 // store received diss value in Java datastructure
