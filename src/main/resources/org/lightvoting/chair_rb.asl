@@ -21,11 +21,6 @@ started(0).
         // !nextcycle
     .
 
-//+!nextcycle
-//<- !store/vote;
-//   !nextcycle.
-
-// vote clean-up is started if group capacity or timeout is reached
 +!wait/for/vote
     : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
@@ -63,19 +58,8 @@ started(0).
 	    // broker needs to remove the voters who didn't vote
 	    // when you are done with clean-up, broker adds goal !start/voting in chair
 	    generic/print( "clean up votes" )
-	//    clean/up/vote()
+	    //    clean/up/vote()
 	.
-
-// ----------------------------------------
-
-//: >>fill(F) && >>capacity(C) && F < C && >>wait/time/vote(X) & >>max/time/vote(Y) && X < Y
-//<- generic/print( "received vote" );
-//store/vote(Traveller, Vote);
-//F = F+1.
-
-//+!store/vote:
-//	>>vote(Traveller,Vote)
-//	<- generic/print( "received vote" ).
 
 +!start/voting
     : >>(started(S), S == 0)

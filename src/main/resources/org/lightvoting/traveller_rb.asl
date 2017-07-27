@@ -18,11 +18,11 @@ generic/print("Test Traveller" );
   -voted(0);
   submit/vote(Chair).
 
-// TODO implement action submit/diss
-//+!submit/diss()
-//: >>result(Chair)
-//<-
-//submit/diss(Chair)
++!submit/diss(Chair, Result)
+    <-
+        generic/print("submit diss for result", Result)
+        // submit/diss(Chair)
+    .
 
 +!leave/group()
 : >>leave/group(Broker)

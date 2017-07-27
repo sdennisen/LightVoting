@@ -33,6 +33,7 @@ import org.lightjason.agentspeak.common.CCommon;
 import org.lightjason.agentspeak.configuration.IAgentConfiguration;
 import org.lightjason.agentspeak.generator.IBaseAgentGenerator;
 import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -88,6 +89,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private String m_grouping;
 
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+    private List<CVotingAgent> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgent> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     private int m_iteration;
@@ -109,6 +111,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_comsize;
     private int m_altnum;
     private int m_groupNum;
+
 
     // TODO merge ctors
 
@@ -328,6 +331,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
         m_bitVotes.add( p_vote );
+        m_voters.add( p_votingAgent );
 
         System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
 
@@ -355,8 +359,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     public void computeResult()
     {
-        final CGroup l_group = this.determineGroup();
-
         final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
         final List<String> l_alternatives = new LinkedList<>();
@@ -374,6 +376,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
+        m_voters.stream().forEach( i ->
+            i.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "submit/diss",
+                        CRawTerm.from( this ),
+                        CRawTerm.from( l_comResultBV )
+                    )
+                )
+            )
+        );
         // m_dissStored = false;
 
     }
