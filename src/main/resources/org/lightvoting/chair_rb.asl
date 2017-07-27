@@ -39,7 +39,8 @@ max/time/diss(10).
 // store received vote in Java datastructure
 +!vote/received(Traveller, Vote)
      <-
-         generic/print( "received vote" )
+         generic/print("received vote");
+         store/vote(Traveller, Vote)
      .
 
 +!clean/up/vote

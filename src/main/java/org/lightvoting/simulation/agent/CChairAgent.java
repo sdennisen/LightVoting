@@ -315,7 +315,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final String p_name, final BitVector p_vote )
+    public void storeVote( final CVotingAgent p_votingAgent, final BitVector p_vote )
     {
     //    final CGroup l_group = this.determineGroup();
 
@@ -323,7 +323,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         m_bitVotes.add( p_vote );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_name );
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
 
 //        if ( m_bitVotes.size() != l_group.size() )
 //            return;
