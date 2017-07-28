@@ -376,18 +376,34 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
+//        m_voters.stream().forEach( i ->
+//            i.trigger(
+//                CTrigger.from(
+//                    ITrigger.EType.ADDGOAL,
+//                    CLiteral.from(
+//                        "submit/diss",
+//                        CRawTerm.from( this ),
+//                        CRawTerm.from( l_comResultBV )
+//                    )
+//                )
+//            )
+//        );
+
         m_voters.stream().forEach( i ->
-            i.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
+            {
+                i.beliefbase().add(
                     CLiteral.from(
-                        "submit/diss",
+                        "result",
                         CRawTerm.from( this ),
                         CRawTerm.from( l_comResultBV )
                     )
-                )
-            )
+                );
+                System.out.println( "addbelief result to agent " + i.name() );
+                System.out.println( "result " + i.toString() );
+            }
         );
+
+
 
         this.trigger(
             CTrigger.from(
