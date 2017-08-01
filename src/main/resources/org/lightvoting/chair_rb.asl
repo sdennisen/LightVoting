@@ -24,13 +24,13 @@ started(0).
     : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
         NewX = X+1;
-        // generic/print( "don't start election:", "time" , X, "fill", F );
+        generic/print( "don't start election:", "time" , X, "fill", F );
         -wait/time/vote(X,Y);
         +wait/time/vote(NewX,Y);
         !wait/for/vote
-    : >>(wait/time/vote(X,Y), Y == X) || >>( fill(F, C), F == C )
+    : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
     <-
-        generic/print( "start election:","time" , X, "fill", F );
+        generic/print( "start election:","time" , X , "fill", F );
         // !clean/up/vote
         !start/voting(F)
     .

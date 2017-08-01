@@ -181,9 +181,9 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             if ( l_group.open() )
             {
                 l_group.add( p_votingAgent, this.cycle() );
-                System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" );
-                p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-                p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
+                System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
+                p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
+                p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
                 m_chairs.add( l_group.chair() );
                 return;
             }
@@ -195,10 +195,10 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 
         final CGroup l_group = new CGroup( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
         m_groups.add( l_group );
-        System.out.println( "Creating new group with agent " + p_votingAgent.name() );
+        System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
-        p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-        p_votingAgent.beliefbase().beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
 
@@ -211,7 +211,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         for ( final CGroup l_group : m_groups )
         {
             if ( l_group.open() )
-                l_group.updateCycle( this.cycle() );
+                l_group.checkBrokerCycle( this.cycle() );
         }
     }
 

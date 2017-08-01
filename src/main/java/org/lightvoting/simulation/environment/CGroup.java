@@ -100,7 +100,7 @@ public class CGroup
      * update cycle
      * @param p_cycle broker cycle
      */
-    public void updateCycle( final long p_cycle )
+    public void checkBrokerCycle( final long p_cycle )
     {
         if ( p_cycle >= m_timeout )
         {
@@ -112,6 +112,11 @@ public class CGroup
     public CChairAgent chair()
     {
         return m_chair;
+    }
+
+    public int id()
+    {
+        return m_ID;
     }
 
     //    /**
