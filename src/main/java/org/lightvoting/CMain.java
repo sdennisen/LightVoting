@@ -108,7 +108,8 @@ public final class CMain
 
         for ( int r = 0; r < s_runs; r++ )
         {
-            setPreferences();
+            s_prefList.clear();
+            setPreferences( r );
 
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
@@ -272,7 +273,7 @@ public final class CMain
         s_map.putAll( s_environment.map() );
     }
 
-    private static void setPreferences() throws FileNotFoundException
+    private static void setPreferences( final int p_run ) throws FileNotFoundException
     {
         if ( s_sigmoidPref )
         {
@@ -280,7 +281,7 @@ public final class CMain
         }
         if ( s_manualPref )
         {
-            readPreferences();
+            readPreferences( p_run );
         }
     }
 
@@ -368,25 +369,48 @@ public final class CMain
         return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
-    private static void readPreferences() throws FileNotFoundException
+    private static void readPreferences( final int p_run ) throws FileNotFoundException
     {
         final Yaml l_yaml = new Yaml();
 
-        final Map<String, ArrayList<ArrayList<Double>>> l_values = (Map<String, ArrayList<ArrayList<Double>>>) l_yaml
+        final Map<String, Map<String, Object>> l_values = (Map<String, Map<String, Object>>) l_yaml
             .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
 
-        System.out.println( l_values.get( "preferences" ) );
+        for ( final String l_key : l_values.keySet() )
+        {
+            final Map<String, Object> l_subValues = l_values.get( l_key );
+            System.out.println( l_subValues );
 
-        final ArrayList<ArrayList<Double>> l_list = l_values.get( "preferences" );
 
-        for ( int i = 0; i < l_list.size(); i++ )
+            for ( final String l_subkey : l_subValues.keySet() )
+            {
+                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
+                if ( l_subkey.contains( "number" ) )
+                {
+                    System.out.println( "run " +  l_subkey.split( "_" )[1] );
+
+                    if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
+                    {
+                        final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
+
+                        readPreferenceList( l_list );
+
+                    }
+                }
+            }
+        }
+    }
+
+    private static void readPreferenceList( final ArrayList<ArrayList<Double>> p_list )
+    {
+        for ( int i = 0; i < p_list.size(); i++ )
         {
             System
-                .out.println( l_list.get( i ) );
-            final double[] l_double =  new double[l_list.get( i ).size()];
+                .out.println( p_list.get( i ) );
+            final double[] l_double = new double[p_list.get( i ).size()];
 
-            for ( int j = 0; j < l_list.get( i ).size(); j++ )
-                l_double[j] = l_list.get( i ).get( j );
+            for ( int j = 0; j < p_list.get( i ).size(); j++ )
+                l_double[j] = p_list.get( i ).get( j );
 
             s_prefList.add( new AtomicDoubleArray( l_double ) );
         }
