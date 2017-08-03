@@ -8,4 +8,4 @@ variables:
   dissthr:  '1.4'
   capacity: '3'
   jointhr: '3'
-  preferences: 'manually'
+  preferences: 'sigmoid'

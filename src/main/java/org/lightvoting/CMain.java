@@ -33,8 +33,13 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -106,10 +111,31 @@ public final class CMain
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
 
+        // clear file
+
+        final File l_preferenceFile;
+
+        l_preferenceFile = new File( "src/main/resources/org/lightvoting/preferences.yaml" );
+        final PrintWriter l_writer = new PrintWriter( l_preferenceFile );
+        l_writer.print( "runs:" );
+        l_writer.close();
+
+       // create preferences for all runs before conducting the runs
         for ( int r = 0; r < s_runs; r++ )
         {
             s_prefList.clear();
             setPreferences( r );
+
+        }
+
+        for ( int r = 0; r < s_runs; r++ )
+        {
+            readPreferences( r );
+        }
+
+
+        for ( int r = 0; r < s_runs; r++ )
+        {
 
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
@@ -221,6 +247,8 @@ public final class CMain
 
     // TODO reinsert
     //    EDataWriter.INSTANCE.storeMap( l_name, s_map );
+
+
     }
 
     private static void createBroker( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
@@ -277,11 +305,43 @@ public final class CMain
     {
         if ( s_sigmoidPref )
         {
-            generatePreferencesSigmoid();
+            s_prefList = createPreferencesSigmoid();
+            writePreferences( p_run, s_prefList );
+
         }
         if ( s_manualPref )
         {
             readPreferences( p_run );
+        }
+    }
+
+    /**
+     * write preferences to yaml file
+     * @param p_run run number
+     * @param p_prefList preference list
+     */
+    private static void writePreferences( final int p_run, final List<AtomicDoubleArray> p_prefList )
+    {
+        final FileWriter l_file;
+        try
+        {
+            l_file = new FileWriter( "src/main/resources/org/lightvoting/preferences.yaml", true );
+
+            BufferedWriter writer = null;
+
+            writer = new BufferedWriter( l_file );
+            writer.write( "\n number_" + p_run + ":" );
+
+            for ( int i = 0; i < s_prefList.size(); i++ )
+            {
+                writer.write( "\n   - " );
+                writer.write( s_prefList.get( i ).toString() );
+            }
+            writer.close();
+        }
+        catch ( final IOException l_ex )
+        {
+            l_ex.printStackTrace();
         }
     }
 
@@ -345,12 +405,13 @@ public final class CMain
 
     }
 
-    private static void createPreferencesSigmoid()
+    private static List<AtomicDoubleArray> createPreferencesSigmoid()
     {
-        s_prefList.clear();
+        final List<AtomicDoubleArray> l_arrays = new ArrayList<>();
 
         for ( int i = 0; i < s_agNum; i++ )
-            s_prefList.add( generatePreferencesSigmoid() );
+            l_arrays.add( generatePreferencesSigmoid() );
+        return l_arrays;
 
     }
 
@@ -391,6 +452,7 @@ public final class CMain
 
                     if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
                     {
+                        System.out.println( l_subValues.get( l_subkey ) );
                         final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
 
                         readPreferenceList( l_list );
