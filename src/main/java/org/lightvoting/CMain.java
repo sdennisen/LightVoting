@@ -23,7 +23,6 @@
 
 package org.lightvoting;
 
-import cern.colt.Arrays;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
@@ -33,19 +32,14 @@ import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -70,11 +64,9 @@ public final class CMain
     private static List<Object> s_data = new ArrayList<>();
 
     private static HashMap<String, Object> s_map =  new HashMap<>();
-    private static boolean s_manualPref;
     private static List<AtomicDoubleArray> s_prefList = new ArrayList<>();
     private static int s_agNum;
     private static int s_comsize;
-    private static boolean s_sigmoidPref;
     private static CBrokerAgent s_broker;
     private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
 
@@ -97,10 +89,9 @@ public final class CMain
         //
         // parameter of the command-line arguments:
         // 1. ASL file
-        // 2. number of agents
-        // 3. number of iterations (if not set maximum)
+        // 2. number of iterations (if not set maximum)
 
-        s_agNum = Integer.parseInt( p_args[2] );
+    //    s_agNum = Integer.parseInt( p_args[2] );
 
         // creater BrokerAgent
 
@@ -115,23 +106,26 @@ public final class CMain
 
         final File l_preferenceFile;
 
-        l_preferenceFile = new File( "src/main/resources/org/lightvoting/preferences.yaml" );
-        final PrintWriter l_writer = new PrintWriter( l_preferenceFile );
-        l_writer.print( "runs:" );
-        l_writer.close();
+//        l_preferenceFile = new File( "src/main/resources/org/lightvoting/preferences.yaml" );
+//        final PrintWriter l_writer = new PrintWriter( l_preferenceFile );
+//        l_writer.print( "runs:" );
+//        l_writer.close();
 
        // create preferences for all runs before conducting the runs
-        for ( int r = 0; r < s_runs; r++ )
-        {
-            s_prefList.clear();
-            setPreferences( r );
-
-        }
+//        for ( int r = 0; r < s_runs; r++ )
+//        {
+//            s_prefList.clear();
+//            setPreferences( r );
+//
+//        }
 
         for ( int r = 0; r < s_runs; r++ )
         {
             readPreferences( r );
+            System.out.println( s_prefList );
         }
+
+
 
 
         for ( int r = 0; r < s_runs; r++ )
@@ -154,7 +148,7 @@ public final class CMain
 
                 s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                createBroker( p_args[4], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                createBroker( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 
             //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
             //    l_agents = l_votingagentgenerator
@@ -189,7 +183,7 @@ public final class CMain
                         0,
                         p_args.length < 4
                         ? Integer.MAX_VALUE
-                        : Integer.parseInt( p_args[3] )
+                        : Integer.parseInt( p_args[2] )
                     )
                     .forEach( j ->
                     {
@@ -301,50 +295,6 @@ public final class CMain
         s_map.putAll( s_environment.map() );
     }
 
-    private static void setPreferences( final int p_run ) throws FileNotFoundException
-    {
-        if ( s_sigmoidPref )
-        {
-            s_prefList = createPreferencesSigmoid();
-            writePreferences( p_run, s_prefList );
-
-        }
-        if ( s_manualPref )
-        {
-            readPreferences( p_run );
-        }
-    }
-
-    /**
-     * write preferences to yaml file
-     * @param p_run run number
-     * @param p_prefList preference list
-     */
-    private static void writePreferences( final int p_run, final List<AtomicDoubleArray> p_prefList )
-    {
-        final FileWriter l_file;
-        try
-        {
-            l_file = new FileWriter( "src/main/resources/org/lightvoting/preferences.yaml", true );
-
-            BufferedWriter writer = null;
-
-            writer = new BufferedWriter( l_file );
-            writer.write( "\n number_" + p_run + ":" );
-
-            for ( int i = 0; i < s_prefList.size(); i++ )
-            {
-                writer.write( "\n   - " );
-                writer.write( s_prefList.get( i ).toString() );
-            }
-            writer.close();
-        }
-        catch ( final IOException l_ex )
-        {
-            l_ex.printStackTrace();
-        }
-    }
-
     @SuppressWarnings( "unchecked" )
     private static void readYaml() throws FileNotFoundException
     {
@@ -368,6 +318,8 @@ public final class CMain
                 // parse input
                 if ( "runs".equals( l_subValueKey ) )
                     s_runs = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+                else if ( "agnum".equals( l_subValueKey ) )
+                    s_agNum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 else if ( "altnum".equals( l_subValueKey ) )
                     s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 else if ( "comsize".equals( l_subValueKey ) )
@@ -393,41 +345,9 @@ public final class CMain
                 else if ( "jointhr".equals( l_subValueKey  ) )
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
 
-                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
-                    //readPreferences();
-                    s_manualPref = true;
-                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
-                    //createPreferencesSigmoid();
-                    s_sigmoidPref = true;
-
             }
         }
 
-    }
-
-    private static List<AtomicDoubleArray> createPreferencesSigmoid()
-    {
-        final List<AtomicDoubleArray> l_arrays = new ArrayList<>();
-
-        for ( int i = 0; i < s_agNum; i++ )
-            l_arrays.add( generatePreferencesSigmoid() );
-        return l_arrays;
-
-    }
-
-    private static AtomicDoubleArray generatePreferencesSigmoid()
-    {
-        final Random l_random = new Random();
-        final double[] l_prefValues = new double[s_altnum];
-        for ( int i = 0; i < s_altnum; i++ )
-            l_prefValues[i] = sigmoidValue( l_random.nextDouble() - 0.5 );
-        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
-        return new AtomicDoubleArray( l_prefValues );
-    }
-
-    private static double sigmoidValue( double p_var )
-    {
-        return 1 / ( 1 + Math.pow( Math.E, -1 * p_var ) );
     }
 
     private static void readPreferences( final int p_run ) throws FileNotFoundException
@@ -448,11 +368,11 @@ public final class CMain
                 // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
                 if ( l_subkey.contains( "number" ) )
                 {
-                    System.out.println( "run " +  l_subkey.split( "_" )[1] );
+                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
 
                     if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
                     {
-                        System.out.println( l_subValues.get( l_subkey ) );
+                        System.out.println( "run " +  l_subkey.split( "_" )[1] );
                         final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
 
                         readPreferenceList( l_list );
