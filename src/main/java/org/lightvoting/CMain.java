@@ -28,8 +28,10 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.agent.CBrokerAgent;
+import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.statistics.EDataWriter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -97,7 +99,7 @@ public final class CMain
 
         readYaml();
 
-        final String l_name = new Date() + "_results.h5";
+        final String l_name = "target/" + new Date() + "_results.h5";
 
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
@@ -134,11 +136,12 @@ public final class CMain
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
-            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
-            s_map.put( l_pathConfNr, s_configStrs.size() );
-            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
-
-            s_map.put( l_pathConfStr, s_configStr );
+            // TODO reinsert?
+//            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
+//            s_map.put( l_pathConfNr, s_configStrs.size() );
+//            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
+//
+//            s_map.put( l_pathConfStr, s_configStr );
 
             try
             {
@@ -230,18 +233,26 @@ public final class CMain
 
                 // reset properties for next configuration
 
+                final int l_finalR = r;
+                s_broker.agentstream().forEach( k ->
+                {
+                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), l_finalR );
+                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(), l_finalR );
+                } );
                 s_environment.reset();
-
-            // TODO reinsert
-            //    storeResults( l_agents );
-
             }
          //   System.out.println( "Next simulation run " );
         }
 
-    // TODO reinsert
-    //    EDataWriter.INSTANCE.storeMap( l_name, s_map );
+        EDataWriter.INSTANCE.storeMap( l_name, s_map );
 
+    }
+
+    private static void append( final HashMap<String, Object> p_map, final HashMap<String, Object> p_agentmap, final int p_run )
+    {
+        for ( final String l_key : p_agentmap.keySet() )
+        // TODO consider configurations: for each run exactly one config
+            p_map.put( p_run + "/" + l_key, p_agentmap.get( l_key ) );
 
     }
 

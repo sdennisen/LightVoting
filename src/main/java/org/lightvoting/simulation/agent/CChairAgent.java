@@ -47,7 +47,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -107,7 +106,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     private List<String> m_paths = new ArrayList();
     private List<Object> m_data = new ArrayList();
-    private Map<String, Object> m_map = new HashMap<>();
+    private HashMap<String, Object> m_map = new HashMap<>();
     private int m_comsize;
     private int m_altnum;
     private int m_groupNum;
@@ -252,7 +251,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //            this.beliefbase().add( m_environment.detectGroup( this ) );
 //    }
 
-    public Map<String, Object> map()
+    public HashMap<String, Object> map()
     {
         return m_map;
     }
@@ -727,6 +726,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return l_maxIndex;
     }
 
+
  //   public int getGroupID()
 //    {
 //        return this.determineGroup().getID();
@@ -880,5 +880,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize );
             return l_chairAgent;
         }
+
     }
 }

@@ -97,6 +97,7 @@ public enum EDataWriter
 
             try
             {
+                System.out.println( "trying to open " + l_path[i] );
                 l_newGroup = l_group.asCommonFG().openGroup( l_path[i] );
             }
             catch ( final Exception l_ex )
@@ -130,10 +131,13 @@ public enum EDataWriter
         if ( p_data instanceof Integer )
             this.writeInteger( p_group, p_datasetName, (Integer) p_data );
 
+        if ( p_data instanceof Double )
+            this.writeDouble( p_group, p_datasetName, (Double) p_data );
+
+
         if ( p_data instanceof String )
             this.writeString( p_group, p_datasetName, (String) p_data );
     }
-
 
     private void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
     {
@@ -191,7 +195,20 @@ public enum EDataWriter
         l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
     }
 
+    private void writeDouble( final hdf5.Group p_group, final String p_datasetName, final Double p_data )
+    {
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+                                                new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+            )
+        );
 
+        final double[] l_buf = new double[1];
+
+        l_buf[0] = Math.round( p_data * 100.0 ) / 100.0;
+
+        l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+    }
 
     private void writeString( final hdf5.Group p_group, final String p_datasetName, final String p_data )
     {

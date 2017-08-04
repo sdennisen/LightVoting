@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,6 +122,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      */
     private double m_joinThreshold;
     private BitVector m_bitVote;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
     // TODO refactor ctors
 
@@ -306,6 +308,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     @IAgentActionName( name = "submit/diss" )
     private void submitDiss( final CChairAgent p_chairAgent, final BitVector p_result ) throws InterruptedException
     {
+        // store dissatisfaction with election result in map
+        m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
+        // store waiting time in map
+        m_map.put( this.name() + "/waiting time", this.cycle() );
+
         p_chairAgent.trigger(
             CTrigger.from(
                 ITrigger.EType.ADDGOAL,
@@ -317,6 +324,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             )
         );
     }
+
+
 
 //    @IAgentActionFilter
 //    @IAgentActionName( name = "submit/dissatisfaction" )
@@ -362,6 +371,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
         }
         return l_diss;
+    }
+
+    public HashMap<String, Object> map()
+    {
+        return m_map;
     }
 
     // private methods

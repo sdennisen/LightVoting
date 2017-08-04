@@ -55,6 +55,7 @@ public final class CMainPreferences
     private static int s_agNum;
     private static int s_altnum;
     private static String s_dis;
+    private static boolean s_uniformPref;
 
     /**
      * Hidden constructor
@@ -103,10 +104,37 @@ public final class CMainPreferences
             s_prefList = createPreferencesSigmoid();
             writePreferences( p_run, s_prefList );
         }
+        if ( s_uniformPref )
+        {
+            s_dis = "uniform";
+            s_prefList = createPreferencesUniform();
+            writePreferences( p_run, s_prefList );
+        }
+
         if ( s_manualPref )
         {
             s_dis = "manually";
         }
+    }
+
+    private static List<AtomicDoubleArray> createPreferencesUniform()
+    {
+        final List<AtomicDoubleArray> l_arrays = new ArrayList<>();
+
+        for ( int i = 0; i < s_agNum; i++ )
+            l_arrays.add( generatePreferencesUniform() );
+        return l_arrays;
+    }
+
+    private static AtomicDoubleArray generatePreferencesUniform()
+    {
+        final Random l_random = new Random();
+        final double[] l_prefValues = new double[s_altnum];
+        for ( int i = 0; i < s_altnum; i++ )
+            l_prefValues[i] = Math.round( l_random.nextDouble() * 100.0 ) / 100.0;
+
+        System.out.println( "Preference Values: " + Arrays.toString( l_prefValues ) );
+        return new AtomicDoubleArray( l_prefValues );
     }
 
     private static List<AtomicDoubleArray> createPreferencesSigmoid()
@@ -196,6 +224,8 @@ public final class CMainPreferences
                     s_manualPref = true;
                 else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
                     s_sigmoidPref = true;
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "uniform" ) ) )
+                    s_uniformPref = true;
 
             }
         }
