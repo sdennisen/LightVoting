@@ -71,6 +71,7 @@ public final class CMain
     private static int s_comsize;
     private static CBrokerAgent s_broker;
     private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
+    private static String s_dis;
 
     /**
      * Hidden constructor
@@ -132,6 +133,8 @@ public final class CMain
 
         for ( int r = 0; r < s_runs; r++ )
         {
+            // TODO store grouping, protocol and rule
+            s_map.put( String.valueOf( r ) + "/config", "ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis );
 
             final Set<CVotingAgent> l_agents;
             final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
@@ -355,6 +358,12 @@ public final class CMain
 
                 else if ( "jointhr".equals( l_subValueKey  ) )
                     s_joinThr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "manually" ) ) )
+                    s_dis = "manually";
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "sigmoid" ) ) )
+                    s_dis = "sigmoid";
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "uniform" ) ) )
+                    s_dis = "uniform";
 
             }
         }
