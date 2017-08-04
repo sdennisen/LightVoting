@@ -28,6 +28,7 @@ import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.hdf5;
 
 import java.util.HashMap;
@@ -134,6 +135,8 @@ public enum EDataWriter
         if ( p_data instanceof Double )
             this.writeDouble( p_group, p_datasetName, (Double) p_data );
 
+        if ( p_data instanceof Long )
+            this.writeLong( p_group, p_datasetName, (Long) p_data );
 
         if ( p_data instanceof String )
             this.writeString( p_group, p_datasetName, (String) p_data );
@@ -209,6 +212,22 @@ public enum EDataWriter
 
         l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
     }
+
+    private void writeLong( final hdf5.Group p_group, final String p_datasetName, final Long p_data )
+    {
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
+                                                new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+            )
+        );
+
+        final long[] l_buf = new long[1];
+
+        l_buf[0] = p_data;
+
+        l_dataSet.write( new LongPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ) );
+    }
+
 
     private void writeString( final hdf5.Group p_group, final String p_datasetName, final String p_data )
     {

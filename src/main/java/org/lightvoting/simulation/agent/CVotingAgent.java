@@ -311,6 +311,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
+        System.out.println( "cycle " + this.cycle() );
         m_map.put( this.name() + "/waiting time", this.cycle() );
 
         p_chairAgent.trigger(

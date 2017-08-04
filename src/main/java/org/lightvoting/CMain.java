@@ -99,7 +99,7 @@ public final class CMain
 
         readYaml();
 
-        final String l_name = "target/" + new Date() + "_results.h5";
+        final String l_name = "target/results/" + new Date() + "_results.h5";
 
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
