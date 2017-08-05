@@ -373,35 +373,88 @@ public final class CMain
     private static void readPreferences( final int p_run ) throws FileNotFoundException
     {
         final Yaml l_yaml = new Yaml();
+        final ArrayList<ArrayList<Double>> l_list = new ArrayList<>();
 
-        final Map<String, Map<String, Object>> l_values = (Map<String, Map<String, Object>>) l_yaml
+        final Map<String, Map<String, Map<String, Map<String, ArrayList<Double>>>>> l_values = (Map<String, Map<String, Map<String, Map<String, ArrayList<Double>>>>>) l_yaml
             .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
 
         for ( final String l_key : l_values.keySet() )
         {
-            final Map<String, Object> l_subValues = l_values.get( l_key );
-            System.out.println( l_subValues );
+            final Map<String, Map<String, Map<String, ArrayList<Double>>>> l_numbers = l_values.get( l_key );
+            System.out.println( l_numbers );
 
 
-            for ( final String l_subkey : l_subValues.keySet() )
+            for ( final String l_number : l_numbers.keySet() )
             {
                 // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
-                if ( l_subkey.contains( "number" ) )
+                if ( l_number.contains( "number" ) )
                 {
+                    final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( l_number );
+                    System.out.println( l_agents );
                     // System.out.println( "run " +  l_subkey.split( "_" )[1] );
 
-                    if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
+                    if ( Integer.parseInt( l_number.split( "_" )[1] ) == p_run )
                     {
-                        System.out.println( "run " +  l_subkey.split( "_" )[1] );
-                        final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
+                        System.out.println( "run " +  l_number.split( "_" )[1] );
 
-                        readPreferenceList( l_list );
+                        for ( final String l_agent : l_agents.keySet()  )
+                        {
+                            final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
+                            ArrayList<Double> l_preferenceVector = new ArrayList<>();
+                            System.out.println( l_preferences );
+
+                            for ( final String l_preference: l_preferences.keySet() )
+                            {
+                                if ( l_preference.contains( "poi_preferences" ) )
+                                {
+                                    l_preferenceVector = l_preferences.get( l_preference );
+                                    l_list.add( l_preferenceVector );
+                                }
+                            }
+
+                            readPreferenceList( l_list );
+                        }
 
                     }
                 }
+
             }
         }
     }
+
+    // old method
+//    private static void readPreferences( final int p_run ) throws FileNotFoundException
+//    {
+//        final Yaml l_yaml = new Yaml();
+//
+//        final Map<String, Map<String, Object>> l_values = (Map<String, Map<String, Object>>) l_yaml
+//            .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
+//
+//        for ( final String l_key : l_values.keySet() )
+//        {
+//            final Map<String, Object> l_subValues = l_values.get( l_key );
+//            System.out.println( l_subValues );
+//
+//
+//            for ( final String l_subkey : l_subValues.keySet() )
+//            {
+//                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
+//                if ( l_subkey.contains( "number" ) )
+//                {
+//                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
+//
+//                    if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
+//                    {
+//                        System.out.println( "run " +  l_subkey.split( "_" )[1] );
+//                        final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
+//
+//                        readPreferenceList( l_list );
+//
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private static void readPreferenceList( final ArrayList<ArrayList<Double>> p_list )
     {

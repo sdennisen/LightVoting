@@ -76,7 +76,7 @@ public final class CMainPreferences
 
         final File l_preferenceFile = new File( "src/main/resources/org/lightvoting/preferences.yaml" );
         final PrintWriter l_writer = new PrintWriter( l_preferenceFile );
-        l_writer.print( "runs:" );
+        l_writer.print( "run:" );
         l_writer.close();
 
         for ( int r = 0; r < s_runs; r++ )
@@ -182,8 +182,8 @@ public final class CMainPreferences
 
             for ( int i = 0; i < s_prefList.size(); i++ )
             {
-                writer.write( "\n   - " );
-                writer.write( s_prefList.get( i ).toString() );
+                writer.write( "\n   agent_" + i + ":" );
+                writer.write( "\n      poi_preferences: " + s_prefList.get( i ).toString() );
             }
             writer.close();
         }
@@ -192,6 +192,32 @@ public final class CMainPreferences
             l_ex.printStackTrace();
         }
     }
+
+    // backup
+//    private static void writePreferences( final int p_run, final List<AtomicDoubleArray> p_prefList )
+//    {
+//        final FileWriter l_file;
+//        try
+//        {
+//            l_file = new FileWriter( "src/main/resources/org/lightvoting/preferences.yaml", true );
+//
+//            BufferedWriter writer = null;
+//
+//            writer = new BufferedWriter( l_file );
+//            writer.write( "\n number_" + p_run + ":" );
+//
+//            for ( int i = 0; i < s_prefList.size(); i++ )
+//            {
+//                writer.write( "\n   - " );
+//                writer.write( s_prefList.get( i ).toString() );
+//            }
+//            writer.close();
+//        }
+//        catch ( final IOException l_ex )
+//        {
+//            l_ex.printStackTrace();
+//        }
+//    }
 
 
     private static void readYaml() throws FileNotFoundException
@@ -230,5 +256,6 @@ public final class CMainPreferences
             }
         }
     }
+
 
 }
