@@ -364,6 +364,8 @@ public final class CMain
                     s_dis = "sigmoid";
                 else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "uniform" ) ) )
                     s_dis = "uniform";
+                else if ( ( "preferences".equals( l_subValueKey  ) ) && ( l_subValues.get( l_subValueKey ).equals( "FScluster" ) ) )
+                    s_dis = "FSCluster";
 
             }
         }
@@ -383,44 +385,74 @@ public final class CMain
             final Map<String, Map<String, Map<String, ArrayList<Double>>>> l_numbers = l_values.get( l_key );
             System.out.println( l_numbers );
 
+            final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( "number_" + p_run );
 
-            for ( final String l_number : l_numbers.keySet() )
+
+            System.out.println( l_agents );
+            // System.out.println( "run " +  l_subkey.split( "_" )[1] );
+
+            System.out.println( "run " + p_run );
+
+            for ( final String l_agent : l_agents.keySet()  )
             {
-                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
-                if ( l_number.contains( "number" ) )
+                final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
+                ArrayList<Double> l_preferenceVector = new ArrayList<>();
+                System.out.println( l_preferences );
+
+                for ( final String l_preference: l_preferences.keySet() )
                 {
-                    final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( l_number );
-                    System.out.println( l_agents );
-                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
-
-                    if ( Integer.parseInt( l_number.split( "_" )[1] ) == p_run )
+                    if ( l_preference.contains( "poi_preferences" ) )
                     {
-                        System.out.println( "run " +  l_number.split( "_" )[1] );
-
-                        for ( final String l_agent : l_agents.keySet()  )
-                        {
-                            final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
-                            ArrayList<Double> l_preferenceVector = new ArrayList<>();
-                            System.out.println( l_preferences );
-
-                            for ( final String l_preference: l_preferences.keySet() )
-                            {
-                                if ( l_preference.contains( "poi_preferences" ) )
-                                {
-                                    l_preferenceVector = l_preferences.get( l_preference );
-                                    l_list.add( l_preferenceVector );
-                                }
-                            }
-
-                            readPreferenceList( l_list );
-                        }
-
+                        l_preferenceVector = l_preferences.get( l_preference );
+                        l_list.add( l_preferenceVector );
                     }
                 }
 
+                readPreferenceList( l_list );
             }
+
         }
+
     }
+
+
+//            for ( final String l_number : l_numbers.keySet() )
+//            {
+//                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
+//                if ( l_number.contains( "number" ) )
+//                {
+//                    final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( l_number );
+//                    System.out.println( l_agents );
+//                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
+//
+//                    if ( Integer.parseInt( l_number.split( "_" )[1] ) == p_run )
+//                    {
+//                        System.out.println( "run " +  l_number.split( "_" )[1] );
+//
+//                        for ( final String l_agent : l_agents.keySet()  )
+//                        {
+//                            final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
+//                            ArrayList<Double> l_preferenceVector = new ArrayList<>();
+//                            System.out.println( l_preferences );
+//
+//                            for ( final String l_preference: l_preferences.keySet() )
+//                            {
+//                                if ( l_preference.contains( "poi_preferences" ) )
+//                                {
+//                                    l_preferenceVector = l_preferences.get( l_preference );
+//                                    l_list.add( l_preferenceVector );
+//                                }
+//                            }
+//
+//                            readPreferenceList( l_list );
+//                        }
+//
+//                    }
+//                }
+//
+//            }
+//        }
+//    }
 
     // old method
 //    private static void readPreferences( final int p_run ) throws FileNotFoundException
