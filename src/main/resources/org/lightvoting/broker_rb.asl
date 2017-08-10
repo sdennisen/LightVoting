@@ -1,29 +1,31 @@
 // number of created voters
 
 created(0).
-agnum(25).
+agnum(10).
 
 !start.
 
 +!start <-
 generic/print("Test Broker" );
+!agent/created;
 !nextcycle.
 
 +!nextcycle
 <-
-!create/ags;
+// !create/ags;
 !assign/group;
 !update/groups;
 !nextcycle.
 
-+!create/ags:
++!agent/created:
 >>created(C) && >>agnum(N) && C < N
 <-  generic/print( "C:", C );
     NewAg = create/ag(C);
     +newag(NewAg);
     NewC = C+1;
     -created(C);
-    +created(NewC).
+    +created(NewC)
+<-  !agent/created.
 
 
 +!assign/group:

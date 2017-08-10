@@ -3,7 +3,7 @@
 variables:
   runs: '1'
   config: 'RANDOM_BASIC'
-  agnum: '25'
+  agnum: '10'
   altnum: '10'
   comsize: '5'
   capacity: '3'
