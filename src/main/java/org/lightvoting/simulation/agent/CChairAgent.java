@@ -111,6 +111,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_altnum;
     private int m_groupNum;
     private double m_voteTimeout;
+    private CGroup m_group;
 
 
     // TODO merge ctors
@@ -262,15 +263,20 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //            this.beliefbase().add( m_environment.detectGroup( this ) );
 //    }
 
+    public CGroup group()
+    {
+        return m_group;
+    }
+
     public HashMap<String, Object> map()
     {
         return m_map;
     }
 
-    public boolean timedout()
-    {
-        return this.cycle() >= m_voteTimeout;
-    }
+//    public boolean timedout()
+//    {
+//        return this.cycle() >= m_voteTimeout;
+//    }
 
     // private methods
 
@@ -318,6 +324,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
             i -> l_groupAtomic.set( i .values().findFirst().get().raw() ) );
         return l_groupAtomic.get();
     }
+
+
 
 
 //    /**
@@ -375,6 +383,18 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //
 //        this.trigger( l_trigger );
     }
+
+    /**
+     * close group
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "close/group" )
+
+    public void closeGroup( )
+    {
+        m_group.close();
+    }
+
 
     /**
      * compute result of election
@@ -753,8 +773,14 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return l_maxIndex;
     }
 
+    public void setGroup( final CGroup p_group )
+    {
+        m_group = p_group;
 
- //   public int getGroupID()
+    }
+
+
+    //   public int getGroupID()
 //    {
 //        return this.determineGroup().getID();
 //    }

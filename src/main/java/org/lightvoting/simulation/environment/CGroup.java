@@ -73,6 +73,7 @@ public class CGroup
         m_inProgress = false;
         m_ID = p_groupNum;
         m_chair = p_chair;
+        p_chair.setGroup( this );
         m_capacity = p_capacity;
         // group waits for new members at most 10 cycles
         m_timeout = p_cycle + p_timeout;
@@ -98,18 +99,18 @@ public class CGroup
         }
     }
 
-    /**
-     * update cycle
-     * @param p_cycle broker cycle
-     */
-    public void checkBrokerCycle( final long p_cycle )
-    {
-        if ( p_cycle >= m_timeout )
-        {
-            System.out.println( "Group " + m_ID + " with " + m_agentMap.size() + " agents" );
-            m_open = false;
-        }
-    }
+//    /**
+//     * update cycle
+//     * @param p_cycle broker cycle
+//     */
+//    public void checkBrokerCycle( final long p_cycle )
+//    {
+//        if ( p_cycle >= m_timeout )
+//        {
+//            System.out.println( "Group " + m_ID + " with " + m_agentMap.size() + " agents" );
+//            m_open = false;
+//        }
+//    }
 
     public CChairAgent chair()
     {
@@ -121,10 +122,13 @@ public class CGroup
         return m_ID;
     }
 
+    /**
+     * return agents
+     * @return agent stream
+     */
     public Stream<CVotingAgent> agents()
     {
         return m_agentMap.values().stream();
-
     }
 
     /**
@@ -135,6 +139,11 @@ public class CGroup
     {
         for ( int i = 0; i < p_toRemoveList.size(); i++ )
             m_agentMap.remove( p_toRemoveList.get( i ) );
+    }
+
+    public void close()
+    {
+        m_open = false;
     }
 
     //    /**

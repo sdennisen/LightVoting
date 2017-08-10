@@ -58,7 +58,7 @@ import java.util.stream.Stream;
 @IAgentAction
 public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 {
-    private HashSet<CVotingAgent> m_voters = new HashSet<>();
+    private List<CVotingAgent> m_voters = new ArrayList<>();
     private HashSet<CChairAgent> m_chairs = new HashSet<>();
     private HashSet<CGroup> m_groups = new HashSet<>();
     private final String m_name;
@@ -211,17 +211,34 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     {
         for ( final CGroup l_group : m_groups )
         {
-            if ( !l_group.open()
-                 ||
-                 l_group.chair().timedout() )
+            if ( !l_group.open() )
 
                 // remove voters from group who didn't vote/whose votes didn't reach the chair
             {
-                final List<String> l_toRemoveList = new ArrayList();
-                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-                       .forEach( j -> l_toRemoveList.add( j.name() ) );
 
-                l_group.removeAll( l_toRemoveList );
+//                final List<String> l_toRemoveList = new ArrayList();
+//                final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
+//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+//                       .forEach( j ->
+//                                 {
+//                                     l_toRemoveList.add( j.name() );
+//                                 //    l_toRemoveAgents.add( j );
+//                                 } );
+//                System.out.println( "XXXXXXX" + l_toRemoveList );
+
+//                l_group.removeAll( l_toRemoveList );
+//
+//                // "re-queue" removed voters
+//
+//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+//                    CLiteral.from(
+//                        "newag",
+//                        CRawTerm.from( i )
+//                    )
+//                                                 )
+//                );
+
+                // set belief in chair that group was "cleaned up"
 
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
