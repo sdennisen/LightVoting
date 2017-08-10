@@ -387,29 +387,38 @@ public final class CMain
 
             final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( "number_" + p_run );
 
-
             System.out.println( l_agents );
             // System.out.println( "run " +  l_subkey.split( "_" )[1] );
 
             System.out.println( "run " + p_run );
 
+            final HashMap<Integer, ArrayList<Double>> l_preferencesMap = new HashMap<>();
+
             for ( final String l_agent : l_agents.keySet()  )
             {
                 final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
                 ArrayList<Double> l_preferenceVector = new ArrayList<>();
-                System.out.println( l_preferences );
+                System.out.println( l_agent + ":" + l_preferences );
+                // determine agent id
+                final Integer l_id = Integer.parseInt( l_agent.split( "_" )[1] );
 
                 for ( final String l_preference: l_preferences.keySet() )
                 {
                     if ( l_preference.contains( "poi_preferences" ) )
                     {
                         l_preferenceVector = l_preferences.get( l_preference );
-                        l_list.add( l_preferenceVector );
+                        l_preferencesMap.put( l_id, l_preferenceVector );
+                        // l_list.add( l_preferenceVector );
                     }
                 }
-
-                readPreferenceList( l_list );
             }
+
+            // transfer HashMap to list
+
+            for ( int i = 0; i < s_agNum; i++ )
+                l_list.add( l_preferencesMap.get( i ) );
+
+            readPreferenceList( l_list );
 
         }
 

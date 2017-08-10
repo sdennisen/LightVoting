@@ -1,12 +1,12 @@
 # LightVoting Default Config
 
 variables:
-  runs: '100'
+  runs: '1'
   config: 'RANDOM_BASIC'
   agnum: '25'
   altnum: '10'
   comsize: '5'
-  capacity: '5'
+  capacity: '3'
   dissthr:  '1.4'
   jointhr: '3'
-  preferences: 'FScluster'
+  preferences: 'uniform'
