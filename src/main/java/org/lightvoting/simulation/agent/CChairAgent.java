@@ -110,6 +110,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_comsize;
     private int m_altnum;
     private int m_groupNum;
+    private double m_voteTimeout;
 
 
     // TODO merge ctors
@@ -256,6 +257,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_map;
     }
 
+    public boolean timedout()
+    {
+        return this.cycle() >= m_voteTimeout;
+    }
+
     // private methods
 
 //    private void checkConditions()
@@ -315,6 +321,17 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        final CGroup l_group = this.determineGroup();
 //        l_group.triggerAgents( this );
 //    }
+
+    /**
+     * set waiting time for votes
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "set/time" )
+
+    public void setTime( final Number p_time )
+    {
+        m_voteTimeout =  (long) p_time;
+    }
 
     /**
      * store vote

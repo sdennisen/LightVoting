@@ -3,6 +3,7 @@ fill(0, 3).
 // initial number of submitted diss vals
 
 wait/time/vote(0, 10).
+
 // instead of 10 it can be any other (random) value
 //max/time/vote(10).
 
@@ -14,7 +15,9 @@ started(0).
 
 // as soon as group is opened, wait for votes
 +!start
+    : >>wait/time/vote(0, T)
     <-
+       set/time(T);
         generic/print("Test Chair");
        !wait/for/vote
         // !nextcycle
@@ -63,10 +66,12 @@ started(0).
 	    //    clean/up/vote()
 	.
 
+// clean/group indicates whether broker has checked if all agents in group have voted.
 +!start/voting(F)
-    : >>(started(S), S == 0)
+    : >>(started(S), S == 0) && >>clean/group(C)
     <-
         -started(S);
+        -clean/group(C);
         +dissatisfaction( 0, F);
         // compute result of election according to given voting rule
         // add belief result/computed when done

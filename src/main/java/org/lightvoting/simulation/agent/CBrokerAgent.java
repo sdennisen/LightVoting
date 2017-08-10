@@ -210,8 +210,18 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     {
         for ( final CGroup l_group : m_groups )
         {
-            if ( l_group.open() )
-                l_group.checkBrokerCycle( this.cycle() );
+            if ( !l_group.open()
+                 ||
+                 l_group.chair().timedout() )
+
+                // TODO remove voters from group who didn't vote/whose votes didn't reach the chair
+
+                l_group.chair().beliefbase().add(
+                    CLiteral.from(
+                        "clean/group",
+                        CRawTerm.from( 1 )
+                    )
+                );
         }
     }
 
