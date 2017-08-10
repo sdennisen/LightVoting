@@ -8,12 +8,13 @@ agnum(10).
 +!start <-
 generic/print("Test Broker" );
 !agent/created;
+!assign/group;
 !nextcycle.
 
 +!nextcycle
 <-
 // !create/ags;
-!assign/group;
+// !assign/group;
 !update/groups;
 !nextcycle.
 
@@ -31,7 +32,9 @@ generic/print("Test Broker" );
 +!assign/group:
 >>newag(Ag)
 <-  -newag(Ag);
-    assign/group(Ag).
+    assign/group(Ag)
+: true
+<- !assign/group.
 
 
 +!update/groups
