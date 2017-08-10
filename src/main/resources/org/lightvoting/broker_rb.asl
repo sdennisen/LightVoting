@@ -9,7 +9,7 @@ agnum(10).
     <-
         generic/print("Test Broker" );
         !agent/created;
-        !assign/group;
+        !assigned/ag;
         !update/groups
     .
 
@@ -27,15 +27,15 @@ agnum(10).
         !agent/created
     .
 
-+!assign/group:
++!assigned/ag:
     >>newag(Ag)
     <-
         -newag(Ag);
         assign/group(Ag);
-        !assign/group
+        !assigned/ag
     : true
     <-
-        !assign/group
+        !assigned/ag
     .
 
 +!update/groups
