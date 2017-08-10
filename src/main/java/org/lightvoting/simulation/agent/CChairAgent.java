@@ -193,6 +193,16 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     }
 
     /**
+     * return voters
+     * @return voters
+     */
+
+    public List<CVotingAgent> voters()
+    {
+        return m_voters;
+    }
+
+    /**
      * reset chair agent for next simulation run
      */
 

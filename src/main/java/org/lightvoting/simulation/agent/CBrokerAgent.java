@@ -45,6 +45,7 @@ import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -214,7 +215,13 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                  ||
                  l_group.chair().timedout() )
 
-                // TODO remove voters from group who didn't vote/whose votes didn't reach the chair
+                // remove voters from group who didn't vote/whose votes didn't reach the chair
+            {
+                final List<String> l_toRemoveList = new ArrayList();
+                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+                       .forEach( j -> l_toRemoveList.add( j.name() ) );
+
+                l_group.removeAll( l_toRemoveList );
 
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
@@ -222,6 +229,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                         CRawTerm.from( 1 )
                     )
                 );
+            }
         }
     }
 

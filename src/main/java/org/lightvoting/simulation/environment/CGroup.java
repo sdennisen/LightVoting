@@ -28,6 +28,8 @@ import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Stream;
 
 
 /**
@@ -117,6 +119,22 @@ public class CGroup
     public int id()
     {
         return m_ID;
+    }
+
+    public Stream<CVotingAgent> agents()
+    {
+        return m_agentMap.values().stream();
+
+    }
+
+    /**
+     * remove all specified voters from group
+     * @param p_toRemoveList names of voters as list
+     */
+    public void removeAll( final List<String> p_toRemoveList )
+    {
+        for ( int i = 0; i < p_toRemoveList.size(); i++ )
+            m_agentMap.remove( p_toRemoveList.get( i ) );
     }
 
     //    /**
