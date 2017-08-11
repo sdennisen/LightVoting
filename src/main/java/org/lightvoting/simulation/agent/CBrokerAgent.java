@@ -46,6 +46,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -83,6 +84,9 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     private CChairAgent.CChairAgentGenerator m_chairagentgenerator;
     private final InputStream m_chairstream;
     private final int m_comsize;
+    // TODO lining limit for allowing agents to drive alone
+    // HashMap for storing how often an agent had to leave a group
+    private final HashMap<CVotingAgent, Long> m_lineHashMap = new HashMap<CVotingAgent, Long>();
 
     /**
      * ctor
@@ -236,6 +240,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                        {
                            l_toRemoveList.add( j.name() );
                            l_toRemoveAgents.add( j );
+                           m_lineHashMap.put( j, j.liningCounter() );
                        } );
                 System.out.println( "XXXXXXX" + l_toRemoveList );
 
@@ -246,7 +251,8 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                 l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
                     CLiteral.from(
                         "newag",
-                        CRawTerm.from( i )
+                        CRawTerm.from( i ),
+                        CRawTerm.from( m_lineHashMap.get( i ) )
                     )
                                                  )
                 );

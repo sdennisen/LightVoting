@@ -123,6 +123,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private double m_joinThreshold;
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
+    private AtomicLong m_liningCounter;
 
     // TODO refactor ctors
 
@@ -257,6 +258,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     public void setConf( final String p_grouping )
     {
         m_grouping = p_grouping;
+    }
+
+    public long liningCounter()
+    {
+        return m_liningCounter.incrementAndGet();
     }
 
     // agent actions

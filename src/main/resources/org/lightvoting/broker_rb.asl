@@ -18,7 +18,7 @@ agnum(10).
     <-
         generic/print( "C:", C );
         NewAg = create/ag(C);
-        +newag(NewAg);
+        +newag(NewAg, 0);
         NewC = C+1;
         -created(C);
         +created(NewC);
@@ -28,9 +28,9 @@ agnum(10).
     .
 
 +!assigned/ag:
-    >>newag(Ag)
-    <-
-        -newag(Ag);
+    >>newag(Ag, I)
+    <-  generic/print(Ag, "I: ", I);
+        -newag(Ag, I);
         assign/group(Ag);
         !assigned/ag
     : true
