@@ -230,26 +230,26 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
             {
 
                 final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-                final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
+                final CopyOnWriteArrayList<CVotingAgent> l_toRemoveAgents = new CopyOnWriteArrayList();
                 l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                        .forEach( j ->
                        {
                            l_toRemoveList.add( j.name() );
-                           //    l_toRemoveAgents.add( j );
+                           l_toRemoveAgents.add( j );
                        } );
                 System.out.println( "XXXXXXX" + l_toRemoveList );
 
                 l_group.removeAll( l_toRemoveList );
 
-//                // "re-queue" removed voters
-//
-//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-//                    CLiteral.from(
-//                        "newag",
-//                        CRawTerm.from( i )
-//                    )
-//                                                 )
-//                );
+                // "re-queue" removed voters
+
+                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+                    CLiteral.from(
+                        "newag",
+                        CRawTerm.from( i )
+                    )
+                                                 )
+                );
 
                 // set belief in chair that group was "cleaned up"
 
