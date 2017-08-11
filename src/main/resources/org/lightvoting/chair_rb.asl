@@ -53,6 +53,7 @@ started(0).
      : >>(fill(F, C), F == C-1)
      <-
          generic/print("received vote, start election");
+         set/group/submitted();
          store/vote(Traveller, Vote);
          NewF = F+1;
          generic/print( "New fill", NewF );

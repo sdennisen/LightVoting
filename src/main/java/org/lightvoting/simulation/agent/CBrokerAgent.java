@@ -213,20 +213,30 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     {
         for ( final CGroup l_group : m_groups )
         {
-            if ( !l_group.open() || l_group.chair().timedout() )
+            // if all voters have submitted their votes, there is nothing to check, group is clean
+
+            if ( l_group.areVotesSubmitted() )
+                l_group.chair().beliefbase().add(
+                    CLiteral.from(
+                        "clean/group",
+                        CRawTerm.from( 1 )
+                    )
+                );
+
+            else  if ( l_group.chair().timedout() )
 
                 // remove voters from group who didn't vote/whose votes didn't reach the chair
             {
 
-//                final List<String> l_toRemoveList = new ArrayList();
-//                final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
-//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-//                       .forEach( j ->
-//                                 {
-//                                     l_toRemoveList.add( j.name() );
-//                                 //    l_toRemoveAgents.add( j );
-//                                 } );
-//                System.out.println( "XXXXXXX" + l_toRemoveList );
+                final List<String> l_toRemoveList = new ArrayList();
+                final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
+                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+                       .forEach( j ->
+                                 {
+                                     l_toRemoveList.add( j.name() );
+                                 //    l_toRemoveAgents.add( j );
+                                 } );
+                System.out.println( "XXXXXXX" + l_toRemoveList );
 
 //                l_group.removeAll( l_toRemoveList );
 //

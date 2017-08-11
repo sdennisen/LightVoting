@@ -52,6 +52,7 @@ public class CGroup
     private int m_ID;
     private int m_currentAg;
     private long m_timeout;
+    private boolean m_votesSubmitted;
 
     /**
      * constructor
@@ -141,7 +142,17 @@ public class CGroup
             m_agentMap.remove( p_toRemoveList.get( i ) );
     }
 
-//    public void close()
+    public void setSubmitted()
+    {
+        m_votesSubmitted = true;
+    }
+
+    public boolean areVotesSubmitted()
+    {
+        return m_votesSubmitted;
+    }
+
+    //    public void close()
 //    {
 //        m_open = false;
 //    }

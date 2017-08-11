@@ -398,8 +398,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
 
     /**
-     * compute result of election
+     * set group to votes submitted
      */
+    @IAgentActionFilter
+    @IAgentActionName( name = "set/group/submitted" )
+    public void setGroupSubmitted( )
+    {
+        m_group.setSubmitted();
+
+    }
+
+        /**
+         * compute result of election
+         */
 
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
