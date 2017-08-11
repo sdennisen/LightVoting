@@ -34,7 +34,7 @@ started(0).
     : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
     <-
         generic/print( "start election:","time" , X , "fill", F );
-        close/group();
+        // close/group();
         // !clean/up/vote
         !start/voting(F)
     .
@@ -56,7 +56,7 @@ started(0).
          store/vote(Traveller, Vote);
          NewF = F+1;
          generic/print( "New fill", NewF );
-         close/group();
+         // close/group();
          !start/voting(NewF)
      .
 

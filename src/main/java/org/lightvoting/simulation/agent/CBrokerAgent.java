@@ -179,7 +179,9 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
         System.out.println( "Assigning group to " + p_votingAgent.name() );
         for ( final CGroup l_group : m_groups )
         {
-            if ( l_group.open() )
+            System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
+            // only add agents to group if group is open and chair did not reach its timeout
+            if ( l_group.open() && !l_group.chair().timedout() )
             {
                 l_group.add( p_votingAgent, this.cycle() );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
@@ -211,7 +213,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     {
         for ( final CGroup l_group : m_groups )
         {
-            if ( !l_group.open() )
+            if ( !l_group.open() || l_group.chair().timedout() )
 
                 // remove voters from group who didn't vote/whose votes didn't reach the chair
             {

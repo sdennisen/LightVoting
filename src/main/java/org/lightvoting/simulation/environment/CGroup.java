@@ -141,10 +141,10 @@ public class CGroup
             m_agentMap.remove( p_toRemoveList.get( i ) );
     }
 
-    public void close()
-    {
-        m_open = false;
-    }
+//    public void close()
+//    {
+//        m_open = false;
+//    }
 
     //    /**
 //     * returns literal representation for voting agent

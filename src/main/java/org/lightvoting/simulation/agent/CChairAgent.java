@@ -273,10 +273,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_map;
     }
 
-//    public boolean timedout()
-//    {
-//        return this.cycle() >= m_voteTimeout;
-//    }
+    public boolean timedout()
+    {
+        return this.cycle() >= m_voteTimeout;
+    }
 
     // private methods
 
@@ -384,16 +384,17 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        this.trigger( l_trigger );
     }
 
-    /**
-     * close group
-     */
-    @IAgentActionFilter
-    @IAgentActionName( name = "close/group" )
-
-    public void closeGroup( )
-    {
-        m_group.close();
-    }
+//    /**
+//     * close group
+//     */
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "close/group" )
+//
+//    public void closeGroup( )
+//    {
+//        System.out.println("close group");
+//        m_group.close();
+//    }
 
 
     /**
@@ -772,6 +773,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         }
         return l_maxIndex;
     }
+
+    /**
+     * set group of chair
+     * @param p_group group of chair
+     */
 
     public void setGroup( final CGroup p_group )
     {
