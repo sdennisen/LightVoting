@@ -232,14 +232,14 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                 final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
                 l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                        .forEach( j ->
-                                 {
-                                     l_toRemoveList.add( j.name() );
-                                 //    l_toRemoveAgents.add( j );
-                                 } );
+                       {
+                           l_toRemoveList.add( j.name() );
+                           //    l_toRemoveAgents.add( j );
+                       });
                 System.out.println( "XXXXXXX" + l_toRemoveList );
 
-//                l_group.removeAll( l_toRemoveList );
-//
+                l_group.removeAll( l_toRemoveList );
+
 //                // "re-queue" removed voters
 //
 //                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(

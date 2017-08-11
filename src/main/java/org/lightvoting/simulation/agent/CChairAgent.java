@@ -110,7 +110,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_comsize;
     private int m_altnum;
     private int m_groupNum;
-    private double m_voteTimeout;
+    private final double m_voteTimeout;
     private CGroup m_group;
 
 
@@ -142,6 +142,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_dissThreshold = p_dissthr;
         m_comsize = p_comsize;
         m_altnum = p_altnum;
+        // TODO via parameters
+        m_voteTimeout = 10;
+
     }
 
     /**
@@ -160,6 +163,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_name = p_name;
         m_altnum = p_altnum;
         m_comsize = p_comsize;
+        // TODO via parameters
+        m_voteTimeout = 10;
     }
 
 
@@ -273,14 +278,19 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         return m_map;
     }
 
+    /**
+     * return whether chair reached timeout
+     * @return boolean value
+     */
     public boolean timedout()
     {
+        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
         return this.cycle() >= m_voteTimeout;
     }
 
     // private methods
 
-//    private void checkConditions()
+//    private void checkConditions()0 Timeout: 0.0
 //    {
 //      //  System.out.println( this.name() + " checking conditions " );
 //        final CGroup l_group = this.determineGroup();
@@ -339,17 +349,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        final CGroup l_group = this.determineGroup();
 //        l_group.triggerAgents( this );
 //    }
-
-    /**
-     * set waiting time for votes
-     */
-    @IAgentActionFilter
-    @IAgentActionName( name = "set/time" )
-
-    public void setTime( final Number p_time )
-    {
-        m_voteTimeout =  (long) p_time;
-    }
 
     /**
      * store vote

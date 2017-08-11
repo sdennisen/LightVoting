@@ -17,8 +17,7 @@ started(0).
 +!start
     : >>wait/time/vote(0, T)
     <-
-       set/time(T);
-        generic/print("Test Chair");
+       generic/print("Test Chair, Timeout ", T);
        !wait/for/vote
         // !nextcycle
     .
