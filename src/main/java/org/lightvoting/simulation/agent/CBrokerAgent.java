@@ -48,6 +48,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -228,14 +229,14 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                 // remove voters from group who didn't vote/whose votes didn't reach the chair
             {
 
-                final List<String> l_toRemoveList = new ArrayList();
+                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
                 final List<CVotingAgent> l_toRemoveAgents = new ArrayList();
                 l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                        .forEach( j ->
                        {
                            l_toRemoveList.add( j.name() );
                            //    l_toRemoveAgents.add( j );
-                       });
+                       } );
                 System.out.println( "XXXXXXX" + l_toRemoveList );
 
                 l_group.removeAll( l_toRemoveList );
