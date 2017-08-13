@@ -10,7 +10,7 @@ agnum(10).
         generic/print("Test Broker" );
         !agent/created;
         !assigned/ag;
-        !update/groups
+        !updated/groups
     .
 
 +!agent/created:
@@ -38,8 +38,13 @@ agnum(10).
         !assigned/ag
     .
 
-+!update/groups
++!updated/groups
     <-
         update/groups();
-        !update/groups
+        !updated/groups
+    .
+
++!done
+    <-
+        generic/print("we are done with this run")
     .
