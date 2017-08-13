@@ -52,14 +52,17 @@ state(0, undefined).
     .
 
 // TODO refine the following
+// +state(0, undefined)
+// -my/group(Group)
+// !start
 
-+!leave/group()
++!left/group()
     : >>leave/group(Broker)
     <-
         +group(0)
     .
 
-+!stay()
++!done()
     : >>stay(Broker)
     <-
         generic/print("I'm staying in the group")
