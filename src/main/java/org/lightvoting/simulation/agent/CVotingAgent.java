@@ -298,7 +298,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "vote/received",
+                    "stored/vote",
                     CRawTerm.from( this ),
                     CRawTerm.from( this.getBitVote() )
                 )
@@ -324,7 +324,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
             CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "diss/received",
+                    "stored/diss",
                     CRawTerm.from( this.name() ),
                     CRawTerm.from( this.computeDissBV( p_result ) )
                 )

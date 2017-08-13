@@ -19,7 +19,6 @@ started(0).
     <-
        generic/print("Test Chair, Timeout ", T);
        !timedout/votes
-        // !nextcycle
     .
 
 +!timedout/votes
@@ -33,8 +32,6 @@ started(0).
     : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
     <-
         generic/print( "start election:","time" , X , "fill", F );
-        // close/group();
-        // !clean/up/vote
         !started/voting(F)
     .
 
@@ -56,17 +53,8 @@ started(0).
          store/vote(Traveller, Vote);
          NewF = F+1;
          generic/print( "New fill", NewF );
-         // close/group();
          !started/voting(NewF)
      .
-
-+!clean/up/vote
-    <-
-	    // broker needs to remove the voters who didn't vote
-	    // when you are done with clean-up, broker adds goal !start/voting in chair
-	    generic/print( "clean up votes" )
-	    //    clean/up/vote()
-	.
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
 +!started/voting(F)
@@ -106,20 +94,11 @@ started(0).
     :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
     <-
         !done
-        //!clean/up/diss
     .
-
-//+!clean/up/diss
-//    <-
-//        // broker needs to remove the voters who didn't submit their diss
-//        // when you are done with clean-up, broker adds goal !done in chair
-//        generic/print( "clean up votes" )
-//        // clean/up/diss()
-//    .
 
 +!done
     <-
-        generic/print( "write h5" )
+        generic/print( "I'm done" )
         // write/h5()
     .
 

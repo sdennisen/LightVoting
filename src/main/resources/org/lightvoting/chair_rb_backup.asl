@@ -18,28 +18,28 @@ started(0).
     : >>wait/time/vote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
-       !timedout/votes
+       !wait/for/vote
         // !nextcycle
     .
 
-+!timedout/votes
++!wait/for/vote
     : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
         NewX = X+1;
         generic/print( "don't start election:", "time" , X, "fill", F );
         -wait/time/vote(X,Y);
         +wait/time/vote(NewX,Y);
-        !timedout/votes
+        !wait/for/vote
     : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
     <-
         generic/print( "start election:","time" , X , "fill", F );
         // close/group();
         // !clean/up/vote
-        !started/voting(F)
+        !start/voting(F)
     .
 
 // store received vote in Java datastructure
-+!stored/vote(Traveller, Vote)
++!vote/received(Traveller, Vote)
      : >>(fill(F, C), F < C-1)
      <-
          generic/print("received vote");
@@ -57,7 +57,7 @@ started(0).
          NewF = F+1;
          generic/print( "New fill", NewF );
          // close/group();
-         !started/voting(NewF)
+         !start/voting(NewF)
      .
 
 +!clean/up/vote
@@ -69,7 +69,7 @@ started(0).
 	.
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
-+!started/voting(F)
++!start/voting(F)
     : >>(started(S), S == 0) && >>clean/group(C)
     <-
         -started(S);
@@ -82,7 +82,7 @@ started(0).
     .
 
 // store received diss value in Java datastructure
-+!stored/diss(Traveller, Diss)
++!diss/received(Traveller, Diss)
     : >>(dissatisfaction(D, F), D < F-1)
     <-
         generic/print( "store diss", "fill", F);
@@ -98,11 +98,11 @@ started(0).
 
 // as soon as result is computed, chair sends it to the voters and waits for diss values
 
-+!timedout/dissvals
++!wait/for/diss
     : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
     <-
         X = X+1;
-        !timedout/dissvals
+        !wait/for/diss
     :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
     <-
         !done
