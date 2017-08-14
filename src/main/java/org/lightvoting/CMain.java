@@ -54,10 +54,10 @@ public final class CMain
     private static int s_altnum;
 
     private static int s_runs;
-    private static List<String> s_configStrs = new ArrayList<>();
+    private static List<String> s_settingStrs = new ArrayList<>();
     private static List<String> s_groupings = new ArrayList<>();
     private static List<String> s_protocols = new ArrayList<>();
-    private static String s_configStr = "";
+    private static String s_settingStr = "";
     private static double s_dissthr;
     private static int s_capacity;
     private static double s_joinThr;
@@ -122,66 +122,69 @@ public final class CMain
 //
 //        }
 
-        for ( int r = 0; r < s_runs; r++ )
+        for ( int c = 0; c < s_settingStrs.size(); c++ )
         {
-            readPreferences( r );
-            System.out.println( s_prefList );
-        }
+            System.out.println( "setting: " + s_settingStrs.get( c ) );
 
-
-
-
-        for ( int r = 0; r < s_runs; r++ )
-        {
-            // TODO store grouping, protocol and rule
-            s_map.put( String.valueOf( r ) + "/config", "ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis );
-
-            final Set<CVotingAgent> l_agents;
-            final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
-
-            // TODO reinsert?
-//            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
-//            s_map.put( l_pathConfNr, s_configStrs.size() );
-//            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
-//
-//            s_map.put( l_pathConfStr, s_configStr );
-
-            try
+            for ( int r = 0; r < s_runs; r++ )
             {
-                final FileInputStream l_stream = new FileInputStream( p_args[0] );
-                final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
-
-
-                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
-
-                createBroker( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
-
-            //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
-            //    l_agents = l_votingagentgenerator
-            //        .generatemultiplenew(
-            //            Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
-            //        .collect( Collectors.toSet() );
-
-                l_stream.close();
-                l_chairstream.close();
-            }
-            catch ( final Exception l_exception )
-            {
-                l_exception.printStackTrace();
-                throw new RuntimeException();
+                readPreferences( r );
+                System.out.println( s_prefList );
             }
 
-            for ( int c = 0; c < s_configStrs.size(); c++ )
+            for ( int r = 0; r < s_runs; r++ )
             {
+                // TODO store grouping, protocol and rule
+                s_map.put( s_settingStrs.get( c ) + "/" + String.valueOf( r ) + "/config", "ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis );
 
-                s_environment.setConf( r, s_configStrs.get( c ) );
+                final Set<CVotingAgent> l_agents;
+                final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
 
-                final int l_finalC = c;
-//                l_agents.parallelStream().forEach( i ->
-//                {
-//                    i.setConf( s_groupings.get( l_finalC ) );
-//                    i.getChair().setConf( s_configStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
-//                } );
+                // TODO reinsert?
+                //            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
+                //            s_map.put( l_pathConfNr, s_settingStrs.size() );
+                //            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
+                //
+                //            s_map.put( l_pathConfStr, s_settingStr );
+
+                try
+                {
+                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
+                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+
+
+                    s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
+
+                    createBroker( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+
+                    //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                    //    l_agents = l_votingagentgenerator
+                    //        .generatemultiplenew(
+                    //            Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
+                    //        .collect( Collectors.toSet() );
+
+                    l_stream.close();
+                    l_chairstream.close();
+                }
+                catch ( final Exception l_exception )
+                {
+                    l_exception.printStackTrace();
+                    throw new RuntimeException();
+                }
+
+                //            for ( int c = 0; c < s_settingStrs.size(); c++ )
+                //            {
+                //
+                //                s_environment.setConf( r, s_settingStrs.get( c ) );
+                //
+                //                final int l_finalC = c;
+
+
+                //                l_agents.parallelStream().forEach( i ->
+                //                {
+                //                    i.setConf( s_groupings.get( l_finalC ) );
+                //                    i.getChair().setConf( s_settingStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
+                //                } );
 
                 IntStream
                     // define cycle range, i.e. number of cycles to run sequentially
@@ -192,70 +195,72 @@ public final class CMain
                         : Integer.parseInt( p_args[2] )
                     )
                     .forEach( j ->
-                    {
-                        System.out.println( "Cycle " + j );
+                              {
+                                  System.out.println( "Cycle " + j );
 
-                        try
-                        {
-                            s_broker.call();
-                            s_broker.agentstream().forEach( k ->
-                            {
-                                try
-                                {
-                                    k.call();
-                                }
-                                catch ( final Exception l_ex )
-                                {
-                                    l_ex.printStackTrace();
-                                }
-                            } );
+                                  try
+                                  {
+                                      s_broker.call();
+                                      s_broker.agentstream().forEach( k ->
+                                                                      {
+                                                                          try
+                                                                          {
+                                                                              k.call();
+                                                                          }
+                                                                          catch ( final Exception l_ex )
+                                                                          {
+                                                                              l_ex.printStackTrace();
+                                                                          }
+                                                                      } );
 
-                        }
-                        catch ( final Exception l_ex )
-                        {
-                            l_ex.printStackTrace();
-                        }
+                                  }
+                                  catch ( final Exception l_ex )
+                                  {
+                                      l_ex.printStackTrace();
+                                  }
 
-//                        l_agents.parallelStream().forEach( i ->
-//                        {
-//                            try
-//                            {
-//                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-//                                // call each agent, i.e. trigger a new agent cycle
-//                                i.call();
-//                                //   i.getChair().sleep( 0 );
-//                                i.getChair().call();
-//                            }
-//                            catch ( final Exception l_exception )
-//                            {
-//                                l_exception.printStackTrace();
-//                                throw new RuntimeException();
-//                            }
-//                        } );
-                    } );
+                                  //                        l_agents.parallelStream().forEach( i ->
+                                  //                        {
+                                  //                            try
+                                  //                            {
+                                  //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                                  //                                // call each agent, i.e. trigger a new agent cycle
+                                  //                                i.call();
+                                  //                                //   i.getChair().sleep( 0 );
+                                  //                                i.getChair().call();
+                                  //                            }
+                                  //                            catch ( final Exception l_exception )
+                                  //                            {
+                                  //                                l_exception.printStackTrace();
+                                  //                                throw new RuntimeException();
+                                  //                            }
+                                  //                        } );
+                              } );
 
                 // reset properties for next configuration
 
                 final int l_finalR = r;
+                final int finalC = c;
                 s_broker.agentstream().forEach( k ->
-                {
-                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), l_finalR );
-                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(), l_finalR );
-                } );
+                                                {
+                                                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( finalC ), l_finalR );
+                                                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( finalC ), l_finalR );
+                                                } );
+                // TODO necessary?
                 s_environment.reset();
             }
-         //   System.out.println( "Next simulation run " );
+            //   System.out.println( "Next simulation run " );
         }
 
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
 
     }
 
-    private static void append( final HashMap<String, Object> p_map, final HashMap<String, Object> p_agentmap, final int p_run )
+    private static void append( final HashMap<String, Object> p_map, final HashMap<String, Object> p_agentmap, final String p_setting, final int p_run )
     {
         for ( final String l_key : p_agentmap.keySet() )
-        // TODO consider configurations: for each run exactly one config
-            p_map.put( p_run + "/" + l_key, p_agentmap.get( l_key ) );
+
+            p_map.put( p_setting + "/" + p_run + "/" + l_key, p_agentmap.get( l_key ) );
 
     }
 
@@ -339,10 +344,10 @@ public final class CMain
                 else if ( "comsize".equals( l_subValueKey ) )
                     s_comsize = Integer.parseInt( l_subValues.get( l_subValueKey ) );
 
-                else if ( l_subValueKey.contains( "config" ) )
+                else if ( l_subValueKey.contains( "setting" ) )
                 {
-                    s_configStrs.add( l_subValues.get( l_subValueKey ) );
-                    s_configStr = s_configStr.concat( " " + l_subValues.get( l_subValueKey ) );
+                    s_settingStrs.add( l_subValues.get( l_subValueKey ) );
+                    s_settingStr = s_settingStr.concat( " " + l_subValues.get( l_subValueKey ) );
                     final String[] l_confStr = l_subValues.get( l_subValueKey ).split( "_" );
                     s_groupings.add( l_confStr[0] );
                     System.out.println( l_confStr[0] );
