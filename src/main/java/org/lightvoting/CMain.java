@@ -160,7 +160,7 @@ public final class CMain
                     //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
                     //        .generatemultiplenew(
-                    //            Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
+                    //    Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
                     //        .collect( Collectors.toSet() );
 
                     l_stream.close();
@@ -195,29 +195,27 @@ public final class CMain
                         : Integer.parseInt( p_args[2] )
                     )
                     .forEach( j ->
-                              {
-                                  System.out.println( "Cycle " + j );
-
-                                  try
-                                  {
-                                      s_broker.call();
-                                      s_broker.agentstream().forEach( k ->
-                                                                      {
-                                                                          try
-                                                                          {
-                                                                              k.call();
-                                                                          }
-                                                                          catch ( final Exception l_ex )
-                                                                          {
-                                                                              l_ex.printStackTrace();
-                                                                          }
-                                                                      } );
-
-                                  }
-                                  catch ( final Exception l_ex )
-                                  {
-                                      l_ex.printStackTrace();
-                                  }
+                    {
+                        System.out.println( "Cycle " + j );
+                        try
+                        {
+                            s_broker.call();
+                            s_broker.agentstream().forEach( k ->
+                            {
+                                try
+                                {
+                                    k.call();
+                                }
+                                catch ( final Exception l_ex )
+                                {
+                                    l_ex.printStackTrace();
+                                }
+                            } );
+                        }
+                        catch ( final Exception l_ex )
+                        {
+                            l_ex.printStackTrace();
+                        }
 
                                   //                        l_agents.parallelStream().forEach( i ->
                                   //                        {
@@ -235,16 +233,16 @@ public final class CMain
                                   //                                throw new RuntimeException();
                                   //                            }
                                   //                        } );
-                              } );
+                    } );
 
                 // reset properties for next configuration
 
                 final int l_finalR = r;
-                final int finalC = c;
+                final int l_finalC = c;
                 s_broker.agentstream().forEach( k ->
                                                 {
-                                                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( finalC ), l_finalR );
-                                                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( finalC ), l_finalR );
+                                                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                                                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( l_finalC ), l_finalR );
                                                 } );
                 // TODO necessary?
                 s_environment.reset();
