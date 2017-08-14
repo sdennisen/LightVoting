@@ -100,7 +100,8 @@ public final class CMain
 
         readYaml();
 
-        final String l_name = "target/results/" + new Date() + "_results.h5";
+        final String l_name = "target/results/" + new Date() + "_ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis
+                              + "_results.h5";
 
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
