@@ -24,6 +24,7 @@
 package org.lightvoting;
 
 import com.google.common.util.concurrent.AtomicDoubleArray;
+import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
@@ -37,6 +38,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,6 +74,7 @@ public final class CMain
     private static CBrokerAgent s_broker;
     private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
     private static String s_dis;
+    private static  String s_nameShort;
 
     /**
      * Hidden constructor
@@ -99,6 +102,8 @@ public final class CMain
         // creater BrokerAgent
 
         readYaml();
+
+        s_nameShort = "target/results/" + new Date() + "_ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis;
 
         final String l_name = "target/results/" + new Date() + "_ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis
                               + "_results.h5";
@@ -376,13 +381,21 @@ public final class CMain
 
     }
 
-    private static void readPreferences( final int p_run ) throws FileNotFoundException
+    private static void readPreferences( final int p_run ) throws IOException
     {
         final Yaml l_yaml = new Yaml();
         final ArrayList<ArrayList<Double>> l_list = new ArrayList<>();
 
         final Map<String, Map<String, Map<String, Map<String, ArrayList<Double>>>>> l_values = (Map<String, Map<String, Map<String, Map<String, ArrayList<Double>>>>>) l_yaml
             .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
+
+        // store preferences yaml for reproducing results
+
+        final File l_preferenceFile = FileUtils.getFile( "src/main/resources/org/lightvoting/preferences.yaml" );
+
+        final File l_backupFile = new File( s_nameShort + "_preferences.yaml" );
+
+        FileUtils.copyFile( l_preferenceFile, l_backupFile );
 
         for ( final String l_key : l_values.keySet() )
         {
