@@ -476,9 +476,22 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_map.put( this.name() + "/election result", l_comResultBV );
         // store group size in map
         m_map.put( this.name() + "/group size", m_voters.size() );
+        // store names of agents
+        for ( int i = 0; i < m_voters.size(); i++ )
+            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
         // m_dissStored = false;
 
+    }
+
+    private String asString( final List<CVotingAgent> p_voters )
+    {
+        String l_string = "{";
+        for ( int i = 0; i < p_voters.size() - 1; i++ )
+            l_string = l_string.concat( p_voters.get( i ).name() + ", " );
+        l_string = l_string.concat( p_voters.get( p_voters.size() - 1 ).name() + "}" );
+
+        return l_string;
     }
 
     /**

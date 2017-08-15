@@ -156,7 +156,7 @@ public enum EDataWriter
         final AtomicDoubleArray l_array = p_data;
 
         final hdf5.DataSet l_dataSet =  p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
-                                                                            new hdf5.DataSpace( 2, new long[]{1, l_length,} ), new hdf5.DSetCreatPropList()
+                                                                            new hdf5.DataSpace( 2, new long[]{1, l_length} ), new hdf5.DSetCreatPropList()
 
         );
 
