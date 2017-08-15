@@ -159,24 +159,32 @@ public final class CMain
 
                 try
                 {
-                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
-                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+//                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
+//                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
 
                     s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
                     // TODO separate creation of broker and setting of parameters
                     if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
-                    createBrokerRandomBasic( p_args[3], l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
+                    {
+                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_rb.asl" );
+                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_rb.asl" );
 
+                        final String l_brokerRB = "src/main/resources/org/lightvoting/broker_rb.asl";
+
+                        createBrokerRandomBasic( l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
+
+                        l_stream.close();
+                        l_chairstream.close();
+                    }
                     //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
                     //        .generatemultiplenew(
                     //    Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
                     //        .collect( Collectors.toSet() );
 
-                    l_stream.close();
-                    l_chairstream.close();
+
                 }
                 catch ( final Exception l_exception )
                 {
