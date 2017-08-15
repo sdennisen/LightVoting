@@ -92,7 +92,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgent> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     private int m_iteration;
-    private List<CVotingAgent> m_agents = Collections.synchronizedList( new LinkedList<>() );
+   // private List<CVotingAgent> m_agents = Collections.synchronizedList( new LinkedList<>() );
     private boolean m_iterative;
     private String m_protocol;
     private double m_dissThreshold;
@@ -218,7 +218,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
-        m_agents = Collections.synchronizedList( new LinkedList<>() );
+    //    m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
         // m_dissStored = false;
@@ -474,6 +474,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
         // store election result in map
         m_map.put( this.name() + "/election result", l_comResultBV );
+        // store group size in map
+        m_map.put( this.name() + "/group size", m_voters.size() );
 
         // m_dissStored = false;
 
