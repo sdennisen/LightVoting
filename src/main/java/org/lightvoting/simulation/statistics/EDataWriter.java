@@ -34,6 +34,7 @@ import org.bytedeco.javacpp.hdf5;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -138,6 +139,9 @@ public enum EDataWriter
         if ( p_data instanceof Long )
             this.writeLong( p_group, p_datasetName, (Long) p_data );
 
+        if ( p_data instanceof AtomicLong )
+            this.writeAtomicLong( p_group, p_datasetName, (AtomicLong) p_data );
+
         if ( p_data instanceof String )
             this.writeString( p_group, p_datasetName, (String) p_data );
     }
@@ -224,6 +228,21 @@ public enum EDataWriter
         final long[] l_buf = new long[1];
 
         l_buf[0] = p_data;
+
+        l_dataSet.write( new LongPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ) );
+    }
+
+    private void writeAtomicLong( final hdf5.Group p_group, final String p_datasetName, final AtomicLong p_data )
+    {
+        final hdf5.DataSet l_dataSet = new hdf5.DataSet(
+            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
+                                                new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
+            )
+        );
+
+        final long[] l_buf = new long[1];
+
+        l_buf[0] = p_data.longValue();
 
         l_dataSet.write( new LongPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ) );
     }

@@ -123,7 +123,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     private double m_joinThreshold;
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
-    private AtomicLong m_liningCounter;
+    private AtomicLong m_liningCounter = new AtomicLong();
 
     // TODO refactor ctors
 
@@ -323,6 +323,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // store waiting time in map
         System.out.println( "cycle " + this.cycle() );
         m_map.put( this.name() + "/waiting time", this.cycle() );
+        // store lining counter in map
+        System.out.println( "lining counter " + m_liningCounter );
+        m_map.put( this.name() + "/lining counter", m_liningCounter );
 
         p_chairAgent.trigger(
             CTrigger.from(
@@ -355,22 +358,22 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //        );
 //    }
 
-    @IAgentActionFilter
-    @IAgentActionName( name = "submit/final/diss" )
-    private void submitFinalDiss( final CChairAgent p_chairAgent, final BitVector p_result, final Integer p_iteration ) throws InterruptedException
-    {
-        p_chairAgent.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "final/diss/received",
-                    CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.computeDissBV( p_result ) ),
-                    CRawTerm.from( p_iteration )
-                )
-            )
-        );
-    }
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "submit/final/diss" )
+//    private void submitFinalDiss( final CChairAgent p_chairAgent, final BitVector p_result, final Integer p_iteration ) throws InterruptedException
+//    {
+//        p_chairAgent.trigger(
+//            CTrigger.from(
+//                ITrigger.EType.ADDGOAL,
+//                CLiteral.from(
+//                    "final/diss/received",
+//                    CRawTerm.from( this.name() ),
+//                    CRawTerm.from( this.computeDissBV( p_result ) ),
+//                    CRawTerm.from( p_iteration )
+//                )
+//            )
+//        );
+//    }
 
     private Double computeDissBV( final BitVector p_result )
     {
