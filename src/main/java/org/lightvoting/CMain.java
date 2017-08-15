@@ -104,8 +104,9 @@ public final class CMain
 
         readYaml();
 
-        s_nameShort = "target/results/" + new Date() + s_parameters;
         s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
+
+        s_nameShort = "target/results/" + new Date() + s_parameters;
 
         final String l_name = s_nameShort + "_results.h5";
 
