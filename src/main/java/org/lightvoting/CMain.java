@@ -28,7 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CBrokerAgent;
+import org.lightvoting.simulation.agent.CBrokerAgentRandomBasic;
 import org.lightvoting.simulation.agent.CChairAgent;
 import org.lightvoting.simulation.agent.CVotingAgent;
 import org.lightvoting.simulation.environment.CEnvironment;
@@ -71,11 +71,13 @@ public final class CMain
     private static List<AtomicDoubleArray> s_prefList = new ArrayList<>();
     private static int s_agNum;
     private static int s_comsize;
-    private static CBrokerAgent s_broker;
-    private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
+    // TODO restructure generation of broker instances
+    private static CBrokerAgentRandomBasic s_brokerRandomBasic;
+    private static CBrokerAgentRandomBasic.CBrokerAgentGenerator s_brokerGenerator;
     private static String s_dis;
     private static  String s_nameShort;
     private static String s_parameters;
+    private static boolean s_randomBasic;
 
     /**
      * Hidden constructor
@@ -160,7 +162,9 @@ public final class CMain
 
                     s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
-                    createBroker( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                    // TODO separate creation of broker and setting of parameters
+                    if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
+                    createBrokerRandomBasic( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 
                     //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
@@ -204,8 +208,8 @@ public final class CMain
                         System.out.println( "Cycle " + j );
                         try
                         {
-                            s_broker.call();
-                            s_broker.agentstream().forEach( k ->
+                            s_brokerRandomBasic.call();
+                            s_brokerRandomBasic.agentstream().forEach( k ->
                             {
                                 try
                                 {
@@ -244,7 +248,7 @@ public final class CMain
 
                 final int l_finalR = r;
                 final int l_finalC = c;
-                s_broker.agentstream().forEach( k ->
+                s_brokerRandomBasic.agentstream().forEach( k ->
                 {
                     if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                     if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( l_finalC ), l_finalR );
@@ -267,7 +271,7 @@ public final class CMain
 
     }
 
-    private static void createBroker( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
+    private static void createBrokerRandomBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
                                       final FileInputStream p_stream,
                                       final CEnvironment p_environment,
                                       final int p_altnum, final String p_name,
@@ -278,20 +282,20 @@ public final class CMain
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
         // TODO modify parameters
-        s_brokerGenerator = new CBrokerAgent.CBrokerAgentGenerator( p_send,
-                                                                    l_bkStr,
-                                                                    p_agNum,
-                                                                    p_stream,
-                                                                    p_chrStream,
-                                                                    s_environment,
-                                                                    s_altnum,
-                                                                    p_name,
-                                                                    s_joinThr,
-                                                                    s_prefList,
-                                                                    s_comsize
+        s_brokerGenerator = new CBrokerAgentRandomBasic.CBrokerAgentGenerator( p_send,
+                                                                               l_bkStr,
+                                                                               p_agNum,
+                                                                               p_stream,
+                                                                               p_chrStream,
+                                                                               s_environment,
+                                                                               s_altnum,
+                                                                               p_name,
+                                                                               s_joinThr,
+                                                                               s_prefList,
+                                                                               s_comsize
         );
 
-        s_broker = s_brokerGenerator.generatesingle();
+        s_brokerRandomBasic = s_brokerGenerator.generatesingle();
     }
 
     private static void storeResults( final Set<CVotingAgent> p_agents )
@@ -356,6 +360,11 @@ public final class CMain
                     System.out.println( l_confStr[0] );
                     s_protocols.add( l_confStr[1] );
                     System.out.println( l_confStr[1] );
+
+                    if ( l_subValues.get( l_subValueKey ).contains( "RANDOM_BASIC" ) )
+                        s_randomBasic = true;
+
+
                 }
 
                 else if ( "dissthr".equals( l_subValueKey  ) )

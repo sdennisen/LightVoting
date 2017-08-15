@@ -58,7 +58,7 @@ import java.util.stream.Stream;
  * Created by sophie on 18.07.17.
  */
 @IAgentAction
-public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
+public class CBrokerAgentRandomBasic extends IBaseAgent<CBrokerAgentRandomBasic>
 {
     private List<CVotingAgent> m_voters = new ArrayList<>();
     private HashSet<CChairAgent> m_chairs = new HashSet<>();
@@ -103,17 +103,17 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
      * @param p_comsize committee size
      * @throws Exception exception
      */
-    public CBrokerAgent( final String p_broker,
-                         @Nonnull final IAgentConfiguration p_configuration,
-                         final int p_agNum,
-                         final InputStream p_stream,
-                         final InputStream p_chairstream,
-                         final CEnvironment p_environment,
-                         final int p_altnum,
-                         final String p_name,
-                         final double p_joinThr,
-                         final List<AtomicDoubleArray> p_prefList,
-                         final int p_comsize
+    public CBrokerAgentRandomBasic( final String p_broker,
+                                    @Nonnull final IAgentConfiguration p_configuration,
+                                    final int p_agNum,
+                                    final InputStream p_stream,
+                                    final InputStream p_chairstream,
+                                    final CEnvironment p_environment,
+                                    final int p_altnum,
+                                    final String p_name,
+                                    final double p_joinThr,
+                                    final List<AtomicDoubleArray> p_prefList,
+                                    final int p_comsize
     ) throws Exception
     {
         super( p_configuration );
@@ -272,7 +272,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
     /**
      * Class CBrokerAgentGenerator
      */
-    public static class CBrokerAgentGenerator extends IBaseAgentGenerator<CBrokerAgent>
+    public static class CBrokerAgentGenerator extends IBaseAgentGenerator<CBrokerAgentRandomBasic>
     {
 
         /**
@@ -328,7 +328,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                         CCommon.actionsFromPackage(),
                         Stream.concat(
                             // use the actions which are defined inside the agent class
-                            CCommon.actionsFromAgentClass( CBrokerAgent.class ),
+                            CCommon.actionsFromAgentClass( CBrokerAgentRandomBasic.class ),
                             // add VotingAgent related external actions
                             Stream.of(
                                 p_send
@@ -337,7 +337,7 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
                         // build the set with a collector
                     ).collect( Collectors.toSet() ) );
 
-            System.out.println( "actions defined in broker class: " + CCommon.actionsFromAgentClass( CBrokerAgent.class ).collect( Collectors.toSet() ) );
+            System.out.println( "actions defined in broker class: " + CCommon.actionsFromAgentClass( CBrokerAgentRandomBasic.class ).collect( Collectors.toSet() ) );
 
 
             // aggregation function for the optimization function, here
@@ -357,12 +357,12 @@ public class CBrokerAgent extends IBaseAgent<CBrokerAgent>
 
         @Nullable
         @Override
-        public CBrokerAgent generatesingle( @Nullable final Object... p_data )
+        public CBrokerAgentRandomBasic generatesingle( @Nullable final Object... p_data )
         {
-            CBrokerAgent l_broker = null;
+            CBrokerAgentRandomBasic l_broker = null;
             try
             {
-                l_broker = new CBrokerAgent(
+                l_broker = new CBrokerAgentRandomBasic(
 
                     // create a string with the agent name "agent <number>"
                     // get the value of the counter first and increment, build the agent
