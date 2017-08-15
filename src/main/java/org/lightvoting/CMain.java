@@ -28,9 +28,9 @@ import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CBrokerAgentRandomBasic;
-import org.lightvoting.simulation.agent.CChairAgent;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.CBrokerAgentRB;
+import org.lightvoting.simulation.agent.CChairAgentRB;
+import org.lightvoting.simulation.agent.CVotingAgentRB;
 import org.lightvoting.simulation.environment.CEnvironment;
 import org.lightvoting.simulation.statistics.EDataWriter;
 import org.yaml.snakeyaml.Yaml;
@@ -72,8 +72,8 @@ public final class CMain
     private static int s_agNum;
     private static int s_comsize;
     // TODO restructure generation of broker instances
-    private static CBrokerAgentRandomBasic s_brokerRandomBasic;
-    private static CBrokerAgentRandomBasic.CBrokerAgentGenerator s_brokerGenerator;
+    private static CBrokerAgentRB s_brokerRandomBasic;
+    private static CBrokerAgentRB.CBrokerAgentGenerator s_brokerGenerator;
     private static String s_dis;
     private static  String s_nameShort;
     private static String s_parameters;
@@ -144,8 +144,8 @@ public final class CMain
                 // TODO store grouping, protocol and rule
                 s_map.put( s_settingStrs.get( c ) + "/" + String.valueOf( r ) + "/config", "ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis );
 
-                final Set<CVotingAgent> l_agents;
-                final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
+                final Set<CVotingAgentRB> l_agents;
+                final CVotingAgentRB.CVotingAgentGenerator l_votingagentgenerator;
 
                 // TODO reinsert?
                 //            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
@@ -166,7 +166,7 @@ public final class CMain
                     if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
                     createBrokerRandomBasic( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 
-                    //    l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                    //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
                     //        .generatemultiplenew(
                     //    Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
@@ -250,8 +250,8 @@ public final class CMain
                 final int l_finalC = c;
                 s_brokerRandomBasic.agentstream().forEach( k ->
                 {
-                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
-                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( l_finalC ), l_finalR );
+                    if ( k instanceof CVotingAgentRB ) append( s_map, ( (CVotingAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                    if ( k instanceof CChairAgentRB ) append( s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                 } );
                 // TODO necessary?
                 s_environment.reset();
@@ -282,23 +282,23 @@ public final class CMain
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
         // TODO modify parameters
-        s_brokerGenerator = new CBrokerAgentRandomBasic.CBrokerAgentGenerator( p_send,
-                                                                               l_bkStr,
-                                                                               p_agNum,
-                                                                               p_stream,
-                                                                               p_chrStream,
-                                                                               s_environment,
-                                                                               s_altnum,
-                                                                               p_name,
-                                                                               s_joinThr,
-                                                                               s_prefList,
-                                                                               s_comsize
+        s_brokerGenerator = new CBrokerAgentRB.CBrokerAgentGenerator( p_send,
+                                                                      l_bkStr,
+                                                                      p_agNum,
+                                                                      p_stream,
+                                                                      p_chrStream,
+                                                                      s_environment,
+                                                                      s_altnum,
+                                                                      p_name,
+                                                                      s_joinThr,
+                                                                      s_prefList,
+                                                                      s_comsize
         );
 
         s_brokerRandomBasic = s_brokerGenerator.generatesingle();
     }
 
-    private static void storeResults( final Set<CVotingAgent> p_agents )
+    private static void storeResults( final Set<CVotingAgentRB> p_agents )
     {
         p_agents.parallelStream().forEach( i ->
         {

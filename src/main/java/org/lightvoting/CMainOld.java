@@ -29,7 +29,7 @@ package org.lightvoting;
 //import org.lightjason.agentspeak.language.CRawTerm;
 //import org.lightvoting.simulation.action.message.CSend;
 //import org.lightvoting.simulation.agent.CChairAgent;
-//import org.lightvoting.simulation.agent.CVotingAgent;
+//import org.lightvoting.simulation.agent.CVotingAgentRB;
 //import org.lightvoting.simulation.environment.CEnvironment;
 //import org.lightvoting.simulation.statistics.EDataWriter;
 //import org.yaml.snakeyaml.Yaml;
@@ -106,8 +106,8 @@ package org.lightvoting;
 //
 //        for ( int r = 0; r < s_runs; r++ )
 //        {
-//            final Set<CVotingAgent> l_agents;
-//            final CVotingAgent.CVotingAgentGenerator l_votingagentgenerator;
+//            final Set<CVotingAgentRB> l_agents;
+//            final CVotingAgentRB.CVotingAgentGenerator l_votingagentgenerator;
 //
 //            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
 //            s_map.put( l_pathConfNr, s_configStrs.size() );
@@ -122,7 +122,7 @@ package org.lightvoting;
 //
 //                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 //
-//                l_votingagentgenerator = new CVotingAgent.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+//                l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 //                l_agents = l_votingagentgenerator
 //                    .generatemultiplenew(
 //                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )

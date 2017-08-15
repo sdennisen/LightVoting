@@ -37,7 +37,7 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.environment.CGroup;
+import org.lightvoting.simulation.environment.CGroupRB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.InputStream;
@@ -63,7 +63,7 @@ import java.util.stream.Stream;
 
 // annotation to mark the class that actions are inside
 @IAgentAction
-public final class CChairAgent extends IBaseAgent<CChairAgent>
+public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 {
     /**
      * serialUID
@@ -88,11 +88,11 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private String m_grouping;
 
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
-    private List<CVotingAgent> m_voters = Collections.synchronizedList( new LinkedList<>() );
+    private List<CVotingAgentRB> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
-    private List<CVotingAgent> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+    private List<CVotingAgentRB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     private int m_iteration;
-   // private List<CVotingAgent> m_agents = Collections.synchronizedList( new LinkedList<>() );
+   // private List<CVotingAgentRB> m_agents = Collections.synchronizedList( new LinkedList<>() );
     private boolean m_iterative;
     private String m_protocol;
     private double m_dissThreshold;
@@ -111,7 +111,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
     private int m_altnum;
     private int m_groupNum;
     private final double m_voteTimeout;
-    private CGroup m_group;
+    private CGroupRB m_group;
 
 
     // TODO merge ctors
@@ -126,12 +126,12 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
 
 
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment,
-                        final String p_fileName,
-                        final int p_run,
-                        final double p_dissthr,
-                        final int p_comsize,
-                        final int p_altnum
+    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironment p_environment,
+                          final String p_fileName,
+                          final int p_run,
+                          final double p_dissthr,
+                          final int p_comsize,
+                          final int p_altnum
     )
     {
         super( p_configuration );
@@ -144,7 +144,6 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
         m_altnum = p_altnum;
         // TODO via parameters
         m_voteTimeout = 10;
-
     }
 
     /**
@@ -155,8 +154,8 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
      */
-    public CChairAgent( final String p_name, final IAgentConfiguration<CChairAgent> p_configuration, final CEnvironment p_environment, final int p_altnum,
-                        final int p_comsize
+    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironment p_environment, final int p_altnum,
+                          final int p_comsize
     )
     {
         super( p_configuration );
@@ -170,7 +169,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     // overload agent-cycle
     @Override
-    public final CChairAgent call() throws Exception
+    public final CChairAgentRB call() throws Exception
     {
         // run default cycle
      //   this.checkConditions();
@@ -203,7 +202,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @return voters
      */
 
-    public List<CVotingAgent> voters()
+    public List<CVotingAgentRB> voters()
     {
         return m_voters;
     }
@@ -268,7 +267,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //            this.beliefbase().add( m_environment.detectGroup( this ) );
 //    }
 
-    public CGroup group()
+    public CGroupRB group()
     {
         return m_group;
     }
@@ -293,7 +292,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //    private void checkConditions()0 Timeout: 0.0
 //    {
 //      //  System.out.println( this.name() + " checking conditions " );
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        if ( l_group != null )
 //
@@ -327,9 +326,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //        }
 //    }
 
-    private CGroup determineGroup()
+    private CGroupRB determineGroup()
     {
-        final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
+        final AtomicReference<CGroupRB> l_groupAtomic = new AtomicReference<>();
         this.beliefbase().beliefbase().literal( "group" ).stream().forEach(
             i -> l_groupAtomic.set( i .values().findFirst().get().raw() ) );
         return l_groupAtomic.get();
@@ -346,7 +345,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //
 //    public void startElection()
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //        l_group.triggerAgents( this );
 //    }
 
@@ -357,9 +356,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final CVotingAgent p_votingAgent, final BitVector p_vote )
+    public void storeVote( final CVotingAgentRB p_votingAgent, final BitVector p_vote )
     {
-    //    final CGroup l_group = this.determineGroup();
+    //    final CGroupRB l_group = this.determineGroup();
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
@@ -484,7 +483,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 
     }
 
-    private String asString( final List<CVotingAgent> p_voters )
+    private String asString( final List<CVotingAgentRB> p_voters )
     {
         String l_string = "{";
         for ( int i = 0; i < p_voters.size() - 1; i++ )
@@ -528,7 +527,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //
 //    public void computeResult()
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 //
@@ -622,10 +621,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //
 //    public void storeDiss( final String p_name, final Double p_diss, final Integer p_iteration )
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        m_dissList.add( p_diss );
-//        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+//        final CVotingAgentRB l_dissAg = l_group.determineAgent( p_name );
 //        m_dissVoters.add( l_dissAg );
 //
 //
@@ -680,10 +679,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //
 //    public void storeFinalDiss( final String p_name, final Double p_diss, final Integer p_iteration )
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        m_dissList.add( p_diss );
-//        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+//        final CVotingAgentRB l_dissAg = l_group.determineAgent( p_name );
 //        m_dissVoters.add( l_dissAg );
 //
 //        System.out.println( "Storing diss " + p_diss );
@@ -729,7 +728,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //    public void removeVoter( final Integer p_iteration )
 //    {
 //        System.out.println( "removing voter " );
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        final int l_maxIndex = this.getMaxIndex( m_dissList );
 //        final double l_max = m_dissList.get( l_maxIndex );
@@ -755,7 +754,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
 //            return;
 //        }
 //        System.out.println( " Determining most dissatisfied voter " );
-//        final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
+//        final CVotingAgentRB l_maxDissAg = m_dissVoters.get( l_maxIndex );
 //        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
 //        // remove vote of most dissatisfied voter from list
 //        m_bitVotes.remove( l_maxDissAg.getBitVote() );
@@ -808,7 +807,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * @param p_group group of chair
      */
 
-    public void setGroup( final CGroup p_group )
+    public void setGroup( final CGroupRB p_group )
     {
         m_group = p_group;
 
@@ -825,7 +824,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
      * Class CChairAgentGenerator
      */
 
-    public static final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgent>
+    public static final class CChairAgentGenerator extends IBaseAgentGenerator<CChairAgentRB>
     {
 
         /**
@@ -869,7 +868,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                     CCommon.actionsFromPackage(),
                     Stream.concat(
                         // use the actions which are defined inside the agent class
-                        CCommon.actionsFromAgentClass( CChairAgent.class ),
+                        CCommon.actionsFromAgentClass( CChairAgentRB.class ),
                         // add VotingAgent related external actions
                         Stream.of(
 
@@ -913,7 +912,7 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                     CCommon.actionsFromPackage(),
                     Stream.concat(
                         // use the actions which are defined inside the agent class
-                        CCommon.actionsFromAgentClass( CChairAgent.class ),
+                        CCommon.actionsFromAgentClass( CChairAgentRB.class ),
                         // add VotingAgent related external actions
                         Stream.of(
 
@@ -941,10 +940,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          */
 
         @Override
-        public final CChairAgent generatesingle( final Object... p_data )
+        public final CChairAgentRB generatesingle( final Object... p_data )
         {
 
-            final CChairAgent l_chairAgent = new CChairAgent(
+            final CChairAgentRB l_chairAgent = new CChairAgentRB(
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
@@ -959,9 +958,9 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
          * @return returns an agent
          */
 
-        public CChairAgent generatesinglenew()
+        public CChairAgentRB generatesinglenew()
         {
-            final CChairAgent l_chairAgent = new CChairAgent(
+            final CChairAgentRB l_chairAgent = new CChairAgentRB(
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)

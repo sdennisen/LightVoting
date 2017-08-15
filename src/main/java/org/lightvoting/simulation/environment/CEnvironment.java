@@ -28,7 +28,7 @@ import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.CVotingAgentRB;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,9 +44,9 @@ import java.util.List;
  */
 public final class CEnvironment
 {
-    private List<CGroup>  m_groups = Collections.synchronizedList( new LinkedList<>() );
+    private List<CGroupRB>  m_groups = Collections.synchronizedList( new LinkedList<>() );
     private int m_groupNum;
-    private List<CVotingAgent> m_agentList = new LinkedList<>();
+    private List<CVotingAgentRB> m_agentList = new LinkedList<>();
 
     // Index of the last activated agent
     private int m_currentIndex;
@@ -77,13 +77,13 @@ public final class CEnvironment
      * @param p_votingAgent agent
      *
      */
-    public final void initialset( final CVotingAgent p_votingAgent )
+    public final void initialset( final CVotingAgentRB p_votingAgent )
     {
         m_agentList.add( p_votingAgent );
 
         if  ( !m_firstActivated )
         {
-            final CVotingAgent l_firstAgent = m_agentList.get( 0 );
+            final CVotingAgentRB l_firstAgent = m_agentList.get( 0 );
 
             l_firstAgent.sleep( 0 );
             System.out.println( "waking up agent " + l_firstAgent.name() );
@@ -98,7 +98,7 @@ public final class CEnvironment
      * @param p_votingAgent voting agent
      * @return literal with references to existing groups
      */
-    public ILiteral literal( final CVotingAgent p_votingAgent )
+    public ILiteral literal( final CVotingAgentRB p_votingAgent )
     {
         System.out.println( "xxxxxxxxxxxxxx m_groups: " + m_groups );
         return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
@@ -109,9 +109,9 @@ public final class CEnvironment
 //     * @param p_votingAgent voting agent opening group
 //     * @return new group
 //     */
-//    public CGroup openNewGroupRandom( final CVotingAgent p_votingAgent )
+//    public CGroupRB openNewGroupRandom( final CVotingAgentRB p_votingAgent )
 //    {
-//        final CGroup l_group = new CGroup( p_votingAgent, "RANDOM", m_groupNum, m_capacity );
+//        final CGroupRB l_group = new CGroupRB( p_votingAgent, "RANDOM", m_groupNum, m_capacity );
 //        m_groups.add( l_group );
 //        System.out.println( "Created Group " + l_group );
 //        this.wakeUpAgent();
@@ -130,9 +130,9 @@ public final class CEnvironment
 //     * @param p_votingAgent voting agent opening group
 //     * @return new group
 //     */
-//    public CGroup openNewGroupCoordinated( final CVotingAgent p_votingAgent )
+//    public CGroupRB openNewGroupCoordinated( final CVotingAgentRB p_votingAgent )
 //    {
-//        final CGroup l_group = new CGroup( p_votingAgent, "COORDINATED", m_groupNum, m_capacity );
+//        final CGroupRB l_group = new CGroupRB( p_votingAgent, "COORDINATED", m_groupNum, m_capacity );
 //        m_groups.add( l_group );
 //        System.out.println( "Created Group " + l_group );
 //
@@ -152,7 +152,7 @@ public final class CEnvironment
 //     * @param p_votingAgent joining agent
 //     */
 //
-//    public void addAgentRandom( final CGroup p_randomGroup, final CVotingAgent p_votingAgent )
+//    public void addAgentRandom( final CGroupRB p_randomGroup, final CVotingAgentRB p_votingAgent )
 //    {
 //        p_randomGroup.addRandom( p_votingAgent );
 //        this.wakeUpAgent();
@@ -166,7 +166,7 @@ public final class CEnvironment
 //     */
 //
 //
-//    public void addAgentCoordinated( final CGroup p_group, final CVotingAgent p_votingAgent )
+//    public void addAgentCoordinated( final CGroupRB p_group, final CVotingAgentRB p_votingAgent )
 //    {
 //        p_group.addCoordinated( p_votingAgent );
 //        this.wakeUpAgent();
@@ -179,7 +179,7 @@ public final class CEnvironment
 //     */
 //    public ILiteral detectGroup( final CChairAgent p_chairAgent )
 //    {
-//        for ( final CGroup l_group : m_groups )
+//        for ( final CGroupRB l_group : m_groups )
 //        {
 //            if ( !( l_group.literal( p_chairAgent ).emptyValues() ) )
 //                return l_group.literal( p_chairAgent );
@@ -194,7 +194,7 @@ public final class CEnvironment
 //     * open group for further elections unless the capacity is reached. Also, wake up the next agent
 //     * @param p_group group to be reopened
 //     */
-//    public void reopen( final CGroup p_group )
+//    public void reopen( final CGroupRB p_group )
 //    {
 //        p_group.reopen();
 //        this.wakeUpAgent();
@@ -252,7 +252,7 @@ public final class CEnvironment
     private void wakeUpAgent()
     {
         m_currentIndex++;
-        final CVotingAgent l_wakingAgent =  m_agentList.get( m_currentIndex );
+        final CVotingAgentRB l_wakingAgent =  m_agentList.get( m_currentIndex );
         l_wakingAgent.sleep( 0 );
         l_wakingAgent.getChair().sleep( 0 );
 

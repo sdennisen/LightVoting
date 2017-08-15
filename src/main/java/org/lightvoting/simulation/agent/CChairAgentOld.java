@@ -38,7 +38,7 @@ package org.lightvoting.simulation.agent;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 //import org.lightvoting.simulation.environment.CEnvironment;
-//import org.lightvoting.simulation.environment.CGroup;
+//import org.lightvoting.simulation.environment.CGroupRB;
 //import org.lightvoting.simulation.rule.CMinisumApproval;
 //
 //import java.io.InputStream;
@@ -92,9 +92,9 @@ package org.lightvoting.simulation.agent;
 //
 //    private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
 //    private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
-//    private List<CVotingAgent> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+//    private List<CVotingAgentRB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
 //    private int m_iteration;
-//    private List<CVotingAgent> m_agents = Collections.synchronizedList( new LinkedList<>() );
+//    private List<CVotingAgentRB> m_agents = Collections.synchronizedList( new LinkedList<>() );
 //    private boolean m_iterative;
 //    private String m_protocol;
 //    private double m_dissThreshold;
@@ -241,7 +241,7 @@ package org.lightvoting.simulation.agent;
 //    private void checkConditions()
 //    {
 //      //  System.out.println( this.name() + " checking conditions " );
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        if ( l_group != null )
 //
@@ -275,9 +275,9 @@ package org.lightvoting.simulation.agent;
 //        }
 //    }
 //
-//    private CGroup determineGroup()
+//    private CGroupRB determineGroup()
 //    {
-//        final AtomicReference<CGroup> l_groupAtomic = new AtomicReference<>();
+//        final AtomicReference<CGroupRB> l_groupAtomic = new AtomicReference<>();
 //        this.beliefbase().beliefbase().literal( "group" ).stream().forEach(
 //            i -> l_groupAtomic.set( i .values().findFirst().get().raw() ) );
 //        return l_groupAtomic.get();
@@ -292,7 +292,7 @@ package org.lightvoting.simulation.agent;
 //
 //    public void startElection()
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //        l_group.triggerAgents( this );
 //    }
 //
@@ -305,7 +305,7 @@ package org.lightvoting.simulation.agent;
 //    @IAgentActionName( name = "store/vote" )
 //    public void storeVote( final String p_agentName, final BitVector p_vote )
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        m_agents.add( l_group.determineAgent( p_agentName ) );
 //        m_bitVotes.add( p_vote );
@@ -336,7 +336,7 @@ package org.lightvoting.simulation.agent;
 //
 //    public void computeResult()
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 //
@@ -430,10 +430,10 @@ package org.lightvoting.simulation.agent;
 //
 //    public void storeDiss( final String p_name, final Double p_diss, final Integer p_iteration )
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        m_dissList.add( p_diss );
-//        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+//        final CVotingAgentRB l_dissAg = l_group.determineAgent( p_name );
 //        m_dissVoters.add( l_dissAg );
 //
 //
@@ -488,10 +488,10 @@ package org.lightvoting.simulation.agent;
 //
 //    public void storeFinalDiss( final String p_name, final Double p_diss, final Integer p_iteration )
 //    {
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        m_dissList.add( p_diss );
-//        final CVotingAgent l_dissAg = l_group.determineAgent( p_name );
+//        final CVotingAgentRB l_dissAg = l_group.determineAgent( p_name );
 //        m_dissVoters.add( l_dissAg );
 //
 //        System.out.println( "Storing diss " + p_diss );
@@ -537,7 +537,7 @@ package org.lightvoting.simulation.agent;
 //    public void removeVoter( final Integer p_iteration )
 //    {
 //        System.out.println( "removing voter " );
-//        final CGroup l_group = this.determineGroup();
+//        final CGroupRB l_group = this.determineGroup();
 //
 //        final int l_maxIndex = this.getMaxIndex( m_dissList );
 //        final double l_max = m_dissList.get( l_maxIndex );
@@ -563,7 +563,7 @@ package org.lightvoting.simulation.agent;
 //            return;
 //        }
 //        System.out.println( " Determining most dissatisfied voter " );
-//        final CVotingAgent l_maxDissAg = m_dissVoters.get( l_maxIndex );
+//        final CVotingAgentRB l_maxDissAg = m_dissVoters.get( l_maxIndex );
 //        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
 //        // remove vote of most dissatisfied voter from list
 //        m_bitVotes.remove( l_maxDissAg.getBitVote() );

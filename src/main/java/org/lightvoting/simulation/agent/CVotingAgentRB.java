@@ -40,7 +40,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.action.message.CSend;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.environment.CGroup;
+import org.lightvoting.simulation.environment.CGroupRB;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -66,7 +66,7 @@ import java.util.stream.Stream;
  */
 // annotation to mark the class that actions are inside
 @IAgentAction
-public final class CVotingAgent extends IBaseAgent<CVotingAgent>
+public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 {
 
     /**
@@ -88,7 +88,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * associated chair agent;
      */
-    private CChairAgent m_chair;
+    private CChairAgentRB m_chair;
 
     /**
      * agent's vote
@@ -138,18 +138,18 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_preferences preferences
      */
 
-    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
-                         final CEnvironment p_environment,
-                         final int p_altNum,
-                         final double p_joinThr,
-                         final AtomicDoubleArray p_preferences
+    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final IBaseAgent<CChairAgentRB> p_chairagent,
+                           final CEnvironment p_environment,
+                           final int p_altNum,
+                           final double p_joinThr,
+                           final AtomicDoubleArray p_preferences
     )
     {
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
 
-        m_chair = (CChairAgent) p_chairagent;
+        m_chair = (CChairAgentRB) p_chairagent;
 
         m_storage.put( "chair", p_chairagent.raw() );
 
@@ -183,9 +183,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      * @param p_joinThr join threshold
      * @param p_atomicDoubleArray preferences
      */
-    public CVotingAgent( final String p_name, final IAgentConfiguration<CVotingAgent> p_configuration, final CEnvironment p_environment, final int p_altNum,
-                         final double p_joinThr,
-                         final AtomicDoubleArray p_atomicDoubleArray
+    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironment p_environment, final int p_altNum,
+                           final double p_joinThr,
+                           final AtomicDoubleArray p_atomicDoubleArray
     )
     {
         super( p_configuration );
@@ -203,7 +203,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     // overload agent-cycle
     @Override
-    public final CVotingAgent call() throws Exception
+    public final CVotingAgentRB call() throws Exception
     {
         // run default cycle
         return super.call();
@@ -226,7 +226,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
      *
      * @return chair agent
      */
-    public CChairAgent getChair()
+    public CChairAgentRB getChair()
     {
         return m_chair;
     }
@@ -292,7 +292,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/vote" )
-    private void submitVote( final CChairAgent p_chairAgent )
+    private void submitVote( final CChairAgentRB p_chairAgent )
     {
         System.out.println( "my name is " + this.name() );
         System.out.println( "my vote is " + this.getBitVote() );
@@ -316,7 +316,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/diss" )
-    private void submitDiss( final CChairAgent p_chairAgent, final BitVector p_result ) throws InterruptedException
+    private void submitDiss( final CChairAgentRB p_chairAgent, final BitVector p_result ) throws InterruptedException
     {
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
@@ -424,9 +424,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     }
 
 
-//    private List<CGroup> determineActiveGroups( final String p_grouping )
+//    private List<CGroupRB> determineActiveGroups( final String p_grouping )
 //    {
-//        final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
+//        final AtomicReference<List<CGroupRB>> l_groupList = new AtomicReference<>();
 //
 //        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
 //        {
@@ -445,7 +445,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
 //    private void openNewGroup()
 //    {
-//        final CGroup l_group;
+//        final CGroupRB l_group;
 //
 //        if ( "RANDOM".equals( m_grouping ) )
 //            l_group = m_environment.openNewGroupRandom( this );
@@ -460,7 +460,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //    private void joinGroupRandom()
 //    {
 //
-//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "RANDOM" );
+//        final List<CGroupRB> l_activeGroups = this.determineActiveGroups( "RANDOM" );
 //
 //        if ( l_activeGroups.isEmpty() )
 //        {
@@ -470,7 +470,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //
 //        final Random l_rand = new Random();
 //
-//        final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
+//        final CGroupRB l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
 //        m_environment.addAgentRandom( l_randomGroup, this );
 //        this.beliefbase().add( l_randomGroup.literal( this ) );
 //
@@ -480,7 +480,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //    {
 //        System.out.println( "join group according to coordinated grouping algorithm" );
 //
-//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
+//        final List<CGroupRB> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
 //
 //        if ( l_activeGroups.isEmpty() )
 //        {
@@ -492,11 +492,11 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //            this.determineGroupCoordinated( l_activeGroups );
 //    }
 
-//    private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
+//    private void determineGroupCoordinated( final List<CGroupRB> p_activeGroups )
 //    {
-//        final CGroup l_group;
+//        final CGroupRB l_group;
 //        // choose group to join
-//        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
+//        final Map<CGroupRB, Integer> l_groupDistances = new HashMap<>();
 //        final BitVector l_vote = this.getBitVote();
 //        System.out.println( "Vote: " + l_vote );
 //        for ( int i = 0; i < p_activeGroups.size(); i++ )
@@ -510,7 +510,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 //            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
 //        }
 //        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
-//        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
+//        final Map.Entry<CGroupRB, Integer> l_entry = (Map.Entry<CGroupRB, Integer>) l_sortedDistances.entrySet().iterator().next();
 //        l_group = l_entry.getKey();
 //
 //        // if Hamming distance is above the threshold, do not join the chair but create a new group
@@ -545,9 +545,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
 
 
-    private Map sortMapDESC( final Map<CGroup, Integer> p_valuesMap )
+    private Map sortMapDESC( final Map<CGroupRB, Integer> p_valuesMap )
     {
-        final List<Map.Entry<CGroup, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
+        final List<Map.Entry<CGroupRB, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 
         /* Sorting the list based on values in descending order */
 
@@ -556,8 +556,8 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         /* Maintaining insertion order with the help of LinkedList */
 
-        final Map<CGroup, Integer> l_sortedMap = new LinkedHashMap<>();
-        for ( final Map.Entry<CGroup, Integer> l_entry : l_list )
+        final Map<CGroupRB, Integer> l_sortedMap = new LinkedHashMap<>();
+        for ( final Map.Entry<CGroupRB, Integer> l_entry : l_list )
         {
             l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
         }
@@ -568,7 +568,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
     /**
      * Class CVotingAgentGenerator
      */
-    public static final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgent>
+    public static final class CVotingAgentGenerator extends IBaseAgentGenerator<CVotingAgentRB>
     {
 
         /**
@@ -621,7 +621,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                     CCommon.actionsFromPackage(),
                     Stream.concat(
                         // use the actions which are defined inside the agent class
-                        CCommon.actionsFromAgentClass( CVotingAgent.class ),
+                        CCommon.actionsFromAgentClass( CVotingAgentRB.class ),
                         // add VotingAgent related external actions
                         Stream.of(
                             p_send
@@ -648,7 +648,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         // unregister an agent
         // @param p_agent agent object
-        public final void unregister( final CVotingAgent p_agent )
+        public final void unregister( final CVotingAgentRB p_agent )
         {
             m_send.unregister( p_agent );
         }
@@ -660,9 +660,9 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
          * @param p_data any data which can be put from outside to the generator method
          * @return stream of voting agents
          */
-        public final Stream<CVotingAgent> generatemultiplenew( final int p_number, final Object... p_data )
+        public final Stream<CVotingAgentRB> generatemultiplenew( final int p_number, final Object... p_data )
         {
-            final ArrayList<CVotingAgent> l_list = new ArrayList();
+            final ArrayList<CVotingAgentRB> l_list = new ArrayList();
 
             for ( int i = 0; i < p_number; i++ )
             {
@@ -677,12 +677,12 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         // @param p_data any data which can be put from outside to the generator method
         // @return returns an agent
         @Override
-        public final CVotingAgent generatesingle( final Object... p_data )
+        public final CVotingAgentRB generatesingle( final Object... p_data )
         {
             // register a new agent object at the send action and the register
             // method retruns the object reference
 
-            final CVotingAgent l_votingAgent = new CVotingAgent(
+            final CVotingAgentRB l_votingAgent = new CVotingAgentRB(
 
                 // create a string with the agent name "agent <number>"
                 // get the value of the counter first and increment, build the agent
@@ -692,7 +692,7 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
                 // add the agent configuration
                 m_configuration,
                 // add the chair agent
-                ( (CChairAgent.CChairAgentGenerator) p_data[0] ).generatesingle(),
+                ( (CChairAgentRB.CChairAgentGenerator) p_data[0] ).generatesingle(),
                 m_environment,
                 m_altNum,
                 m_joinThr,
@@ -707,13 +707,13 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
 
         }
 
-        final CVotingAgent generatesinglenew()
+        final CVotingAgentRB generatesinglenew()
         {
             System.out.println( "creating new voter, m_count is " + m_count );
             final AtomicDoubleArray l_preferences = m_prefList.get( m_count );
             System.out.println( "Preferences: " + l_preferences );
 
-            final CVotingAgent l_votingAgent = new CVotingAgent(
+            final CVotingAgentRB l_votingAgent = new CVotingAgentRB(
 
                 // create a string with the agent name "agent <number>"
                 // get the value of the counter first and increment, build the agent

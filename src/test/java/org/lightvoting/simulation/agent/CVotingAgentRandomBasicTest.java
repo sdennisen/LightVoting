@@ -30,16 +30,16 @@ import junit.framework.TestSuite;
 
 
 /**
- * Unit test for CVotingAgent.
+ * Unit test for CVotingAgentRB.
  */
-public final class CVotingAgentTest extends TestCase
+public final class CVotingAgentRandomBasicTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CVotingAgentTest( final String p_testName )
+    public CVotingAgentRandomBasicTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -51,13 +51,13 @@ public final class CVotingAgentTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CVotingAgentTest.class );
+        return new TestSuite( CVotingAgentRandomBasicTest.class );
     }
 
     /* TODO fix test */
 
     /**
-     * Testing CVotingAgent Class
+     * Testing CVotingAgentRB Class
      *
      *
      */
@@ -70,7 +70,7 @@ public final class CVotingAgentTest extends TestCase
 //                                                              0,
 //                                                              1
 //            );
-//            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5",
+//            final CVotingAgentRB l_agent = new CVotingAgentRB( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5",
 //                                                                                                                                        3
 //            ), 10,
 //

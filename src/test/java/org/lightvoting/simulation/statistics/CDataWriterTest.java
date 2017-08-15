@@ -103,7 +103,7 @@ public class CDataWriterTest extends TestCase
 //    {
 //        final String l_fileName = "test_vector.h5";
 //        new CDataWriter().createHDF5( l_fileName );
-//        final List<CVotingAgent> l_agentList = new LinkedList<>();
+//        final List<CVotingAgentRB> l_agentList = new LinkedList<>();
 //
 //        for ( int i = 0; i < 3; i++ )
 //        {
@@ -114,7 +114,7 @@ public class CDataWriterTest extends TestCase
 //                                                              l_fileName, 0,
 //                                                              1
 //            );
-//            l_agentList.add( new CVotingAgent( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
+//            l_agentList.add( new CVotingAgentRB( "agent" + String.valueOf( i ), new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 3, l_fileName,
 //                                                                                                                                                  3
 //                             ), 10,
 //                                               5

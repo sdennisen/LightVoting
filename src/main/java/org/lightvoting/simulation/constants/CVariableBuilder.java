@@ -28,7 +28,7 @@ import org.lightjason.agentspeak.language.execution.IVariableBuilder;
 import org.lightjason.agentspeak.language.instantiable.IInstantiable;
 import org.lightjason.agentspeak.language.variable.CConstant;
 import org.lightjason.agentspeak.language.variable.IVariable;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.CVotingAgentRB;
 import org.lightvoting.simulation.environment.CEnvironment;
 
 import java.util.stream.Stream;
@@ -61,7 +61,7 @@ public final class CVariableBuilder implements IVariableBuilder
     public final Stream<IVariable<?>> apply( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
     {
         return Stream.of(
-            new CConstant<>( "MyName", p_agent.<CVotingAgent>raw().name() )
+            new CConstant<>( "MyName", p_agent.<CVotingAgentRB>raw().name() )
         );
     }
 

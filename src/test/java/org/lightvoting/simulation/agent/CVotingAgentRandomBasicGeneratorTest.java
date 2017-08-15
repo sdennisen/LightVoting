@@ -41,14 +41,14 @@ import java.util.stream.Collectors;
 /**
  * Unit test for CVotingAgentGenerator.
  */
-public final class CVotingAgentGeneratorTest extends TestCase
+public final class CVotingAgentRandomBasicGeneratorTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CVotingAgentGeneratorTest( final String p_testName )
+    public CVotingAgentRandomBasicGeneratorTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -60,11 +60,11 @@ public final class CVotingAgentGeneratorTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CVotingAgentGeneratorTest.class );
+        return new TestSuite( CVotingAgentRandomBasicGeneratorTest.class );
     }
 
     /**
-     * Testing CVotingAgent Class
+     * Testing CVotingAgentRB Class
      */
     public void testCVotingAgent()
     {
@@ -77,12 +77,12 @@ public final class CVotingAgentGeneratorTest extends TestCase
             final CSend l_sendaction = new CSend();
 
             /* TODO Check test */
-            final Set<CVotingAgent> l_agents = new
+            final Set<CVotingAgentRB> l_agents = new
 
-                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList() )
-                    .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5", 3 ),
-                                                                                 "foo.h5", 0,
-                                                                                 3, 1, 5
+                CVotingAgentRB.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList() )
+                    .generatemultiple( 23, new CChairAgentRB.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5", 3 ),
+                                                                                   "foo.h5", 0,
+                                                                                   3, 1, 5
                     ) )
                     .collect( Collectors.toSet() );
 
@@ -90,7 +90,7 @@ public final class CVotingAgentGeneratorTest extends TestCase
 
             l_agents.forEach( i ->
             {
-                assertTrue( i instanceof CVotingAgent );
+                assertTrue( i instanceof CVotingAgentRB );
                 assertTrue( i instanceof IAgent );
             } );
         }

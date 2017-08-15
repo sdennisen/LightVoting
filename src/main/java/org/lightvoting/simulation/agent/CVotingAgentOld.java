@@ -41,7 +41,7 @@ package org.lightvoting.simulation.agent;
 //import org.lightvoting.simulation.action.message.CSend;
 //import org.lightvoting.simulation.constants.CVariableBuilder;
 //import org.lightvoting.simulation.environment.CEnvironment;
-//import org.lightvoting.simulation.environment.CGroup;
+//import org.lightvoting.simulation.environment.CGroupRB;
 //
 //import java.io.InputStream;
 //import java.text.MessageFormat;
@@ -357,9 +357,9 @@ package org.lightvoting.simulation.agent;
 //    }
 //
 //
-//    private List<CGroup> determineActiveGroups( final String p_grouping )
+//    private List<CGroupRB> determineActiveGroups( final String p_grouping )
 //    {
-//        final AtomicReference<List<CGroup>> l_groupList = new AtomicReference<>();
+//        final AtomicReference<List<CGroupRB>> l_groupList = new AtomicReference<>();
 //
 //        m_beliefbase.beliefbase().literal( "groups" ).stream().forEach( i ->
 //        {
@@ -378,7 +378,7 @@ package org.lightvoting.simulation.agent;
 //
 //    private void openNewGroup()
 //    {
-//        final CGroup l_group;
+//        final CGroupRB l_group;
 //
 //        if ( "RANDOM".equals( m_grouping ) )
 //            l_group = m_environment.openNewGroupRandom( this );
@@ -393,7 +393,7 @@ package org.lightvoting.simulation.agent;
 //    private void joinGroupRandom()
 //    {
 //
-//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "RANDOM" );
+//        final List<CGroupRB> l_activeGroups = this.determineActiveGroups( "RANDOM" );
 //
 //        if ( l_activeGroups.isEmpty() )
 //        {
@@ -403,7 +403,7 @@ package org.lightvoting.simulation.agent;
 //
 //        final Random l_rand = new Random();
 //
-//        final CGroup l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
+//        final CGroupRB l_randomGroup = l_activeGroups.get( l_rand.nextInt( l_activeGroups.size() ) );
 //        m_environment.addAgentRandom( l_randomGroup, this );
 //        this.beliefbase().add( l_randomGroup.literal( this ) );
 //
@@ -413,7 +413,7 @@ package org.lightvoting.simulation.agent;
 //    {
 //        System.out.println( "join group according to coordinated grouping algorithm" );
 //
-//        final List<CGroup> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
+//        final List<CGroupRB> l_activeGroups = this.determineActiveGroups( "COORDINATED" );
 //
 //        if ( l_activeGroups.isEmpty() )
 //        {
@@ -425,11 +425,11 @@ package org.lightvoting.simulation.agent;
 //            this.determineGroupCoordinated( l_activeGroups );
 //    }
 //
-//    private void determineGroupCoordinated( final List<CGroup> p_activeGroups )
+//    private void determineGroupCoordinated( final List<CGroupRB> p_activeGroups )
 //    {
-//        final CGroup l_group;
+//        final CGroupRB l_group;
 //        // choose group to join
-//        final Map<CGroup, Integer> l_groupDistances = new HashMap<>();
+//        final Map<CGroupRB, Integer> l_groupDistances = new HashMap<>();
 //        final BitVector l_vote = this.getBitVote();
 //        System.out.println( "Vote: " + l_vote );
 //        for ( int i = 0; i < p_activeGroups.size(); i++ )
@@ -443,7 +443,7 @@ package org.lightvoting.simulation.agent;
 //            l_groupDistances.put( p_activeGroups.get( i ), l_HD );
 //        }
 //        final Map l_sortedDistances = this.sortMapDESC( l_groupDistances );
-//        final Map.Entry<CGroup, Integer> l_entry = (Map.Entry<CGroup, Integer>) l_sortedDistances.entrySet().iterator().next();
+//        final Map.Entry<CGroupRB, Integer> l_entry = (Map.Entry<CGroupRB, Integer>) l_sortedDistances.entrySet().iterator().next();
 //        l_group = l_entry.getKey();
 //
 //        // if Hamming distance is above the threshold, do not join the chair but create a new group
@@ -478,9 +478,9 @@ package org.lightvoting.simulation.agent;
 //
 //
 //
-//    private Map sortMapDESC( final Map<CGroup, Integer> p_valuesMap )
+//    private Map sortMapDESC( final Map<CGroupRB, Integer> p_valuesMap )
 //    {
-//        final List<Map.Entry<CGroup, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
+//        final List<Map.Entry<CGroupRB, Integer>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
 //
 //        /* Sorting the list based on values in descending order */
 //
@@ -489,8 +489,8 @@ package org.lightvoting.simulation.agent;
 //
 //        /* Maintaining insertion order with the help of LinkedList */
 //
-//        final Map<CGroup, Integer> l_sortedMap = new LinkedHashMap<>();
-//        for ( final Map.Entry<CGroup, Integer> l_entry : l_list )
+//        final Map<CGroupRB, Integer> l_sortedMap = new LinkedHashMap<>();
+//        for ( final Map.Entry<CGroupRB, Integer> l_entry : l_list )
 //        {
 //            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
 //        }

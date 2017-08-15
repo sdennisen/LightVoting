@@ -24,8 +24,8 @@
 package org.lightvoting.simulation.environment;
 
 import cern.colt.bitvector.BitVector;
-import org.lightvoting.simulation.agent.CChairAgent;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.CChairAgentRB;
+import org.lightvoting.simulation.agent.CVotingAgentRB;
 
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,13 +35,13 @@ import java.util.stream.Stream;
 /**
  * Created by sophie on 24.04.17.
  */
-public class CGroup
+public class CGroupRB
 {
-    private final HashMap<String, CVotingAgent> m_agentMap = new HashMap<>();
+    private final HashMap<String, CVotingAgentRB> m_agentMap = new HashMap<>();
 
     private final int m_capacity;
 
-    private final CChairAgent m_chair;
+    private final CChairAgentRB m_chair;
 
     private boolean m_open;
 
@@ -60,12 +60,12 @@ public class CGroup
      * @param p_groupNum group number
      * @param p_capacity group capacity
      */
-    public CGroup( final CVotingAgent p_votingAgent,
-                   final CChairAgent p_chair,
-                   final int p_groupNum,
-                   final int p_capacity,
-                   final long p_cycle,
-                   final long p_timeout )
+    public CGroupRB( final CVotingAgentRB p_votingAgent,
+                     final CChairAgentRB p_chair,
+                     final int p_groupNum,
+                     final int p_capacity,
+                     final long p_cycle,
+                     final long p_timeout )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
@@ -90,7 +90,7 @@ public class CGroup
      * @param p_votingAgent agent to be added
      * @param p_cycle current broker cycle
      */
-    public void add( final CVotingAgent p_votingAgent, final long p_cycle )
+    public void add( final CVotingAgentRB p_votingAgent, final long p_cycle )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         if ( ( m_agentMap.size() == m_capacity ) || ( p_cycle >= m_timeout ) )
@@ -113,7 +113,7 @@ public class CGroup
 //        }
 //    }
 
-    public CChairAgent chair()
+    public CChairAgentRB chair()
     {
         return m_chair;
     }
@@ -127,7 +127,7 @@ public class CGroup
      * return agents
      * @return agent stream
      */
-    public Stream<CVotingAgent> agents()
+    public Stream<CVotingAgentRB> agents()
     {
         return m_agentMap.values().stream();
     }
@@ -163,7 +163,7 @@ public class CGroup
 //     * @return literal with chair, status of group, curret voting result and info whether the group contains the agent
 //     */
 //
-//    public ILiteral literal( final CVotingAgent p_votingAgent )
+//    public ILiteral literal( final CVotingAgentRB p_votingAgent )
 //    {
 //        return CLiteral.from( "group", CRawTerm.from( m_chair ), CRawTerm.from( this.open() ), CRawTerm.from( m_result ),
 //                              CRawTerm.from( m_agentMap.values().contains( p_votingAgent ) ) );
@@ -196,7 +196,7 @@ public class CGroup
 //     * add voting agent (for random grouping)
 //     * @param p_votingAgent joining voting agent
 //     */
-//    public void addRandom( final CVotingAgent p_votingAgent )
+//    public void addRandom( final CVotingAgentRB p_votingAgent )
 //    {
 //        System.out.println( "Adding agent, old size is " + m_agentMap.size() );
 //        m_agentMap.put( p_votingAgent.name(), p_votingAgent );
@@ -218,7 +218,7 @@ public class CGroup
 //     * @param p_votingAgent joining voting agent
 //     */
 //
-//    public void addCoordinated( final CVotingAgent p_votingAgent )
+//    public void addCoordinated( final CVotingAgentRB p_votingAgent )
 //    {
 //
 //        System.out.println( "Adding agent, old size is " + m_agentMap.size() );
@@ -229,7 +229,7 @@ public class CGroup
 //        m_readyForElection = true;
 //    }
 //
-//    public void remove( final CVotingAgent p_votingAgent )
+//    public void remove( final CVotingAgentRB p_votingAgent )
 //    {
 //        m_agentMap.values().remove( p_votingAgent );
 //    }
@@ -401,7 +401,7 @@ public class CGroup
 //     * @param p_agentName name
 //     * @return corresponding voting agent
 //     */
-//    public CVotingAgent determineAgent( final String p_agentName )
+//    public CVotingAgentRB determineAgent( final String p_agentName )
 //    {
 //        return m_agentMap.get( p_agentName );
 //    }

@@ -35,7 +35,7 @@ import org.lightjason.agentspeak.language.fuzzy.CFuzzyValue;
 import org.lightjason.agentspeak.language.fuzzy.IFuzzyValue;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.CVotingAgentRB;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -58,13 +58,13 @@ public final class CSend extends IBaseAction
     /**
      * thread-safe map for storing name and agent object
      */
-    private final Map<String, CVotingAgent> m_agents = new ConcurrentHashMap<>();
+    private final Map<String, CVotingAgentRB> m_agents = new ConcurrentHashMap<>();
 
     /** Register a new agent.
      * @param p_agent agent object
      * @return object of registered agent
      */
-    public final CVotingAgent register( final CVotingAgent p_agent )
+    public final CVotingAgentRB register( final CVotingAgentRB p_agent )
     {
         m_agents.put( p_agent.name(), p_agent );
         return p_agent;
@@ -75,7 +75,7 @@ public final class CSend extends IBaseAction
      * @param p_agent agent object
      * @return object of unregistered agent
      */
-    public final CVotingAgent unregister( final CVotingAgent p_agent )
+    public final CVotingAgentRB unregister( final CVotingAgentRB p_agent )
     {
         m_agents.remove( p_agent.name() );
         return p_agent;
@@ -128,7 +128,7 @@ public final class CSend extends IBaseAction
                                 // name of the sending agent in this the agent which calls the send action is read from
                                 // context and translate in the communication agent, the communication agent has got the
                                 // method name() to read the agent name
-                                CLiteral.from( "from", CRawTerm.from( p_context.agent().<CVotingAgent>raw().name() ) )
+                                CLiteral.from( "from", CRawTerm.from( p_context.agent().<CVotingAgentRB>raw().name() ) )
                         )
 
                 )
