@@ -138,10 +138,7 @@ public final class CMain
             {
                 readPreferences( r );
                 System.out.println( s_prefList );
-            }
 
-            for ( int r = 0; r < s_runs; r++ )
-            {
                 // TODO store grouping, protocol and rule
                 s_map.put( s_settingStrs.get( c ) + "/" + String.valueOf( r ) + "/config", "ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis );
 
@@ -518,6 +515,8 @@ public final class CMain
 
     private static void readPreferenceList( final ArrayList<ArrayList<Double>> p_list )
     {
+        s_prefList.clear();
+
         for ( int i = 0; i < p_list.size(); i++ )
         {
             System
@@ -529,5 +528,7 @@ public final class CMain
 
             s_prefList.add( new AtomicDoubleArray( l_double ) );
         }
+
+        System.out.println( "new preference list:" + s_prefList );
     }
 }
