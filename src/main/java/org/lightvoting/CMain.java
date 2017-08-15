@@ -163,7 +163,7 @@ public final class CMain
 //                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
 
-                    s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[2] ), l_name, s_capacity );
+                    s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[0] ), l_name, s_capacity );
 
                     // TODO separate creation of broker and setting of parameters
                     if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
@@ -210,9 +210,9 @@ public final class CMain
                     // define cycle range, i.e. number of cycles to run sequentially
                     .range(
                         0,
-                        p_args.length < 4
+                        p_args.length < 1
                         ? Integer.MAX_VALUE
-                        : Integer.parseInt( p_args[2] )
+                        : Integer.parseInt( p_args[0] )
                     )
                     .forEach( j ->
                     {
