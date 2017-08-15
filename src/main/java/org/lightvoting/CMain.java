@@ -75,6 +75,7 @@ public final class CMain
     private static CBrokerAgent.CBrokerAgentGenerator s_brokerGenerator;
     private static String s_dis;
     private static  String s_nameShort;
+    private static String s_parameters;
 
     /**
      * Hidden constructor
@@ -103,10 +104,10 @@ public final class CMain
 
         readYaml();
 
-        s_nameShort = "target/results/" + new Date() + "_ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis;
+        s_nameShort = "target/results/" + new Date() + s_parameters;
+        s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
 
-        final String l_name = "target/results/" + new Date() + "_ags:" + s_agNum + "_alts:" + s_altnum + "_runs:" + s_runs + "_dis:" + s_dis
-                              + "_results.h5";
+        final String l_name = s_nameShort + "_results.h5";
 
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
@@ -246,10 +247,10 @@ public final class CMain
                 final int l_finalR = r;
                 final int l_finalC = c;
                 s_broker.agentstream().forEach( k ->
-                                                {
-                                                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
-                                                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( l_finalC ), l_finalR );
-                                                } );
+                {
+                    if ( k instanceof  CVotingAgent ) append( s_map, ( (CVotingAgent) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                    if ( k instanceof CChairAgent ) append( s_map, ( (CChairAgent) k ).map(),  s_settingStrs.get( l_finalC ), l_finalR );
+                } );
                 // TODO necessary?
                 s_environment.reset();
             }

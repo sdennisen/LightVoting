@@ -192,6 +192,10 @@ public final class CVotingAgent extends IBaseAgent<CVotingAgent>
         m_name = p_name;
         m_altNum = p_altNum;
         m_atomicPrefValues = p_atomicDoubleArray;
+
+        // store preferences in map
+        m_map.put( this.name() + "/preferences", m_atomicPrefValues );
+
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
 
         System.out.println( this );

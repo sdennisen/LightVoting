@@ -7,6 +7,6 @@ variables:
   altnum: '10'
   comsize: '5'
   capacity: '3'
-  dissthr:  '1.4'
-  jointhr: '3'
+#  dissthr:  '1.4'
+#  jointhr: '3'
   preferences: 'uniform'
