@@ -21,11 +21,11 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.environment;
+package org.lightvoting.simulation.environment.random_iterative;
 
 import cern.colt.bitvector.BitVector;
-import org.lightvoting.simulation.agent.CChairAgentRB;
-import org.lightvoting.simulation.agent.CVotingAgentRB;
+import org.lightvoting.simulation.agent.random_iterative.CChairAgentRI;
+import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
 
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,13 +35,13 @@ import java.util.stream.Stream;
 /**
  * Created by sophie on 24.04.17.
  */
-public class CGroupRB
+public class CGroupRI
 {
-    private final HashMap<String, CVotingAgentRB> m_agentMap = new HashMap<>();
+    private final HashMap<String, CVotingAgentRI> m_agentMap = new HashMap<>();
 
     private final int m_capacity;
 
-    private final CChairAgentRB m_chair;
+    private final CChairAgentRI m_chair;
 
     private boolean m_open;
 
@@ -57,11 +57,12 @@ public class CGroupRB
     /**
      * constructor
      * @param p_votingAgent voting agent creating the group
+     * @param p_chair chair of group
      * @param p_groupNum group number
      * @param p_capacity group capacity
      */
-    public CGroupRB( final CVotingAgentRB p_votingAgent,
-                     final CChairAgentRB p_chair,
+    public CGroupRI( final CVotingAgentRI p_votingAgent,
+                     final CChairAgentRI p_chair,
                      final int p_groupNum,
                      final int p_capacity,
                      final long p_cycle,
@@ -90,7 +91,7 @@ public class CGroupRB
      * @param p_votingAgent agent to be added
      * @param p_cycle current broker cycle
      */
-    public void add( final CVotingAgentRB p_votingAgent, final long p_cycle )
+    public void add( final CVotingAgentRI p_votingAgent, final long p_cycle )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         if ( ( m_agentMap.size() == m_capacity ) || ( p_cycle >= m_timeout ) )
@@ -113,7 +114,7 @@ public class CGroupRB
 //        }
 //    }
 
-    public CChairAgentRB chair()
+    public CChairAgentRI chair()
     {
         return m_chair;
     }
@@ -127,7 +128,7 @@ public class CGroupRB
      * return agents
      * @return agent stream
      */
-    public Stream<CVotingAgentRB> agents()
+    public Stream<CVotingAgentRI> agents()
     {
         return m_agentMap.values().stream();
     }

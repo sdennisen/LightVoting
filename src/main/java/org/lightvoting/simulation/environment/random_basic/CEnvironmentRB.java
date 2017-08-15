@@ -21,90 +21,89 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.environment;
+package org.lightvoting.simulation.environment.random_basic;
 
-//import org.lightjason.agentspeak.language.CLiteral;
-//import org.lightjason.agentspeak.language.CRawTerm;
-//import org.lightjason.agentspeak.language.ILiteral;
-//import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
-//import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-//import org.lightvoting.simulation.agent.CChairAgent;
-//import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
-//
-//import java.util.Collections;
-//import java.util.HashMap;
-//import java.util.LinkedList;
-//import java.util.List;
-//
-//// import org.lightvoting.simulation.statistics.CDataWriter;
-//
-//
-///**
-// * Created by sophie on 22.02.17.
-// * Environment class
-// */
-//public final class CEnvironmentOld
-//{
-//    private List<CGroupRB>  m_groups = Collections.synchronizedList( new LinkedList<>() );
-//    private int m_groupNum;
-//    private List<CVotingAgentRB> m_agentList = new LinkedList<>();
-//
-//    // Index of the last activated agent
-//    private int m_currentIndex;
-//
-//    private boolean m_firstActivated;
-//    private final String m_fileName;
-//    private int m_run;
-//    private String m_config;
-//    private int m_capacity;
-//    private HashMap<String, Object> m_map = new HashMap<>();
-//    private int m_finalGroupNum;
-//
-//    /**
-//     * constructor
-//     * @param p_size number of agents
-//     * @param p_fileName HDF5 file
-//     * @param p_capacity group capacity
-//     */
-//    public CEnvironmentOld( final int p_size, final String p_fileName, final int p_capacity )
-//    {
-//        m_fileName = p_fileName;
-//        m_capacity = p_capacity;
-//    }
-//
-//    /**
-//     * initialize groups
-//     *
-//     * @param p_votingAgent agent
-//     *
-//     */
-//    public final void initialset( final CVotingAgentRB p_votingAgent )
-//    {
-//        m_agentList.add( p_votingAgent );
-//
-//        if  ( !m_firstActivated )
-//        {
-//            final CVotingAgentRB l_firstAgent = m_agentList.get( 0 );
-//
-//            l_firstAgent.sleep( 0 );
-//            System.out.println( "waking up agent " + l_firstAgent.name() );
-//            l_firstAgent.getChair().sleep( 0 );
-//            System.out.println( "waking up chair " + l_firstAgent.getChair().name() );
-//            m_firstActivated = true;
-//        }
-//    }
-//
-//    /**
-//     * returns literal representation of existing groups
-//     * @param p_votingAgent voting agent
-//     * @return literal with references to existing groups
-//     */
-//    public ILiteral literal( final CVotingAgentRB p_votingAgent )
-//    {
-//        System.out.println( "xxxxxxxxxxxxxx m_groups: " + m_groups );
-//        return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
-//    }
-//
+import org.lightjason.agentspeak.language.CLiteral;
+import org.lightjason.agentspeak.language.CRawTerm;
+import org.lightjason.agentspeak.language.ILiteral;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
+import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+// import org.lightvoting.simulation.statistics.CDataWriter;
+
+
+/**
+ * Created by sophie on 22.02.17.
+ * Environment class
+ */
+public final class CEnvironmentRB
+{
+    private List<CGroupRB>  m_groups = Collections.synchronizedList( new LinkedList<>() );
+    private int m_groupNum;
+    private List<CVotingAgentRB> m_agentList = new LinkedList<>();
+
+    // Index of the last activated agent
+    private int m_currentIndex;
+
+    private boolean m_firstActivated;
+    private final String m_fileName;
+    private int m_run;
+    private String m_config;
+    private int m_capacity;
+    private HashMap<String, Object> m_map = new HashMap<>();
+    private int m_finalGroupNum;
+
+    /**
+     * constructor
+     * @param p_size number of agents
+     * @param p_fileName HDF5 file
+     * @param p_capacity group capacity
+     */
+    public CEnvironmentRB( final int p_size, final String p_fileName, final int p_capacity )
+    {
+        m_fileName = p_fileName;
+        m_capacity = p_capacity;
+    }
+
+    /**
+     * initialize groups
+     *
+     * @param p_votingAgent agent
+     *
+     */
+    public final void initialset( final CVotingAgentRB p_votingAgent )
+    {
+        m_agentList.add( p_votingAgent );
+
+        if  ( !m_firstActivated )
+        {
+            final CVotingAgentRB l_firstAgent = m_agentList.get( 0 );
+
+            l_firstAgent.sleep( 0 );
+            System.out.println( "waking up agent " + l_firstAgent.name() );
+            l_firstAgent.getChair().sleep( 0 );
+            System.out.println( "waking up chair " + l_firstAgent.getChair().name() );
+            m_firstActivated = true;
+        }
+    }
+
+    /**
+     * returns literal representation of existing groups
+     * @param p_votingAgent voting agent
+     * @return literal with references to existing groups
+     */
+    public ILiteral literal( final CVotingAgentRB p_votingAgent )
+    {
+        System.out.println( "xxxxxxxxxxxxxx m_groups: " + m_groups );
+        return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
+    }
+
 //    /**
 //     * open new group (for random grouping)
 //     * @param p_votingAgent voting agent opening group
@@ -125,7 +124,7 @@ package org.lightvoting.simulation.environment;
 //
 //        return l_group;
 //    }
-//
+
 //    /**
 //     * open new group (for coordinated grouping)
 //     * @param p_votingAgent voting agent opening group
@@ -146,7 +145,7 @@ package org.lightvoting.simulation.environment;
 //
 //        return l_group;
 //    }
-//
+
 //    /**
 //     * add agent to group (for random grouping)
 //     * @param p_randomGroup random group to join
@@ -158,8 +157,8 @@ package org.lightvoting.simulation.environment;
 //        p_randomGroup.addRandom( p_votingAgent );
 //        this.wakeUpAgent();
 //    }
-//
-//
+
+
 //    /**
 //     * add agent to group (for coordinated grouping)
 //     * @param p_group group to join
@@ -172,7 +171,7 @@ package org.lightvoting.simulation.environment;
 //        p_group.addCoordinated( p_votingAgent );
 //        this.wakeUpAgent();
 //    }
-//
+
 //    /**
 //     * detect group of chair agent
 //     * @param p_chairAgent chair agent
@@ -187,10 +186,10 @@ package org.lightvoting.simulation.environment;
 //        }
 //        return CLiteral.from( "" );
 //    }
-//
-//    // open group for further elections, unless the capacity is reached
-//    // also, wake up the next agent
-//
+
+    // open group for further elections, unless the capacity is reached
+    // also, wake up the next agent
+
 //    /**
 //     * open group for further elections unless the capacity is reached. Also, wake up the next agent
 //     * @param p_group group to be reopened
@@ -200,73 +199,73 @@ package org.lightvoting.simulation.environment;
 //        p_group.reopen();
 //        this.wakeUpAgent();
 //    }
-//
-//    /**
-//     * reset environment for next simulation run
-//     */
-//
-//    public void reset()
-//    {
-//        m_groups = Collections.synchronizedList( new LinkedList<>() );
-//        m_agentList = new LinkedList<>();
-//        m_firstActivated = false;
-//        m_agentList = new LinkedList<>();
-//        m_currentIndex = 0;
-//    }
-//
-//    /**
-//     * set config
-//     * @param p_run run number
-//     * @param p_config config number
-//     */
-//
-//    public void setConf( final int p_run, final String p_config )
-//    {
-//        m_run = p_run;
-//        m_config = p_config;
-//        m_groupNum = 0;
-//        m_finalGroupNum = 0;
-//    }
-//
-//    public HashMap<String, Object> map()
-//    {
-//        return m_map;
-//    }
-//
-//    /**
-//     * count group if final diss values are stored
-//     * @param p_run run nr
-//     * @param p_conf config name
-//     */
-//
-//    public void incrementGroupCount( final int p_run, final String p_conf )
-//    {
-//        m_finalGroupNum++;
-//
-//        final String l_slash = "/";
-//
-//        final String l_path = p_run + l_slash  + p_conf + l_slash + "groups" + l_slash + "group count";
-//
-//        m_map.put( l_path, m_finalGroupNum );
-//    }
-//
-//    private void wakeUpAgent()
-//    {
-//        m_currentIndex++;
-//        final CVotingAgentRB l_wakingAgent =  m_agentList.get( m_currentIndex );
-//        l_wakingAgent.sleep( 0 );
-//        l_wakingAgent.getChair().sleep( 0 );
-//
-//        l_wakingAgent.trigger(
-//            CTrigger.from(
-//                ITrigger.EType.ADDGOAL,
-//                CLiteral.from(
-//                    "main"
-//                )
-//            )
-//        );
-//        System.out.println( "Waking up agent " + l_wakingAgent.name() );
-//        System.out.println( "Waking up chair " + l_wakingAgent.getChair().name() );
-//
-//    }
-//}
+
+    /**
+     * reset environment for next simulation run
+     */
+
+    public void reset()
+    {
+        m_groups = Collections.synchronizedList( new LinkedList<>() );
+        m_agentList = new LinkedList<>();
+        m_firstActivated = false;
+        m_agentList = new LinkedList<>();
+        m_currentIndex = 0;
+    }
+
+    /**
+     * set config
+     * @param p_run run number
+     * @param p_config config number
+     */
+
+    public void setConf( final int p_run, final String p_config )
+    {
+        m_run = p_run;
+        m_config = p_config;
+        m_groupNum = 0;
+        m_finalGroupNum = 0;
+    }
+
+    public HashMap<String, Object> map()
+    {
+        return m_map;
+    }
+
+    /**
+     * count group if final diss values are stored
+     * @param p_run run nr
+     * @param p_conf config name
+     */
+
+    public void incrementGroupCount( final int p_run, final String p_conf )
+    {
+        m_finalGroupNum++;
+
+        final String l_slash = "/";
+
+        final String l_path = p_run + l_slash  + p_conf + l_slash + "groups" + l_slash + "group count";
+
+        m_map.put( l_path, m_finalGroupNum );
+    }
+
+    private void wakeUpAgent()
+    {
+        m_currentIndex++;
+        final CVotingAgentRB l_wakingAgent =  m_agentList.get( m_currentIndex );
+        l_wakingAgent.sleep( 0 );
+        l_wakingAgent.getChair().sleep( 0 );
+
+        l_wakingAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "main"
+                )
+            )
+        );
+        System.out.println( "Waking up agent " + l_wakingAgent.name() );
+        System.out.println( "Waking up chair " + l_wakingAgent.getChair().name() );
+
+    }
+}

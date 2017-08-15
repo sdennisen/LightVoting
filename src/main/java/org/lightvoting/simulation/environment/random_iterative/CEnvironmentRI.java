@@ -21,14 +21,15 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.environment;
+package org.lightvoting.simulation.environment.random_iterative;
 
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ILiteral;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CVotingAgentRB;
+import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
+import org.lightvoting.simulation.environment.random_basic.CGroupRB;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,11 +43,11 @@ import java.util.List;
  * Created by sophie on 22.02.17.
  * Environment class
  */
-public final class CEnvironment
+public final class CEnvironmentRI
 {
     private List<CGroupRB>  m_groups = Collections.synchronizedList( new LinkedList<>() );
     private int m_groupNum;
-    private List<CVotingAgentRB> m_agentList = new LinkedList<>();
+    private List<CVotingAgentRI> m_agentList = new LinkedList<>();
 
     // Index of the last activated agent
     private int m_currentIndex;
@@ -65,7 +66,7 @@ public final class CEnvironment
      * @param p_fileName HDF5 file
      * @param p_capacity group capacity
      */
-    public CEnvironment( final int p_size, final String p_fileName, final int p_capacity )
+    public CEnvironmentRI( final int p_size, final String p_fileName, final int p_capacity )
     {
         m_fileName = p_fileName;
         m_capacity = p_capacity;
@@ -77,13 +78,13 @@ public final class CEnvironment
      * @param p_votingAgent agent
      *
      */
-    public final void initialset( final CVotingAgentRB p_votingAgent )
+    public final void initialset( final CVotingAgentRI p_votingAgent )
     {
         m_agentList.add( p_votingAgent );
 
         if  ( !m_firstActivated )
         {
-            final CVotingAgentRB l_firstAgent = m_agentList.get( 0 );
+            final CVotingAgentRI l_firstAgent = m_agentList.get( 0 );
 
             l_firstAgent.sleep( 0 );
             System.out.println( "waking up agent " + l_firstAgent.name() );
@@ -98,7 +99,7 @@ public final class CEnvironment
      * @param p_votingAgent voting agent
      * @return literal with references to existing groups
      */
-    public ILiteral literal( final CVotingAgentRB p_votingAgent )
+    public ILiteral literal( final CVotingAgentRI p_votingAgent )
     {
         System.out.println( "xxxxxxxxxxxxxx m_groups: " + m_groups );
         return CLiteral.from( "groups", CRawTerm.from( m_groups ) );
@@ -252,7 +253,7 @@ public final class CEnvironment
     private void wakeUpAgent()
     {
         m_currentIndex++;
-        final CVotingAgentRB l_wakingAgent =  m_agentList.get( m_currentIndex );
+        final CVotingAgentRI l_wakingAgent =  m_agentList.get( m_currentIndex );
         l_wakingAgent.sleep( 0 );
         l_wakingAgent.getChair().sleep( 0 );
 

@@ -38,7 +38,7 @@ package org.lightvoting.simulation.agent;
 //    private int m_count;
 //    private IAgentConfiguration<CVotingAgentRB> m_configuration;
 //    private final InputStream m_stream;
-//    private CEnvironment m_environment;
+//    private CEnvironmentRI m_environment;
 //    private int m_altnum;
 //    private double m_joinThr;
 //    private List<AtomicDoubleArray> m_prefList;
@@ -78,7 +78,7 @@ package org.lightvoting.simulation.agent;
 //                             final int p_agNum,
 //                             final InputStream p_stream,
 //                             final InputStream p_chairstream,
-//                             final CEnvironment p_environment,
+//                             final CEnvironmentRI p_environment,
 //                             final int p_altnum,
 //                             final String p_name,
 //                             final double p_joinThr,
@@ -100,7 +100,7 @@ package org.lightvoting.simulation.agent;
 //        m_timeout = 10;
 //        m_comsize = p_comsize;
 //
-//        m_votingagentgenerator = new CVotingAgentGenerator( new CSend(), m_stream, m_environment, m_altnum, m_name,
+//        m_votingagentgenerator = new CVotingAgentGenerator( new CSendRB(), m_stream, m_environment, m_altnum, m_name,
 //                                                                                  m_joinThr, m_prefList );
 //        m_chairagentgenerator = new CChairAgent.CChairAgentGenerator(  m_chairstream, m_environment, m_name, m_altnum, m_comsize );
 //
@@ -248,11 +248,11 @@ package org.lightvoting.simulation.agent;
 //        /**
 //         * Store reference to send action to registered agents upon creation.
 //         */
-//        private final CSend m_send;
+//        private final CSendRB m_send;
 //        private final int m_agNum;
 //        private int m_count;
 //        private final InputStream m_stream;
-//        private final CEnvironment m_environment;
+//        private final CEnvironmentRI m_environment;
 //        private final String m_name;
 //        private final double m_joinThr;
 //        private final List<AtomicDoubleArray> m_prefList;
@@ -275,12 +275,12 @@ package org.lightvoting.simulation.agent;
 //         * @param p_comsize committee size
 //         * @throws Exception exception
 //         */
-//        public CBrokerAgentGenerator( final CSend p_send,
+//        public CBrokerAgentGenerator( final CSendRB p_send,
 //                                      final FileInputStream p_brokerStream,
 //                                      final int p_agNum,
 //                                      final InputStream p_stream,
 //                                      final InputStream p_chairStream,
-//                                      final CEnvironment p_environment,
+//                                      final CEnvironmentRI p_environment,
 //                                      final int p_altnum,
 //                                      final String p_name,
 //                                      final double p_joinThr,

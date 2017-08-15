@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.agent;
+package org.lightvoting.simulation.agent.random_basic;
 
 import cern.colt.Arrays;
 import cern.colt.bitvector.BitVector;
@@ -37,10 +37,10 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.action.message.CSend;
+import org.lightvoting.simulation.action.message.random_basic.CSendRB;
 import org.lightvoting.simulation.constants.CVariableBuilder;
-import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.environment.CGroupRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
+import org.lightvoting.simulation.environment.random_basic.CGroupRB;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -83,7 +83,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     /**
      * environment
      */
-    private CEnvironment m_environment;
+    private CEnvironmentRB m_environment;
 
     /**
      * associated chair agent;
@@ -139,7 +139,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      */
 
     public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final IBaseAgent<CChairAgentRB> p_chairagent,
-                           final CEnvironment p_environment,
+                           final CEnvironmentRB p_environment,
                            final int p_altNum,
                            final double p_joinThr,
                            final AtomicDoubleArray p_preferences
@@ -183,7 +183,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      * @param p_joinThr join threshold
      * @param p_atomicDoubleArray preferences
      */
-    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironment p_environment, final int p_altNum,
+    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altNum,
                            final double p_joinThr,
                            final AtomicDoubleArray p_atomicDoubleArray
     )
@@ -574,7 +574,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         /**
          * Store reference to send action to registered agents upon creation.
          */
-        private final CSend m_send;
+        private final CSendRB m_send;
 
         /**
          * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
@@ -584,7 +584,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         /**
          * environment reference
          */
-        private final CEnvironment m_environment;
+        private final CEnvironmentRB m_environment;
 
         /**
          * number of alternatives
@@ -604,7 +604,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
          * @param p_preferences preferences
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
+        public CVotingAgentGenerator( final CSendRB p_send, final InputStream p_stream, final CEnvironmentRB p_environment, final int p_altNum,
                                       final String p_fileName,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_preferences

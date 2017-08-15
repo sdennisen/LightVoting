@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.message;
+package org.lightvoting.simulation.action.message.random_basic;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.agent.IAgent;
@@ -35,7 +35,7 @@ import org.lightjason.agentspeak.language.fuzzy.CFuzzyValue;
 import org.lightjason.agentspeak.language.fuzzy.IFuzzyValue;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CVotingAgentRB;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Action to send messages for communication.
  * Based on/credits to https://lightjason.github.io/tutorials/communication/
  */
-public final class CSend extends IBaseAction
+public final class CSendRB extends IBaseAction
 {
     /**
      * serialUID

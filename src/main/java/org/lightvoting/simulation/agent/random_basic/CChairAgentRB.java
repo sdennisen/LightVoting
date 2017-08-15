@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.agent;
+package org.lightvoting.simulation.agent.random_basic;
 
 
 import cern.colt.bitvector.BitVector;
@@ -36,8 +36,8 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.environment.CGroupRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
+import org.lightvoting.simulation.environment.random_basic.CGroupRB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 
 import java.io.InputStream;
@@ -79,7 +79,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      * environment
      */
 
-    private CEnvironment m_environment;
+    private CEnvironmentRB m_environment;
 
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
@@ -119,6 +119,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     /**
      * constructor of the agent
      * @param p_configuration agent configuration of the agent generator
+     * @param p_environment environment
      * @param p_fileName h5 file
      * @param p_run run number
      * @param p_dissthr dissatisfaction threshold
@@ -126,7 +127,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      */
 
 
-    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironment p_environment,
+    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironmentRB p_environment,
                           final String p_fileName,
                           final int p_run,
                           final double p_dissthr,
@@ -154,7 +155,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
      */
-    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironment p_environment, final int p_altnum,
+    public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altnum,
                           final int p_comsize
     )
     {
@@ -830,7 +831,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         /**
          * environment
          */
-        private final CEnvironment m_environment;
+        private final CEnvironmentRB m_environment;
 
         /**
          * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
@@ -846,13 +847,14 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         /**
          * constructor of the generator
          * @param p_stream ASL code as any stream e.g. FileInputStream
+         * @param p_environment environment
          * @param p_fileName h5 file
          * @param p_run run number
          * @param p_dissthr dissatisfaction threshold
          * @param p_comsize size of committee to be elected
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
+        public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentRB p_environment,
                                      final String p_fileName,
                                      final int p_run,
                                      final double p_dissthr, final int p_comsize, final int p_altnum
@@ -899,7 +901,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironment p_environment, final String p_name, final int p_altnum, final int p_comsize )
+        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentRB p_environment, final String p_name, final int p_altnum, final int p_comsize )
         throws Exception
         {
             super(

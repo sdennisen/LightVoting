@@ -28,8 +28,9 @@ import org.lightjason.agentspeak.language.execution.IVariableBuilder;
 import org.lightjason.agentspeak.language.instantiable.IInstantiable;
 import org.lightjason.agentspeak.language.variable.CConstant;
 import org.lightjason.agentspeak.language.variable.IVariable;
-import org.lightvoting.simulation.agent.CVotingAgentRB;
-import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
+import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 
 import java.util.stream.Stream;
 
@@ -45,16 +46,22 @@ public final class CVariableBuilder implements IVariableBuilder
      * environment reference
      */
 
-    private final CEnvironment m_environment;
+    private CEnvironmentRI m_environmentRI;
+    private CEnvironmentRB m_environmentRB;
 
     /**
      * constructor
      *
      * @param p_environment environment
      */
-    public CVariableBuilder( final CEnvironment p_environment )
+    public CVariableBuilder( final CEnvironmentRB p_environment )
     {
-        m_environment = p_environment;
+        m_environmentRB = p_environment;
+    }
+
+    public CVariableBuilder( final CEnvironmentRI p_environment )
+    {
+        m_environmentRI = p_environment;
     }
 
     @Override

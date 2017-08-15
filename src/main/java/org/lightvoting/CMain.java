@@ -27,11 +27,12 @@ import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
-import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CBrokerAgentRB;
-import org.lightvoting.simulation.agent.CChairAgentRB;
-import org.lightvoting.simulation.agent.CVotingAgentRB;
-import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.action.message.random_basic.CSendRB;
+import org.lightvoting.simulation.agent.random_basic.CBrokerAgentRB;
+import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
+import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.statistics.EDataWriter;
 import org.yaml.snakeyaml.Yaml;
 
@@ -52,7 +53,9 @@ import java.util.stream.IntStream;
  */
 public final class CMain
 {
-    private static CEnvironment s_environment;
+    private static CEnvironmentRB s_environmentRB;
+    private static CEnvironmentRI s_environmentRI;
+
     private static int s_altnum;
 
     private static int s_runs;
@@ -160,13 +163,13 @@ public final class CMain
                     final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
 
-                    s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
+                    s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 
                     // TODO separate creation of broker and setting of parameters
                     if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
-                    createBrokerRandomBasic( p_args[3], l_chairstream, s_agNum, new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                    createBrokerRandomBasic( p_args[3], l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
 
-                    //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+                    //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
                     //        .generatemultiplenew(
                     //    Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
@@ -254,7 +257,7 @@ public final class CMain
                     if ( k instanceof CChairAgentRB ) append( s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                 } );
                 // TODO necessary?
-                s_environment.reset();
+                s_environmentRB.reset();
             }
             //   System.out.println( "Next simulation run " );
         }
@@ -271,9 +274,9 @@ public final class CMain
 
     }
 
-    private static void createBrokerRandomBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSend p_send,
+    private static void createBrokerRandomBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendRB p_send,
                                       final FileInputStream p_stream,
-                                      final CEnvironment p_environment,
+                                      final CEnvironmentRB p_environment,
                                       final int p_altnum, final String p_name,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList
@@ -287,7 +290,7 @@ public final class CMain
                                                                       p_agNum,
                                                                       p_stream,
                                                                       p_chrStream,
-                                                                      s_environment,
+                                                                      s_environmentRB,
                                                                       s_altnum,
                                                                       p_name,
                                                                       s_joinThr,
@@ -313,12 +316,12 @@ public final class CMain
                     CRawTerm.from( i.getChair() )
                 )
             );
-            s_environment.initialset( i );
+            s_environmentRB.initialset( i );
             i.reset();
             i.getChair().reset();
             s_map.putAll( i.getChair().map() );
         } );
-        s_map.putAll( s_environment.map() );
+        s_map.putAll( s_environmentRB.map() );
     }
 
     @SuppressWarnings( "unchecked" )

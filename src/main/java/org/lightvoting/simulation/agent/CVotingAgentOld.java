@@ -38,10 +38,10 @@ package org.lightvoting.simulation.agent;
 //import org.lightjason.agentspeak.language.ILiteral;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-//import org.lightvoting.simulation.action.message.CSend;
+//import org.lightvoting.simulation.action.message.randomBasic.CSendRB;
 //import org.lightvoting.simulation.constants.CVariableBuilder;
-//import org.lightvoting.simulation.environment.CEnvironment;
-//import org.lightvoting.simulation.environment.CGroupRB;
+//import org.lightvoting.simulation.environment.randomIterative.CEnvironmentRI;
+//import org.lightvoting.simulation.environment.randomBasic.CGroupRB;
 //
 //import java.io.InputStream;
 //import java.text.MessageFormat;
@@ -86,7 +86,7 @@ package org.lightvoting.simulation.agent;
 //    /**
 //     * environment
 //     */
-//    private final CEnvironment m_environment;
+//    private final CEnvironmentRI m_environment;
 //
 //    /**
 //     * associated chair agent;
@@ -138,7 +138,7 @@ package org.lightvoting.simulation.agent;
 //     */
 //
 //    public CVotingAgent_old( final String p_name, final IAgentConfiguration<CVotingAgent_old> p_configuration, final IBaseAgent<CChairAgent> p_chairagent,
-//                             final CEnvironment p_environment,
+//                             final CEnvironmentRI p_environment,
 //                             final int p_altNum,
 //                             final double p_joinThr,
 //                             final AtomicDoubleArray p_preferences
@@ -507,7 +507,7 @@ package org.lightvoting.simulation.agent;
 //        /**
 //         * Store reference to send action to registered agents upon creation.
 //         */
-//        private final CSend m_send;
+//        private final CSendRB m_send;
 //
 //        /**
 //         * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
@@ -517,7 +517,7 @@ package org.lightvoting.simulation.agent;
 //        /**
 //         * environment reference
 //         */
-//        private final CEnvironment m_environment;
+//        private final CEnvironmentRI m_environment;
 //
 //        /**
 //         * number of alternatives
@@ -537,7 +537,7 @@ package org.lightvoting.simulation.agent;
 //         * @param p_preferences preferences
 //         * @throws Exception Thrown if something goes wrong while generating agents.
 //         */
-//        public CVotingAgentGenerator( final CSend p_send, final InputStream p_stream, final CEnvironment p_environment, final int p_altNum,
+//        public CVotingAgentGenerator( final CSendRB p_send, final InputStream p_stream, final CEnvironmentRI p_environment, final int p_altNum,
 //                                      final String p_fileName,
 //                                      final double p_joinThr,
 //                                      final List<AtomicDoubleArray> p_preferences

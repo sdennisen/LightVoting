@@ -27,10 +27,10 @@ package org.lightvoting;
 //import com.google.common.util.concurrent.AtomicDoubleArray;
 //import org.lightjason.agentspeak.language.CLiteral;
 //import org.lightjason.agentspeak.language.CRawTerm;
-//import org.lightvoting.simulation.action.message.CSend;
+//import org.lightvoting.simulation.action.message.randomBasic.CSendRB;
 //import org.lightvoting.simulation.agent.CChairAgent;
-//import org.lightvoting.simulation.agent.CVotingAgentRB;
-//import org.lightvoting.simulation.environment.CEnvironment;
+//import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+//import org.lightvoting.simulation.environment.randomIterative.CEnvironmentRI;
 //import org.lightvoting.simulation.statistics.EDataWriter;
 //import org.yaml.snakeyaml.Yaml;
 //
@@ -52,7 +52,7 @@ package org.lightvoting;
 // */
 //public final class CMainOld
 //{
-//    private static CEnvironment s_environment;
+//    private static CEnvironmentRI s_environment;
 //    private static int s_altnum;
 //
 //    private static int s_runs;
@@ -120,9 +120,9 @@ package org.lightvoting;
 //                final FileInputStream l_stream = new FileInputStream( p_args[0] );
 //                final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 //
-//                s_environment = new CEnvironment( Integer.parseInt( p_args[2] ), l_name, s_capacity );
+//                s_environment = new CEnvironmentRI( Integer.parseInt( p_args[2] ), l_name, s_capacity );
 //
-//                l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSend(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
+//                l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
 //                l_agents = l_votingagentgenerator
 //                    .generatemultiplenew(
 //                        Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )

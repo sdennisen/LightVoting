@@ -65,12 +65,12 @@ public final class CVotingAgentRandomBasicTest extends TestCase
 //    {
 //        try
 //        {
-//            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, "foo.h5", 3 ),
+//            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironmentRI( 23, "foo.h5", 3 ),
 //                                                                                                               "foo.h5",
 //                                                              0,
 //                                                              1
 //            );
-//            final CVotingAgentRB l_agent = new CVotingAgentRB( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5",
+//            final CVotingAgentRB l_agent = new CVotingAgentRB( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironmentRI( 23, "foo.h5",
 //                                                                                                                                        3
 //            ), 10,
 //

@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.agent;
+package org.lightvoting.simulation.agent.random_iterative;
 
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
@@ -35,10 +35,9 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.agent.CVotingAgentRB.CVotingAgentGenerator;
-import org.lightvoting.simulation.environment.CEnvironment;
-import org.lightvoting.simulation.environment.CGroupRB;
+import org.lightvoting.simulation.action.message.random_iterative.CSendRI;
+import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
+import org.lightvoting.simulation.environment.random_iterative.CGroupRI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,22 +57,22 @@ import java.util.stream.Stream;
  * Created by sophie on 18.07.17.
  */
 @IAgentAction
-public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
+public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 {
-    private List<CVotingAgentRB> m_voters = new ArrayList<>();
-    private HashSet<CChairAgentRB> m_chairs = new HashSet<>();
-    private HashSet<CGroupRB> m_groups = new HashSet<>();
+    private List<CVotingAgentRI> m_voters = new ArrayList<>();
+    private HashSet<CChairAgentRI> m_chairs = new HashSet<>();
+    private HashSet<CGroupRI> m_groups = new HashSet<>();
     private final String m_name;
     private final int m_agNum;
     private int m_count;
-    private IAgentConfiguration<CVotingAgentRB> m_configuration;
+    private IAgentConfiguration<CVotingAgentRI> m_configuration;
     private final InputStream m_stream;
-    private CEnvironment m_environment;
+    private CEnvironmentRI m_environment;
     private int m_altnum;
     private double m_joinThr;
     private List<AtomicDoubleArray> m_prefList;
     private final String m_broker;
-    private CVotingAgentGenerator m_votingagentgenerator;
+    private CVotingAgentRI.CVotingAgentGenerator m_votingagentgenerator;
     private int m_groupNum;
     // TODO read via yaml
     private int m_capacity;
@@ -81,12 +80,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     private long m_timeout;
     private Object m_fileName;
     private int m_chairNum;
-    private CChairAgentRB.CChairAgentGenerator m_chairagentgenerator;
+    private CChairAgentRI.CChairAgentGenerator m_chairagentgenerator;
     private final InputStream m_chairstream;
     private final int m_comsize;
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
-    private final HashMap<CVotingAgentRB, Long> m_lineHashMap = new HashMap<CVotingAgentRB, Long>();
+    private final HashMap<CVotingAgentRI, Long> m_lineHashMap = new HashMap<>();
 
     /**
      * ctor
@@ -103,12 +102,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
      * @param p_comsize committee size
      * @throws Exception exception
      */
-    public CBrokerAgentRB( final String p_broker,
+    public CBrokerAgentRI( final String p_broker,
                            @Nonnull final IAgentConfiguration p_configuration,
                            final int p_agNum,
                            final InputStream p_stream,
                            final InputStream p_chairstream,
-                           final CEnvironment p_environment,
+                           final CEnvironmentRI p_environment,
                            final int p_altnum,
                            final String p_name,
                            final double p_joinThr,
@@ -130,9 +129,9 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_timeout = 10;
         m_comsize = p_comsize;
 
-        m_votingagentgenerator = new CVotingAgentGenerator( new CSend(), m_stream, m_environment, m_altnum, m_name,
-                                                                                  m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentRB.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize );
+        m_votingagentgenerator = new CVotingAgentRI.CVotingAgentGenerator( new CSendRI(), m_stream, m_environment, m_altnum, m_name,
+                                                                           m_joinThr, m_prefList );
+        m_chairagentgenerator = new CChairAgentRI.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -162,12 +161,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "create/ag" )
-    private CVotingAgentRB createAgent( final Number p_createdNum ) throws Exception
+    private CVotingAgentRI createAgent( final Number p_createdNum ) throws Exception
     {
 
         System.out.println( "voters generated so far: " + p_createdNum );
 
-        final CVotingAgentRB l_testvoter = m_votingagentgenerator.generatesinglenew();
+        final CVotingAgentRI l_testvoter = m_votingagentgenerator.generatesinglenew();
 
         System.out.println( "new voter:" + l_testvoter.name() );
 
@@ -179,10 +178,10 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "assign/group" )
-    private void assignGroup( final CVotingAgentRB p_votingAgent ) throws Exception
+    private void assignGroup( final CVotingAgentRI p_votingAgent ) throws Exception
     {
         System.out.println( "Assigning group to " + p_votingAgent.name() );
-        for ( final CGroupRB l_group : m_groups )
+        for ( final CGroupRI l_group : m_groups )
         {
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
             // only add agents to group if group is open and chair did not reach its timeout
@@ -197,11 +196,11 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             }
         }
 
-        final CChairAgentRB l_chairAgent = m_chairagentgenerator.generatesinglenew();
+        final CChairAgentRI l_chairAgent = m_chairagentgenerator.generatesinglenew();
 
         // if there was no available group, create a new group
 
-        final CGroupRB l_group = new CGroupRB( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
+        final CGroupRI l_group = new CGroupRI( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
@@ -216,7 +215,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     @IAgentActionName( name = "update/groups" )
     private void updateGroups() throws Exception
     {
-        for ( final CGroupRB l_group : m_groups )
+        for ( final CGroupRI l_group : m_groups )
         {
             // if all voters have submitted their votes, there is nothing to check, group is clean
 
@@ -234,7 +233,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             {
 
                 final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-                final CopyOnWriteArrayList<CVotingAgentRB> l_toRemoveAgents = new CopyOnWriteArrayList();
+                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
                 l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                        .forEach( j ->
                        {
@@ -272,17 +271,17 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     /**
      * Class CBrokerAgentGenerator
      */
-    public static class CBrokerAgentGenerator extends IBaseAgentGenerator<CBrokerAgentRB>
+    public static class CBrokerAgentGenerator extends IBaseAgentGenerator<CBrokerAgentRI>
     {
 
         /**
          * Store reference to send action to registered agents upon creation.
          */
-        private final CSend m_send;
+        private final CSendRI m_send;
         private final int m_agNum;
         private int m_count;
         private final InputStream m_stream;
-        private final CEnvironment m_environment;
+        private final CEnvironmentRI m_environment;
         private final String m_name;
         private final double m_joinThr;
         private final List<AtomicDoubleArray> m_prefList;
@@ -305,12 +304,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
          * @param p_comsize committee size
          * @throws Exception exception
          */
-        public CBrokerAgentGenerator( final CSend p_send,
+        public CBrokerAgentGenerator( final CSendRI p_send,
                                       final FileInputStream p_brokerStream,
                                       final int p_agNum,
                                       final InputStream p_stream,
                                       final InputStream p_chairStream,
-                                      final CEnvironment p_environment,
+                                      final CEnvironmentRI p_environment,
                                       final int p_altnum,
                                       final String p_name,
                                       final double p_joinThr,
@@ -328,7 +327,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                         CCommon.actionsFromPackage(),
                         Stream.concat(
                             // use the actions which are defined inside the agent class
-                            CCommon.actionsFromAgentClass( CBrokerAgentRB.class ),
+                            CCommon.actionsFromAgentClass( CBrokerAgentRI.class ),
                             // add VotingAgent related external actions
                             Stream.of(
                                 p_send
@@ -337,7 +336,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                         // build the set with a collector
                     ).collect( Collectors.toSet() ) );
 
-            System.out.println( "actions defined in broker class: " + CCommon.actionsFromAgentClass( CBrokerAgentRB.class ).collect( Collectors.toSet() ) );
+            System.out.println( "actions defined in broker class: " + CCommon.actionsFromAgentClass( CBrokerAgentRI.class ).collect( Collectors.toSet() ) );
 
 
             // aggregation function for the optimization function, here
@@ -357,12 +356,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
         @Nullable
         @Override
-        public CBrokerAgentRB generatesingle( @Nullable final Object... p_data )
+        public CBrokerAgentRI generatesingle( @Nullable final Object... p_data )
         {
-            CBrokerAgentRB l_broker = null;
+            CBrokerAgentRI l_broker = null;
             try
             {
-                l_broker = new CBrokerAgentRB(
+                l_broker = new CBrokerAgentRI(
 
                     // create a string with the agent name "agent <number>"
                     // get the value of the counter first and increment, build the agent

@@ -28,8 +28,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.agent.IAgent;
-import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.action.message.random_basic.CSendRB;
+import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -74,13 +76,13 @@ public final class CVotingAgentRandomBasicGeneratorTest extends TestCase
                     "!main.\n+!main.".getBytes( "UTF-8" )
             );
 
-            final CSend l_sendaction = new CSend();
+            final CSendRB l_sendaction = new CSendRB();
 
             /* TODO Check test */
             final Set<CVotingAgentRB> l_agents = new
 
-                CVotingAgentRB.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList() )
-                    .generatemultiple( 23, new CChairAgentRB.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5", 3 ),
+                CVotingAgentRB.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList() )
+                    .generatemultiple( 23, new CChairAgentRB.CChairAgentGenerator( l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ),
                                                                                    "foo.h5", 0,
                                                                                    3, 1, 5
                     ) )

@@ -37,8 +37,8 @@ package org.lightvoting.simulation.agent;
 //import org.lightjason.agentspeak.language.CRawTerm;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 //import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-//import org.lightvoting.simulation.environment.CEnvironment;
-//import org.lightvoting.simulation.environment.CGroupRB;
+//import org.lightvoting.simulation.environment.randomIterative.CEnvironmentRI;
+//import org.lightvoting.simulation.environment.randomBasic.CGroupRB;
 //import org.lightvoting.simulation.rule.CMinisumApproval;
 //
 //import java.io.InputStream;
@@ -82,7 +82,7 @@ package org.lightvoting.simulation.agent;
 //     * environment
 //     */
 //
-//    private final CEnvironment m_environment;
+//    private final CEnvironmentRI m_environment;
 //
 //    /**
 //     * grouping algorithm: "RANDOM" or "COORDINATED"
@@ -123,7 +123,7 @@ package org.lightvoting.simulation.agent;
 //     */
 //
 //
-//    public CChairAgent_old( final String p_name, final IAgentConfiguration<CChairAgent_old> p_configuration, final CEnvironment p_environment,
+//    public CChairAgent_old( final String p_name, final IAgentConfiguration<CChairAgent_old> p_configuration, final CEnvironmentRI p_environment,
 //                            final String p_fileName,
 //                            final int p_run,
 //                            final double p_dissthr,
@@ -627,7 +627,7 @@ package org.lightvoting.simulation.agent;
 //        /**
 //         * environment
 //         */
-//        private final CEnvironment m_environment;
+//        private final CEnvironmentRI m_environment;
 //
 //        /**
 //         * Current free agent id, needs to be thread-safe, therefore using AtomicLong.
@@ -649,7 +649,7 @@ package org.lightvoting.simulation.agent;
 //         * @param p_comsize size of committee to be elected
 //         * @throws Exception Thrown if something goes wrong while generating agents.
 //         */
-//        public CChairAgentGenerator( final InputStream p_stream, final CEnvironment p_environment,
+//        public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentRI p_environment,
 //                                     final String p_fileName,
 //                                     final int p_run,
 //                                     final double p_dissthr, final int p_comsize, final int p_altnum
