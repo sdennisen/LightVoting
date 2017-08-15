@@ -471,6 +471,10 @@ public final class CChairAgent extends IBaseAgent<CChairAgent>
                 )
             )
         );
+
+        // store election result in map
+        m_map.put( this.name() + "/election result", l_comResultBV );
+
         // m_dissStored = false;
 
     }
