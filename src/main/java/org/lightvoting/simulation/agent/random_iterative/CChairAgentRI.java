@@ -462,18 +462,6 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             }
         );
 
-
-
-        this.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "removed/voter"
-
-                )
-            )
-        );
-
         // store election result in map
         m_map.put( this.name() + "/election result", l_comResultBV );
         // store group size in map
