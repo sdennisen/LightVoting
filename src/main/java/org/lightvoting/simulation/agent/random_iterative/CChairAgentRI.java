@@ -65,7 +65,7 @@ import java.util.stream.Stream;
 @IAgentAction
 public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 {
-    static private final long serialVersionUID = -2704070311180663530L;
+    private static final long serialVersionUID = -2704070311180663530L;
 
     /**
      * name of chair
@@ -410,11 +410,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public void computeResult()
+    public void computeResult( final Number p_iteration )
     {
         final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
         final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "Iteration:" + p_iteration );
 
         System.out.println( "number of alternatives: " + m_altnum );
 
@@ -427,7 +429,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 
-        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + "Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(
@@ -448,7 +450,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                     CLiteral.from(
                         "result",
                         CRawTerm.from( this ),
-                        CRawTerm.from( l_comResultBV )
+                        CRawTerm.from( l_comResultBV ),
+                        CRawTerm.from( p_iteration )
                     )
                 );
                 System.out.println( "addbelief result to agent " + i.name() );

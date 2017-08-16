@@ -39,10 +39,10 @@ state(0, undefined).
     .
 
 +!diss/submitted
-    : >>result(Chair, Result) && >>state(3, S)
+    : >>result(Chair, Result, Iteration) && >>state(3, S)
     <-
         generic/print(MyName, "submit diss for result", Result);
-        submit/diss(Chair,Result);
+        submit/diss(Chair,Result,Iteration);
         -state(3, S);
         +state(4, diss/submitted);
         generic/print(MyName, "diss/submitted")

@@ -69,7 +69,7 @@ import java.util.stream.Stream;
 public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 {
 
-    static private final long serialVersionUID = 5177441212784089728L;
+    private static final long serialVersionUID = 5177441212784089728L;
 
     /**
      * name of the agent
@@ -312,7 +312,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/diss" )
-    private void submitDiss( final CChairAgentRI p_chairAgent, final BitVector p_result ) throws InterruptedException
+    private void submitDiss( final CChairAgentRI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
     {
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
@@ -329,8 +329,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 CLiteral.from(
                     "stored/diss",
                     CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.computeDissBV( p_result ) )
-                )
+                    CRawTerm.from( this.computeDissBV( p_result ) ),
+                    CRawTerm.from( p_iteration )                )
             )
         );
     }

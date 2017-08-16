@@ -59,6 +59,8 @@ import java.util.stream.Stream;
 @IAgentAction
 public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 {
+    private static final long serialVersionUID = -5422798855948273749L;
+
     private List<CVotingAgentRI> m_voters = new ArrayList<>();
     private HashSet<CChairAgentRI> m_chairs = new HashSet<>();
     private HashSet<CGroupRI> m_groups = new HashSet<>();
@@ -86,7 +88,6 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentRI, Long> m_lineHashMap = new HashMap<>();
-    static private final long serialVersionUID = -5422798855948273749L;
 
     /**
      * ctor

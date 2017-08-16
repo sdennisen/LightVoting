@@ -11,6 +11,9 @@ wait/time/diss(0, 10).
 //max/time/diss(10).
 started(0).
 
+// initial iteration
+iteration(0).
+
 !start.
 
 // as soon as group is opened, wait for votes
@@ -70,7 +73,7 @@ started(0).
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
 +!started/voting(F)
-    : >>(started(S), S == 0) && >>clean/group(C)
+    : >>(started(S), S == 0) && >>clean/group(C) && >>iteration(I)
     <-
         -started(S);
         -clean/group(C);
@@ -78,11 +81,11 @@ started(0).
         // compute result of election according to given voting rule
         // add belief result/computed when done
         generic/print( "compute result", "fill is", F );
-        compute/result()
+        compute/result(I)
     .
 
 // store received diss value in Java datastructure
-+!stored/diss(Traveller, Diss)
++!stored/diss(Traveller, Diss, Iteration)
     : >>(dissatisfaction(D, F), D < F-1)
     <-
         generic/print( "store diss", "fill", F);
@@ -106,16 +109,7 @@ started(0).
     :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
     <-
         !done
-        //!clean/up/diss
     .
-
-//+!clean/up/diss
-//    <-
-//        // broker needs to remove the voters who didn't submit their diss
-//        // when you are done with clean-up, broker adds goal !done in chair
-//        generic/print( "clean up votes" )
-//        // clean/up/diss()
-//    .
 
 +!done
     <-
