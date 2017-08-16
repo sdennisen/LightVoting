@@ -524,13 +524,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         {
             System.out.println( "fill: " +  m_dissList.size() + " add goal !removed/voter" );
 
-            this.beliefbase().add(
+            this.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
                     CLiteral.from(
-                        "remove/voter",
-                        CRawTerm.from( 1 )
-
+                        "removed/voter"
                     )
-
+                )
             );
         }
 

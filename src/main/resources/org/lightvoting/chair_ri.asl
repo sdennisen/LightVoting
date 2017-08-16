@@ -22,8 +22,8 @@ count(0).
     : >>waittimevote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
-       !timedout/votes;
-       !removed/voter
+       !timedout/votes//;
+      // !removed/voter
         // !nextcycle
     .
 
@@ -117,8 +117,9 @@ count(0).
 //        remove/voter()
     : true
     <-
-        !removed/voter;
-        generic/print( "not removing voter yet" )
+        // Test print
+        generic/print( "not removing voter yet" );
+        !removed/voter
     .
 
 +!reelected
