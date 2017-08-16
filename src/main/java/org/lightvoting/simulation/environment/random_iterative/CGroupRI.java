@@ -133,6 +133,11 @@ public class CGroupRI
         return m_agentMap.values().stream();
     }
 
+    public void remove( final CVotingAgentRI p_votingAgent )
+    {
+        m_agentMap.values().remove( p_votingAgent );
+    }
+
     /**
      * remove all specified voters from group
      * @param p_toRemoveList names of voters as list
@@ -151,6 +156,11 @@ public class CGroupRI
     public boolean areVotesSubmitted()
     {
         return m_votesSubmitted;
+    }
+
+    public int size()
+    {
+        return m_agentMap.size();
     }
 
     //    public void close()

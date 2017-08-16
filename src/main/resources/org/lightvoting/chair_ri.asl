@@ -96,8 +96,26 @@ iteration(0).
     : >>(dissatisfaction(D, F), D == F-1)
     <-
         store/diss(Traveller, Diss);
-        !done
+        generic/print("add goal !removed/voter");
+        !removed/voter
     .
+
++!removed/voter
+    : >>iteration(I)
+    <-
+        NewI = I+1;
+        -iteration(I);
+        +iteration(NewI);
+        remove/voter()
+    .
+
++!reelected
+    : >>iteration(I)
+    <-
+        compute/result(I)
+    .
+
+
 
 // as soon as result is computed, chair sends it to the voters and waits for diss values
 

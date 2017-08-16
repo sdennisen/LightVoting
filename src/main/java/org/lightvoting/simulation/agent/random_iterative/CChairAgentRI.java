@@ -150,15 +150,18 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      * @param p_environment environment
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
+     * @param p_dissthr dissatisfaction threshold
      */
     public CChairAgentRI( final String p_name, final IAgentConfiguration<CChairAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altnum,
-                          final int p_comsize
+                          final int p_comsize,
+                          final double p_dissthr
     )
     {
         super( p_configuration );
         m_name = p_name;
         m_altnum = p_altnum;
         m_comsize = p_comsize;
+        m_dissThreshold = p_dissthr;
         // TODO via parameters
         m_voteTimeout = 10;
     }
@@ -429,7 +432,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 
-        System.out.println( " ------------------------ " + this.name() + "Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(
@@ -504,6 +507,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     public void storeDiss( final String p_votingAgent, final Double p_diss )
     {
         m_dissList.add( p_diss );
+        m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
         System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent );
 
@@ -515,6 +519,14 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
 
+    }
+
+    private CVotingAgentRI getAgent( final String p_votingAgent )
+    {
+        for ( int i = 0; i < m_voters.size(); i++ )
+            if ( m_voters.get( i ).name().equals( p_votingAgent ) )
+                return m_voters.get( i );
+        return null;
     }
 
 
@@ -720,73 +732,59 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //
 //    }
 
-//    /**
-//     * remove most dissatisfied voter
-//     */
-//    @IAgentActionFilter
-//    @IAgentActionName( name = "remove/voter" )
-//    public void removeVoter( final Integer p_iteration )
-//    {
-//        System.out.println( "removing voter " );
-//        final CGroupRI l_group = this.determineGroup();
-//
-//        final int l_maxIndex = this.getMaxIndex( m_dissList );
-//        final double l_max = m_dissList.get( l_maxIndex );
-//        System.out.println( " max diss is " + l_max );
-//
-//        if ( l_max <= m_dissThreshold )
-//        {
-//            System.out.println( " No dissatisfied voter left, we are done " );
-//
-//            final String l_slash = "/";
-//
-//            final String l_groupStr = "group ";
-//
-//            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
-//
-//            m_map.put( l_path, p_iteration );
-//
-//            m_environment.incrementGroupCount( m_run, m_conf );
-//
-//
-//           // EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
-//            //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
-//            return;
-//        }
-//        System.out.println( " Determining most dissatisfied voter " );
-//        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
-//        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
-//        // remove vote of most dissatisfied voter from list
-//        m_bitVotes.remove( l_maxDissAg.getBitVote() );
-//        l_group.remove( l_maxDissAg );
-//
-//        System.out.println( "Removing " + l_maxDissAg.name() );
-//        // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
-//        System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
-//
-//        if ( l_group.size() == 0 )
-//        {
-//            System.out.println( " Voter list is empty, we are done " );
-//            // TODO write data to list instead
-//
-//            final String l_slash = "/";
-//
-//            final String l_groupStr = "group ";
-//
-//            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
-//
-//            m_map.put( l_path, p_iteration );
-//
-//            m_environment.incrementGroupCount( m_run, m_conf );
-//        }
-//
-//        // remove diss Values for next iteration
-//        m_dissVoters.clear();
-//        m_dissList.clear();
-//
+    /**
+     * remove most dissatisfied voter
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "remove/voter" )
+    public void removeVoter()
+    {
+        System.out.println( "removing voter " );
+        final CGroupRI l_group = this.group();
+
+        final int l_maxIndex = this.getMaxIndex( m_dissList );
+        final double l_max = m_dissList.get( l_maxIndex );
+        System.out.println( " max diss is " + l_max );
+        System.out.println( "dissThr is " + m_dissThreshold );
+
+        if ( l_max <= m_dissThreshold )
+        {
+            System.out.println( " No dissatisfied voter left, we are done " );
+
+            return;
+        }
+        System.out.println( " Determining most dissatisfied voter " );
+        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
+        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+        // remove vote of most dissatisfied voter from list
+        m_bitVotes.remove( l_maxDissAg.getBitVote() );
+        l_group.remove( l_maxDissAg );
+
+        System.out.println( "Removing " + l_maxDissAg.name() );
+        // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+        System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
+
+        // if a voter needed to be removed, the election has to be repeated
+
+        this.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "reelected" )
+                      )
+        );
+
+        if ( l_group.size() == 0 )
+        {
+            System.out.println( " Voter list is empty, we are done " );
+        }
+
+        // remove diss Values for next iteration
+        m_dissVoters.clear();
+        m_dissList.clear();
+
 //        m_iterative = true;
 //        l_group.makeReady();
-//    }
+    }
 
     private int getMaxIndex( final List<Double> p_dissValues )
     {
@@ -896,10 +894,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
          * @param p_environment environment
          * @param p_name file name
          * @param p_altnum number of alternatives
+         * @param p_dissthr dissatisfaction threshold
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentRI p_environment, final String p_name, final int p_altnum, final int p_comsize )
+        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentRI p_environment, final String p_name, final int p_altnum,
+                                     final int p_comsize, final double p_dissthr
+        )
         throws Exception
         {
             super(
@@ -931,6 +932,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             m_fileName = p_name;
             m_altnum = p_altnum;
             m_comsize = p_comsize;
+            m_dissthr = p_dissthr;
         }
 
         /**
@@ -964,9 +966,78 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_dissthr );
             return l_chairAgent;
         }
 
     }
+
+
+//    /**
+//     * remove most dissatisfied voter
+//     */
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "remove/voter" )
+//    public void removeVoter( final Integer p_iteration )
+//    {
+//        System.out.println( "removing voter " );
+//        final CGroupRI l_group = this.determineGroup();
+//
+//        final int l_maxIndex = this.getMaxIndex( m_dissList );
+//        final double l_max = m_dissList.get( l_maxIndex );
+//        System.out.println( " max diss is " + l_max );
+//
+//        if ( l_max <= m_dissThreshold )
+//        {
+//            System.out.println( " No dissatisfied voter left, we are done " );
+//
+//            final String l_slash = "/";
+//
+//            final String l_groupStr = "group ";
+//
+//            //            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+//            //
+//            //            m_map.put( l_path, p_iteration );
+//
+//            //            m_environment.incrementGroupCount( m_run, m_conf );
+//
+//
+//            // EDataWriter.INSTANCE.writeLastIteration( m_run, m_conf, this, p_iteration );
+//            //    new CDataWriter().writeLastIteration( m_fileName, m_run, m_conf, this, p_iteration );
+//            return;
+//        }
+//        System.out.println( " Determining most dissatisfied voter " );
+//        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
+//        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+//        // remove vote of most dissatisfied voter from list
+//        m_bitVotes.remove( l_maxDissAg.getBitVote() );
+//        l_group.remove( l_maxDissAg );
+//
+//        System.out.println( "Removing " + l_maxDissAg.name() );
+//        // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+//        System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
+//
+//        if ( l_group.size() == 0 )
+//        {
+//            System.out.println( " Voter list is empty, we are done " );
+//            // TODO write data to list instead
+//
+//            final String l_slash = "/";
+//
+//            final String l_groupStr = "group ";
+//
+//            //            final String l_path = m_run + l_slash + m_conf + l_slash + l_groupStr + this.getGroupID() +  l_slash + "lastIt";
+//            //
+//            //            m_map.put( l_path, p_iteration );
+//            //
+//            //            m_environment.incrementGroupCount( m_run, m_conf );
+//        }
+//
+//        // remove diss Values for next iteration
+//        m_dissVoters.clear();
+//        m_dissList.clear();
+//
+//        //        m_iterative = true;
+//        //        l_group.makeReady();
+//    }
 }

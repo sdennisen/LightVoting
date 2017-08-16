@@ -427,7 +427,8 @@ public final class CMain
                                                                         p_name,
                                                                         s_joinThr,
                                                                         s_prefList,
-                                                                        s_comsize
+                                                                        s_comsize,
+                                                                        s_dissthr
         );
 
         s_brokerRandomIterative = s_brokerGeneratorRI.generatesingle();
@@ -506,7 +507,10 @@ public final class CMain
                 }
 
                 else if ( "dissthr".equals( l_subValueKey  ) )
+                {
                     s_dissthr = Double.parseDouble( l_subValues.get( l_subValueKey ) );
+                    System.out.println( "CMain: dissthr: " + s_dissthr );
+                }
 
                 else if ( "capacity".equals( l_subValueKey ) )
                     s_capacity = Integer.parseInt( l_subValues.get( l_subValueKey ) );
