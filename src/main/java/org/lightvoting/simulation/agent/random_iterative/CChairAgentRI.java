@@ -468,7 +468,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             CTrigger.from(
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
-                    "wait/for/diss"
+                    "removed/voter"
 
                 )
             )
@@ -504,7 +504,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final String p_votingAgent, final Double p_diss )
+    public void storeDiss( final String p_votingAgent, final Double p_diss, final Number p_fill )
     {
         m_dissList.add( p_diss );
         m_dissVoters.add( this.getAgent( p_votingAgent ) );
@@ -518,6 +518,21 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+
+        if ( m_dissList.size() == p_fill.intValue() )
+
+        {
+            System.out.println( "fill: " +  m_dissList.size() + " add goal !removed/voter" );
+
+            this.beliefbase().add(
+                    CLiteral.from(
+                        "remove/voter",
+                        CRawTerm.from( 1 )
+
+                    )
+
+            );
+        }
 
     }
 

@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -197,8 +196,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             {
                 l_group.add( p_votingAgent, this.cycle() );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
-                p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-                p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
+                p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+                p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
                 m_chairs.add( l_group.chair() );
                 return;
             }
@@ -212,8 +211,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
-        p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-        p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
 
@@ -230,7 +229,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             if ( l_group.areVotesSubmitted() )
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
-                        "clean/group",
+                        "cleangroup",
                         CRawTerm.from( 1 )
                     )
                 );
@@ -239,36 +238,36 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
                 // remove voters from group who didn't vote/whose votes didn't reach the chair
             {
-
-                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
-                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-                       .forEach( j ->
-                       {
-                           l_toRemoveList.add( j.name() );
-                           l_toRemoveAgents.add( j );
-                           m_lineHashMap.put( j, j.liningCounter() );
-                       } );
-                System.out.println( "XXXXXXX" + l_toRemoveList );
-
-                l_group.removeAll( l_toRemoveList );
-
-                // "re-queue" removed voters
-
-                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-                    CLiteral.from(
-                        "newag",
-                        CRawTerm.from( i ),
-                        CRawTerm.from( m_lineHashMap.get( i ) )
-                    )
-                                                 )
-                );
+//
+//                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+//                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
+//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+//                       .forEach( j ->
+//                       {
+//                           l_toRemoveList.add( j.name() );
+//                           l_toRemoveAgents.add( j );
+//                           m_lineHashMap.put( j, j.liningCounter() );
+//                       } );
+//                System.out.println( "XXXXXXX" + l_toRemoveList );
+//
+//                l_group.removeAll( l_toRemoveList );
+//
+//                // "re-queue" removed voters
+//
+//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+//                    CLiteral.from(
+//                        "newag",
+//                        CRawTerm.from( i ),
+//                        CRawTerm.from( m_lineHashMap.get( i ) )
+//                    )
+//                                                 )
+//                );
 
                 // set belief in chair that group was "cleaned up"
 
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
-                        "clean/group",
+                        "cleangroup",
                         CRawTerm.from( 1 )
                     )
                 );

@@ -2,38 +2,40 @@
 fill(0, 5).
 // initial number of submitted diss vals
 
-wait/time/vote(0, 10).
+waittimevote(0, 10).
 
 // instead of 10 it can be any other (random) value
 //max/time/vote(10).
 
-wait/time/diss(0, 10).
+waittimediss(0, 10).
 //max/time/diss(10).
 started(0).
 
 // initial iteration
 iteration(0).
+count(0).
 
 !start.
 
 // as soon as group is opened, wait for votes
 +!start
-    : >>wait/time/vote(0, T)
+    : >>waittimevote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
-       !timedout/votes
+       !timedout/votes;
+       !removed/voter
         // !nextcycle
     .
 
 +!timedout/votes
-    : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
+    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
         NewX = X+1;
         generic/print( "don't start election:", "time" , X, "fill", F );
-        -wait/time/vote(X,Y);
-        +wait/time/vote(NewX,Y);
+        -waittimevote(X,Y);
+        +waittimevote(NewX,Y);
         !timedout/votes
-    : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
+    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
     <-
         generic/print( "start election:","time" , X , "fill", F );
         // close/group();
@@ -73,10 +75,10 @@ iteration(0).
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
 +!started/voting(F)
-    : >>(started(S), S == 0) && >>clean/group(C) && >>iteration(I)
+    : >>(started(S), S == 0) && >>cleangroup(C) && >>iteration(I)
     <-
         -started(S);
-        -clean/group(C);
+        -cleangroup(C);
         +dissatisfaction( 0, F);
         // compute result of election according to given voting rule
         // add belief result/computed when done
@@ -86,27 +88,37 @@ iteration(0).
 
 // store received diss value in Java datastructure
 +!stored/diss(Traveller, Diss, Iteration)
-    : >>(dissatisfaction(D, F), D < F-1)
+    : >>dissatisfaction(D, F) //, D < F-1)
     <-
-        generic/print( "store diss", "fill", F);
-        store/diss(Traveller, Diss);
-        NewD = D+1;
-        -dissatisfaction(D, F);
-        +dissatisfaction(NewD, F)
-    : >>(dissatisfaction(D, F), D == F-1)
-    <-
-        store/diss(Traveller, Diss);
-        generic/print("add goal !removed/voter");
-        !removed/voter
+
+      //  generic/print( "store diss", "stored:", D, "fill", F );
+        store/diss(Traveller, Diss, F)
+      .
+
+//        ;
+//        -dissatisfaction(D, F);
+//        +dissatisfaction(NewD, F);
+//        generic/print( "new belief", "D", NewD, "fill", F )
+//    : >>(dissatisfaction(D, F), D == F-1)
+//    <-
+//        store/diss(Traveller, Diss, D);
+//        generic/print("add goal !removed/voter");
+//        !removed/voter
     .
 
 +!removed/voter
-    : >>iteration(I)
+//    : >>iteration(I) && >>remove/voter(1)
+//    <-
+//        -remove/voter(1);
+//        generic/print( "remove voter" );
+//        NewI = I+1;
+//        -iteration(I);
+//        +iteration(NewI);
+//        remove/voter()
+    : true
     <-
-        NewI = I+1;
-        -iteration(I);
-        +iteration(NewI);
-        remove/voter()
+        !removed/voter;
+        generic/print( "not removing voter yet" )
     .
 
 +!reelected
@@ -120,11 +132,11 @@ iteration(0).
 // as soon as result is computed, chair sends it to the voters and waits for diss values
 
 +!timedout/dissvals
-    : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
+    : >>(waittimediss(X, Y), X < Y) && >>(diss(D, F), D < F)
     <-
         X = X+1;
         !timedout/dissvals
-    :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
+    :  >>(waittimediss(X,Y), X == Y) || >>(diss(D, F), D==F)
     <-
         !done
     .
