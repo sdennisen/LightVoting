@@ -28,9 +28,13 @@ import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.random_basic.CSendRB;
+import org.lightvoting.simulation.action.message.random_iterative.CSendRI;
 import org.lightvoting.simulation.agent.random_basic.CBrokerAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.agent.random_iterative.CBrokerAgentRI;
+import org.lightvoting.simulation.agent.random_iterative.CChairAgentRI;
+import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.statistics.EDataWriter;
@@ -76,11 +80,14 @@ public final class CMain
     private static int s_comsize;
     // TODO restructure generation of broker instances
     private static CBrokerAgentRB s_brokerRandomBasic;
-    private static CBrokerAgentRB.CBrokerAgentGenerator s_brokerGenerator;
+    private static CBrokerAgentRI s_brokerRandomIterative;
+    private static CBrokerAgentRB.CBrokerAgentGenerator s_brokerGeneratorRB;
+    private static CBrokerAgentRI.CBrokerAgentGenerator s_brokerGeneratorRI;
     private static String s_dis;
     private static  String s_nameShort;
     private static String s_parameters;
     private static boolean s_randomBasic;
+    private static boolean s_randomIterative;
 
     /**
      * Hidden constructor
@@ -159,25 +166,196 @@ public final class CMain
 
                 try
                 {
-//                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
-//                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
+                    //                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
+                    //                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
 
 
-                    s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[0] ), l_name, s_capacity );
 
                     // TODO separate creation of broker and setting of parameters
-                    if  ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
+                    if ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
                     {
+                        s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[0] ), l_name, s_capacity );
+
                         final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_rb.asl" );
                         final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_rb.asl" );
 
                         final String l_brokerRB = "src/main/resources/org/lightvoting/broker_rb.asl";
 
-                        createBrokerRandomBasic( l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
+                        createBrokerRandomBasic(
+                            l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
 
                         l_stream.close();
                         l_chairstream.close();
+
+
+                        //            for ( int c = 0; c < s_settingStrs.size(); c++ )
+                        //            {
+                        //
+                        //                s_environment.setConf( r, s_settingStrs.get( c ) );
+                        //
+                        //                final int l_finalC = c;
+
+
+                        //                l_agents.parallelStream().forEach( i ->
+                        //                {
+                        //                    i.setConf( s_groupings.get( l_finalC ) );
+                        //                    i.getChair().setConf( s_settingStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
+                        //                } );
+
+                        IntStream
+                            // define cycle range, i.e. number of cycles to run sequentially
+                            .range(
+                                0,
+                                p_args.length < 1
+                                ? Integer.MAX_VALUE
+                                : Integer.parseInt( p_args[0] )
+                            )
+                            .forEach( j ->
+                            {
+                                System.out.println( "Cycle " + j );
+                                try
+                                {
+                                    s_brokerRandomBasic.call();
+                                    s_brokerRandomBasic.agentstream().forEach( k ->
+                                    {
+                                        try
+                                        {
+                                            k.call();
+                                        }
+                                        catch ( final Exception l_ex )
+                                        {
+                                            l_ex.printStackTrace();
+                                        }
+                                    } );
+                                }
+                                catch ( final Exception l_ex )
+                                {
+                                    l_ex.printStackTrace();
+                                }
+
+                                //                        l_agents.parallelStream().forEach( i ->
+                                //                        {
+                                //                            try
+                                //                            {
+                                //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                                //                                // call each agent, i.e. trigger a new agent cycle
+                                //                                i.call();
+                                //                                //   i.getChair().sleep( 0 );
+                                //                                i.getChair().call();
+                                //                            }
+                                //                            catch ( final Exception l_exception )
+                                //                            {
+                                //                                l_exception.printStackTrace();
+                                //                                throw new RuntimeException();
+                                //                            }
+                                //                        } );
+                            } );
+
+                        // reset properties for next configuration
+
+                        final int l_finalR = r;
+                        final int l_finalC = c;
+                        s_brokerRandomBasic.agentstream().forEach( k ->
+                        {
+                            if ( k instanceof CVotingAgentRB )
+                                append(
+                                    s_map, ( (CVotingAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                            if ( k instanceof CChairAgentRB )
+                                append(
+                                    s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                        } );
+                        // TODO necessary?
+                        s_environmentRB.reset();
                     }
+
+                    if ( s_settingStrs.get( c ).contains( "RANDOM_ITERATIVE" ) && s_randomIterative )
+                    {
+                        s_environmentRI = new CEnvironmentRI( Integer.parseInt( p_args[0] ), l_name, s_capacity );
+
+                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_ri.asl" );
+                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_ri.asl" );
+
+                        final String l_brokerRI = "src/main/resources/org/lightvoting/broker_ri.asl";
+
+                        createBrokerRandomIterative(
+                            l_brokerRI, l_chairstream, s_agNum, new CSendRI(), l_stream, s_environmentRI, s_altnum, l_name, s_joinThr, s_prefList );
+
+                        l_stream.close();
+                        l_chairstream.close();
+
+                        IntStream
+                            // define cycle range, i.e. number of cycles to run sequentially
+                            .range(
+                                0,
+                                p_args.length < 1
+                                ? Integer.MAX_VALUE
+                                : Integer.parseInt( p_args[0] )
+                            )
+                            .forEach( j ->
+                            {
+                                System.out.println( "Cycle " + j );
+                                try
+                                {
+                                    s_brokerRandomIterative.call();
+                                    s_brokerRandomIterative.agentstream().forEach( k ->
+                                    {
+                                        try
+                                        {
+                                            k.call();
+                                        }
+                                        catch ( final Exception l_ex )
+                                        {
+                                            l_ex.printStackTrace();
+                                        }
+                                    } );
+                                }
+                                catch ( final Exception l_ex )
+                                {
+                                    l_ex.printStackTrace();
+                                }
+
+                                //                        l_agents.parallelStream().forEach( i ->
+                                //                        {
+                                //                            try
+                                //                            {
+                                //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                                //                                // call each agent, i.e. trigger a new agent cycle
+                                //                                i.call();
+                                //                                //   i.getChair().sleep( 0 );
+                                //                                i.getChair().call();
+                                //                            }
+                                //                            catch ( final Exception l_exception )
+                                //                            {
+                                //                                l_exception.printStackTrace();
+                                //                                throw new RuntimeException();
+                                //                            }
+                                //                        } );
+                            } );
+
+                        // reset properties for next configuration
+
+                        final int l_finalR = r;
+                        final int l_finalC = c;
+                        s_brokerRandomIterative.agentstream().forEach( k ->
+                        {
+                            if ( k instanceof CVotingAgentRI )
+                                append(
+                                    s_map, ( (CVotingAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                            if ( k instanceof CChairAgentRI )
+                                append(
+                                    s_map, ( (CChairAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                        } );
+                        // TODO necessary?
+                        s_environmentRI.reset();
+                    }
+                }
+                catch ( final Exception l_exception )
+                {
+                    l_exception.printStackTrace();
+                    throw new RuntimeException();
+                }
+            }
+
                     //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
                     //    l_agents = l_votingagentgenerator
                     //        .generatemultiplenew(
@@ -185,88 +363,7 @@ public final class CMain
                     //        .collect( Collectors.toSet() );
 
 
-                }
-                catch ( final Exception l_exception )
-                {
-                    l_exception.printStackTrace();
-                    throw new RuntimeException();
-                }
 
-                //            for ( int c = 0; c < s_settingStrs.size(); c++ )
-                //            {
-                //
-                //                s_environment.setConf( r, s_settingStrs.get( c ) );
-                //
-                //                final int l_finalC = c;
-
-
-                //                l_agents.parallelStream().forEach( i ->
-                //                {
-                //                    i.setConf( s_groupings.get( l_finalC ) );
-                //                    i.getChair().setConf( s_settingStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
-                //                } );
-
-                IntStream
-                    // define cycle range, i.e. number of cycles to run sequentially
-                    .range(
-                        0,
-                        p_args.length < 1
-                        ? Integer.MAX_VALUE
-                        : Integer.parseInt( p_args[0] )
-                    )
-                    .forEach( j ->
-                    {
-                        System.out.println( "Cycle " + j );
-                        try
-                        {
-                            s_brokerRandomBasic.call();
-                            s_brokerRandomBasic.agentstream().forEach( k ->
-                            {
-                                try
-                                {
-                                    k.call();
-                                }
-                                catch ( final Exception l_ex )
-                                {
-                                    l_ex.printStackTrace();
-                                }
-                            } );
-                        }
-                        catch ( final Exception l_ex )
-                        {
-                            l_ex.printStackTrace();
-                        }
-
-                                  //                        l_agents.parallelStream().forEach( i ->
-                                  //                        {
-                                  //                            try
-                                  //                            {
-                                  //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                  //                                // call each agent, i.e. trigger a new agent cycle
-                                  //                                i.call();
-                                  //                                //   i.getChair().sleep( 0 );
-                                  //                                i.getChair().call();
-                                  //                            }
-                                  //                            catch ( final Exception l_exception )
-                                  //                            {
-                                  //                                l_exception.printStackTrace();
-                                  //                                throw new RuntimeException();
-                                  //                            }
-                                  //                        } );
-                    } );
-
-                // reset properties for next configuration
-
-                final int l_finalR = r;
-                final int l_finalC = c;
-                s_brokerRandomBasic.agentstream().forEach( k ->
-                {
-                    if ( k instanceof CVotingAgentRB ) append( s_map, ( (CVotingAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
-                    if ( k instanceof CChairAgentRB ) append( s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
-                } );
-                // TODO necessary?
-                s_environmentRB.reset();
-            }
             //   System.out.println( "Next simulation run " );
         }
 
@@ -293,21 +390,49 @@ public final class CMain
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
         // TODO modify parameters
-        s_brokerGenerator = new CBrokerAgentRB.CBrokerAgentGenerator( p_send,
-                                                                      l_bkStr,
-                                                                      p_agNum,
-                                                                      p_stream,
-                                                                      p_chrStream,
-                                                                      s_environmentRB,
-                                                                      s_altnum,
-                                                                      p_name,
-                                                                      s_joinThr,
-                                                                      s_prefList,
-                                                                      s_comsize
+        s_brokerGeneratorRB = new CBrokerAgentRB.CBrokerAgentGenerator( p_send,
+                                                                        l_bkStr,
+                                                                        p_agNum,
+                                                                        p_stream,
+                                                                        p_chrStream,
+                                                                        s_environmentRB,
+                                                                        s_altnum,
+                                                                        p_name,
+                                                                        s_joinThr,
+                                                                        s_prefList,
+                                                                        s_comsize
         );
 
-        s_brokerRandomBasic = s_brokerGenerator.generatesingle();
+        s_brokerRandomBasic = s_brokerGeneratorRB.generatesingle();
     }
+
+    private static void createBrokerRandomIterative( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendRI p_send,
+                                                 final FileInputStream p_stream,
+                                                 final CEnvironmentRI p_environment,
+                                                 final int p_altnum, final String p_name,
+                                                 final double p_joinThr,
+                                                 final List<AtomicDoubleArray> p_prefList
+    ) throws Exception
+    {
+        final FileInputStream l_bkStr = new FileInputStream( p_arg );
+
+        // TODO modify parameters
+        s_brokerGeneratorRI = new CBrokerAgentRI.CBrokerAgentGenerator( p_send,
+                                                                        l_bkStr,
+                                                                        p_agNum,
+                                                                        p_stream,
+                                                                        p_chrStream,
+                                                                        s_environmentRI,
+                                                                        s_altnum,
+                                                                        p_name,
+                                                                        s_joinThr,
+                                                                        s_prefList,
+                                                                        s_comsize
+        );
+
+        s_brokerRandomIterative = s_brokerGeneratorRI.generatesingle();
+    }
+
 
     private static void storeResults( final Set<CVotingAgentRB> p_agents )
     {
@@ -374,6 +499,8 @@ public final class CMain
 
                     if ( l_subValues.get( l_subValueKey ).contains( "RANDOM_BASIC" ) )
                         s_randomBasic = true;
+                    if ( l_subValues.get( l_subValueKey ).contains( "RANDOM_ITERATIVE" ) )
+                        s_randomIterative = true;
 
 
                 }

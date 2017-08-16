@@ -69,11 +69,7 @@ import java.util.stream.Stream;
 public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 {
 
-    /**
-     * serialUID
-     */
-
-    private static final long serialVersionUID = 8515283969360402946L;
+    static private final long serialVersionUID = 5177441212784089728L;
 
     /**
      * name of the agent

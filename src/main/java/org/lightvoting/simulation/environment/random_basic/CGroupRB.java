@@ -76,6 +76,7 @@ public class CGroupRB
         m_chair = p_chair;
         p_chair.setGroup( this );
         m_capacity = p_capacity;
+        System.out.println( "Capacity: " + m_capacity );
         // group waits for new members at most 10 cycles
         m_timeout = p_cycle + p_timeout;
     }

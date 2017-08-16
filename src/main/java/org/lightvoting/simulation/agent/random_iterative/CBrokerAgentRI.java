@@ -86,6 +86,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentRI, Long> m_lineHashMap = new HashMap<>();
+    static private final long serialVersionUID = -5422798855948273749L;
 
     /**
      * ctor
@@ -125,7 +126,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_name = p_name;
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
-        m_capacity = 3;
+        m_capacity = 5;
         m_timeout = 10;
         m_comsize = p_comsize;
 
