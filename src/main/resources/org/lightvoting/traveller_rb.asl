@@ -13,7 +13,7 @@ state(0, undefined).
     .
 
 +!group/joined
-    : >>my/group(Group) && >>state(1, S)
+    : >>mygroup(Group) && >>state(1, S)
     <-  -state(1, S);
         +state(2, group/joined);
         generic/print( "group/joined");
@@ -24,7 +24,7 @@ state(0, undefined).
     .
 
 +!vote/submitted
-    : >>(voted(N), N==0) && >>my/chair(Chair) && >>state(2, S)
+    : >>(voted(N), N==0) && >>mychair(Chair) && >>state(2, S)
     <-
         generic/print( "submit vote ");
         -voted(0);
@@ -57,7 +57,7 @@ state(0, undefined).
 // !start
 
 +!left/group()
-    : >>leave/group(Broker)
+    : >>leavegroup(Broker)
     <-
         +group(0)
     .

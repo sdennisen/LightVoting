@@ -2,12 +2,12 @@
 fill(0, 5).
 // initial number of submitted diss vals
 
-wait/time/vote(0, 10).
+waittimevote(0, 10).
 
 // instead of 10 it can be any other (random) value
 //max/time/vote(10).
 
-wait/time/diss(0, 10).
+waittimediss(0, 10).
 //max/time/diss(10).
 started(0).
 
@@ -15,7 +15,7 @@ started(0).
 
 // as soon as group is opened, wait for votes
 +!start
-    : >>wait/time/vote(0, T)
+    : >>waittimevote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
        !timedout/votes
@@ -23,14 +23,14 @@ started(0).
     .
 
 +!timedout/votes
-    : >>(wait/time/vote(X,Y), X < Y) && >>( fill(F, C), F < C )
+    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
     <-
         NewX = X+1;
         generic/print( "don't start election:", "time" , X, "fill", F );
-        -wait/time/vote(X,Y);
-        +wait/time/vote(NewX,Y);
+        -waittimevote(X,Y);
+        +waittimevote(NewX,Y);
         !timedout/votes
-    : >>(wait/time/vote(X,Y), Y == X) &&  >>fill(F, C)
+    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
     <-
         generic/print( "start election:","time" , X , "fill", F );
         // close/group();
@@ -70,7 +70,7 @@ started(0).
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
 +!started/voting(F)
-    : >>(started(S), S == 0) && >>clean/group(C)
+    : >>(started(S), S == 0) && >>cleangroup(C)
     <-
         -started(S);
         -clean/group(C);

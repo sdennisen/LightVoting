@@ -191,8 +191,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             {
                 l_group.add( p_votingAgent, this.cycle() );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
-                p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-                p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_group.chair() ) ) );
+                p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+                p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
                 m_chairs.add( l_group.chair() );
                 return;
             }
@@ -206,8 +206,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
-        p_votingAgent.beliefbase().add( CLiteral.from( "my/group", CRawTerm.from( l_group ) ) );
-        p_votingAgent.beliefbase().add( CLiteral.from( "my/chair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+        p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
 
@@ -224,7 +224,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             if ( l_group.areVotesSubmitted() )
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
-                        "clean/group",
+                        "cleangroup",
                         CRawTerm.from( 1 )
                     )
                 );
@@ -262,7 +262,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
                 l_group.chair().beliefbase().add(
                     CLiteral.from(
-                        "clean/group",
+                        "cleangroup",
                         CRawTerm.from( 1 )
                     )
                 );

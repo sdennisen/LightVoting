@@ -2,7 +2,7 @@
 
 variables:
   runs: '1'
-  setting: 'RANDOM_ITERATIVE'
+  setting: 'RANDOM_BASIC'
   agnum: '11'
   altnum: '10'
   comsize: '3'
