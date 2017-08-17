@@ -492,12 +492,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final String p_votingAgent, final Double p_diss, final Number p_fill )
+    public void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
     {
-        m_dissList.add( p_diss );
+        m_dissList.add( p_diss.doubleValue() );
         m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
-        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent );
+        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
 
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
@@ -510,8 +510,6 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         if ( m_dissList.size() == p_fill.intValue() )
 
         {
-            System.out.println( "fill: " +  m_dissList.size() + " add goal !removed/voter" );
-
             this.trigger(
                 CTrigger.from(
                     ITrigger.EType.ADDGOAL,
@@ -520,6 +518,9 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                     )
                 )
             );
+
+            System.out.println( "fill: " +  m_dissList.size() + " add goal !removed/voter" );
+
         }
 
     }
@@ -740,7 +741,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "remove/voter" )
-    public void removeVoter()
+    public void removeVoter( )
     {
         System.out.println( "removing voter " );
         final CGroupRI l_group = this.group();

@@ -22,8 +22,7 @@ count(0).
     : >>waittimevote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
-       !timedout/votes//;
-      // !removed/voter
+       !timedout/votes
         // !nextcycle
     .
 
@@ -41,6 +40,12 @@ count(0).
         // close/group();
         // !clean/up/vote
         !started/voting(F)
+    .
+
++!removed/voter
+    : true
+    <-
+        generic/print( "test" )
     .
 
 // store received vote in Java datastructure
@@ -85,14 +90,13 @@ count(0).
         generic/print( "compute result", "fill is", F );
         compute/result(I)
     .
-
 // store received diss value in Java datastructure
 +!stored/diss(Traveller, Diss, Iteration)
     : >>dissatisfaction(D, F) //, D < F-1)
     <-
 
       //  generic/print( "store diss", "stored:", D, "fill", F );
-        store/diss(Traveller, Diss, F)
+        store/diss(Traveller, Diss, F, Iteration)
       .
 
 //        ;
@@ -104,27 +108,23 @@ count(0).
 //        store/diss(Traveller, Diss, D);
 //        generic/print("add goal !removed/voter");
 //        !removed/voter
-    .
+
 
 +!removed/voter
-//    : >>iteration(I) && >>remove/voter(1)
-//    <-
-//        -remove/voter(1);
-//        generic/print( "remove voter" );
-//        NewI = I+1;
-//        -iteration(I);
-//        +iteration(NewI);
-//        remove/voter()
-    : true
+    : >>iteration(I)
     <-
-        // Test print
-        generic/print( "not removing voter yet" );
-        !removed/voter
+        -remove/voter(1);
+        generic/print( "remove voter" );
+        NewI = I+1;
+        -iteration(I);
+        +iteration(NewI);
+        remove/voter()
     .
 
 +!reelected
     : >>iteration(I)
     <-
+        generic/print( "re-compute result of election" );
         compute/result(I)
     .
 

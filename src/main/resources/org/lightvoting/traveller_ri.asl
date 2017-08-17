@@ -41,7 +41,7 @@ state(0, undefined).
 +!diss/submitted
     : >>result(Chair, Result, Iteration) && >>state(3, S)
     <-
-        generic/print(MyName, "submit diss for result", Result);
+        generic/print(MyName, "submit diss for result", Result, "iteration", Iteration);
         submit/diss(Chair,Result,Iteration);
         -state(3, S);
         +state(4, diss/submitted);
