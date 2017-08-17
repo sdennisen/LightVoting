@@ -497,7 +497,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_dissList.add( p_diss.doubleValue() );
         m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
-        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
+        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
 
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
@@ -753,7 +753,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         if ( l_max <= m_dissThreshold )
         {
-            System.out.println( " No dissatisfied voter left, we are done " );
+            System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
 
             return;
         }
@@ -763,10 +763,11 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // remove vote of most dissatisfied voter from list
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
         l_group.remove( l_maxDissAg );
+        m_voters.remove( l_maxDissAg );
 
-        System.out.println( "Removing " + l_maxDissAg.name() );
+        System.out.println( this.name() + ": Removing " + l_maxDissAg.name() );
         // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
-        System.out.println( this.name() + ":Size of Group after removing " + l_group.size() );
+        System.out.println( this.name() + ": Size of Group after removing " + l_group.size() );
 
         // if a voter needed to be removed, the election has to be repeated
 
@@ -779,7 +780,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         if ( l_group.size() == 0 )
         {
-            System.out.println( " Voter list is empty, we are done " );
+            System.out.println( this.name() + ": Voter list is empty, we are done " );
         }
 
         // remove diss Values for next iteration
