@@ -315,9 +315,10 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     }
 
     @IAgentActionFilter
-    @IAgentActionName( name = "submit/diss" )
-    private void submitDiss( final CChairAgentCB p_chairAgent, final BitVector p_result ) throws InterruptedException
+    @IAgentActionName( name = "compute/diss" )
+    private void computeDiss( final CChairAgentCB p_chairAgent, final BitVector p_result ) throws InterruptedException
     {
+        System.out.println( "computing diss " );
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
@@ -327,16 +328,6 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
 
-        p_chairAgent.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "stored/diss",
-                    CRawTerm.from( this.name() ),
-                    CRawTerm.from( this.computeDissBV( p_result ) )
-                )
-            )
-        );
     }
 
 

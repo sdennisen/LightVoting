@@ -42,16 +42,17 @@ started(0).
 +!stored/vote(Traveller, Vote)
      : >>(fill(F, C), F < C-1)
      <-
-         generic/print("received vote");
+         generic/print("received vote, start intermediate election");
          store/vote(Traveller, Vote);
          NewF = F+1;
          NewC = C-1;
          generic/print( "New fill", NewF, "capacity-1", NewC );
          -fill(F,C);
-         +fill(NewF, C)
+         +fill(NewF, C);
+         compute/result()
      : >>(fill(F, C), F == C-1)
      <-
-         generic/print("received vote, start election");
+         generic/print("received vote, start final election");
          set/group/submitted();
          store/vote(Traveller, Vote);
          NewF = F+1;
@@ -81,33 +82,33 @@ started(0).
         compute/result()
     .
 
-// store received diss value in Java datastructure
-+!stored/diss(Traveller, Diss)
-    : >>(dissatisfaction(D, F), D < F-1)
-    <-
-        generic/print( "store diss", "fill", F);
-        store/diss(Traveller, Diss);
-        NewD = D+1;
-        -dissatisfaction(D, F);
-        +dissatisfaction(NewD, F)
-    : >>(dissatisfaction(D, F), D == F-1)
-    <-
-        store/diss(Traveller, Diss);
-        !done
-    .
-
-// as soon as result is computed, chair sends it to the voters and waits for diss values
-
-+!timedout/dissvals
-    : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
-    <-
-        X = X+1;
-        !timedout/dissvals
-    :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
-    <-
-        !done
-        //!clean/up/diss
-    .
+//// store received diss value in Java datastructure
+//+!stored/diss(Traveller, Diss)
+//    : >>(dissatisfaction(D, F), D < F-1)
+//    <-
+//        generic/print( "store diss", "fill", F);
+//        store/diss(Traveller, Diss);
+//        NewD = D+1;
+//        -dissatisfaction(D, F);
+//        +dissatisfaction(NewD, F)
+//    : >>(dissatisfaction(D, F), D == F-1)
+//    <-
+//        store/diss(Traveller, Diss);
+//        !done
+//    .
+//
+//// as soon as result is computed, chair sends it to the voters and waits for diss values
+//
+//+!timedout/dissvals
+//    : >>(wait/time/diss(X, Y), X < Y) && >>(diss(D, F), D < F)
+//    <-
+//        X = X+1;
+//        !timedout/dissvals
+//    :  >>(wait/time/diss(X,Y), X == Y) || >>(diss(D, F), D==F)
+//    <-
+//        !done
+//        //!clean/up/diss
+//    .
 
 //+!clean/up/diss
 //    <-
