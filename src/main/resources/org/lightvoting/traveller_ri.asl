@@ -32,21 +32,33 @@ state(0, undefined).
         -state(2, S);
         +state(3, vote/submitted);
         generic/print( "vote/submitted");
-        !diss/submitted
+        //!diss/submitted
+        !received/result
     : >>state(2, _)
     <-
         !vote/submitted
     .
 
-+!diss/submitted
++!received/result
     : >>result(Chair, Result, Iteration) && >>state(3, S)
+    <-
+        -state(3, S);
+        +state(4, received/result);
+        !diss/submitted
+    <-
+        !received/result
+    .
+
++!diss/submitted
+    : >>result(Chair, Result, Iteration) && >>state(4, S)
     <-
         generic/print(MyName, "submit diss for result", Result, "iteration", Iteration);
         submit/diss(Chair,Result,Iteration);
-        -state(3, S);
-        +state(4, diss/submitted);
-        generic/print(MyName, "diss/submitted")
-    : >>state(3, _)
+        -state(4, S);
+        +state(3, vote/submitted);
+        generic/print(MyName, "state: vote/submitted");
+        -result(Chair, Result, Iteration)
+    : >>state(4, _)
     <-
         !diss/submitted
     .
