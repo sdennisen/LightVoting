@@ -28,8 +28,10 @@ import org.lightjason.agentspeak.language.execution.IVariableBuilder;
 import org.lightjason.agentspeak.language.instantiable.IInstantiable;
 import org.lightjason.agentspeak.language.variable.CConstant;
 import org.lightjason.agentspeak.language.variable.IVariable;
+import org.lightvoting.simulation.agent.coordinated_basic.CVotingAgentCB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
+import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 
@@ -49,6 +51,7 @@ public final class CVariableBuilder implements IVariableBuilder
 
     private CEnvironmentRI m_environmentRI;
     private CEnvironmentRB m_environmentRB;
+    private CEnvironmentCB m_environmentCB;
 
     /**
      * constructor
@@ -65,6 +68,11 @@ public final class CVariableBuilder implements IVariableBuilder
         m_environmentRI = p_environment;
     }
 
+    public CVariableBuilder( final CEnvironmentCB p_environment )
+    {
+        m_environmentCB = p_environment;
+    }
+
     @Override
     public final Stream<IVariable<?>> apply( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
     {
@@ -76,10 +84,19 @@ public final class CVariableBuilder implements IVariableBuilder
 
         // p_agent instanceof CVotingAgentRI
 
-        else
+        else if ( p_agent instanceof  CVotingAgentRI )
             return Stream.of(
                 new CConstant<>( "MyName", p_agent.<CVotingAgentRI>raw().name() )
         );
+
+        // p_agent instanceof CVotingAgentCB
+
+        else
+            return Stream.of(
+                new CConstant<>( "MyName", p_agent.<CVotingAgentCB>raw().name() )
+            );
+
+
     }
 
 }

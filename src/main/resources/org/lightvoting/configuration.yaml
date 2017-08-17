@@ -1,8 +1,8 @@
 # LightVoting Config
 
 variables:
-  runs: '100'
-  setting: 'RANDOM_ITERATIVE'
+  runs: '1'
+  setting: 'COORDINATED_BASIC'
   agnum: '11'
   altnum: '10'
   comsize: '3'
