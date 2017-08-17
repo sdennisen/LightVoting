@@ -467,8 +467,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // store group size in map
         m_map.put( this.name() + "/group size", m_voters.size() );
         // store names of agents
-        for ( int i = 0; i < m_voters.size(); i++ )
-            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+   //     for ( int i = 0; i < m_voters.size(); i++ )
+        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
         // m_dissStored = false;
 
@@ -498,6 +498,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
         System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
+
+        m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
 
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
@@ -757,6 +759,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
             return;
         }
+
+        // TODO: revise, try alternative approaches
+        else if ( l_group.size() == 1 )
+        {
+            System.out.println( this.name() + ": only one voter left, we are done " );
+
+            return;
+        }
+
         System.out.println( " Determining most dissatisfied voter " );
         final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
         System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
@@ -778,14 +789,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                       )
         );
 
-        if ( l_group.size() == 0 )
-        {
-            System.out.println( this.name() + ": Voter list is empty, we are done " );
-        }
-
         // remove diss Values for next iteration
         m_dissVoters.clear();
         m_dissList.clear();
+
+        // update map
+        m_map.remove( this.name() + "/" + l_maxDissAg.name() );
+        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
 //        m_iterative = true;
 //        l_group.makeReady();
