@@ -109,6 +109,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private int m_groupNum;
     private final double m_voteTimeout;
     private CGroupRI m_group;
+    private HashMap<CVotingAgentRI, Double> m_dissMap = new HashMap<>();
 
 
     // TODO merge ctors
@@ -217,6 +218,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+        m_dissMap = new HashMap<>();
     //    m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
@@ -462,6 +464,11 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             }
         );
 
+        // store intermediate election results
+        m_map.put( this.name() + "/" + p_iteration + "/election result", l_comResultBV );
+        // store contributing agents
+        m_map.put( this.name() + "/" + p_iteration + "/agents", this.asString( m_voters ) );
+
         // store election result in map
         m_map.put( this.name() + "/election result", l_comResultBV );
         // store group size in map
@@ -494,8 +501,10 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     public void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
     {
-        m_dissList.add( p_diss.doubleValue() );
-        m_dissVoters.add( this.getAgent( p_votingAgent ) );
+//        m_dissList.add( p_diss.doubleValue() );
+//        m_dissVoters.add( this.getAgent( p_votingAgent ) );
+
+        m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
 
         System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
 
@@ -509,7 +518,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
 
-        if ( m_dissList.size() == p_fill.intValue() )
+        if ( m_dissMap.size() == p_fill.intValue() )
 
         {
             this.trigger(
@@ -748,8 +757,10 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         System.out.println( "removing voter " );
         final CGroupRI l_group = this.group();
 
-        final int l_maxIndex = this.getMaxIndex( m_dissList );
-        final double l_max = m_dissList.get( l_maxIndex );
+        final double l_max = this.getMaxDiss( m_dissMap );
+
+//        final int l_maxIndex = this.getMaxIndex( m_dissList );
+//        final double l_max = m_dissList.get( l_maxIndex );
         System.out.println( " max diss is " + l_max );
         System.out.println( "dissThr is " + m_dissThreshold );
 
@@ -769,7 +780,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         }
 
         System.out.println( " Determining most dissatisfied voter " );
-        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
+
+
+//        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
+//        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+
+        final CVotingAgentRI l_maxDissAg = getMaxAg( m_dissMap );
         System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
         // remove vote of most dissatisfied voter from list
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
@@ -790,8 +806,9 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         );
 
         // remove diss Values for next iteration
-        m_dissVoters.clear();
-        m_dissList.clear();
+//        m_dissVoters.clear();
+//        m_dissList.clear();
+        m_dissMap.clear();
 
         // update map
         m_map.remove( this.name() + "/" + l_maxDissAg.name() );
@@ -801,18 +818,32 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        l_group.makeReady();
     }
 
-    private int getMaxIndex( final List<Double> p_dissValues )
+    private double getMaxDiss( final HashMap<CVotingAgentRI, Double> p_dissMap )
     {
-        int l_maxIndex = 0;
-        for ( int i = 0; i < p_dissValues.size(); i++ )
+        double l_max = 0;
+
+        for ( final CVotingAgentRI l_key : p_dissMap.keySet() )
         {
-            if ( p_dissValues.get( i ) > p_dissValues.get( l_maxIndex ) )
+            if ( p_dissMap.get( l_key ) > l_max )
+                l_max = p_dissMap.get( l_key );
+        }
+        return l_max;
+    }
+
+    private CVotingAgentRI getMaxAg( final HashMap<CVotingAgentRI, Double> p_dissMap )
+    {
+        double l_max = 0;
+        CVotingAgentRI l_maxAg = null;
+
+        for ( final CVotingAgentRI l_key : p_dissMap.keySet() )
+        {
+            if ( p_dissMap.get( l_key ) > l_max )
             {
-                System.out.println( " changed max index to " + i + " diss: " + p_dissValues.get( i ) );
-                l_maxIndex = i;
+                l_maxAg = l_key;
+                l_max = p_dissMap.get( l_key );
             }
         }
-        return l_maxIndex;
+        return l_maxAg;
     }
 
     /**

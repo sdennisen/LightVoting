@@ -314,7 +314,9 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     @IAgentActionName( name = "submit/diss" )
     private void submitDiss( final CChairAgentRI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
     {
-        // store dissatisfaction with election result in map
+        // store dissatisfaction with result in map
+        m_map.put( this.name() + "/" + p_iteration + "/diss", this.computeDissBV( p_result ) );
+        // store final dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
         System.out.println( "cycle " + this.cycle() );
