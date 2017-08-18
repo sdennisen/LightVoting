@@ -461,7 +461,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             }
         );
 
-
+        this.group().setResult( l_comResultBV );
 
         this.trigger(
             CTrigger.from(

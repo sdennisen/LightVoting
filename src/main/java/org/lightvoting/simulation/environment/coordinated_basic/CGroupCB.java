@@ -153,6 +153,16 @@ public class CGroupCB
         return m_votesSubmitted;
     }
 
+    public void setResult( final BitVector p_comResultBV )
+    {
+        m_result = p_comResultBV;
+    }
+
+    public BitVector result()
+    {
+        return m_result;
+    }
+
     //    public void close()
 //    {
 //        m_open = false;

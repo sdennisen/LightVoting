@@ -12,15 +12,20 @@ state(0, undefined).
         !group/joined
     .
 
+// Refactor
+
 +!group/joined
-    : >>mygroup(Group) && >>state(1, S)
+    : >>mygroup(Group) // && >>state(1, S)
     <-  -state(1, S);
         +state(2, group/joined);
         generic/print( "group/joined");
         !vote/submitted
-    : >>state(1, _)
     <-
-        !start
+        !group/joined
+//    : >>state(1, _)
+//    <-
+//        generic/print( "going back to start" );
+//        !start
     .
 
 +!vote/submitted

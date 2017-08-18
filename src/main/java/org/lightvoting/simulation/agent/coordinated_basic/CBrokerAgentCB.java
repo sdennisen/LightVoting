@@ -23,6 +23,7 @@
 
 package org.lightvoting.simulation.agent.coordinated_basic;
 
+import cern.colt.bitvector.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
@@ -49,7 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -182,20 +182,38 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     @IAgentActionName( name = "assign/group" )
     private void assignGroup( final CVotingAgentCB p_votingAgent ) throws Exception
     {
+        CGroupCB l_determinedGroup = null;
+        int l_hammingDist = Integer.MAX_VALUE;
+
         System.out.println( "Assigning group to " + p_votingAgent.name() );
+        System.out.println( "join threshold: " + m_joinThr );
         for ( final CGroupCB l_group : m_groups )
         {
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
-            // only add agents to group if group is open and chair did not reach its timeout
-            if ( l_group.open() && !l_group.chair().timedout() )
+            // you can only add an agent to group if it is still open
+            if ( l_group.open() )
             {
-                l_group.add( p_votingAgent, this.cycle() );
-                System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
-                p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
-                p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
-                m_chairs.add( l_group.chair() );
-                return;
+                System.out.println( "Result:" + l_group.result() );
+                // use new distance if it is lower than the joint threshold and than the old distance
+                final int l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
+                System.out.println( "Hamming distance: " + l_newDist );
+                if ( l_newDist < m_joinThr && l_newDist < l_hammingDist )
+                {
+                    l_hammingDist = l_newDist;
+                    l_determinedGroup = l_group;
+                }
             }
+        }
+
+        // if there is no available group, create a new group
+        if ( l_determinedGroup != null )
+        {
+            l_determinedGroup.add( p_votingAgent, this.cycle() );
+            System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
+            p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
+            p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
+            m_chairs.add( l_determinedGroup.chair() );
+            return;
         }
 
         final CChairAgentCB l_chairAgent = m_chairagentgenerator.generatesinglenew();
@@ -213,60 +231,89 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
     }
 
+    private int hammingDistance( final BitVector p_bitVote, final BitVector p_result )
+    {
+        System.out.println( "vote: " + p_bitVote + " committee: " + p_result );
+        final BitVector l_diff = p_result.copy();
+        l_diff.xor( p_bitVote );
+        System.out.println( "diff: " + l_diff + " cardinality: " + l_diff.cardinality() );
+        return l_diff.cardinality();
+    }
+
     @IAgentActionFilter
     @IAgentActionName( name = "update/groups" )
     private void updateGroups() throws Exception
     {
+
+        // TODO refactor method
+
+        boolean l_allReady = true;
+
         for ( final CGroupCB l_group : m_groups )
         {
+
+            if ( l_group.result() == null )
+                l_allReady = false;
             // if all voters have submitted their votes, there is nothing to check, group is clean
 
-            if ( l_group.areVotesSubmitted() )
-                l_group.chair().beliefbase().add(
-                    CLiteral.from(
-                        "cleangroup",
-                        CRawTerm.from( 1 )
-                    )
-                );
+//            if ( l_group.areVotesSubmitted() )
+//                l_group.chair().beliefbase().add(
+//                    CLiteral.from(
+//                        "cleangroup",
+//                        CRawTerm.from( 1 )
+//                    )
+//                );
+//
+//            else  if ( l_group.chair().timedout() )
+//
+//                // remove voters from group who didn't vote/whose votes didn't reach the chair
+//            {
+//
+//                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+//                final CopyOnWriteArrayList<CVotingAgentCB> l_toRemoveAgents = new CopyOnWriteArrayList();
+//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+//                       .forEach( j ->
+//                       {
+//                           l_toRemoveList.add( j.name() );
+//                           l_toRemoveAgents.add( j );
+//                           m_lineHashMap.put( j, j.liningCounter() );
+//                       } );
+//                System.out.println( "XXXXXXX" + l_toRemoveList );
+//
+//                l_group.removeAll( l_toRemoveList );
+//
+//                // "re-queue" removed voters
+//
+//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+//                    CLiteral.from(
+//                        "newag",
+//                        CRawTerm.from( i ),
+//                        CRawTerm.from( m_lineHashMap.get( i ) )
+//                    )
+//                                                 )
+//                );
+//
+//                // set belief in chair that group was "cleaned up"
+//
+//                l_group.chair().beliefbase().add(
+//                    CLiteral.from(
+//                        "cleangroup",
+//                        CRawTerm.from( 1 )
+//                    )
+//                );
+//            }
+        }
 
-            else  if ( l_group.chair().timedout() )
+        if ( l_allReady )
+        {
+            System.out.println( "all groups ready" );
 
-                // remove voters from group who didn't vote/whose votes didn't reach the chair
-            {
-
-                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-                final CopyOnWriteArrayList<CVotingAgentCB> l_toRemoveAgents = new CopyOnWriteArrayList();
-                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-                       .forEach( j ->
-                       {
-                           l_toRemoveList.add( j.name() );
-                           l_toRemoveAgents.add( j );
-                           m_lineHashMap.put( j, j.liningCounter() );
-                       } );
-                System.out.println( "XXXXXXX" + l_toRemoveList );
-
-                l_group.removeAll( l_toRemoveList );
-
-                // "re-queue" removed voters
-
-                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-                    CLiteral.from(
-                        "newag",
-                        CRawTerm.from( i ),
-                        CRawTerm.from( m_lineHashMap.get( i ) )
-                    )
-                                                 )
-                );
-
-                // set belief in chair that group was "cleaned up"
-
-                l_group.chair().beliefbase().add(
-                    CLiteral.from(
-                        "cleangroup",
-                        CRawTerm.from( 1 )
-                    )
-                );
-            }
+            this.beliefbase().add(
+                CLiteral.from(
+                    "allgroupsready",
+                    CRawTerm.from( 1 )
+                )
+            );
         }
     }
 

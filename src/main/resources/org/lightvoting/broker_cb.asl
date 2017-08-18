@@ -28,13 +28,14 @@ agnum(11).
     .
 
 +!assigned/ag:
-    >>newag(Ag, I)
+    >>newag(Ag, I) && >>allgroupsready(S)
     <-  generic/print(Ag, "I: ", I);
         -newag(Ag, I);
+        -allgroupsready(S);
         assign/group(Ag);
         !assigned/ag
-    : true
     <-
+        generic/print( "not assigning ag" );
         !assigned/ag
     .
 

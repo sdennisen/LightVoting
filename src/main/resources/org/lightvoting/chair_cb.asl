@@ -61,17 +61,17 @@ started(0).
          !started/voting(NewF)
      .
 
-+!clean/up/vote
-    <-
-	    // broker needs to remove the voters who didn't vote
-	    // when you are done with clean-up, broker adds goal !start/voting in chair
-	    generic/print( "clean up votes" )
-	    //    clean/up/vote()
-	.
+//+!clean/up/vote
+//    <-
+//	    // broker needs to remove the voters who didn't vote
+//	    // when you are done with clean-up, broker adds goal !start/voting in chair
+//	    generic/print( "clean up votes" )
+//	    //    clean/up/vote()
+//	.
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
 +!started/voting(F)
-    : >>(started(S), S == 0) && >>cleangroup(C)
+    : >>(started(S), S == 0) // && >>cleangroup(C)
     <-
         -started(S);
         -clean/group(C);
