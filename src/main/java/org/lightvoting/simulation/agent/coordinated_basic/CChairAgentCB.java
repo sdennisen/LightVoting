@@ -112,6 +112,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private int m_groupNum;
     private final double m_voteTimeout;
     private CGroupCB m_group;
+    private int m_imNum;
 
 
     // TODO merge ctors
@@ -472,13 +473,20 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             )
         );
 
+        // store intermediate election results
+        m_map.put( this.name() + "/" + m_imNum + "/election result", l_comResultBV );
+        // store contributing agents
+        m_map.put( this.name() + "/" + m_imNum + "/agents", this.asString( m_voters ) );
+
+
         // store election result in map
         m_map.put( this.name() + "/election result", l_comResultBV );
         // store group size in map
         m_map.put( this.name() + "/group size", m_voters.size() );
         // store names of agents
-        for ( int i = 0; i < m_voters.size(); i++ )
-            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+
+        m_imNum++;
 
         // m_dissStored = false;
 

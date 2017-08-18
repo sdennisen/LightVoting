@@ -22,21 +22,21 @@ started(0).
        // !nextcycle
     .
 
-+!timedout/votes
-    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
-    <-
-        NewX = X+1;
-        generic/print( "don't start election:", "time" , X, "fill", F );
-        -waittimevote(X,Y);
-        +waittimevote(NewX,Y);
-        !timedout/votes
-    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
-    <-
-        generic/print( "start election:","time" , X , "fill", F );
-        // close/group();
-        // !clean/up/vote
-        !started/voting(F)
-    .
+//+!timedout/votes
+//    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
+//    <-
+//        NewX = X+1;
+//        generic/print( "don't start election:", "time" , X, "fill", F );
+//        -waittimevote(X,Y);
+//        +waittimevote(NewX,Y);
+//        !timedout/votes
+//    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
+//    <-
+//        generic/print( "start election:","time" , X , "fill", F );
+//        // close/group();
+//        // !clean/up/vote
+//        !started/voting(F)
+//    .
 
 // store received vote in Java datastructure
 +!stored/vote(Traveller, Vote)
