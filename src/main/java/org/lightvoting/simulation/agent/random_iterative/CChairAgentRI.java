@@ -479,7 +479,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         // store iteration number
 
-        m_map.put( this.name() + "/itNum", p_iteration );
+        m_map.put( this.name() + "/itNum", p_iteration.intValue() );
 
         // m_dissStored = false;
 
