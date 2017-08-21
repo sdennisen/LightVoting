@@ -47,6 +47,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,6 +89,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentRI, Long> m_lineHashMap = new HashMap<>();
     private final double m_dissthr;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
     /**
      * ctor
@@ -166,6 +168,11 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         );
     }
 
+    public HashMap<String, Object> map()
+    {
+        return m_map;
+    }
+
     @IAgentActionFilter
     @IAgentActionName( name = "create/ag" )
     private CVotingAgentRI createAgent( final Number p_createdNum ) throws Exception
@@ -216,6 +223,27 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
         m_chairs.add( l_chairAgent );
 
+        m_map.put( "chairs", this.asString( m_chairs ) );
+
+    }
+
+    private String asString( final HashSet<CChairAgentRI> p_chairs )
+    {
+        final Iterator<CChairAgentRI> l_chairIterator = p_chairs.iterator();
+
+        String l_string = "{";
+
+        CChairAgentRI l_current = l_chairIterator.next();
+
+        while ( l_chairIterator.hasNext() )
+        {
+            l_string = l_string.concat( l_current.name() + ", " );
+            l_current = l_chairIterator.next();
+        }
+
+        l_string = l_string.concat( l_current.name() + "}" );
+
+        return l_string;
     }
 
     @IAgentActionFilter
