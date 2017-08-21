@@ -477,6 +477,10 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
    //     for ( int i = 0; i < m_voters.size(); i++ )
         m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
+        // store iteration number
+
+        m_map.put( this.name() + "/itNum", p_iteration );
+
         // m_dissStored = false;
 
     }
@@ -785,7 +789,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
 //        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
 
-        final CVotingAgentRI l_maxDissAg = getMaxAg( m_dissMap );
+        final CVotingAgentRI l_maxDissAg = this.getMaxAg( m_dissMap );
         System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
         // remove vote of most dissatisfied voter from list
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
