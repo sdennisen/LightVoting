@@ -24,10 +24,11 @@ state(0, undefined).
     .
 
 +!vote/submitted
-    : >>(voted(N), N==0) && >>mychair(Chair) && >>state(2, S)
+    : //>>(voted(N), N==0) &&
+    >>mychair(Chair) && >>state(2, S)
     <-
         generic/print( "submit vote ");
-        -voted(0);
+        //-voted(0);
         submit/vote(Chair);
         -state(2, S);
         +state(3, vote/submitted);
@@ -68,10 +69,15 @@ state(0, undefined).
 // -my/group(Group)
 // !start
 
-+!left/group()
-    : >>leavegroup(Broker)
++!leftgroup
+    : >>mygroup(G) && >>mychair(C)
+    //: >>leavegroup(Broker)
     <-
-        +group(0)
+        generic/print("I needed to leave my group, need a new one");
+        -mygroup(G);
+        -mychair(C);
+        +state(0, undefined);
+        !start
     .
 
 +!done()

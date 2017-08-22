@@ -198,6 +198,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         for ( final CGroupRI l_group : m_groups )
         {
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
+            System.out.println( "group " + l_group.id() + " timeout " + l_group.chair().cycle() );
             // only add agents to group if group is open and chair did not reach its timeout
             if ( l_group.open() && !l_group.chair().timedout() )
             {
@@ -267,7 +268,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
             {
                 //  TODO re-insert and test
-                // remove voters from group who didn't vote/whose votes didn't reach the chair
+//                // remove voters from group who didn't vote/whose votes didn't reach the chair
 //                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
 //                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
 //                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
@@ -309,19 +310,27 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
      * @param p_Ag agent
      */
 
-    public void addAg( final CVotingAgentRI p_Ag )
+    public void removeAndAddAg( final CVotingAgentRI p_Ag )
     {
-//        System.out.println( "adding Agent " + p_Ag.name() );
-//        // increase lining counter of ag
-//        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
-//
-//        this.beliefbase().add(
-//            CLiteral.from(
-//                "newag",
-//                CRawTerm.from( p_Ag ),
-//                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
-//            )
-//        );
+        p_Ag.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "leftgroup" )
+                             )
+        );
+
+
+        System.out.println( "adding Agent " + p_Ag.name() );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+
+        this.beliefbase().add(
+            CLiteral.from(
+                "newag",
+                CRawTerm.from( p_Ag ),
+                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+            )
+        );
     }
 
     /**

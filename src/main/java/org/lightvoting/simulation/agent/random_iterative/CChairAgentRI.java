@@ -804,8 +804,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_voters.remove( l_maxDissAg );
 
         // add belief in broker
-        m_broker.addAg( l_maxDissAg );
-
+        m_broker.removeAndAddAg( l_maxDissAg );
 
         System.out.println( this.name() + ": Removing " + l_maxDissAg.name() );
         // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
