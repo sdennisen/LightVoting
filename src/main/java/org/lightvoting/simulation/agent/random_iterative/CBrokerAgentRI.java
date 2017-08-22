@@ -140,7 +140,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
         m_votingagentgenerator = new CVotingAgentRI.CVotingAgentGenerator( new CSendRI(), m_stream, m_environment, m_altnum, m_name,
                                                                            m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentRI.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize, m_dissthr );
+        m_chairagentgenerator = new CChairAgentRI.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize, m_dissthr, this );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -264,9 +264,10 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
             else  if ( l_group.chair().timedout() )
 
-                // remove voters from group who didn't vote/whose votes didn't reach the chair
+
             {
-//
+                //  TODO re-insert and test
+                // remove voters from group who didn't vote/whose votes didn't reach the chair
 //                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
 //                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
 //                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
@@ -276,7 +277,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 //                           l_toRemoveAgents.add( j );
 //                           m_lineHashMap.put( j, j.liningCounter() );
 //                       } );
-//                System.out.println( "XXXXXXX" + l_toRemoveList );
+//                System.out.println( "toRemoveList:" + l_toRemoveList );
 //
 //                l_group.removeAll( l_toRemoveList );
 //
@@ -301,6 +302,26 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                 );
             }
         }
+    }
+
+    /**
+     * add Ag
+     * @param p_Ag agent
+     */
+
+    public void addAg( final CVotingAgentRI p_Ag )
+    {
+//        System.out.println( "adding Agent " + p_Ag.name() );
+//        // increase lining counter of ag
+//        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+//
+//        this.beliefbase().add(
+//            CLiteral.from(
+//                "newag",
+//                CRawTerm.from( p_Ag ),
+//                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+//            )
+//        );
     }
 
     /**
