@@ -53,6 +53,7 @@ public class CGroupRI
     private int m_currentAg;
     private long m_timeout;
     private boolean m_votesSubmitted;
+    private boolean m_dissValsSubmitted;
 
     /**
      * constructor
@@ -161,6 +162,16 @@ public class CGroupRI
     public int size()
     {
         return m_agentMap.size();
+    }
+
+    public void setDissSubmitted()
+    {
+        m_dissValsSubmitted = true;
+    }
+
+    public boolean areDissValsSubmitted()
+    {
+        return m_dissValsSubmitted;
     }
 
     //    public void close()

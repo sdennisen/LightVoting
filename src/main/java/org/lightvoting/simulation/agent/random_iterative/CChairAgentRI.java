@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -109,8 +110,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private int m_groupNum;
     private final double m_voteTimeout;
     private CGroupRI m_group;
-    private HashMap<CVotingAgentRI, Double> m_dissMap = new HashMap<>();
+    private ConcurrentHashMap<CVotingAgentRI, Double> m_dissMap = new ConcurrentHashMap<>();
     private CBrokerAgentRI m_broker;
+    private ConcurrentHashMap<CVotingAgentRI,Double> m_newdissMap;
+    private boolean m_removedGoalAdded;
+    private long m_dissCounter;
+    private boolean m_waitingForDiss;
 
 
     // TODO merge ctors
@@ -222,7 +227,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
-        m_dissMap = new HashMap<>();
+        m_dissMap = new ConcurrentHashMap<>();
     //    m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
@@ -291,6 +296,21 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     {
         System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
         return this.cycle() >= m_voteTimeout;
+    }
+
+    public List<CVotingAgentRI> dissvoters()
+    {
+        return new ArrayList<>( m_dissMap.keySet() );
+    }
+
+    public void endWaitForDiss()
+    {
+        m_waitingForDiss = false;
+    }
+
+    boolean waitingforDiss()
+    {
+        return m_waitingForDiss;
     }
 
     // private methods
@@ -368,10 +388,24 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        m_bitVotes.add( p_vote );
-        m_voters.add( p_votingAgent );
+        if (! this.timedout() && !m_voters.contains( p_votingAgent ))
+        {
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+            m_bitVotes.add( p_vote );
+            m_voters.add( p_votingAgent );
+
+            System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        }
+
+        else if ( this.timedout() )
+        {
+            System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+        }
+
+        else if ( m_voters.contains( p_votingAgent ) )
+
+            System.out.println( "already containing " + p_votingAgent.name() );
+
 
 //        if ( m_bitVotes.size() != l_group.size() )
 //            return;
@@ -490,6 +524,11 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         // m_dissStored = false;
 
+        // reset timeout for diss vals
+
+        m_waitingForDiss = true;
+        m_dissCounter = this.cycle() + 50;
+
     }
 
     private String asString( final List<CVotingAgentRI> p_voters )
@@ -510,15 +549,24 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
+    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
     {
+
+        if ( this.dissTimedOut() )
+        {
+            System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
+            return;
+        }
 //        m_dissList.add( p_diss.doubleValue() );
 //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
         m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
 
+//        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+//                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
+
         System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
-                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
+                            + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
 
         // store diss for each iteration
 
@@ -536,9 +584,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         // TODO refactor
 
-        if ( m_dissMap.size() >= p_fill.intValue() )
+      //  if ( m_dissMap.size() >= p_fill.intValue() )
 
+        if ( ( m_dissMap.size() == m_voters.size() ) && !( m_removedGoalAdded ) )
         {
+            this.group().setDissSubmitted();
+
             this.trigger(
                 CTrigger.from(
                     ITrigger.EType.ADDGOAL,
@@ -549,9 +600,29 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             );
 
             System.out.println( "fill: " +  m_dissMap.size() + " add goal !removed/voter" );
+            if ( !( m_dissMap.isEmpty() ) )
+            {
+                m_newdissMap = new ConcurrentHashMap<>( m_dissMap );
+                m_dissMap.clear();
+            }
+            m_removedGoalAdded = true;
 
         }
 
+    }
+
+    /**
+     * return true if waiting time for diss vals is timedout
+     * @return boolean value
+     */
+
+    public boolean dissTimedOut()
+    {
+        System.out.println( this.name() + " " + this.cycle() + " Diss timeout: " + m_dissCounter );
+
+        if ( m_dissCounter == 0 )
+            return false;
+        else  return ( this.cycle() >= m_dissCounter );
     }
 
     private CVotingAgentRI getAgent( final String p_votingAgent )
@@ -772,10 +843,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionName( name = "remove/voter" )
     public void removeVoter( )
     {
+        m_removedGoalAdded = false;
+
         System.out.println( "removing voter " );
         final CGroupRI l_group = this.group();
 
-        final double l_max = this.getMaxDiss( m_dissMap );
+        final double l_max = this.getMaxDiss( m_newdissMap );
 
 //        final int l_maxIndex = this.getMaxIndex( m_dissList );
 //        final double l_max = m_dissList.get( l_maxIndex );
@@ -803,7 +876,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        final CVotingAgentRI l_maxDissAg = m_dissVoters.get( l_maxIndex );
 //        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
 
-        final CVotingAgentRI l_maxDissAg = this.getMaxAg( m_dissMap );
+        final CVotingAgentRI l_maxDissAg = this.getMaxAg( m_newdissMap );
         System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
         // remove vote of most dissatisfied voter from list
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
@@ -829,7 +902,9 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // remove diss Values for next iteration
 //        m_dissVoters.clear();
 //        m_dissList.clear();
-        m_dissMap.clear();
+
+ //       m_dissMap.clear();
+        m_newdissMap.clear();
 
         // update map
         m_map.remove( this.name() + "/" + l_maxDissAg.name() );
@@ -839,7 +914,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        l_group.makeReady();
     }
 
-    private double getMaxDiss( final HashMap<CVotingAgentRI, Double> p_dissMap )
+    private double getMaxDiss( final ConcurrentHashMap<CVotingAgentRI, Double> p_dissMap )
     {
         double l_max = 0;
 
@@ -851,7 +926,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         return l_max;
     }
 
-    private CVotingAgentRI getMaxAg( final HashMap<CVotingAgentRI, Double> p_dissMap )
+    private CVotingAgentRI getMaxAg( final ConcurrentHashMap<CVotingAgentRI, Double> p_dissMap )
     {
         double l_max = 0;
         CVotingAgentRI l_maxAg = null;

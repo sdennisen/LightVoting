@@ -217,6 +217,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     @IAgentActionName( name = "update/groups" )
     private void updateGroups() throws Exception
     {
+
         for ( final CGroupRB l_group : m_groups )
         {
             // if all voters have submitted their votes, there is nothing to check, group is clean

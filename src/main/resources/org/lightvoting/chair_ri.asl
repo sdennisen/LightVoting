@@ -89,6 +89,7 @@ count(0).
         // add belief result/computed when done
         generic/print( "compute result", "fill is", F );
         compute/result(I)
+   //     !timedout/dissvals
     .
 // store received diss value in Java datastructure
 +!stored/diss(Traveller, Diss, Iteration)
@@ -108,7 +109,6 @@ count(0).
 //        store/diss(Traveller, Diss, D);
 //        generic/print("add goal !removed/voter");
 //        !removed/voter
-
 
 +!removed/voter
     : >>iteration(I)
@@ -132,23 +132,34 @@ count(0).
     .
 
 
+//+!timedout/dissvals
+//    : >>(waittimediss(X, Y), X < Y) && >>(diss(D, F), D < F)
+//    <-
+//        X = X+1;
+//        !timedout/dissvals
+//    :  >>(waittimediss(X,Y), X == Y) || >>(diss(D, F), D==F)
+//    <-
+//        !done
+//    .
+
+
 
 // as soon as result is computed, chair sends it to the voters and waits for diss values
 
-+!timedout/dissvals
-    : >>(waittimediss(X, Y), X < Y) && >>(diss(D, F), D < F)
-    <-
-        X = X+1;
-        !timedout/dissvals
-    :  >>(waittimediss(X,Y), X == Y) || >>(diss(D, F), D==F)
-    <-
-        !done
-    .
-
-+!done
-    <-
-        generic/print( "write h5" )
-        // write/h5()
-    .
+//+!timedout/dissvals
+//    : >>(waittimediss(X, Y), X < Y) && >>(diss(D, F), D < F)
+//    <-
+//        X = X+1;
+//        !timedout/dissvals
+//    :  >>(waittimediss(X,Y), X == Y) || >>(diss(D, F), D==F)
+//    <-
+//        !done
+//    .
+//
+//+!done
+//    <-
+//        generic/print( "write h5" )
+//        // write/h5()
+//    .
 
 
