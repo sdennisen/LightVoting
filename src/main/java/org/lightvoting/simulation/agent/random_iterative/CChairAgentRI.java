@@ -517,7 +517,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
 
-        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
+        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
 
         // store diss for each iteration
 
@@ -533,7 +534,9 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
 
-        if ( m_dissMap.size() == p_fill.intValue() )
+        // TODO refactor
+
+        if ( m_dissMap.size() >= p_fill.intValue() )
 
         {
             this.trigger(
@@ -545,7 +548,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                 )
             );
 
-            System.out.println( "fill: " +  m_dissList.size() + " add goal !removed/voter" );
+            System.out.println( "fill: " +  m_dissMap.size() + " add goal !removed/voter" );
 
         }
 
