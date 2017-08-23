@@ -519,6 +519,10 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration );
 
+        // store diss for each iteration
+
+        m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
+
         m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
 
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
