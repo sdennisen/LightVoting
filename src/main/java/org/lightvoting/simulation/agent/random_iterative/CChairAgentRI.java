@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +113,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private CGroupRI m_group;
     private ConcurrentHashMap<CVotingAgentRI, Double> m_dissMap = new ConcurrentHashMap<>();
     private CBrokerAgentRI m_broker;
-    private ConcurrentHashMap<CVotingAgentRI,Double> m_newdissMap;
+    private ConcurrentHashMap<CVotingAgentRI, Double> m_newdissMap;
     private boolean m_removedGoalAdded;
     private long m_dissCounter;
     private boolean m_waitingForDiss;
@@ -388,7 +389,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        if (! this.timedout() && !m_voters.contains( p_votingAgent ))
+        if ( !this.timedout() && !m_voters.contains( p_votingAgent ) )
         {
 
             m_bitVotes.add( p_vote );
@@ -453,81 +454,89 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public void computeResult( final Number p_iteration )
+    public synchronized void computeResult( final Number p_iteration )
     {
-        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+        try
+        {
+            final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
-        final List<String> l_alternatives = new LinkedList<>();
+            final List<String> l_alternatives = new LinkedList<>();
 
-        System.out.println( "Iteration:" + p_iteration );
+            System.out.println( "Iteration:" + p_iteration );
 
-        System.out.println( "number of alternatives: " + m_altnum );
+            System.out.println( "number of alternatives: " + m_altnum );
 
-        for ( int i = 0; i < m_altnum; i++ )
-            l_alternatives.add( "POI" + i );
+            for ( int i = 0; i < m_altnum; i++ )
+                l_alternatives.add( "POI" + i );
 
-        System.out.println( " Alternatives: " + l_alternatives );
+            System.out.println( " Alternatives: " + l_alternatives );
 
-        System.out.println( " Votes: " + m_bitVotes );
+            System.out.println( " Votes: " + m_bitVotes );
 
-        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+            final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 
-        System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
+            System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
 
-//        m_voters.stream().forEach( i ->
-//            i.trigger(
-//                CTrigger.from(
-//                    ITrigger.EType.ADDGOAL,
-//                    CLiteral.from(
-//                        "submit/diss",
-//                        CRawTerm.from( this ),
-//                        CRawTerm.from( l_comResultBV )
-//                    )
-//                )
-//            )
-//        );
+            //        m_voters.stream().forEach( i ->
+            //            i.trigger(
+            //                CTrigger.from(
+            //                    ITrigger.EType.ADDGOAL,
+            //                    CLiteral.from(
+            //                        "submit/diss",
+            //                        CRawTerm.from( this ),
+            //                        CRawTerm.from( l_comResultBV )
+            //                    )
+            //                )
+            //            )
+            //        );
 
-        m_voters.stream().forEach( i ->
-            {
-                i.beliefbase().add(
-                    CLiteral.from(
-                        "result",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( l_comResultBV ),
-                        CRawTerm.from( p_iteration )
-                    )
-                );
-                System.out.println( "addbelief result to agent " + i.name() );
-                System.out.println( "result " + i.toString() );
-            }
-        );
+            m_voters.stream().forEach( i ->
+                {
+                    i.beliefbase().add(
+                        CLiteral.from(
+                            "result",
+                            CRawTerm.from( this ),
+                            CRawTerm.from( l_comResultBV ),
+                            CRawTerm.from( p_iteration )
+                        )
+                    );
+                    System.out.println( "addbelief result to agent " + i.name() );
+                    System.out.println( "result " + i.toString() );
+                }
+            );
 
-        // store intermediate election results
-        m_map.put( this.name() + "/" + p_iteration + "/election result", l_comResultBV );
-        // store contributing agents
-        m_map.put( this.name() + "/" + p_iteration + "/agents", this.asString( m_voters ) );
+            // store intermediate election results
+            m_map.put( this.name() + "/" + p_iteration + "/election result", l_comResultBV );
+            // store contributing agents
+            m_map.put( this.name() + "/" + p_iteration + "/agents", this.asString( m_voters ) );
 
-        // store election result in map
-        m_map.put( this.name() + "/election result", l_comResultBV );
-        // store group size in map
-        m_map.put( this.name() + "/group size", m_voters.size() );
-        // store names of agents
-   //     for ( int i = 0; i < m_voters.size(); i++ )
-        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+            // store election result in map
+            m_map.put( this.name() + "/election result", l_comResultBV );
+            // store group size in map
+            m_map.put( this.name() + "/group size", m_voters.size() );
+            // store names of agents
+            //     for ( int i = 0; i < m_voters.size(); i++ )
+            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
-        // store iteration number
+            // store iteration number
 
-        m_map.put( this.name() + "/itNum", p_iteration.intValue() );
+            m_map.put( this.name() + "/itNum", p_iteration.intValue() );
 
-        // store group ID
-        m_map.put( this.name() + "/groupID", this.group().id() );
+            // store group ID
+            m_map.put( this.name() + "/groupID", this.group().id() );
 
-        // m_dissStored = false;
+            // m_dissStored = false;
 
-        // reset timeout for diss vals
+            // reset timeout for diss vals
 
-        m_waitingForDiss = true;
-        m_dissCounter = this.cycle() + 50;
+            m_waitingForDiss = true;
+            m_dissCounter = this.cycle() + 50;
+        }
+        catch ( final ConcurrentModificationException l_ex )
+        {
+            System.out.println( "ConcurrentModificationException in computeResult" );
+            System.exit( 1 );
+        }
 
     }
 
@@ -586,7 +595,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
       //  if ( m_dissMap.size() >= p_fill.intValue() )
 
-        if ( ( m_dissMap.size() == m_voters.size() ) && !( m_removedGoalAdded ) )
+        if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
         {
             this.group().setDissSubmitted();
 
@@ -622,7 +631,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         if ( m_dissCounter == 0 )
             return false;
-        else  return ( this.cycle() >= m_dissCounter );
+        else  return this.cycle() >= m_dissCounter;
     }
 
     private CVotingAgentRI getAgent( final String p_votingAgent )
@@ -863,7 +872,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         }
 
         // TODO: revise, try alternative approaches
-        else if ( l_group.size() == 1 )
+        // TODO: this should be consistent with l_group.size()
+        else if ( m_newdissMap.size() == 1 )
         {
             System.out.println( this.name() + ": only one voter left, we are done " );
 

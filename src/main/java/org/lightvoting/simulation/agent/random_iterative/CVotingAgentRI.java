@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -120,6 +121,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
+    // List of already known groups
+    private CopyOnWriteArrayList<CGroupRI> m_visitedGroups = new CopyOnWriteArrayList<>();
 
     // TODO refactor ctors
 
@@ -263,6 +266,16 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     public long liningCounter()
     {
         return m_liningCounter.incrementAndGet();
+    }
+
+    public void addGroupID( final CGroupRI p_group )
+    {
+        m_visitedGroups.add( p_group );
+    }
+
+    public boolean unknownGroup( final CGroupRI p_group )
+    {
+            return !m_visitedGroups.contains( p_group );
     }
 
     // agent actions

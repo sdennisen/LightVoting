@@ -202,11 +202,12 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
             System.out.println( "group " + l_group.id() + " timeout " + l_group.chair().cycle() );
             // only add agents to group if group is open and chair did not reach its timeout
-            if ( l_group.open() && !l_group.chair().timedout() )
+            if ( l_group.open() && !l_group.chair().timedout() && p_votingAgent.unknownGroup( l_group ) )
             {
                 l_group.add( p_votingAgent, this.cycle() );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+                p_votingAgent.addGroupID( l_group );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
                 m_chairs.add( l_group.chair() );
                 return;
@@ -223,6 +224,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.addGroupID( l_group );
 
         m_chairs.add( l_chairAgent );
 
@@ -278,7 +280,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                                l_toRemoveList.add( j.name() );
                                l_toRemoveAgents.add( j );
                                m_lineHashMap.put( j, j.liningCounter() );
-                           });
+                           } );
                     System.out.println( "toRemoveList:" + l_toRemoveList );
 
                     l_group.removeAll( l_toRemoveList );
@@ -286,7 +288,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                     // "re-queue" removed voters
 
                     l_toRemoveAgents.parallelStream().forEach( i ->
-                    this.removeAndAddAg( i )   );
+                        this.removeAndAddAg( i )   );
 
                                                                //this.beliefbase().add(
 
@@ -308,7 +310,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
                     // set belief in chair that group was "cleaned up"
 
-                 l_cleanGroups.parallelStream().forEach(
+                l_cleanGroups.parallelStream().forEach(
                     i -> i.chair().beliefbase().add(
                         CLiteral.from(
                             "cleangroup",
