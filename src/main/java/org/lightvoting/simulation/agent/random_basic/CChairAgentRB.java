@@ -508,6 +508,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
         System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent );
 
+        m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
+
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
         //   m_map.put( l_path, l_dissVals );
