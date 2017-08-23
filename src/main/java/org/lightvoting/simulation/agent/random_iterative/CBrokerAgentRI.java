@@ -45,10 +45,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -251,57 +253,65 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     @IAgentActionName( name = "update/groups" )
     private void updateGroups() throws Exception
     {
-        for ( final CGroupRI l_group : m_groups )
+        try
         {
-            // if all voters have submitted their votes, there is nothing to check, group is clean
 
-            if ( l_group.areVotesSubmitted() )
-                l_group.chair().beliefbase().add(
-                    CLiteral.from(
-                        "cleangroup",
-                        CRawTerm.from( 1 )
-                    )
-                );
+            final CopyOnWriteArrayList<CGroupRI> l_cleanGroups = new CopyOnWriteArrayList<>();
 
-            else  if ( l_group.chair().timedout() )
-
-
+            for ( final CGroupRI l_group : m_groups )
             {
-                //  TODO re-insert and test
-//                // remove voters from group who didn't vote/whose votes didn't reach the chair
-//                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-//                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
-//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-//                       .forEach( j ->
-//                       {
-//                           l_toRemoveList.add( j.name() );
-//                           l_toRemoveAgents.add( j );
-//                           m_lineHashMap.put( j, j.liningCounter() );
-//                       } );
-//                System.out.println( "toRemoveList:" + l_toRemoveList );
-//
-//                l_group.removeAll( l_toRemoveList );
-//
-//                // "re-queue" removed voters
-//
-//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-//                    CLiteral.from(
-//                        "newag",
-//                        CRawTerm.from( i ),
-//                        CRawTerm.from( m_lineHashMap.get( i ) )
-//                    )
-//                                                 )
-//                );
+                // if all voters have submitted their votes, there is nothing to check, group is clean
 
-                // set belief in chair that group was "cleaned up"
+                if ( l_group.areVotesSubmitted() )
+                    l_cleanGroups.add( l_group );
 
-                l_group.chair().beliefbase().add(
-                    CLiteral.from(
-                        "cleangroup",
-                        CRawTerm.from( 1 )
-                    )
-                );
+                else if ( l_group.chair().timedout() )
+                    l_cleanGroups.add( l_group );
+
+                {
+                    //  TODO re-insert and test
+                    //                // remove voters from group who didn't vote/whose votes didn't reach the chair
+                    //                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                    //                final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                    //                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+                    //                       .forEach( j ->
+                    //                       {
+                    //                           l_toRemoveList.add( j.name() );
+                    //                           l_toRemoveAgents.add( j );
+                    //                           m_lineHashMap.put( j, j.liningCounter() );
+                    //                       } );
+                    //                System.out.println( "toRemoveList:" + l_toRemoveList );
+                    //
+                    //                l_group.removeAll( l_toRemoveList );
+                    //
+                    //                // "re-queue" removed voters
+                    //
+                    //                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+                    //                    CLiteral.from(
+                    //                        "newag",
+                    //                        CRawTerm.from( i ),
+                    //                        CRawTerm.from( m_lineHashMap.get( i ) )
+                    //                    )
+                    //                                                 )
+                    //                );
+
+                    // set belief in chair that group was "cleaned up"
+
+
+                    l_cleanGroups.parallelStream().forEach(
+                        i -> i.chair().beliefbase().add(
+                        CLiteral.from(
+                            "cleangroup",
+                            CRawTerm.from( 1 ) )
+                        )
+                    );
+                }
             }
+        }
+        catch ( final ConcurrentModificationException l_ex )
+        {
+            System.out.println( "ConcurrentModificationException" );
+            System.exit( 1 );
         }
     }
 
