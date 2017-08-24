@@ -307,6 +307,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
          * @param p_comsize committee size
          * @throws Exception exception
          */
+
         public CBrokerAgentGenerator( final CSendRB p_send,
                                       final FileInputStream p_brokerStream,
                                       final int p_agNum,

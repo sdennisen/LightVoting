@@ -3,7 +3,6 @@
 variables:
   runs: '100'
   setting1: 'RANDOM_BASIC'
-  setting2: 'RANDOM_ITERATIVE'
   agnum: '11'
   altnum: '10'
   comsize: '3'

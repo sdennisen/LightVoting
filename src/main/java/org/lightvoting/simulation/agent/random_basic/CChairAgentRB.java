@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -357,7 +358,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final CVotingAgentRB p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentRB p_votingAgent, final BitVector p_vote )
     {
     //    final CGroupRB l_group = this.determineGroup();
 
@@ -414,39 +415,41 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public void computeResult()
+    public synchronized void computeResult()
     {
-        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+        try
+        {
+            final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
-        final List<String> l_alternatives = new LinkedList<>();
+            final List<String> l_alternatives = new LinkedList<>();
 
-        System.out.println( "number of alternatives: " + m_altnum );
+            System.out.println( "number of alternatives: " + m_altnum );
 
-        for ( int i = 0; i < m_altnum; i++ )
-            l_alternatives.add( "POI" + i );
+            for ( int i = 0; i < m_altnum; i++ )
+                l_alternatives.add( "POI" + i );
 
-        System.out.println( " Alternatives: " + l_alternatives );
+            System.out.println( " Alternatives: " + l_alternatives );
 
-        System.out.println( " Votes: " + m_bitVotes );
+            System.out.println( " Votes: " + m_bitVotes );
 
-        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+            final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 
-        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+            System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
-//        m_voters.stream().forEach( i ->
-//            i.trigger(
-//                CTrigger.from(
-//                    ITrigger.EType.ADDGOAL,
-//                    CLiteral.from(
-//                        "submit/diss",
-//                        CRawTerm.from( this ),
-//                        CRawTerm.from( l_comResultBV )
-//                    )
-//                )
-//            )
-//        );
+            //        m_voters.stream().forEach( i ->
+            //            i.trigger(
+            //                CTrigger.from(
+            //                    ITrigger.EType.ADDGOAL,
+            //                    CLiteral.from(
+            //                        "submit/diss",
+            //                        CRawTerm.from( this ),
+            //                        CRawTerm.from( l_comResultBV )
+            //                    )
+            //                )
+            //            )
+            //        );
 
-        m_voters.stream().forEach( i ->
+            m_voters.stream().forEach( i ->
             {
                 i.beliefbase().add(
                     CLiteral.from(
@@ -458,30 +461,34 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                 System.out.println( "addbelief result to agent " + i.name() );
                 System.out.println( "result " + i.toString() );
             }
-        );
+            );
 
 
+            this.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "wait/for/diss"
 
-        this.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "wait/for/diss"
-
+                    )
                 )
-            )
-        );
+            );
 
-        // store election result in map
-        m_map.put( this.name() + "/election result", l_comResultBV );
-        // store group size in map
-        m_map.put( this.name() + "/group size", m_voters.size() );
-        // store names of agents
-        for ( int i = 0; i < m_voters.size(); i++ )
-            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+            // store election result in map
+            m_map.put( this.name() + "/election result", l_comResultBV );
+            // store group size in map
+            m_map.put( this.name() + "/group size", m_voters.size() );
+            // store names of agents
+            for ( int i = 0; i < m_voters.size(); i++ )
+                m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
-        // m_dissStored = false;
-
+            // m_dissStored = false;
+        }
+        catch ( final ConcurrentModificationException l_ex )
+        {
+            System.out.println( "ConcurrentModificationException in computeResult" );
+            System.exit( 1 );
+        }
     }
 
     private String asString( final List<CVotingAgentRB> p_voters )
@@ -502,7 +509,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final String p_votingAgent, final Double p_diss )
+    public synchronized void storeDiss( final String p_votingAgent, final Double p_diss )
     {
         m_dissList.add( p_diss );
 
