@@ -1,12 +1,13 @@
 # LightVoting Config
 
 variables:
-  runs: '1'
-  setting: 'RANDOM_ITERATIVE'
+  runs: '100'
+  setting1: 'RANDOM_BASIC'
+  setting2: 'RANDOM_ITERATIVE'
   agnum: '11'
   altnum: '10'
   comsize: '3'
   capacity: '5'
-  dissthr:  '1.4'
+  dissthr:  '1.3'
   jointhr: '5'
-  preferences: 'FSCluster'
+  preferences: 'sigmoid'

@@ -383,7 +383,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final CVotingAgentRI p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentRI p_votingAgent, final BitVector p_vote )
     {
     //    final CGroupRI l_group = this.determineGroup();
 
@@ -401,6 +401,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         else if ( this.timedout() )
         {
             System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+
         }
 
         else if ( m_voters.contains( p_votingAgent ) )
@@ -531,6 +532,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
             m_waitingForDiss = true;
             m_dissCounter = this.cycle() + 50;
+
         }
         catch ( final ConcurrentModificationException l_ex )
         {

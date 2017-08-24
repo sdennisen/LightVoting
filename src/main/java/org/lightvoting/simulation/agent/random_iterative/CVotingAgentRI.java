@@ -275,7 +275,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     public boolean unknownGroup( final CGroupRI p_group )
     {
-            return !m_visitedGroups.contains( p_group );
+        return !m_visitedGroups.contains( p_group );
     }
 
     // agent actions

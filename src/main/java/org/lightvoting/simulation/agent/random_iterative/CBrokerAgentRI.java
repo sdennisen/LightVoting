@@ -262,12 +262,13 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
             for ( final CGroupRI l_group : m_groups )
             {
-                // if all voters have submitted their votes and diss vals, there is nothing to check for electing,, group is clean
 
-                if ( l_group.areVotesSubmitted() )
-                    l_cleanGroups.add( l_group );
+//                if ( l_group.areVotesSubmitted() )
+//                    l_cleanGroups.add( l_group );
+//
+//                else if ( l_group.chair().timedout() )
 
-                else if ( l_group.chair().timedout() )
+                if ( l_group.areVotesSubmitted() || l_group.chair().timedout() )
 
                 {
                     // TODO test
