@@ -180,7 +180,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "assign/group" )
-    private void assignGroup( final CVotingAgentRB p_votingAgent ) throws Exception
+    private synchronized void assignGroup( final CVotingAgentRB p_votingAgent ) throws Exception
     {
         System.out.println( "Assigning group to " + p_votingAgent.name() );
         for ( final CGroupRB l_group : m_groups )
@@ -215,7 +215,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "update/groups" )
-    private void updateGroups() throws Exception
+    private synchronized void updateGroups() throws Exception
     {
 
         for ( final CGroupRB l_group : m_groups )
