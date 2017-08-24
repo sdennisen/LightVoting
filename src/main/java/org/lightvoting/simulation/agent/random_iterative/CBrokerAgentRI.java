@@ -317,7 +317,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                             "cleangroup",
                             CRawTerm.from( 1 ) )
                         )
-                    );
+                );
 
                 if ( l_group.areDissValsSubmitted() )
                 {

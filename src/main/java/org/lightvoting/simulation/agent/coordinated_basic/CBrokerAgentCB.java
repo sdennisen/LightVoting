@@ -190,8 +190,8 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         for ( final CGroupCB l_group : m_groups )
         {
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
-            // you can only add an agent to group if it is still open
-            if ( l_group.open() )
+            // you can only add an agent to group if it is still open and the result is not null
+            if ( l_group.open() && !( l_group.result() == null ) )
             {
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
