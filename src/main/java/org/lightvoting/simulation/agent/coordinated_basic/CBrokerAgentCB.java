@@ -212,6 +212,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
+            p_votingAgent.setChair( l_determinedGroup.chair() );
             m_chairs.add( l_determinedGroup.chair() );
             return;
         }
@@ -226,6 +227,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.setChair( l_chairAgent );
 
         m_chairs.add( l_chairAgent );
 

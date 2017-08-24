@@ -193,6 +193,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         m_altNum = p_altNum;
         m_atomicPrefValues = p_atomicDoubleArray;
 
+
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
 
@@ -269,6 +270,11 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         return m_liningCounter.incrementAndGet();
     }
 
+    public void setChair( final CChairAgentCB p_chair )
+    {
+        m_chair = p_chair;
+    }
+
     // agent actions
 
     @IAgentActionFilter
@@ -319,14 +325,19 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     private void computeDiss( final CChairAgentCB p_chairAgent, final BitVector p_result ) throws InterruptedException
     {
         System.out.println( "computing diss " );
+
+        final double l_diss = this.computeDissBV( p_result );
         // store dissatisfaction with election result in map
-        m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
+        m_map.put( this.name() + "/diss", l_diss );
         // store waiting time in map
         System.out.println( "cycle " + this.cycle() );
         m_map.put( this.name() + "/waiting time", this.cycle() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
+
+        m_map.put( m_chair.name() + "/" + this.name(), l_diss );
+
 
     }
 
