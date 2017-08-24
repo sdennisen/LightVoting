@@ -180,7 +180,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "assign/group" )
-    private void assignGroup( final CVotingAgentCB p_votingAgent ) throws Exception
+    private synchronized void assignGroup( final CVotingAgentCB p_votingAgent ) throws Exception
     {
         CGroupCB l_determinedGroup = null;
         int l_hammingDist = Integer.MAX_VALUE;
@@ -242,7 +242,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "update/groups" )
-    private void updateGroups() throws Exception
+    private synchronized void updateGroups() throws Exception
     {
 
         // TODO refactor method

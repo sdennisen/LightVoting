@@ -358,7 +358,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public void storeVote( final CVotingAgentCB p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentCB p_votingAgent, final BitVector p_vote )
     {
     //    final CGroupCB l_group = this.determineGroup();
 
@@ -415,7 +415,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public void computeResult()
+    public synchronized void computeResult()
     {
         final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
@@ -510,7 +510,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public void storeDiss( final String p_votingAgent, final Double p_diss )
+    public synchronized void storeDiss( final String p_votingAgent, final Double p_diss )
     {
         m_dissList.add( p_diss );
 
