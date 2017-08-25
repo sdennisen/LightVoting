@@ -44,29 +44,50 @@ state(0, undefined).
         !vote/submitted
     .
 
-+!received/result
-    : >>result(Chair, Result) && >>state(3, S)
-    <-
-        -state(3, S);
-        +state(4, received/result);
-        !diss/computed
-    <-
-        !received/result
-    .
 
+    +!received/result
+        : >>result(Chair, Result)
+        <-
+            !diss/computed(Chair, Result);
+            -result(Chair, Result)
+        <-
+            !received/result;
+            generic/print( MyName, " added goal !received/result")
+        .
 
-+!diss/computed
-    : >>result(Chair, Result) && >>state(4, S)
+// TODO re-insert?
+//+!received/result
+//    : >>result(Chair, Result) && >>state(3, S)
+//    <-
+//        -state(3, S);
+//        +state(4, received/result);
+//        !diss/computed
+//    <-
+//        !received/result
+//    .
+
++!diss/computed(Chair,Result)
     <-
         generic/print(MyName, "compute diss for result", Result);
-        compute/diss(Chair,Result);
-        -state(4, S);
-        +state(3, vote/submitted);
-        generic/print(MyName, "diss/computed")
-    : >>state(3, _)
-    <-
-        !diss/computed
+        compute/diss(Chair,Result)
     .
+
+
+// TODO re-insert?
+//+!diss/computed
+//    : >>result(Chair, Result) && >>state(4, S)
+//    <-
+//        generic/print(MyName, "compute diss for result", Result);
+//        compute/diss(Chair,Result);
+//        -state(4, S);
+//        +state(3, vote/submitted);
+//        generic/print(MyName, "diss/computed")
+//    : >>state(3, _)
+//    <-
+//        !diss/computed
+//    .
+
+
 
 // TODO refine the following
 // +state(0, undefined)
