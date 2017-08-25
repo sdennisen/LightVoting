@@ -124,6 +124,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
+    private boolean m_hasDiss;
 
     // TODO refactor ctors
 
@@ -285,6 +286,11 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         System.out.println( this.name() + " perceived environment " );
     }
 
+    public boolean hasDiss()
+    {
+        return m_hasDiss;
+    }
+
 //    @IAgentActionFilter
 //    @IAgentActionName( name = "join/group" )
 //    private void joinGroup()
@@ -337,6 +343,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         m_map.put( this.name() + "/lining counter", m_liningCounter );
 
         m_map.put( m_chair.name() + "/" + this.name(), l_diss );
+
+        m_hasDiss = true;
 
 
     }

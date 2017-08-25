@@ -431,8 +431,15 @@ public final class CMain
                         s_brokerCoordinatedBasic.agentstream().forEach( k ->
                         {
                             if ( k instanceof CVotingAgentCB )
+                            {
+                                if ( !( (CVotingAgentCB) k ).hasDiss() )
+                                {
+                                    System.out.println( "Agent " + ( (CVotingAgentCB) k ).name() + " has no diss value " );
+                                    System.exit( 1 );
+                                }
                                 append(
                                     s_map, ( (CVotingAgentCB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                            }
                             if ( k instanceof CChairAgentCB )
                                 append(
                                     s_map, ( (CChairAgentCB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
