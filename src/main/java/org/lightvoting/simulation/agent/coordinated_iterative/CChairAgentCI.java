@@ -474,9 +474,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         );
 
         // store intermediate election results
-        m_map.put( this.name() + "/" + m_imNum + "/election result", l_comResultBV );
+        m_map.put( this.name() + "/join_" + m_imNum + "/election result", l_comResultBV );
         // store contributing agents
-        m_map.put( this.name() + "/" + m_imNum + "/agents", this.asString( m_voters ) );
+        m_map.put( this.name() + "/join_" + m_imNum + "/agents", this.asString( m_voters ) );
 
 
         // store election result in map

@@ -28,11 +28,15 @@ import org.apache.commons.io.FileUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.coordinated_basic.CSendCB;
+import org.lightvoting.simulation.action.message.coordinated_iterative.CSendCI;
 import org.lightvoting.simulation.action.message.random_basic.CSendRB;
 import org.lightvoting.simulation.action.message.random_iterative.CSendRI;
 import org.lightvoting.simulation.agent.coordinated_basic.CBrokerAgentCB;
 import org.lightvoting.simulation.agent.coordinated_basic.CChairAgentCB;
 import org.lightvoting.simulation.agent.coordinated_basic.CVotingAgentCB;
+import org.lightvoting.simulation.agent.coordinated_iterative.CBrokerAgentCI;
+import org.lightvoting.simulation.agent.coordinated_iterative.CChairAgentCI;
+import org.lightvoting.simulation.agent.coordinated_iterative.CVotingAgentCI;
 import org.lightvoting.simulation.agent.random_basic.CBrokerAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
@@ -40,6 +44,7 @@ import org.lightvoting.simulation.agent.random_iterative.CBrokerAgentRI;
 import org.lightvoting.simulation.agent.random_iterative.CChairAgentRI;
 import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
 import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
+import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.statistics.EDataWriter;
@@ -65,6 +70,7 @@ public final class CMain
     private static CEnvironmentRB s_environmentRB;
     private static CEnvironmentRI s_environmentRI;
     private static CEnvironmentCB s_environmentCB;
+    private static CEnvironmentCI s_environmentCI;
 
     private static int s_altnum;
 
@@ -88,15 +94,18 @@ public final class CMain
     private static CBrokerAgentRB s_brokerRandomBasic;
     private static CBrokerAgentRI s_brokerRandomIterative;
     private static CBrokerAgentCB s_brokerCoordinatedBasic;
+    private static CBrokerAgentCI s_brokerCoordinatedIterative;
     private static CBrokerAgentRB.CBrokerAgentGenerator s_brokerGeneratorRB;
     private static CBrokerAgentRI.CBrokerAgentGenerator s_brokerGeneratorRI;
     private static CBrokerAgentCB.CBrokerAgentGenerator s_brokerGeneratorCB;
+    private static CBrokerAgentCI.CBrokerAgentGenerator s_brokerGeneratorCI;
     private static String s_dis;
     private static  String s_nameShort;
     private static String s_parameters;
     private static boolean s_randomBasic;
     private static boolean s_randomIterative;
     private static boolean s_coordinatedBasic;
+    private static boolean s_coordinatedIterative;
 
 
     /**
@@ -448,6 +457,92 @@ public final class CMain
                         s_environmentCB.reset();
                     }
 
+                    if ( s_settingStrs.get( c ).contains( "COORDINATED_ITERATIVE" ) && s_coordinatedIterative )
+                    {
+                        s_environmentCI = new CEnvironmentCI( Integer.parseInt( p_args[0] ), l_name, s_capacity );
+
+                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_cb.asl" );
+                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_cb.asl" );
+
+                        final String l_brokerCI = "src/main/resources/org/lightvoting/broker_cb.asl";
+
+                        createBrokerCoordinatedIterative(
+                            l_brokerCI, l_chairstream, s_agNum, new CSendCI(), l_stream, s_environmentCI, s_altnum, l_name, s_joinThr, s_prefList );
+
+                        l_stream.close();
+                        l_chairstream.close();
+
+                        IntStream
+                            // define cycle range, i.e. number of cycles to run sequentially
+                            .range(
+                                0,
+                                p_args.length < 1
+                                ? Integer.MAX_VALUE
+                                : Integer.parseInt( p_args[0] )
+                            )
+                            .forEach( j ->
+                            {
+                                System.out.println( "Cycle " + j );
+                                try
+                                {
+                                    s_brokerCoordinatedIterative.call();
+                                    s_brokerCoordinatedIterative.agentstream().forEach( k ->
+                                    {
+                                        try
+                                        {
+                                            k.call();
+                                        }
+                                        catch ( final Exception l_ex )
+                                        {
+                                            l_ex.printStackTrace();
+                                        }
+                                    } );
+                                }
+                                catch ( final Exception l_ex )
+                                {
+                                    l_ex.printStackTrace();
+                                }
+
+                                          //                        l_agents.parallelStream().forEach( i ->
+                                          //                        {
+                                          //                            try
+                                          //                            {
+                                          //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
+                                          //                                // call each agent, i.e. trigger a new agent cycle
+                                          //                                i.call();
+                                          //                                //   i.getChair().sleep( 0 );
+                                          //                                i.getChair().call();
+                                          //                            }
+                                          //                            catch ( final Exception l_exception )
+                                          //                            {
+                                          //                                l_exception.printStackTrace();
+                                          //                                throw new RuntimeException();
+                                          //                            }
+                                          //                        } );
+                            } );
+
+                        // reset properties for next configuration
+
+                        final int l_finalR = r;
+                        final int l_finalC = c;
+                        s_brokerCoordinatedIterative.agentstream().forEach( k ->
+                        {
+                            if ( k instanceof CVotingAgentCI )
+                            {
+                                if ( !( (CVotingAgentCI) k ).hasDiss() )
+                                {
+                                    System.out.println( "Agent " + ( (CVotingAgentCI) k ).name() + " has no diss value " );
+                                    System.exit( 1 );
+                                }
+                                append( s_map, ( (CVotingAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                            }
+                            if ( k instanceof CChairAgentCI )
+                                append( s_map, ( (CChairAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                        } );
+                        // TODO necessary?
+                        s_environmentCI.reset();
+                    }
+
                 }
                 catch ( final Exception l_exception )
                 {
@@ -470,6 +565,7 @@ public final class CMain
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
 
     }
+
 
     private static void createBrokerCoordinatedBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCB p_send,
                                                       final FileInputStream p_stream,
@@ -497,6 +593,34 @@ public final class CMain
         );
 
         s_brokerCoordinatedBasic = s_brokerGeneratorCB.generatesingle();
+    }
+
+    private static void createBrokerCoordinatedIterative( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCI p_send,
+                                                          final FileInputStream p_stream,
+                                                          final CEnvironmentCI p_environmentCI,
+                                                          final int p_altnum,
+                                                          final String p_name,
+                                                          final double p_joinThr,
+                                                          final List<AtomicDoubleArray> p_prefList
+    ) throws Exception
+    {
+        final FileInputStream l_bkStr = new FileInputStream( p_arg );
+
+        // TODO modify parameters
+        s_brokerGeneratorCI = new CBrokerAgentCI.CBrokerAgentGenerator( p_send,
+                                                                        l_bkStr,
+                                                                        p_agNum,
+                                                                        p_stream,
+                                                                        p_chrStream,
+                                                                        s_environmentCI,
+                                                                        s_altnum,
+                                                                        p_name,
+                                                                        s_joinThr,
+                                                                        s_prefList,
+                                                                        s_comsize
+        );
+
+        s_brokerCoordinatedIterative = s_brokerGeneratorCI.generatesingle();
     }
 
     private static void append( final HashMap<String, Object> p_map, final HashMap<String, Object> p_agentmap, final String p_setting, final int p_run )
@@ -632,6 +756,8 @@ public final class CMain
                         s_randomIterative = true;
                     if ( l_subValues.get( l_subValueKey ).contains( "COORDINATED_BASIC" ) )
                         s_coordinatedBasic = true;
+                    if ( l_subValues.get( l_subValueKey ).contains( "COORDINATED_ITERATIVE" ) )
+                        s_coordinatedIterative = true;
 
 
                 }
