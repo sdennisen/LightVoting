@@ -461,10 +461,10 @@ public final class CMain
                     {
                         s_environmentCI = new CEnvironmentCI( Integer.parseInt( p_args[0] ), l_name, s_capacity );
 
-                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_cb.asl" );
-                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_cb.asl" );
+                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_ci.asl" );
+                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_ci.asl" );
 
-                        final String l_brokerCI = "src/main/resources/org/lightvoting/broker_cb.asl";
+                        final String l_brokerCI = "src/main/resources/org/lightvoting/broker_ci.asl";
 
                         createBrokerCoordinatedIterative(
                             l_brokerCI, l_chairstream, s_agNum, new CSendCI(), l_stream, s_environmentCI, s_altnum, l_name, s_joinThr, s_prefList );

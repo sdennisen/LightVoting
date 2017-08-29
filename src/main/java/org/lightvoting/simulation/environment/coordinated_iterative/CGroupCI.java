@@ -53,6 +53,7 @@ public class CGroupCI
     private int m_currentAg;
     private long m_timeout;
     private boolean m_votesSubmitted;
+    private boolean m_dissValsSubmitted;
 
     /**
      * constructor
@@ -161,6 +162,16 @@ public class CGroupCI
     public BitVector result()
     {
         return m_result;
+    }
+
+    public boolean areDissValsSubmitted()
+    {
+        return m_dissValsSubmitted;
+    }
+
+    public void setDissSubmitted()
+    {
+        m_dissValsSubmitted = true;
     }
 
     //    public void close()

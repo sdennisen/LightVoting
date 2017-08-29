@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -253,6 +254,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         for ( final CGroupCI l_group : m_groups )
         {
+            System.out.println( l_group.id() + "result: " + l_group.result() );
 
             if ( l_group.result() == null )
                 l_allReady = false;
@@ -304,7 +306,48 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 //                    )
 //                );
 //            }
+
+            if ( l_group.areDissValsSubmitted() )
+            {
+                System.out.println( "All diss vals are submitted" );
+            }
+            // if there are agents whose diss vals were not stored by the chair, remove them
+            else if ( l_group.chair().dissTimedOut() && l_group.chair().waitingforDiss() )
+            {
+                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                l_group.agents().filter( i -> !l_group.chair().dissvoters().contains( i ) )
+                       .forEach(
+                           j ->
+                           {
+                               l_toRemoveList.add( j.name() );
+                               l_toRemoveAgents.add( j );
+                               m_lineHashMap.put( j, j.liningCounter() );
+                           } );
+                System.out.println( "toRemoveList:" + l_toRemoveList );
+
+                l_group.removeAll( l_toRemoveList );
+
+                // "re-queue" removed voters
+
+                l_toRemoveAgents.parallelStream().forEach(
+                    i -> this.removeAndAddAg( i )
+                );
+
+                l_group.chair().endWaitForDiss();
+
+            }
+
+            // TODO refactor
+            // check if chair is timedout, if yes, the chair needs to send the result to the agents to be sure that all agents received the final result
+
+            if ( l_group.chair().timedout() && l_group.result() != null )
+            {
+                l_group.chair().resendResult();
+            }
+
         }
+
 
         if ( l_allReady )
         {
@@ -317,6 +360,37 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 )
             );
         }
+    }
+
+
+    /**
+     * add Ag
+     * @param p_Ag agent
+     */
+
+    // TODO refactor
+
+
+    public void removeAndAddAg( final CVotingAgentCI p_Ag )
+    {
+//        p_Ag.trigger( CTrigger.from(
+//            ITrigger.EType.ADDGOAL,
+//            CLiteral.from(
+//                "leftgroup" )
+//                      )
+//        );
+//
+//        System.out.println( "adding Agent " + p_Ag.name() );
+//        // increase lining counter of ag
+//        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+//
+//        this.beliefbase().add(
+//            CLiteral.from(
+//                "newag",
+//                CRawTerm.from( p_Ag ),
+//                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+//            )
+//        );
     }
 
     /**

@@ -44,9 +44,11 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -112,7 +114,12 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private int m_groupNum;
     private final double m_voteTimeout;
     private CGroupCI m_group;
+    private ConcurrentHashMap<CVotingAgentCI, Double> m_dissMap = new ConcurrentHashMap<>();
     private int m_imNum;
+    private boolean m_waitingForDiss;
+    private long m_dissCounter;
+    private boolean m_removedGoalAdded;
+    private ConcurrentHashMap<CVotingAgentCI, Double> m_newdissMap;
 
 
     // TODO merge ctors
@@ -219,6 +226,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+        m_dissMap = new ConcurrentHashMap<>();
     //    m_agents = Collections.synchronizedList( new LinkedList<>() );
         m_iteration = 0;
         m_iterative = false;
@@ -287,6 +295,27 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     {
         System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
         return this.cycle() >= m_voteTimeout;
+    }
+
+    /**
+     * resend result
+     */
+
+    public void resendResult()
+    {
+        m_voters.stream().forEach( i ->
+        {
+            i.beliefbase().add(
+                CLiteral.from(
+                    "result",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( this.group().result() ),
+                    CRawTerm.from( 0 )
+                )
+            );
+            System.out.println( "addbelief result to agent " + i.name() );
+            System.out.println( "result " + i.toString() );
+        } );
     }
 
     // private methods
@@ -384,7 +413,87 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //        this.trigger( l_trigger );
     }
 
-//    /**
+
+    /**
+     * store dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/diss" )
+
+    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
+    {
+
+        if ( this.dissTimedOut() )
+        {
+            System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
+            return;
+        }
+        //        m_dissList.add( p_diss.doubleValue() );
+        //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
+
+        m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+
+        //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+        //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
+
+        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+                            + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
+
+        // store diss for each iteration
+
+        m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
+
+        m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
+
+        //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+        //   m_map.put( l_path, l_dissVals );
+
+        // TODO write data to list instead
+        //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+        //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+
+        // TODO refactor
+
+        //  if ( m_dissMap.size() >= p_fill.intValue() )
+
+        if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
+        {
+            this.group().setDissSubmitted();
+
+            this.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "removed/voter"
+                    )
+                )
+            );
+
+            System.out.println( "fill: " +  m_dissMap.size() + " add goal !removed/voter" );
+            if ( !( m_dissMap.isEmpty() ) )
+            {
+                m_newdissMap = new ConcurrentHashMap<>( m_dissMap );
+                m_dissMap.clear();
+            }
+            m_removedGoalAdded = true;
+
+        }
+
+    }
+
+    private CVotingAgentCI getAgent( final String p_votingAgent )
+    {
+        for ( int i = 0; i < m_voters.size(); i++ )
+            if ( m_voters.get( i ).name().equals( p_votingAgent ) )
+                return m_voters.get( i );
+        return null;
+    }
+
+
+    //    /**
 //     * close group
 //     */
 //    @IAgentActionFilter
@@ -408,8 +517,23 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     }
 
+    /**
+     * call iterative election if timedout, intermediate election otherwise
+     */
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "determine/timedout" )
+
+    public synchronized void determineTimedout()
+    {
+        if ( this.timedout() )
+            this.computeResult( 0 );
+        else
+            this.computeResult( );
+    }
+
         /**
-         * compute result of election
+         * compute result of intermediate election
          */
 
     @IAgentActionFilter
@@ -447,19 +571,20 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //            )
 //        );
 
+
         m_voters.stream().forEach( i ->
-            {
-                i.beliefbase().add(
-                    CLiteral.from(
-                        "result",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( l_comResultBV )
-                    )
-                );
-                System.out.println( "addbelief result to agent " + i.name() );
-                System.out.println( "result " + i.toString() );
-            }
-        );
+        {
+            i.beliefbase().add(
+                CLiteral.from(
+                    "result",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( l_comResultBV )
+                )
+            );
+            System.out.println( "addbelief result to agent " + i.name() );
+            System.out.println( "result " + i.toString() );
+        } );
+
 
         this.group().setResult( l_comResultBV );
 
@@ -492,6 +617,102 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     }
 
+    /**
+     * compute result of iterative election
+     */
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "compute/result" )
+
+    public synchronized void computeResult( final Number p_iteration )
+    {
+        try
+        {
+            final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+            final List<String> l_alternatives = new LinkedList<>();
+
+            System.out.println( "Iteration:" + p_iteration );
+
+            System.out.println( "number of alternatives: " + m_altnum );
+
+            for ( int i = 0; i < m_altnum; i++ )
+                l_alternatives.add( "POI" + i );
+
+            System.out.println( " Alternatives: " + l_alternatives );
+
+            System.out.println( " Votes: " + m_bitVotes );
+
+            final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+
+            System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
+
+            //        m_voters.stream().forEach( i ->
+            //            i.trigger(
+            //                CTrigger.from(
+            //                    ITrigger.EType.ADDGOAL,
+            //                    CLiteral.from(
+            //                        "submit/diss",
+            //                        CRawTerm.from( this ),
+            //                        CRawTerm.from( l_comResultBV )
+            //                    )
+            //                )
+            //            )
+            //        );
+
+            m_voters.stream().forEach( i ->
+            {
+                i.beliefbase().add(
+                    CLiteral.from(
+                        "result",
+                        CRawTerm.from( this ),
+                        CRawTerm.from( l_comResultBV ),
+                        CRawTerm.from( p_iteration )
+                    )
+                );
+                System.out.println( "addbelief result to agent " + i.name() );
+                System.out.println( "result " + i.toString() );
+            } );
+
+            this.group().setResult( l_comResultBV );
+
+            // store intermediate election results
+            m_map.put( this.name() + "/iteration_" + p_iteration + "/election result", l_comResultBV );
+            // store contributing agents
+            m_map.put( this.name() + "/iteration_" + p_iteration + "/agents", this.asString( m_voters ) );
+
+            // store election result in map
+            m_map.put( this.name() + "/election result", l_comResultBV );
+            // store group size in map
+            m_map.put( this.name() + "/group size", m_voters.size() );
+            // store names of agents
+            //     for ( int i = 0; i < m_voters.size(); i++ )
+            m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+
+            // store iteration number
+
+            m_map.put( this.name() + "/itNum", p_iteration.intValue() );
+
+            // store group ID
+            m_map.put( this.name() + "/groupID", this.group().id() );
+
+            // m_dissStored = false;
+
+            // reset timeout for diss vals
+
+            m_waitingForDiss = true;
+            m_dissCounter = this.cycle() + 50;
+
+        }
+        catch ( final ConcurrentModificationException l_ex )
+        {
+            System.out.println( "ConcurrentModificationException in computeResult" );
+            System.exit( 1 );
+        }
+
+    }
+
+
     private String asString( final List<CVotingAgentCI> p_voters )
     {
         String l_string = "{";
@@ -502,7 +723,36 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         return l_string;
     }
 
-//    /**
+    /**
+     * return true if waiting time for diss vals is timedout
+     * @return boolean value
+     */
+
+    public boolean dissTimedOut()
+    {
+        System.out.println( this.name() + " " + this.cycle() + " Diss timeout: " + m_dissCounter );
+
+        if ( m_dissCounter == 0 )
+            return false;
+        else  return this.cycle() >= m_dissCounter;
+    }
+
+    public void endWaitForDiss()
+    {
+        m_waitingForDiss = false;
+    }
+
+    boolean waitingforDiss()
+    {
+        return m_waitingForDiss;
+    }
+
+    public List<CVotingAgentCI> dissvoters()
+    {
+        return new ArrayList<>( m_dissMap.keySet() );
+    }
+
+    //    /**
 //     * store dissatisfaction value
 //     *
 //     * @param p_diss dissatisfaction value
