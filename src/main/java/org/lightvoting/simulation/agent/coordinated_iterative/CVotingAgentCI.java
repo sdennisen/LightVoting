@@ -361,13 +361,14 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         );
 
         m_dissSent.add( p_iteration.intValue() );
+        m_hasDiss = true;
     }
 
 
 
     @IAgentActionFilter
     @IAgentActionName( name = "compute/diss" )
-    private void computeDiss( final CChairAgentCI p_chairAgent, final BitVector p_result ) throws InterruptedException
+    private synchronized void computeDiss( final CChairAgentCI p_chairAgent, final BitVector p_result ) throws InterruptedException
     {
         System.out.println( "computing diss " );
 
