@@ -309,24 +309,31 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     @IAgentActionName( name = "submit/vote" )
     private synchronized void submitVote( final CChairAgentCI p_chairAgent )
     {
-        System.out.println( "my name is " + this.name() );
-        System.out.println( "my vote is " + this.getBitVote() );
-        System.out.println( "my chair: " + p_chairAgent.name() );
+        try
+        {
+            System.out.println( "my name is " + this.name() );
+            System.out.println( "my vote is " + this.getBitVote() );
+            System.out.println( "my chair: " + p_chairAgent.name() );
 
-        p_chairAgent.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "stored/vote",
-                    CRawTerm.from( this ),
-                    CRawTerm.from( this.getBitVote() )
+            p_chairAgent.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "stored/vote",
+                        CRawTerm.from( this ),
+                        CRawTerm.from( this.getBitVote() )
+                    )
                 )
-            )
-        );
-
-        //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+            );
 
 
+            //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+
+        }
+        catch ( final StackOverflowError l_ex  )
+        {
+            System.out.println( "StackOverFlowError in agent " + this.name() );
+        }
     }
 
 

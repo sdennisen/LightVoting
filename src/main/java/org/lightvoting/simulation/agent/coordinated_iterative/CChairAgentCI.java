@@ -814,7 +814,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     {
         m_removedGoalAdded = false;
 
-        System.out.println( "removing voter " );
+        System.out.println( this.name() + " removing voter" );
         final CGroupCI l_group = this.group();
 
         final double l_max = this.getMaxDiss( m_newdissMap );
@@ -869,6 +869,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 "reelected" )
                       )
         );
+
+        System.out.println( this.name() + " added reelection goal" );
 
         // remove diss Values for next iteration
         //        m_dissVoters.clear();

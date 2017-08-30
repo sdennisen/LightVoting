@@ -78,6 +78,16 @@ started(0).
          remove/voter()
      .
 
+ +!reelected
+     : >>iteration(I) //&& >>dissatisfaction(D, F)
+     <-
+   //      NewF = F-1;
+//         -dissatisfaction(D, F);
+//         +dissatisfaction(D, New F);
+         generic/print( "re-compute result of election" );
+         compute/result(I)
+     .
+
 
 //// store received diss value in Java datastructure
 //+!stored/diss(Traveller, Diss)
