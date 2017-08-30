@@ -125,6 +125,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
     private boolean m_hasDiss;
+    private List<Integer> m_dissSent = Collections.synchronizedList( new LinkedList<>() );
 
     // TODO refactor ctors
 
@@ -304,7 +305,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/vote" )
-    private void submitVote( final CChairAgentCI p_chairAgent )
+    private synchronized void submitVote( final CChairAgentCI p_chairAgent )
     {
         System.out.println( "my name is " + this.name() );
         System.out.println( "my vote is " + this.getBitVote() );
@@ -325,6 +326,44 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
 
     }
+
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "submit/diss" )
+    private synchronized void submitDiss( final CChairAgentCI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
+    {
+        if ( m_dissSent.contains( p_iteration ) )
+        {
+            System.out.println( "I already submitted my diss for this iteration" );
+            return;
+        }
+
+        // store dissatisfaction with result in map
+        m_map.put( this.name() + "/" + p_chairAgent.name() + "/" + p_iteration + "/diss", this.computeDissBV( p_result ) );
+        // store final dissatisfaction with election result in map
+        m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
+        // store waiting time in map
+        System.out.println( "cycle " + this.cycle() );
+        m_map.put( this.name() + "/waiting time", this.cycle() );
+        // store lining counter in map
+        System.out.println( "lining counter " + m_liningCounter );
+        m_map.put( this.name() + "/lining counter", m_liningCounter );
+
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "stored/diss",
+                    CRawTerm.from( this.name() ),
+                    CRawTerm.from( this.computeDissBV( p_result ) ),
+                    CRawTerm.from( p_iteration )                )
+            )
+        );
+
+        m_dissSent.add( p_iteration.intValue() );
+    }
+
+
 
     @IAgentActionFilter
     @IAgentActionName( name = "compute/diss" )

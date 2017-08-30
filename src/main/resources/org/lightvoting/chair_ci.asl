@@ -56,6 +56,16 @@ started(0).
         compute/result( 0 )
     .
 
+// store received diss value in Java datastructure
++!stored/diss(Traveller, Diss, Iteration)
+    // : >>dissatisfaction(D, F) //, D < F-1)
+    <-
+
+       //  generic/print( "store diss", "stored:", D, "fill", F );
+       //  store/diss(Traveller, Diss, F, Iteration)
+         store/diss(Traveller, Diss, Iteration)
+       .
+
 //// store received diss value in Java datastructure
 //+!stored/diss(Traveller, Diss)
 //    : >>(dissatisfaction(D, F), D < F-1)

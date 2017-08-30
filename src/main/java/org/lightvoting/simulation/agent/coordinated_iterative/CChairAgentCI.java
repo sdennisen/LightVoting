@@ -491,7 +491,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
+    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_iteration )
     {
 
         if ( this.dissTimedOut() )

@@ -49,6 +49,7 @@ state(0, undefined).
         : >>result(Chair, Result, Iteration)
         <-
             !diss/computed(Chair, Result, Iteration);
+            +received(Iteration);
             -result(Chair, Result, Iteration)
         <-
             !received/result;
@@ -68,8 +69,8 @@ state(0, undefined).
 
 +!diss/computed(Chair,Result, Iteration)
     <-
-        generic/print(MyName, "compute diss for result", Result, " iteration ", Iteration);
-        compute/diss(Chair,Result)
+        generic/print(MyName, "submit diss for result", Result, "iteration", Iteration);
+        submit/diss(Chair,Result,Iteration)
     .
 
 
