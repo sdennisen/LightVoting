@@ -348,19 +348,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         if ( m_updated )
             return;
 
-        m_voters.stream().forEach( i ->
-        {
-            i.beliefbase().add(
-                CLiteral.from(
-                    "result",
-                    CRawTerm.from( this ),
-                    CRawTerm.from( this.group().result() ),
-                    CRawTerm.from( 0 )
-                )
-            );
-            System.out.println( "addbelief result to agent " + i.name() );
-            System.out.println( "result " + i.toString() );
-        } );
+        System.out.println( this.name() + " updating last intermediate election with agents " + this.asString( m_voters ) );
 
         // store intermediate election results
         m_map.put( this.name() + "/iteration_" + 0 + "/election result", this.group().result() );
@@ -381,6 +369,21 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         // store group ID
         m_map.put( this.name() + "/groupID", this.group().id() );
+
+
+        m_voters.stream().forEach( i ->
+        {
+            i.beliefbase().add(
+                CLiteral.from(
+                    "result",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( this.group().result() ),
+                    CRawTerm.from( 0 )
+                )
+            );
+            System.out.println( "addbelief result to agent " + i.name() );
+            System.out.println( "result " + i.toString() );
+        } );
 
         // m_dissStored = false;
 
@@ -469,12 +472,30 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        m_bitVotes.add( p_vote );
-        m_voters.add( p_votingAgent );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        if ( !this.timedout() && !m_voters.contains( p_votingAgent ) )
+        {
 
-//        if ( m_bitVotes.size() != l_group.size() )
+            m_bitVotes.add( p_vote );
+            m_voters.add( p_votingAgent );
+
+            System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+
+            this.computeIM();
+        }
+
+        else if ( this.timedout() )
+        {
+            System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+
+        }
+
+        else if ( m_voters.contains( p_votingAgent ) )
+
+            System.out.println( "already containing " + p_votingAgent.name() );
+
+
+        //        if ( m_bitVotes.size() != l_group.size() )
 //            return;
 //
 //        final ITrigger l_trigger = CTrigger.from(
@@ -774,10 +795,6 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             // m_dissStored = false;
 
-            // reset timeout for diss vals
-
-            m_waitingForDiss = true;
-            m_dissCounter = this.cycle() + 50;
 
         }
         catch ( final ConcurrentModificationException l_ex )
@@ -838,6 +855,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         // add belief in broker
         m_broker.removeAndAddAg( l_maxDissAg );
+
 
         System.out.println( this.name() + ": Removing " + l_maxDissAg.name() );
         // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );

@@ -192,7 +192,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         {
             System.out.println( "group " + l_group.id() + " open: " + l_group.open() );
             // you can only add an agent to group if it is still open and the result is not null
-            if ( l_group.open() && !( l_group.result() == null ) )
+            if ( l_group.open() && !( l_group.result() == null ) && p_votingAgent.unknownGroup( l_group ) )
             {
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
@@ -213,6 +213,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
+            p_votingAgent.addGroupID( l_determinedGroup );
             p_votingAgent.setChair( l_determinedGroup.chair() );
             m_chairs.add( l_determinedGroup.chair() );
             return;
@@ -228,6 +229,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
+        p_votingAgent.addGroupID( l_group );
         p_votingAgent.setChair( l_chairAgent );
 
         m_chairs.add( l_chairAgent );
@@ -251,6 +253,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         // TODO refactor method
 
         boolean l_allReady = true;
+
+        final CopyOnWriteArrayList<CGroupCI> l_cleanGroups = new CopyOnWriteArrayList<>();
 
         for ( final CGroupCI l_group : m_groups )
         {
@@ -312,6 +316,43 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 //                    )
 //                );
 //            }
+
+
+            if ( l_group.areVotesSubmitted() || l_group.chair().timedout() )
+
+            {
+                // TODO test
+                // remove voters from group who didn't vote/whose votes didn't reach the chair
+                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+                       .forEach( j ->
+                       {
+                           l_toRemoveList.add( j.name() );
+                           l_toRemoveAgents.add( j );
+                           m_lineHashMap.put( j, j.liningCounter() );
+                       } );
+                System.out.println( l_group.chair().name() + " toRemoveList:" + l_toRemoveList );
+
+                l_group.removeAll( l_toRemoveList );
+
+                // "re-queue" removed voters
+
+                l_toRemoveAgents.parallelStream().forEach( i ->
+                                                               this.removeAndAddAg( i )   );
+
+                //this.beliefbase().add(
+
+                //                        CLiteral.from(
+                //                            "newag",
+                //                            CRawTerm.from( i ),
+                //                            CRawTerm.from( m_lineHashMap.get( i ) )
+                //                        )
+                //    )
+
+                l_cleanGroups.add( l_group );
+            }
+
 
             if ( l_group.areDissValsSubmitted() )
             {
@@ -385,6 +426,10 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 "leftgroup" )
                       )
         );
+
+        // TODO possibly superfluous
+
+        p_Ag.beliefbase().remove( CLiteral.from( "mychair", CRawTerm.from( p_Ag.getChair() ) ) );
 
         System.out.println( "adding Agent " + p_Ag.name() );
         // increase lining counter of ag

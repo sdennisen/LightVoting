@@ -29,10 +29,9 @@ state(0, undefined).
     .
 
 +!vote/submitted
-    : >>(voted(N), N==0) && >>mychair(Chair) && >>state(2, S)
+    : >>mychair(Chair) && >>state(2, S)
     <-
         generic/print( "submit vote ");
-        -voted(0);
         submit/vote(Chair);
         -state(2, S);
         +state(3, vote/submitted);

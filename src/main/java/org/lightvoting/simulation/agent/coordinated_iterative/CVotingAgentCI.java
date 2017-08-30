@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -126,6 +127,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private AtomicLong m_liningCounter = new AtomicLong();
     private boolean m_hasDiss;
     private List<Integer> m_dissSent = Collections.synchronizedList( new LinkedList<>() );
+    private CopyOnWriteArrayList<CGroupCI> m_visitedGroups = new CopyOnWriteArrayList<CGroupCI>();
 
     // TODO refactor ctors
 
@@ -366,28 +368,28 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
 
 
-    @IAgentActionFilter
-    @IAgentActionName( name = "compute/diss" )
-    private synchronized void computeDiss( final CChairAgentCI p_chairAgent, final BitVector p_result ) throws InterruptedException
-    {
-        System.out.println( "computing diss " );
-
-        final double l_diss = this.computeDissBV( p_result );
-        // store dissatisfaction with election result in map
-        m_map.put( this.name() + "/diss", l_diss );
-        // store waiting time in map
-        System.out.println( "cycle " + this.cycle() );
-        m_map.put( this.name() + "/waiting time", this.cycle() );
-        // store lining counter in map
-        System.out.println( "lining counter " + m_liningCounter );
-        m_map.put( this.name() + "/lining counter", m_liningCounter );
-
-        m_map.put( m_chair.name() + "/" + this.name(), l_diss );
-
-        m_hasDiss = true;
-
-
-    }
+//    @IAgentActionFilter
+//    @IAgentActionName( name = "compute/diss" )
+//    private synchronized void computeDiss( final CChairAgentCI p_chairAgent, final BitVector p_result ) throws InterruptedException
+//    {
+//        System.out.println( "computing diss " );
+//
+//        final double l_diss = this.computeDissBV( p_result );
+//        // store dissatisfaction with election result in map
+//        m_map.put( this.name() + "/diss", l_diss );
+//        // store waiting time in map
+//        System.out.println( "cycle " + this.cycle() );
+//        m_map.put( this.name() + "/waiting time", this.cycle() );
+//        // store lining counter in map
+//        System.out.println( "lining counter " + m_liningCounter );
+//        m_map.put( this.name() + "/lining counter", m_liningCounter );
+//
+//        m_map.put( m_chair.name() + "/" + this.name(), l_diss );
+//
+//        m_hasDiss = true;
+//
+//
+//    }
 
 
 
@@ -471,6 +473,16 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 l_voteValues.put( i, false );
         System.out.println( "Vote as BitVector: " + l_voteValues  );
         return l_voteValues;
+    }
+
+    public void addGroupID( final CGroupCI p_group )
+    {
+        m_visitedGroups.add( p_group );
+    }
+
+    public boolean unknownGroup( final CGroupCI p_group )
+    {
+        return !m_visitedGroups.contains( p_group );
     }
 
 
