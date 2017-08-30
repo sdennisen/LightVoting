@@ -44,7 +44,7 @@ state(0, undefined).
         !vote/submitted
     .
 
-
+// TODO reinsert
     +!received/result
         : >>result(Chair, Result, Iteration)
         <-

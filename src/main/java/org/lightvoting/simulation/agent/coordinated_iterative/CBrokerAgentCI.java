@@ -134,7 +134,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
                                                                            m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize );
+        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -255,6 +255,12 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         for ( final CGroupCI l_group : m_groups )
         {
             System.out.println( l_group.id() + "result: " + l_group.result() );
+
+            // if chair is timed out or group is full, update info on current election
+
+            if ( l_group.chair().timedout() || l_group.chair().full() )
+
+                l_group.chair().updateElection();
 
             if ( l_group.result() == null )
                 l_allReady = false;
