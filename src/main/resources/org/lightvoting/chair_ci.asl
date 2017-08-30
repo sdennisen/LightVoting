@@ -9,6 +9,8 @@ waittimevote(0, 10).
 
 waittimediss(0, 10).
 //max/time/diss(10).
+
+iteration(0).
 started(0).
 
 !start.
@@ -65,6 +67,17 @@ started(0).
        //  store/diss(Traveller, Diss, F, Iteration)
          store/diss(Traveller, Diss, Iteration)
        .
+
+ +!removed/voter
+     : >>iteration(I)
+     <-
+         generic/print( "remove voter" );
+         NewI = I+1;
+         -iteration(I);
+         +iteration(NewI);
+         remove/voter()
+     .
+
 
 //// store received diss value in Java datastructure
 //+!stored/diss(Traveller, Diss)

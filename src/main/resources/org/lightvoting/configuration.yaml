@@ -3,7 +3,7 @@
 variables:
   runs: '1'
   setting1: 'COORDINATED_ITERATIVE'
-  agnum: '3'
+  agnum: '11'
   altnum: '10'
   comsize: '3'
   capacity: '5'

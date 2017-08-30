@@ -122,6 +122,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private ConcurrentHashMap<CVotingAgentCI, Double> m_newdissMap;
     private int m_capacity;
     private boolean m_updated;
+    private CBrokerAgentCI m_broker;
 
 
     // TODO merge ctors
@@ -134,6 +135,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      * @param p_run run number
      * @param p_dissthr dissatisfaction threshold
      * @param p_comsize size of committee to be elected
+     * @param p_broker broker agent
      */
 
 
@@ -143,7 +145,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                           final double p_dissthr,
                           final int p_comsize,
                           final int p_altnum,
-                          final int p_capacity
+                          final int p_capacity,
+                          final CBrokerAgentCI p_broker
     )
     {
         super( p_configuration );
@@ -157,6 +160,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         // TODO via parameters
         m_voteTimeout = 10;
         m_capacity = p_capacity;
+        m_broker = p_broker;
     }
 
     /**
@@ -166,9 +170,11 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      * @param p_environment environment
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
+     * @param p_broker broker agent
      */
     public CChairAgentCI( final String p_name, final IAgentConfiguration<CChairAgentCI> p_configuration, final CEnvironmentCI p_environment, final int p_altnum,
-                          final int p_comsize, final int p_capacity
+                          final int p_comsize, final int p_capacity,
+                          final CBrokerAgentCI p_broker
     )
     {
         super( p_configuration );
@@ -178,6 +184,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         // TODO via parameters
         m_voteTimeout = 10;
         m_capacity = p_capacity;
+        m_broker = p_broker;
     }
 
 
@@ -781,6 +788,114 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     }
 
+    /**
+     * remove most dissatisfied voter
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "remove/voter" )
+    public void removeVoter( )
+    {
+        m_removedGoalAdded = false;
+
+        System.out.println( "removing voter " );
+        final CGroupCI l_group = this.group();
+
+        final double l_max = this.getMaxDiss( m_newdissMap );
+
+        //        final int l_maxIndex = this.getMaxIndex( m_dissList );
+        //        final double l_max = m_dissList.get( l_maxIndex );
+        System.out.println( " max diss is " + l_max );
+        System.out.println( "dissThr is " + m_dissThreshold );
+
+        if ( l_max <= m_dissThreshold )
+        {
+            System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
+
+            return;
+        }
+
+        // TODO: revise, try alternative approaches
+        // TODO: this should be consistent with l_group.size()
+        else if ( m_newdissMap.size() == 1 )
+        {
+            System.out.println( this.name() + ": only one voter left, we are done " );
+
+            return;
+        }
+
+        System.out.println( " Determining most dissatisfied voter " );
+
+
+        //        final CVotingAgentCI l_maxDissAg = m_dissVoters.get( l_maxIndex );
+        //        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+
+        final CVotingAgentCI l_maxDissAg = this.getMaxAg( m_newdissMap );
+        System.out.println( " Most dissatisfied voter is " + l_maxDissAg.name() );
+        // remove vote of most dissatisfied voter from list
+        m_bitVotes.remove( l_maxDissAg.getBitVote() );
+        l_group.remove( l_maxDissAg );
+        m_voters.remove( l_maxDissAg );
+
+        // add belief in broker
+        m_broker.removeAndAddAg( l_maxDissAg );
+
+        System.out.println( this.name() + ": Removing " + l_maxDissAg.name() );
+        // System.out.println( this.name() + ":Size of List after removing " + m_dissVoters.size() );
+        System.out.println( this.name() + ": Size of Group after removing " + l_group.size() );
+
+        // if a voter needed to be removed, the election has to be repeated
+
+        this.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "reelected" )
+                      )
+        );
+
+        // remove diss Values for next iteration
+        //        m_dissVoters.clear();
+        //        m_dissList.clear();
+
+        //       m_dissMap.clear();
+        m_newdissMap.clear();
+
+        // update map
+        m_map.remove( this.name() + "/" + l_maxDissAg.name() );
+        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+
+        //        m_iterative = true;
+        //        l_group.makeReady();
+    }
+
+    private double getMaxDiss( final ConcurrentHashMap<CVotingAgentCI, Double> p_dissMap )
+    {
+        double l_max = 0;
+
+        for ( final CVotingAgentCI l_key : p_dissMap.keySet() )
+        {
+            if ( p_dissMap.get( l_key ) > l_max )
+                l_max = p_dissMap.get( l_key );
+        }
+        return l_max;
+    }
+
+    private CVotingAgentCI getMaxAg( final ConcurrentHashMap<CVotingAgentCI, Double> p_dissMap )
+    {
+        double l_max = 0;
+        CVotingAgentCI l_maxAg = null;
+
+        for ( final CVotingAgentCI l_key : p_dissMap.keySet() )
+        {
+            if ( p_dissMap.get( l_key ) > l_max )
+            {
+                l_maxAg = l_key;
+                l_max = p_dissMap.get( l_key );
+            }
+        }
+        return l_maxAg;
+    }
+
+
 
     private String asString( final List<CVotingAgentCI> p_voters )
     {
@@ -1173,6 +1288,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         private int m_comsize;
         private int m_altnum;
         private int m_capacity;
+        private CBrokerAgentCI m_broker;
 
         /**
          * constructor of the generator
@@ -1183,13 +1299,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
          * @param p_dissthr dissatisfaction threshold
          * @param p_comsize size of committee to be elected
          * @param p_capacity group capacity
+         * @param p_broker broker agent
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentCI p_environment,
                                      final String p_fileName,
                                      final int p_run,
                                      final double p_dissthr, final int p_comsize, final int p_altnum,
-                                     final int p_capacity
+                                     final int p_capacity,
+                                     final CBrokerAgentCI p_broker
         ) throws Exception
         {
             super(
@@ -1223,6 +1341,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_comsize = p_comsize;
             m_altnum = p_altnum;
             m_capacity = p_capacity;
+            m_broker = p_broker;
         }
 
         /**
@@ -1232,11 +1351,13 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
          * @param p_name file name
          * @param p_altnum number of alternatives
          * @param p_capacity group capacity
+         * @param p_broker broker agent
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
         public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCI p_environment, final String p_name, final int p_altnum,
-                                     final int p_comsize, final int p_capacity
+                                     final int p_comsize, final int p_capacity,
+                                     final CBrokerAgentCI p_broker
         )
         throws Exception
         {
@@ -1270,6 +1391,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_altnum = p_altnum;
             m_comsize = p_comsize;
             m_capacity = p_capacity;
+            m_broker = p_broker;
         }
 
         /**
@@ -1286,7 +1408,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_capacity );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_capacity,
+                m_broker
+            );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
@@ -1303,7 +1427,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_capacity );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_capacity,
+                m_broker
+            );
             return l_chairAgent;
         }
 

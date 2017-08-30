@@ -134,7 +134,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
                                                                            m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity );
+        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -379,24 +379,24 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
     public void removeAndAddAg( final CVotingAgentCI p_Ag )
     {
-//        p_Ag.trigger( CTrigger.from(
-//            ITrigger.EType.ADDGOAL,
-//            CLiteral.from(
-//                "leftgroup" )
-//                      )
-//        );
-//
-//        System.out.println( "adding Agent " + p_Ag.name() );
-//        // increase lining counter of ag
-//        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
-//
-//        this.beliefbase().add(
-//            CLiteral.from(
-//                "newag",
-//                CRawTerm.from( p_Ag ),
-//                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
-//            )
-//        );
+        p_Ag.trigger( CTrigger.from(
+            ITrigger.EType.ADDGOAL,
+            CLiteral.from(
+                "leftgroup" )
+                      )
+        );
+
+        System.out.println( "adding Agent " + p_Ag.name() );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+
+        this.beliefbase().add(
+            CLiteral.from(
+                "newag",
+                CRawTerm.from( p_Ag ),
+                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+            )
+        );
     }
 
     /**
