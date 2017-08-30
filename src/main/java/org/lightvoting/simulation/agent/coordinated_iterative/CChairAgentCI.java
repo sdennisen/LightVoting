@@ -121,6 +121,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private boolean m_removedGoalAdded;
     private ConcurrentHashMap<CVotingAgentCI, Double> m_newdissMap;
     private int m_capacity;
+    private boolean m_updated;
 
 
     // TODO merge ctors
@@ -337,6 +338,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     public synchronized void updateElection()
     {
+        if ( m_updated )
+            return;
+
         m_voters.stream().forEach( i ->
         {
             i.beliefbase().add(
@@ -377,6 +381,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         m_waitingForDiss = true;
         m_dissCounter = this.cycle() + 50;
+
+        m_updated = true;
 
 
     }
