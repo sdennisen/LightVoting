@@ -127,6 +127,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private AtomicLong m_liningCounter = new AtomicLong();
     private boolean m_hasDiss;
     private List<Integer> m_dissSent = Collections.synchronizedList( new LinkedList<>() );
+    private List<CChairAgentCI> m_submittedTo = Collections.synchronizedList( new LinkedList<>() );
     private CopyOnWriteArrayList<CGroupCI> m_visitedGroups = new CopyOnWriteArrayList<CGroupCI>();
 
     // TODO refactor ctors
@@ -309,31 +310,35 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     @IAgentActionName( name = "submit/vote" )
     private synchronized void submitVote( final CChairAgentCI p_chairAgent )
     {
-        try
-        {
-            System.out.println( "my name is " + this.name() );
-            System.out.println( "my vote is " + this.getBitVote() );
-            System.out.println( "my chair: " + p_chairAgent.name() );
+        if ( !m_submittedTo.contains( p_chairAgent ) )
 
-            p_chairAgent.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "stored/vote",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( this.getBitVote() )
+            try
+            {
+                System.out.println( "my name is " + this.name() );
+                System.out.println( "my vote is " + this.getBitVote() );
+                System.out.println( "my chair: " + p_chairAgent.name() );
+
+                p_chairAgent.trigger(
+                    CTrigger.from(
+                        ITrigger.EType.ADDGOAL,
+                        CLiteral.from(
+                            "stored/vote",
+                            CRawTerm.from( this ),
+                            CRawTerm.from( this.getBitVote() )
+                        )
                     )
-                )
-            );
+                );
+
+                m_submittedTo.add( p_chairAgent );
 
 
-            //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+                //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
-        }
-        catch ( final StackOverflowError l_ex  )
-        {
-            System.out.println( "StackOverFlowError in agent " + this.name() );
-        }
+            }
+            catch ( final StackOverflowError l_ex  )
+            {
+                System.out.println( "StackOverFlowError in agent " + this.name() );
+            }
     }
 
 
