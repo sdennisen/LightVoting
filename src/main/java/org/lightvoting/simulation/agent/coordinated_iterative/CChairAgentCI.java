@@ -815,7 +815,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "remove/voter" )
-    public void removeVoter( )
+    public synchronized void removeVoter( )
     {
         m_removedGoalAdded = false;
 

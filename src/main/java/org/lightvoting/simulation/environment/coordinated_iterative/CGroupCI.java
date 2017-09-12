@@ -82,7 +82,7 @@ public class CGroupCI
         m_timeout = p_cycle + p_timeout;
     }
 
-    public boolean open()
+    public synchronized boolean open()
     {
         return m_open;
     }
