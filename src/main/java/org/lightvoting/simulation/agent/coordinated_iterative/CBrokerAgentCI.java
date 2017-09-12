@@ -87,6 +87,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentCI, Long> m_lineHashMap = new HashMap<CVotingAgentCI, Long>();
+    // TODO via config
+    private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
 
     /**
@@ -187,6 +189,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         int l_hammingDist = Integer.MAX_VALUE;
 
         System.out.println( "Assigning group to " + p_votingAgent.name() );
+
+
         System.out.println( "join threshold: " + m_joinThr );
         for ( final CGroupCI l_group : m_groups )
         {
@@ -205,6 +209,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 }
             }
         }
+
 
         // if there is no available group, create a new group
         if ( l_determinedGroup != null )
@@ -358,9 +363,15 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             {
                 System.out.println( "All diss vals are submitted" );
             }
-            // if there are agents whose diss vals were not stored by the chair, remove them
+
             else if ( l_group.chair().dissTimedOut() && l_group.chair().waitingforDiss() )
             {
+//                // TODO refactor
+//                l_group.chair().determineDissVals();
+
+
+                // TODO reinsert?
+                // if there are agents whose diss vals were not stored by the chair, remove them
                 final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
                 final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
                 l_group.agents().filter( i -> !l_group.chair().dissvoters().contains( i ) )

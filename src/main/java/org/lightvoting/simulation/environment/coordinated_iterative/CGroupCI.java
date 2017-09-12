@@ -174,7 +174,7 @@ public class CGroupCI
         return m_result;
     }
 
-    public boolean areDissValsSubmitted()
+    public synchronized boolean areDissValsSubmitted()
     {
         return m_dissValsSubmitted;
     }

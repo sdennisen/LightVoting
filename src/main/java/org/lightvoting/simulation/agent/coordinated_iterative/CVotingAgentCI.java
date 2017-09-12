@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
@@ -129,6 +130,9 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private List<Integer> m_dissSent = Collections.synchronizedList( new LinkedList<>() );
     private List<CChairAgentCI> m_submittedTo = Collections.synchronizedList( new LinkedList<>() );
     private CopyOnWriteArrayList<CGroupCI> m_visitedGroups = new CopyOnWriteArrayList<CGroupCI>();
+    private double m_diss;
+    private int m_iteration;
+    private ConcurrentHashMap<CChairAgentCI, Integer> m_iterationSent = new ConcurrentHashMap<>();
 
     // TODO refactor ctors
 
@@ -280,6 +284,16 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         m_chair = p_chair;
     }
 
+    public synchronized Double diss()
+    {
+        return m_diss;
+    }
+
+    public synchronized int iteration()
+    {
+        return m_iteration;
+    }
+
     // agent actions
 
     @IAgentActionFilter
@@ -346,11 +360,15 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     @IAgentActionName( name = "submit/diss" )
     private synchronized void submitDiss( final CChairAgentCI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
     {
-        if ( m_dissSent.contains( p_iteration ) )
-        {
-            System.out.println( "I already submitted my diss for this iteration" );
-            return;
-        }
+        if ( m_iterationSent.contains( p_chairAgent ) )
+            if ( m_iterationSent.get( p_chairAgent ) >= p_iteration.intValue() )
+        // if ( m_dissSent.contains( p_iteration ) )
+            {
+                System.out.println( "I already submitted my diss for this iteration" );
+                return;
+            }
+
+        System.out.println( this.name() + " submitting diss for iteration " + p_iteration );
 
         // store dissatisfaction with result in map
         m_map.put( this.name() + "/" + p_chairAgent.name() + "/" + p_iteration + "/diss", this.computeDissBV( p_result ) );
@@ -374,7 +392,9 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             )
         );
 
-        m_dissSent.add( p_iteration.intValue() );
+        // m_dissSent.add( p_iteration.intValue() );
+        m_iterationSent.put( p_chairAgent, p_iteration.intValue() );
+        m_iteration = p_iteration.intValue();
         m_hasDiss = true;
     }
 
@@ -448,6 +468,9 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             if ( p_result.get( i ) )
                 l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
         }
+
+        m_diss = l_diss;
+
         return l_diss;
     }
 

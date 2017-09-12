@@ -402,6 +402,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         return m_voters.size();
     }
 
+//    public void determineDissVals()
+//    {
+//        for ( int i=0; i < m_voters.size(); i++ )
+//        {
+//            final CVotingAgentCI l_agent = m_voters.get( i );
+//            this.storeDiss( l_agent.name(), l_agent.diss(), l_agent.iteration() );
+//        }
+//    }
+
     // private methods
 
 //    private void checkConditions()0 Timeout: 0.0
