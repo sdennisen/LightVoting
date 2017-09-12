@@ -71,7 +71,7 @@ started(0).
  +!removed/voter
      : >>iteration(I)
      <-
-         generic/print( "remove voter" );
+         generic/print( "remove voter - foo" );
          NewI = I+1;
          -iteration(I);
          +iteration(NewI);

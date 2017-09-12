@@ -184,6 +184,11 @@ public class CGroupCI
         m_dissValsSubmitted = true;
     }
 
+    public synchronized void close()
+    {
+        m_open = false;
+    }
+
     //    public void close()
 //    {
 //        m_open = false;

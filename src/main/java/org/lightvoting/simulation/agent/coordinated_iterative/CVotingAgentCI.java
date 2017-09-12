@@ -132,7 +132,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private CopyOnWriteArrayList<CGroupCI> m_visitedGroups = new CopyOnWriteArrayList<CGroupCI>();
     private double m_diss;
     private int m_iteration;
-    private ConcurrentHashMap<CChairAgentCI, Integer> m_iterationSent = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<CChairAgentCI, List<Integer>> m_iterationSent = new ConcurrentHashMap<>();
+    private List<Integer> m_iterations = new CopyOnWriteArrayList<>();
 
     // TODO refactor ctors
 
@@ -361,7 +362,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private synchronized void submitDiss( final CChairAgentCI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
     {
         if ( m_iterationSent.contains( p_chairAgent ) )
-            if ( m_iterationSent.get( p_chairAgent ) >= p_iteration.intValue() )
+            if ( m_iterationSent.get( p_chairAgent ).contains(  p_iteration.intValue() ) )
         // if ( m_dissSent.contains( p_iteration ) )
             {
                 System.out.println( "I already submitted my diss for this iteration" );
@@ -393,7 +394,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         );
 
         // m_dissSent.add( p_iteration.intValue() );
-        m_iterationSent.put( p_chairAgent, p_iteration.intValue() );
+        m_iterations.add( p_iteration.intValue() );
+        m_iterationSent.put( p_chairAgent, m_iterations );
         m_iteration = p_iteration.intValue();
         m_hasDiss = true;
     }

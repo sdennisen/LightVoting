@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -123,6 +124,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private int m_capacity;
     private boolean m_updated;
     private CBrokerAgentCI m_broker;
+    private ConcurrentHashMap<CVotingAgentCI, List<Integer>> m_dissReceived  = new ConcurrentHashMap<>();
+    private List<Integer> m_iterations = new CopyOnWriteArrayList<>();
 
 
     // TODO merge ctors
@@ -348,7 +351,10 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         if ( m_updated )
             return;
 
+        this.m_group.close();
+
         System.out.println( this.name() + " updating last intermediate election with agents " + this.asString( m_voters ) );
+        // close group
 
         // store intermediate election results
         m_map.put( this.name() + "/iteration_" + 0 + "/election result", this.group().result() );
@@ -537,63 +543,74 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     {
         try
         {
+            final CVotingAgentCI l_votingAg = this.getAgent( p_votingAgent );
 
-            if ( this.dissTimedOut() )
-            {
-                System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
-                return;
-            }
-            //        m_dissList.add( p_diss.doubleValue() );
-            //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
-
-            m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
-
-            //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
-            //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
-
-            System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
-                                + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
-
-            // store diss for each iteration
-
-            m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
-
-            m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
-
-            //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
-
-            //   m_map.put( l_path, l_dissVals );
-
-            // TODO write data to list instead
-            //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
-            //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
-
-            // TODO refactor
-
-            //  if ( m_dissMap.size() >= p_fill.intValue() )
-
-            if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
-            {
-                this.group().setDissSubmitted();
-
-                this.trigger(
-                    CTrigger.from(
-                        ITrigger.EType.ADDGOAL,
-                        CLiteral.from(
-                            "removed/voter"
-                        )
-                    )
-                );
-
-                System.out.println( "fill: " + m_dissMap.size() + " add goal !removed/voter" );
-                if ( !( m_dissMap.isEmpty() ) )
+            if ( m_dissReceived.contains( l_votingAg ) )
+                if ( m_dissReceived.get( p_votingAgent ).contains(  p_iteration.intValue() ) )
                 {
-                    m_newdissMap = new ConcurrentHashMap<>( m_dissMap );
-                    m_dissMap.clear();
+                    System.out.println( "already received diss from agent for this iteration" );
+                    return;
                 }
-                m_removedGoalAdded = true;
 
-            }
+                if ( this.dissTimedOut() )
+                {
+                    System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
+                    return;
+                }
+                //        m_dissList.add( p_diss.doubleValue() );
+                //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
+
+                m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+
+                //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+                //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
+
+                System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
+                                    + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
+
+                // store diss for each iteration
+
+                m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
+
+                m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
+
+                //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
+
+                //   m_map.put( l_path, l_dissVals );
+
+                // TODO write data to list instead
+                //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+                //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+
+                // TODO refactor
+
+                //  if ( m_dissMap.size() >= p_fill.intValue() )
+
+                m_iterations.add( p_iteration.intValue() );
+                m_dissReceived.put( l_votingAg, m_iterations );
+
+                if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
+                {
+                    this.group().setDissSubmitted();
+
+                    this.trigger(
+                        CTrigger.from(
+                            ITrigger.EType.ADDGOAL,
+                            CLiteral.from(
+                                "removed/voter"
+                            )
+                        )
+                    );
+
+                    System.out.println( "fill: " + m_dissMap.size() + " add goal !removed/voter" );
+                    if ( !( m_dissMap.isEmpty() ) )
+                    {
+                        m_newdissMap = new ConcurrentHashMap<>( m_dissMap );
+                        m_dissMap.clear();
+                    }
+                    m_removedGoalAdded = true;
+
+                }
         }
         catch ( final NullPointerException l_ex )
         {
