@@ -397,6 +397,11 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     }
 
+    public synchronized int groupSize()
+    {
+        return m_voters.size();
+    }
+
     // private methods
 
 //    private void checkConditions()0 Timeout: 0.0

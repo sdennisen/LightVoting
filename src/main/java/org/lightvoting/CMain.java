@@ -106,6 +106,7 @@ public final class CMain
     private static boolean s_randomIterative;
     private static boolean s_coordinatedBasic;
     private static boolean s_coordinatedIterative;
+    private static int s_checkAgNum;
 
 
     /**
@@ -537,11 +538,23 @@ public final class CMain
                                 append( s_map, ( (CVotingAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                             }
                             if ( k instanceof CChairAgentCI )
+                            {
+                                // you need to check if the number of ags in the groups sums up to s_agNum
+                                s_checkAgNum = s_checkAgNum + ( (CChairAgentCI) k ).groupSize();
                                 append( s_map, ( (CChairAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                            }
                         } );
+
+                        if ( s_checkAgNum != s_agNum )
+                        {
+                            System.out.println( "There are agents not assigned to any group" );
+                            System.exit( 1 );
+                        }
+
                         // TODO necessary?
                         s_environmentCI.reset();
                     }
+
 
                 }
                 catch ( final Exception l_exception )
