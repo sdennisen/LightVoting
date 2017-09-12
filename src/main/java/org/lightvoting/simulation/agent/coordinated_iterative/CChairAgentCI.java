@@ -597,7 +597,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         }
         catch ( final NullPointerException l_ex )
         {
-            System.out.println(  "NullPointerException in " + this.name() );
+            System.out.println(  "NullPointerException in " + this.name() + " with " + p_votingAgent );
             System.exit( 1 );
         }
 
