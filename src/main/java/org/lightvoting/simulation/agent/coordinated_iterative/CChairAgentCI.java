@@ -545,8 +545,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         {
             final CVotingAgentCI l_votingAg = this.getAgent( p_votingAgent );
 
-            if ( m_dissReceived.contains( l_votingAg ) )
-                if ( m_dissReceived.get( p_votingAgent ).contains(  p_iteration.intValue() ) )
+            if ( m_dissReceived.keySet().contains( l_votingAg ) )
+                if ( m_dissReceived.get( l_votingAg ).contains(  p_iteration.intValue() ) )
                 {
                     System.out.println( "already received diss from agent for this iteration" );
                     return;

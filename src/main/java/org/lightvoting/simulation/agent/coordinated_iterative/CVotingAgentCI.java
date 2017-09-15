@@ -397,7 +397,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         // m_dissSent.add( p_iteration.intValue() );
        // m_iterations.add( p_iteration );
         m_iterationSent.put( p_chairAgent, p_iteration );
-        System.out.println( "test: " + p_chairAgent.name() + " p_iteration " + p_iteration.intValue() );
+        System.out.println( "test: " + this.name() + " " + p_chairAgent.name() + " p_iteration " + p_iteration.intValue() );
         m_iteration = p_iteration.intValue();
         m_hasDiss = true;
     }
