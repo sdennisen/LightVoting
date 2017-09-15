@@ -619,6 +619,8 @@ public final class CMain
     {
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
+        System.out.println( "s_dissThr: " + s_dissthr );
+
         // TODO modify parameters
         s_brokerGeneratorCI = new CBrokerAgentCI.CBrokerAgentGenerator( p_send,
                                                                         l_bkStr,
@@ -630,7 +632,8 @@ public final class CMain
                                                                         p_name,
                                                                         s_joinThr,
                                                                         s_prefList,
-                                                                        s_comsize
+                                                                        s_comsize,
+                                                                        s_dissthr
         );
 
         s_brokerCoordinatedIterative = s_brokerGeneratorCI.generatesingle();

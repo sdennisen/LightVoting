@@ -174,10 +174,12 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
      * @param p_broker broker agent
+     * @param p_dissthr
      */
     public CChairAgentCI( final String p_name, final IAgentConfiguration<CChairAgentCI> p_configuration, final CEnvironmentCI p_environment, final int p_altnum,
                           final int p_comsize, final int p_capacity,
-                          final CBrokerAgentCI p_broker
+                          final CBrokerAgentCI p_broker,
+                          final double p_dissthr
     )
     {
         super( p_configuration );
@@ -188,6 +190,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_voteTimeout = 10;
         m_capacity = p_capacity;
         m_broker = p_broker;
+        m_dissThreshold = p_dissthr;
     }
 
 
@@ -1367,6 +1370,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                                      final double p_dissthr, final int p_comsize, final int p_altnum,
                                      final int p_capacity,
                                      final CBrokerAgentCI p_broker
+
         ) throws Exception
         {
             super(
@@ -1411,12 +1415,14 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
          * @param p_altnum number of alternatives
          * @param p_capacity group capacity
          * @param p_broker broker agent
+         * @param p_dissthr dissatisfaction threshold
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
         public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCI p_environment, final String p_name, final int p_altnum,
                                      final int p_comsize, final int p_capacity,
-                                     final CBrokerAgentCI p_broker
+                                     final CBrokerAgentCI p_broker,
+                                     final double p_dissthr
         )
         throws Exception
         {
@@ -1451,6 +1457,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_comsize = p_comsize;
             m_capacity = p_capacity;
             m_broker = p_broker;
+            m_dissthr = p_dissthr;
         }
 
         /**
@@ -1487,7 +1494,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_capacity,
-                m_broker
+                m_broker,
+                m_dissthr
             );
             return l_chairAgent;
         }

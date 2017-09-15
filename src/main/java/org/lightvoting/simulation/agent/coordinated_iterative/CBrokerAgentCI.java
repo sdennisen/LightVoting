@@ -90,6 +90,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     // TODO via config
     private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
+    private final double m_dissthr;
 
     /**
      * ctor
@@ -104,6 +105,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
      * @param p_joinThr join threshold
      * @param p_prefList preference list
      * @param p_comsize committee size
+     * @param p_dissthr
      * @throws Exception exception
      */
     public CBrokerAgentCI( final String p_broker,
@@ -116,7 +118,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                            final String p_name,
                            final double p_joinThr,
                            final List<AtomicDoubleArray> p_prefList,
-                           final int p_comsize
+                           final int p_comsize,
+                           final double p_dissthr
     ) throws Exception
     {
         super( p_configuration );
@@ -133,10 +136,15 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_capacity = 5;
         m_timeout = 10;
         m_comsize = p_comsize;
+        m_dissthr = p_dissthr;
+
+        System.out.println( "dissthr in broker: " + m_dissthr );
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
                                                                            m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this );
+        m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this,
+                                                                        m_dissthr
+        );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -475,6 +483,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         private final InputStream m_chairstream;
         private int m_altnum;
         private int m_comsize;
+        private double m_dissthr;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -489,6 +498,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
          * @param p_joinThr join threshold
          * @param p_prefList preference list
          * @param p_comsize committee size
+         * @param p_dissthr
          * @throws Exception exception
          */
         public CBrokerAgentGenerator( final CSendCI p_send,
@@ -501,7 +511,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                                       final String p_name,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList,
-                                      final int p_comsize
+                                      final int p_comsize,
+                                      final double p_dissthr
         ) throws Exception
         {
             super(
@@ -539,6 +550,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             m_joinThr = p_joinThr;
             m_prefList = p_prefList;
             m_comsize = p_comsize;
+            m_dissthr = p_dissthr;
         }
 
         @Nullable
@@ -565,7 +577,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                     m_name,
                     m_joinThr,
                     m_prefList,
-                    m_comsize
+                    m_comsize,
+                    m_dissthr
                 );
             }
             catch ( final Exception l_ex )
