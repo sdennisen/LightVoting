@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -77,7 +78,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     // TODO read via yaml
     private int m_capacity;
     // TODO read via yaml
-    private long m_timeout;
+    private AtomicLong m_timeout;
     private Object m_fileName;
     private int m_chairNum;
     private CChairAgentCB.CChairAgentGenerator m_chairagentgenerator;
@@ -128,7 +129,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         m_prefList = p_prefList;
         // TODO set via yaml
         m_capacity = 5;
-        m_timeout = 10;
+        m_timeout = new AtomicLong( 20 );
         m_comsize = p_comsize;
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCB(), m_stream, m_environmentCB, m_altnum, m_name,
@@ -159,6 +160,19 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             m_voters.stream(),
             m_chairs.stream()
         );
+    }
+
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "decrement/counters" )
+    private synchronized void decrementCounters() throws Exception
+    {
+
+        for ( final CGroupCB l_group : m_groups )
+        {
+            l_group.decrementCounter();
+        }
+
     }
 
     @IAgentActionFilter
@@ -208,7 +222,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         // if there is no available group, create a new group
         if ( l_determinedGroup != null )
         {
-            l_determinedGroup.add( p_votingAgent, this.cycle() );
+            l_determinedGroup.add( p_votingAgent );
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
@@ -221,7 +235,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
         // if there was no available group, create a new group
 
-        final CGroupCB l_group = new CGroupCB( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
+        final CGroupCB l_group = new CGroupCB( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, m_timeout );
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 

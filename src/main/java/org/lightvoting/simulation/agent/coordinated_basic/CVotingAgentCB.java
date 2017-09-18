@@ -125,6 +125,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
     private boolean m_hasDiss;
+    private AtomicLong m_cycle = new AtomicLong();
 
     // TODO refactor ctors
 
@@ -279,6 +280,14 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     // agent actions
 
     @IAgentActionFilter
+    @IAgentActionName( name = "update/cycle" )
+    private void updateCycle()
+    {
+        m_cycle.incrementAndGet();
+        System.out.println( "cycle counter incremented to " + m_cycle );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "perceive/env" )
     private void perceiveEnv()
     {
@@ -336,8 +345,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", l_diss );
         // store waiting time in map
-        System.out.println( "cycle " + this.cycle() );
-        m_map.put( this.name() + "/waiting time", this.cycle() );
+        System.out.println( "cycle " + this.cycleCounter() );
+        m_map.put( this.name() + "/waiting time", this.cycleCounter().longValue() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
@@ -349,9 +358,13 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
 
     }
 
+    private AtomicLong cycleCounter()
+    {
+        return m_cycle;
+    }
 
 
-//    @IAgentActionFilter
+    //    @IAgentActionFilter
 //    @IAgentActionName( name = "submit/dissatisfaction" )
 //    private void submitDiss( final CChairAgent p_chairAgent, final Integer p_iteration, final BitVector p_result ) throws InterruptedException
 //    {
