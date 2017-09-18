@@ -124,6 +124,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
+    private AtomicLong m_cycle = new AtomicLong();
 
     // TODO refactor ctors
 
@@ -272,6 +273,14 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     // agent actions
 
     @IAgentActionFilter
+    @IAgentActionName( name = "update/cycle" )
+    private void updateCycle()
+    {
+        m_cycle.incrementAndGet();
+        System.out.println( "cycle counter incremented to " + m_cycle );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "perceive/env" )
     private void perceiveEnv()
     {
@@ -321,8 +330,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
-        System.out.println( "cycle " + this.cycle() );
-        m_map.put( this.name() + "/waiting time", this.cycle() );
+        System.out.println( "cycle " + this.cycleCounter() );
+        m_map.put( this.name() + "/waiting time", this.cycleCounter().longValue() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
@@ -374,6 +383,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 //            )
 //        );
 //    }
+
+    private AtomicLong cycleCounter()
+    {
+        return m_cycle;
+    }
 
     private Double computeDissBV( final BitVector p_result )
     {

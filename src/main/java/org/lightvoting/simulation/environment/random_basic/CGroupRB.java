@@ -29,6 +29,7 @@ import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 
@@ -51,7 +52,7 @@ public class CGroupRB
     private boolean m_inProgress;
     private int m_ID;
     private int m_currentAg;
-    private long m_timeout;
+    private AtomicLong m_timeout;
     private boolean m_votesSubmitted;
 
     /**
@@ -59,13 +60,13 @@ public class CGroupRB
      * @param p_votingAgent voting agent creating the group
      * @param p_groupNum group number
      * @param p_capacity group capacity
+     * @param p_timeout
      */
     public CGroupRB( final CVotingAgentRB p_votingAgent,
                      final CChairAgentRB p_chair,
                      final int p_groupNum,
                      final int p_capacity,
-                     final long p_cycle,
-                     final long p_timeout )
+                     final AtomicLong p_timeout )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
@@ -78,7 +79,7 @@ public class CGroupRB
         m_capacity = p_capacity;
         System.out.println( "Capacity: " + m_capacity );
         // group waits for new members at most 10 cycles
-        m_timeout = p_cycle + p_timeout;
+        m_timeout = p_timeout;
     }
 
     public boolean open()
@@ -89,12 +90,12 @@ public class CGroupRB
     /**
      * add agent to group
      * @param p_votingAgent agent to be added
-     * @param p_cycle current broker cycle
+     *
      */
-    public void add( final CVotingAgentRB p_votingAgent, final long p_cycle )
+    public void add( final CVotingAgentRB p_votingAgent )
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
-        if ( ( m_agentMap.size() == m_capacity ) || ( p_cycle >= m_timeout ) )
+        if ( ( m_agentMap.size() == m_capacity ) || ( m_timeout.longValue() == 0 ) )
         {
             System.out.println( "Group " + m_ID + " with " + m_agentMap.size() + " agents" );
             m_open = false;
@@ -151,6 +152,21 @@ public class CGroupRB
     public boolean areVotesSubmitted()
     {
         return m_votesSubmitted;
+    }
+
+    public void decrementCounter()
+    {
+        if ( m_timeout.longValue() > 0 )
+
+        {
+            m_timeout.decrementAndGet();
+            System.out.println( "decremented group counter to " + m_timeout );
+        }
+    }
+
+    public boolean timedout()
+    {
+        return m_timeout.longValue() == 0;
     }
 
     //    public void close()
