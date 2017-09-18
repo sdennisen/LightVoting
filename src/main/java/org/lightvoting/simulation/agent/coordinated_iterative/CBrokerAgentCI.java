@@ -283,52 +283,52 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 l_allReady = false;
             // if all voters have submitted their votes, there is nothing to check, group is clean
 
-//            if ( l_group.areVotesSubmitted() )
-//                l_group.chair().beliefbase().add(
-//                    CLiteral.from(
-//                        "cleangroup",
-//                        CRawTerm.from( 1 )
-//                    )
-//                );
-//
-//            else  if ( l_group.chair().timedout() )
-//
-//                // remove voters from group who didn't vote/whose votes didn't reach the chair
-//            {
-//
-//                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
-//                final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
-//                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
-//                       .forEach( j ->
-//                       {
-//                           l_toRemoveList.add( j.name() );
-//                           l_toRemoveAgents.add( j );
-//                           m_lineHashMap.put( j, j.liningCounter() );
-//                       } );
-//                System.out.println( "XXXXXXX" + l_toRemoveList );
-//
-//                l_group.removeAll( l_toRemoveList );
-//
-//                // "re-queue" removed voters
-//
-//                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-//                    CLiteral.from(
-//                        "newag",
-//                        CRawTerm.from( i ),
-//                        CRawTerm.from( m_lineHashMap.get( i ) )
-//                    )
-//                                                 )
-//                );
-//
-//                // set belief in chair that group was "cleaned up"
-//
-//                l_group.chair().beliefbase().add(
-//                    CLiteral.from(
-//                        "cleangroup",
-//                        CRawTerm.from( 1 )
-//                    )
-//                );
-//            }
+            //            if ( l_group.areVotesSubmitted() )
+            //                l_group.chair().beliefbase().add(
+            //                    CLiteral.from(
+            //                        "cleangroup",
+            //                        CRawTerm.from( 1 )
+            //                    )
+            //                );
+            //
+            //            else  if ( l_group.chair().timedout() )
+            //
+            //                // remove voters from group who didn't vote/whose votes didn't reach the chair
+            //            {
+            //
+            //                final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+            //                final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
+            //                l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+            //                       .forEach( j ->
+            //                       {
+            //                           l_toRemoveList.add( j.name() );
+            //                           l_toRemoveAgents.add( j );
+            //                           m_lineHashMap.put( j, j.liningCounter() );
+            //                       } );
+            //                System.out.println( "XXXXXXX" + l_toRemoveList );
+            //
+            //                l_group.removeAll( l_toRemoveList );
+            //
+            //                // "re-queue" removed voters
+            //
+            //                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+            //                    CLiteral.from(
+            //                        "newag",
+            //                        CRawTerm.from( i ),
+            //                        CRawTerm.from( m_lineHashMap.get( i ) )
+            //                    )
+            //                                                 )
+            //                );
+            //
+            //                // set belief in chair that group was "cleaned up"
+            //
+            //                l_group.chair().beliefbase().add(
+            //                    CLiteral.from(
+            //                        "cleangroup",
+            //                        CRawTerm.from( 1 )
+            //                    )
+            //                );
+            //            }
 
 
             if ( l_group.areVotesSubmitted() || l_group.chair().timedout() )
@@ -340,11 +340,11 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
                 l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                        .forEach( j ->
-                       {
-                           l_toRemoveList.add( j.name() );
-                           l_toRemoveAgents.add( j );
-                           m_lineHashMap.put( j, j.liningCounter() );
-                       } );
+                                 {
+                                     l_toRemoveList.add( j.name() );
+                                     l_toRemoveAgents.add( j );
+                                     m_lineHashMap.put( j, j.liningCounter() );
+                                 } );
                 System.out.println( l_group.chair().name() + " toRemoveList:" + l_toRemoveList );
 
                 l_group.removeAll( l_toRemoveList );
@@ -352,7 +352,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 // "re-queue" removed voters
 
                 l_toRemoveAgents.parallelStream().forEach( i ->
-                                                               this.removeAndAddAg( i )   );
+                                                               this.removeAndAddAg( i ) );
 
                 //this.beliefbase().add(
 
@@ -374,8 +374,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
             else if ( l_group.chair().dissTimedOut() && l_group.chair().waitingforDiss() )
             {
-//                // TODO refactor
-//                l_group.chair().determineDissVals();
+                //                // TODO refactor
+                //                l_group.chair().determineDissVals();
 
 
                 // TODO reinsert?
@@ -427,6 +427,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             );
         }
     }
+
 
 
     /**

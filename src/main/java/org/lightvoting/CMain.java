@@ -547,8 +547,8 @@ public final class CMain
 
                         if ( s_checkAgNum != s_agNum )
                         {
-                            System.out.println( "There are agents not assigned to any group" );
-                            System.exit( 1 );
+                            System.out.println( "There are agents not assigned to any group, run " + r );
+                          //  System.exit( 1 );
                         }
 
                         // TODO necessary?
