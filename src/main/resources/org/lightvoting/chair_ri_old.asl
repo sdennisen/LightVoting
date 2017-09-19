@@ -22,26 +22,25 @@ count(0).
     : >>waittimevote(0, T)
     <-
        generic/print("Test Chair, Timeout ", T);
-       // !timedout/votes
-       !started/election
+       !timedout/votes
         // !nextcycle
     .
 
-//+!timedout/votes
-//    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
-//    <-
-//        NewX = X+1;
-//        generic/print( "don't start election:", "time" , X, "fill", F );
-//        -waittimevote(X,Y);
-//        +waittimevote(NewX,Y);
-//        !timedout/votes
-//    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
-//    <-
-//        generic/print( "start election:","time" , X , "fill", F );
-//        // close/group();
-//        // !clean/up/vote
-//        !started/voting(F)
-//    .
++!timedout/votes
+    : >>(waittimevote(X,Y), X < Y) && >>( fill(F, C), F < C )
+    <-
+        NewX = X+1;
+        generic/print( "don't start election:", "time" , X, "fill", F );
+        -waittimevote(X,Y);
+        +waittimevote(NewX,Y);
+        !timedout/votes
+    : >>(waittimevote(X,Y), Y == X) &&  >>fill(F, C)
+    <-
+        generic/print( "start election:","time" , X , "fill", F );
+        // close/group();
+        // !clean/up/vote
+        !started/voting(F)
+    .
 
 +!removed/voter
     : true
@@ -66,42 +65,35 @@ count(0).
          set/group/submitted();
          store/vote(Traveller, Vote);
          NewF = F+1;
-         -fill(F,C);
-         +fill(NewF, C);
-         generic/print( "New fill", NewF )
+         generic/print( "New fill", NewF );
          // close/group();
-       //  !started/voting(NewF)
+         !started/voting(NewF)
      .
 
-//+!clean/up/vote
-//    <-
-//	    // broker needs to remove the voters who didn't vote
-//	    // when you are done with clean-up, broker adds goal !start/voting in chair
-//	    generic/print( "clean up votes" )
-//	    //    clean/up/vote()
-//	.
++!clean/up/vote
+    <-
+	    // broker needs to remove the voters who didn't vote
+	    // when you are done with clean-up, broker adds goal !start/voting in chair
+	    generic/print( "clean up votes" )
+	    //    clean/up/vote()
+	.
 
 // clean/group indicates whether broker has checked if all agents in group have voted.
-//+!started/voting(F)
-+!started/election
-    : >>(started(S), S == 0) && >>cleangroup(C) && >>iteration(I) && >>fill(F, Cap)
++!started/voting(F)
+    : >>(started(S), S == 0) && >>cleangroup(C) && >>iteration(I)
     <-
         -started(S);
         -cleangroup(C);
-
-        // TODO adapt?
         +dissatisfaction( 0, F);
         // compute result of election according to given voting rule
         // add belief result/computed when done
-        generic/print( "compute result" );
+        generic/print( "compute result", "fill is", F );
         compute/result(I)
-    <-  !started/election;
-        generic/print( "not ready for election" )
    //     !timedout/dissvals
     .
 // store received diss value in Java datastructure
 +!stored/diss(Traveller, Diss, Iteration)
-   : >>dissatisfaction(D, F) //, D < F-1)
+    : >>dissatisfaction(D, F) //, D < F-1)
     <-
 
       //  generic/print( "store diss", "stored:", D, "fill", F );

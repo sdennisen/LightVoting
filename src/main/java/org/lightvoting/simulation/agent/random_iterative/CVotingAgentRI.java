@@ -123,6 +123,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private AtomicLong m_liningCounter = new AtomicLong();
     // List of already known groups
     private CopyOnWriteArrayList<CGroupRI> m_visitedGroups = new CopyOnWriteArrayList<>();
+    private AtomicLong m_cycle = new AtomicLong();
 
     // TODO refactor ctors
 
@@ -281,6 +282,14 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     // agent actions
 
     @IAgentActionFilter
+    @IAgentActionName( name = "update/cycle" )
+    private void updateCycle()
+    {
+        m_cycle.incrementAndGet();
+        System.out.println( "cycle counter incremented to " + m_cycle );
+    }
+
+    @IAgentActionFilter
     @IAgentActionName( name = "perceive/env" )
     private void perceiveEnv()
     {
@@ -301,7 +310,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/vote" )
-    private void submitVote( final CChairAgentRI p_chairAgent )
+    private synchronized void submitVote( final CChairAgentRI p_chairAgent )
     {
         System.out.println( "my name is " + this.name() );
         System.out.println( "my vote is " + this.getBitVote() );
@@ -318,6 +327,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
             )
         );
 
+        System.out.println( this.name() + " submitted vote to chair " + p_chairAgent.name() );
+
         //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
 
@@ -332,8 +343,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         // store final dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
-        System.out.println( "cycle " + this.cycle() );
-        m_map.put( this.name() + "/waiting time", this.cycle() );
+        System.out.println( "cycle " + this.cycleCounter() );
+        m_map.put( this.name() + "/waiting time", this.cycleCounter() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
@@ -351,6 +362,10 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     }
 
 
+    private AtomicLong cycleCounter()
+    {
+        return m_cycle;
+    }
 
 //    @IAgentActionFilter
 //    @IAgentActionName( name = "submit/dissatisfaction" )

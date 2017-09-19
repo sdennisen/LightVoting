@@ -115,7 +115,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private CBrokerAgentRI m_broker;
     private ConcurrentHashMap<CVotingAgentRI, Double> m_newdissMap;
     private boolean m_removedGoalAdded;
-    private long m_dissCounter;
+    // private long m_dissCounter;
     private boolean m_waitingForDiss;
 
 
@@ -148,7 +148,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_comsize = p_comsize;
         m_altnum = p_altnum;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 20;
     }
 
     /**
@@ -173,7 +173,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_comsize = p_comsize;
         m_dissThreshold = p_dissthr;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 20;
         m_broker = p_broker;
     }
 
@@ -289,30 +289,22 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         return m_map;
     }
 
-    /**
-     * return whether chair reached timeout
-     * @return boolean value
-     */
-    public boolean timedout()
-    {
-        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
-        return this.cycle() >= m_voteTimeout;
-    }
+//    /**
+//     * return whether chair reached timeout
+//     * @return boolean value
+//     */
+//    public boolean timedout()
+//    {
+//        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
+//        return this.cycle() >= m_voteTimeout;
+//    }
 
     public List<CVotingAgentRI> dissvoters()
     {
         return new ArrayList<>( m_dissMap.keySet() );
     }
 
-    public void endWaitForDiss()
-    {
-        m_waitingForDiss = false;
-    }
 
-    boolean waitingforDiss()
-    {
-        return m_waitingForDiss;
-    }
 
     // private methods
 
@@ -389,7 +381,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        if ( !this.timedout() && !m_voters.contains( p_votingAgent ) )
+        if ( !this.group().timedout() && !m_voters.contains( p_votingAgent ) )
         {
 
             m_bitVotes.add( p_vote );
@@ -398,15 +390,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
         }
 
-        else if ( this.timedout() )
+        else if ( this.group().timedout() )
         {
-            System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+            System.out.println( this.name() + " timeout reached, not accepting vote of agent " + p_votingAgent.name() );
 
         }
 
         else if ( m_voters.contains( p_votingAgent ) )
 
-            System.out.println( "already containing " + p_votingAgent.name() );
+            System.out.println( this.name() + " already containing " + p_votingAgent.name() );
 
 
 //        if ( m_bitVotes.size() != l_group.size() )
@@ -530,8 +522,10 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
             // reset timeout for diss vals
 
-            m_waitingForDiss = true;
-            m_dissCounter = this.cycle() + 50;
+            this.group().setWaitingForDiss();
+
+            this.group().setDissCounter( new AtomicLong( 50 ) );
+         //   m_dissCounter = this.cycle() + 50;
 
         }
         catch ( final ConcurrentModificationException l_ex )
@@ -563,7 +557,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
     {
 
-        if ( this.dissTimedOut() )
+        if ( this.group().dissTimedOut() )
         {
             System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
             return;
@@ -599,6 +593,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
         {
+            System.out.println( "Number of voters and diss vals: " + m_voters.size() );
+
             this.group().setDissSubmitted();
 
             this.trigger(
@@ -627,14 +623,14 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      * @return boolean value
      */
 
-    public boolean dissTimedOut()
-    {
-        System.out.println( this.name() + " " + this.cycle() + " Diss timeout: " + m_dissCounter );
-
-        if ( m_dissCounter == 0 )
-            return false;
-        else  return this.cycle() >= m_dissCounter;
-    }
+//    public boolean dissTimedOut()
+//    {
+//        System.out.println( this.name() + " Diss timeout: " + m_dissCounter );
+//
+//        if ( m_dissCounter == 0 )
+//            return false;
+//        else  return this.cycle() >= m_dissCounter;
+//    }
 
     private CVotingAgentRI getAgent( final String p_votingAgent )
     {

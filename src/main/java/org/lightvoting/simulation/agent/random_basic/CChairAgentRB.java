@@ -279,15 +279,15 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         return m_map;
     }
 
-    /**
-     * return whether chair reached timeout
-     * @return boolean value
-     */
-    public boolean timedout()
-    {
-        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
-        return this.cycle() >= m_voteTimeout;
-    }
+//    /**
+//     * return whether chair reached timeout
+//     * @return boolean value
+//     */
+//    public boolean timedout()
+//    {
+//        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
+//        return this.cycle() >= m_voteTimeout;
+//    }
 
     // private methods
 

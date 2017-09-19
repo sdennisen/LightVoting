@@ -9,8 +9,15 @@ state(0, undefined).
         -state(0, S);
         +state(1, start);
         generic/print("start" );
-        !group/joined
+        !group/joined;
+        !nextcycle
     .
+
+ +!nextcycle
+     <-
+         update/cycle();
+         !nextcycle
+     .
 
 +!group/joined
     : >>mygroup(Group) && >>state(1, S)
