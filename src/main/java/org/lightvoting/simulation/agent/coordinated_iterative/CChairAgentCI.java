@@ -390,7 +390,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                     CRawTerm.from( 0 )
                 )
             );
-            System.out.println( "addbelief result to agent " + i.name() );
+            System.out.println( "addbelief result for iteration 0 to agent " + i.name() );
             System.out.println( "result " + i.toString() );
         } );
 
@@ -400,10 +400,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         this.group().setWaitingForDiss();
 
-        this.group().setDissCounter( new AtomicLong( 50 ) );
+        this.group().setDissCounter( new AtomicLong( 20 ) );
 
         m_updated = true;
-
 
     }
 
@@ -549,12 +548,12 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         {
             final CVotingAgentCI l_votingAg = this.getAgent( p_votingAgent );
 
-            if ( m_dissReceived.keySet().contains( l_votingAg ) )
-                if ( m_dissReceived.get( l_votingAg ).contains(  p_iteration.intValue() ) )
-                {
-                    System.out.println( "already received diss from agent for this iteration" );
-                    return;
-                }
+//            if ( m_dissReceived.keySet().contains( l_votingAg ) )
+//                if ( m_dissReceived.get( l_votingAg ).contains(  p_iteration.intValue() ) )
+//                {
+//                    System.out.println( this.name() + " already received diss from agent for this iteration " + l_votingAg.name() );
+//                    return;
+//                }
 
             if ( this.group().dissTimedOut() )
             {
@@ -592,6 +591,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             m_iterations.add( p_iteration.intValue() );
             m_dissReceived.put( l_votingAg, m_iterations );
+            System.out.println( "put in iteration value " +  p_iteration.intValue() + " for agent " + l_votingAg.name() );
 
             if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
             {
@@ -837,6 +837,10 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_map.put( this.name() + "/groupID", this.group().id() );
 
             // m_dissStored = false;
+
+            this.group().setWaitingForDiss();
+
+            this.group().setDissCounter( new AtomicLong( 20 ) );
 
 
         }

@@ -289,6 +289,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         {
             System.out.println( l_group.id() + "result: " + l_group.result() );
 
+
             // if chair is timed out or group is full, update info on current election
 
             if ( l_group.timedout() || l_group.chair().full() )

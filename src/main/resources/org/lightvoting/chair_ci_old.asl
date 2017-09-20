@@ -33,6 +33,16 @@ started(0).
          generic/print( "New fill", NewF, "capacity-1", NewC );
          -fill(F,C);
          +fill(NewF, C)
+    //     compute/im()
+//     : >>(fill(F, C), F == C-1)
+//     <-
+//         generic/print("received vote, start final election");
+//         set/group/submitted();
+//         store/vote(Traveller, Vote);
+//         NewF = F+1;
+//         generic/print( "New fill", NewF );
+//         // close/group();
+//         !started/voting(NewF)
      .
 
 // clean/group indicates whether broker has checked if all agents in group have voted.

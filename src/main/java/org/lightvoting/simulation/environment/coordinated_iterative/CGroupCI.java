@@ -88,11 +88,11 @@ public class CGroupCI
     public void decrementCounter()
     {
         if ( m_timeout.longValue() > 0 )
-
         {
             m_timeout.decrementAndGet();
             System.out.println( "decremented group counter to " + m_timeout );
         }
+
     }
 
     public boolean timedout()

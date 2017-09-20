@@ -375,7 +375,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     @IAgentActionName( name = "submit/diss" )
     private synchronized void submitDiss( final CChairAgentCI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
     {
-        if ( m_iterationSent.keySet().contains( p_chairAgent ) )
+      if ( m_iterationSent.keySet().contains( p_chairAgent ) )
             if ( m_iterationSent.get( p_chairAgent ).intValue() >= p_iteration.intValue() )
             // if ( m_dissSent.contains( p_iteration ) )
             {

@@ -54,6 +54,7 @@ state(0, undefined).
     +!received/result
         : >>result(Chair, Result, Iteration)
         <-
+            generic/print( MyName, "add goal !diss/computed" );
             !diss/computed(Chair, Result, Iteration);
             +received(Iteration);
             -result(Chair, Result, Iteration)

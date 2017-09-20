@@ -1,7 +1,7 @@
 # LightVoting Config
 
 variables:
-  runs: '1'
+  runs: '100'
   setting1: 'COORDINATED_ITERATIVE'
   agnum: '11'
   altnum: '10'

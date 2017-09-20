@@ -10,7 +10,8 @@ agnum(11).
         generic/print("Test Broker" );
         !agent/created;
         !assigned/ag;
-        !updated/groups
+        !updated/groups;
+        !decrement/counters
     .
 
 +!agent/created:
