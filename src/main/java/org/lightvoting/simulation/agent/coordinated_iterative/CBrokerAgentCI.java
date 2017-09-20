@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -134,7 +135,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_prefList = p_prefList;
         // TODO set via yaml
         m_capacity = 5;
-        m_timeout = 10;
+        m_timeout = 20;
         m_comsize = p_comsize;
         m_dissthr = p_dissthr;
 
@@ -170,6 +171,21 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             m_voters.stream(),
             m_chairs.stream()
         );
+    }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "decrement/counters" )
+    private synchronized void decrementCounters() throws Exception
+    {
+
+        for ( final CGroupCI l_group : m_groups )
+        {
+            l_group.decrementCounter();
+
+            if ( l_group.waitingforDiss() )
+                l_group.decrementDissCounter();
+        }
+
     }
 
     @IAgentActionFilter
@@ -222,7 +238,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         // if there is no available group, create a new group
         if ( l_determinedGroup != null )
         {
-            l_determinedGroup.add( p_votingAgent, this.cycle() );
+            l_determinedGroup.add( p_votingAgent );
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
@@ -236,7 +252,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         // if there was no available group, create a new group
 
-        final CGroupCI l_group = new CGroupCI( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, this.cycle(), m_timeout );
+        final CGroupCI l_group = new CGroupCI( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, new AtomicLong( m_timeout ) );
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
@@ -275,7 +291,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
             // if chair is timed out or group is full, update info on current election
 
-            if ( l_group.chair().timedout() || l_group.chair().full() )
+            if ( l_group.timedout() || l_group.chair().full() )
 
                 l_group.chair().updateElection();
 
@@ -331,7 +347,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             //            }
 
 
-            if ( l_group.areVotesSubmitted() || l_group.chair().timedout() )
+            if ( l_group.areVotesSubmitted() || l_group.timedout() )
 
             {
                 // TODO test
@@ -372,7 +388,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 System.out.println( "All diss vals are submitted" );
             }
 
-            else if ( l_group.chair().dissTimedOut() && l_group.chair().waitingforDiss() )
+            else if ( l_group.waitingforDiss() )
+                if ( l_group.dissTimedOut() )
             {
                 //                // TODO refactor
                 //                l_group.chair().determineDissVals();
@@ -400,14 +417,14 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                     i -> this.removeAndAddAg( i )
                 );
 
-                l_group.chair().endWaitForDiss();
+                l_group.endWaitForDiss();
 
             }
 
             // TODO refactor
             // check if chair is timedout, if yes, the chair needs to send the result to the agents to be sure that all agents received the final result
 
-            if ( l_group.chair().timedout() && l_group.result() != null )
+            if ( l_group.timedout() && l_group.result() != null )
             {
                 l_group.chair().resendResult();
             }

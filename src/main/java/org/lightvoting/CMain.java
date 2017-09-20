@@ -533,7 +533,8 @@ public final class CMain
                                 if ( !( (CVotingAgentCI) k ).hasDiss() )
                                 {
                                     System.out.println( "Agent " + ( (CVotingAgentCI) k ).name() + " has no diss value " );
-                                    System.exit( 1 );
+                                    // TODO reinsert?
+                                    //  System.exit( 1 );
                                 }
                                 append( s_map, ( (CVotingAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                             }

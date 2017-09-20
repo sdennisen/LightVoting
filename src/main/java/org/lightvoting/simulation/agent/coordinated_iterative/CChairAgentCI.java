@@ -161,7 +161,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_comsize = p_comsize;
         m_altnum = p_altnum;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 20;
         m_capacity = p_capacity;
         m_broker = p_broker;
     }
@@ -305,15 +305,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         return m_map;
     }
 
-    /**
-     * return whether chair reached timeout
-     * @return boolean value
-     */
-    public boolean timedout()
-    {
-        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
-        return this.cycle() >= m_voteTimeout;
-    }
+//    /**
+//     * return whether chair reached timeout
+//     * @return boolean value
+//     */
+//    public boolean timedout()
+//    {
+//        System.out.println( this.name() + " " + this.cycle() + " Timeout: " + m_voteTimeout );
+//        return this.cycle() >= m_voteTimeout;
+//    }
 
     /**
      * resend result
@@ -398,8 +398,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         // reset timeout for diss vals
 
-        m_waitingForDiss = true;
-        m_dissCounter = this.cycle() + 50;
+        this.group().setWaitingForDiss();
+
+        this.group().setDissCounter( new AtomicLong( 50 ) );
 
         m_updated = true;
 
@@ -496,7 +497,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
 
-        if ( !this.timedout() && !m_voters.contains( p_votingAgent ) )
+        if ( !this.group().timedout() && !m_voters.contains( p_votingAgent ) )
         {
 
             m_bitVotes.add( p_vote );
@@ -507,7 +508,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             this.computeIM();
         }
 
-        else if ( this.timedout() )
+        else if ( this.group().timedout() )
         {
             System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
 
@@ -555,7 +556,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                     return;
                 }
 
-            if ( this.dissTimedOut() )
+            if ( this.group().dissTimedOut() )
             {
                 System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
                 return;
@@ -665,7 +666,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     public synchronized void determineTimedout()
     {
-        if ( this.timedout() )
+        if ( this.group().timedout() )
             this.computeResult( 0 );
         else
             this.computeIM( );
@@ -969,29 +970,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         return l_string;
     }
 
-    /**
-     * return true if waiting time for diss vals is timedout
-     * @return boolean value
-     */
 
-    public boolean dissTimedOut()
-    {
-        System.out.println( this.name() + " " + this.cycle() + " Diss timeout: " + m_dissCounter );
-
-        if ( m_dissCounter == 0 )
-            return false;
-        else  return this.cycle() >= m_dissCounter;
-    }
-
-    public void endWaitForDiss()
-    {
-        m_waitingForDiss = false;
-    }
-
-    boolean waitingforDiss()
-    {
-        return m_waitingForDiss;
-    }
 
     public List<CVotingAgentCI> dissvoters()
     {

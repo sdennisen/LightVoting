@@ -46,6 +46,13 @@ agnum(11).
         !updated/groups
     .
 
+
++!decrement/counters
+    <-
+        decrement/counters();
+        !decrement/counters
+    .
+
 +!done
     <-
         generic/print("we are done with this run")

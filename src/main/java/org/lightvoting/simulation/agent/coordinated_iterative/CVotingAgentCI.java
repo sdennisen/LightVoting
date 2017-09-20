@@ -133,7 +133,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private double m_diss;
     private int m_iteration;
     private ConcurrentHashMap<CChairAgentCI, Number> m_iterationSent = new ConcurrentHashMap<CChairAgentCI, Number>();
-  //  private Set<Number> m_iterations = new CopyOnWriteArraySet<Number>();
+    private AtomicLong m_cycle = new AtomicLong();
+    //  private Set<Number> m_iterations = new CopyOnWriteArraySet<Number>();
 
     // TODO refactor ctors
 
@@ -252,6 +253,11 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         return m_bitVote;
     }
 
+    private AtomicLong cycleCounter()
+    {
+        return m_cycle;
+    }
+
     /**
      * reset voting agent for next simulation run
      */
@@ -296,6 +302,14 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     }
 
     // agent actions
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "update/cycle" )
+    private void updateCycle()
+    {
+        m_cycle.incrementAndGet();
+        System.out.println( "cycle counter incremented to " + m_cycle );
+    }
 
     @IAgentActionFilter
     @IAgentActionName( name = "perceive/env" )
@@ -377,8 +391,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         // store final dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
-        System.out.println( "cycle " + this.cycle() );
-        m_map.put( this.name() + "/waiting time", this.cycle() );
+        System.out.println( "cycle " + this.cycleCounter() );
+        m_map.put( this.name() + "/waiting time", this.cycleCounter() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
