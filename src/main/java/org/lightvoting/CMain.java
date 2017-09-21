@@ -547,7 +547,7 @@ public final class CMain
                                 append( s_map, ( (CChairAgentCI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                             }
                         } );
-
+                        append( s_map, s_brokerCoordinatedIterative.map(), s_settingStrs.get( l_finalC ), l_finalR );
 
                         if ( s_checkAgNum != s_agNum )
                         {

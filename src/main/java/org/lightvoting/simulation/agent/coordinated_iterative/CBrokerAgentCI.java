@@ -91,6 +91,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
     private final double m_dissthr;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
 
     /**
@@ -173,6 +174,11 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         );
     }
 
+    public HashMap<String,Object> map()
+    {
+        return m_map;
+    }
+
     @IAgentActionFilter
     @IAgentActionName( name = "decrement/counters" )
     private synchronized void decrementCounters() throws Exception
@@ -244,7 +250,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
             p_votingAgent.addGroupID( l_determinedGroup );
             p_votingAgent.setChair( l_determinedGroup.chair() );
-            m_chairs.add( l_determinedGroup.chair() );
+        //    m_chairs.add( l_determinedGroup.chair() );
             return;
         }
 
@@ -262,6 +268,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         p_votingAgent.setChair( l_chairAgent );
 
         m_chairs.add( l_chairAgent );
+        m_map.put( "chairNum", m_chairs.size() );
 
     }
 
