@@ -88,6 +88,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentCB, Long> m_lineHashMap = new HashMap<CVotingAgentCB, Long>();
     private final CEnvironmentCB m_environmentCB;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
     /**
      * ctor
@@ -162,6 +163,11 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         );
     }
 
+    public HashMap<String,Object> map()
+    {
+        return m_map;
+    }
+
 
     @IAgentActionFilter
     @IAgentActionName( name = "decrement/counters" )
@@ -227,7 +233,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
             p_votingAgent.setChair( l_determinedGroup.chair() );
-            m_chairs.add( l_determinedGroup.chair() );
+          //  m_chairs.add( l_determinedGroup.chair() );
             return;
         }
 
@@ -244,6 +250,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         p_votingAgent.setChair( l_chairAgent );
 
         m_chairs.add( l_chairAgent );
+        m_map.put( "chairNum", m_chairs.size() );
 
     }
 
