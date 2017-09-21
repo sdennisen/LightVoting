@@ -392,7 +392,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
         System.out.println( "cycle " + this.cycleCounter() );
-        m_map.put( this.name() + "/waiting time", this.cycleCounter() );
+        m_map.put( this.name() + "/waiting time", this.cycleCounter().longValue() );
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
