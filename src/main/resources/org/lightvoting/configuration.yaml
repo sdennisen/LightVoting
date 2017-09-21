@@ -1,12 +1,12 @@
 # LightVoting Config
 
 variables:
-  runs: '1'
-  setting1: 'COORDINATED_ITERATIVE'
+  runs: '100'
+  setting1: 'RANDOM_BASIC'
   agnum: '11'
   altnum: '10'
   comsize: '3'
   capacity: '5'
-  dissthr:  '1'
+  dissthr:  '1.4'
   jointhr: '4'
   preferences: 'uniform'

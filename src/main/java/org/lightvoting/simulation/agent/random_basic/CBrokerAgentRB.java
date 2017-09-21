@@ -48,6 +48,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -168,6 +169,22 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         return m_map;
     }
 
+    public void cleanUpChairs()
+    {
+        final Iterator<CChairAgentRB> l_iterator = m_chairs.iterator();
+
+        while ( l_iterator.hasNext() )
+        {
+            final CChairAgentRB l_chair = l_iterator.next();
+            if ( l_chair.empty() )
+                m_chairs.remove( l_chair );
+
+        }
+
+        m_map.put( "chairNum", m_chairs.size() );
+
+    }
+
     @IAgentActionFilter
     @IAgentActionName( name = "create/ag" )
     private CVotingAgentRB createAgent( final Number p_createdNum ) throws Exception
@@ -200,7 +217,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
-                m_chairs.add( l_group.chair() );
+           //     m_chairs.add( l_group.chair() );
                 return;
             }
         }
@@ -217,7 +234,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
-        m_map.put( "chairNum", m_chairs.size() );
+      //  m_map.put( "chairNum", m_chairs.size() );
 
 
     }

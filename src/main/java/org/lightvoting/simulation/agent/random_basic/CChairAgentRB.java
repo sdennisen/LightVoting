@@ -279,7 +279,12 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         return m_map;
     }
 
-//    /**
+    public boolean empty()
+    {
+        return ( m_voters.isEmpty() );
+    }
+
+    //    /**
 //     * return whether chair reached timeout
 //     * @return boolean value
 //     */
