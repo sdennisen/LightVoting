@@ -81,7 +81,6 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     // TODO read via yaml
     private long m_timeout;
     private Object m_fileName;
-    private int m_chairNum;
     private CChairAgentCI.CChairAgentGenerator m_chairagentgenerator;
     private final InputStream m_chairstream;
     private final int m_comsize;
@@ -92,6 +91,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
     private final double m_dissthr;
+
 
     /**
      * ctor

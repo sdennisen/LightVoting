@@ -88,6 +88,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     // HashMap for storing how often an agent had to leave a group
     private final HashMap<CVotingAgentRB, Long> m_lineHashMap = new HashMap<CVotingAgentRB, Long>();
     private final CEnvironmentRB m_environmentRB;
+    private HashMap<String, Object> m_map = new HashMap<>();
 
     /**
      * ctor
@@ -162,6 +163,11 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         );
     }
 
+    public HashMap map()
+    {
+        return m_map;
+    }
+
     @IAgentActionFilter
     @IAgentActionName( name = "create/ag" )
     private CVotingAgentRB createAgent( final Number p_createdNum ) throws Exception
@@ -211,6 +217,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
+        m_map.put( "chairNum", m_chairs.size() );
+
 
     }
 

@@ -284,6 +284,7 @@ public final class CMain
                                 append(
                                     s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                         } );
+                        append( s_map, s_brokerRandomBasic.map(), s_settingStrs.get( c ), r );
                         // TODO necessary?
                         s_environmentRB.reset();
                     }
