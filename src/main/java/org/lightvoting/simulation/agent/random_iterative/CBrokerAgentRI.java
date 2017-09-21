@@ -247,6 +247,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_chairs.add( l_chairAgent );
 
         m_map.put( "chairs", this.asString( m_chairs ) );
+        m_map.put( "chairNum", m_chairs.size());
 
     }
 

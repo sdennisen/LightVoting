@@ -548,6 +548,7 @@ public final class CMain
                             }
                         } );
 
+
                         if ( s_checkAgNum != s_agNum )
                         {
                             System.out.println( "There are agents not assigned to any group, run " + r );
