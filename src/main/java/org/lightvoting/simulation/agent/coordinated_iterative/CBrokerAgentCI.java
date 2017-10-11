@@ -266,6 +266,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
         p_votingAgent.addGroupID( l_group );
         p_votingAgent.setChair( l_chairAgent );
+        System.out.println( "created chair " + l_chairAgent.name() );
 
         m_chairs.add( l_chairAgent );
         m_map.put( "chairNum", m_chairs.size() );
