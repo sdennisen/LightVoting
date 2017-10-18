@@ -169,16 +169,28 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         return m_map;
     }
 
-    public void cleanUpChairs()
+    public synchronized void cleanUpChairs()
     {
+        HashSet<CChairAgentRB> m_removeChairs = new HashSet<>();
+
         final Iterator<CChairAgentRB> l_iterator = m_chairs.iterator();
 
         while ( l_iterator.hasNext() )
         {
             final CChairAgentRB l_chair = l_iterator.next();
             if ( l_chair.empty() )
-                m_chairs.remove( l_chair );
+                m_removeChairs.add( l_chair );
 
+
+        }
+
+        // remove chairs with empty groups
+
+        final Iterator<CChairAgentRB> l_removeIterator = m_removeChairs.iterator();
+
+        while ( l_removeIterator.hasNext() )
+        {
+            m_chairs.remove( l_removeIterator.next() );
         }
 
         m_map.put( "chairNum", m_chairs.size() );

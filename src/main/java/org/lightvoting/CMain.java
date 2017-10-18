@@ -275,6 +275,9 @@ public final class CMain
 
                         final int l_finalR = r;
                         final int l_finalC = c;
+
+                        s_brokerRandomBasic.cleanUpChairs();
+
                         s_brokerRandomBasic.agentstream().forEach( k ->
                         {
                             if ( k instanceof CVotingAgentRB )
@@ -285,7 +288,6 @@ public final class CMain
                                     s_map, ( (CChairAgentRB) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                         } );
 
-                        s_brokerRandomBasic.cleanUpChairs();
                         append( s_map, s_brokerRandomBasic.map(), s_settingStrs.get( c ), r );
                         // TODO necessary?
                         s_environmentRB.reset();
