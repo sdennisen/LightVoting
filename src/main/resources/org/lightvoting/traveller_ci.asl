@@ -8,7 +8,7 @@ state(0, undefined).
         <-
         -state(0, S);
         +state(1, start);
-        generic/print("start" );
+        generic/print(MyName, " start" );
         !group/joined;
         !nextcycle
     .
@@ -106,7 +106,7 @@ state(0, undefined).
     : >>mygroup(G) && >>mychair(C)
     //: >>leavegroup(Broker)
     <-
-        generic/print("I needed to leave my group, need a new one");
+        generic/print(MyName, " I needed to leave my group, need a new one");
         -mygroup(G);
         -mychair(C);
         +state(0, undefined);
