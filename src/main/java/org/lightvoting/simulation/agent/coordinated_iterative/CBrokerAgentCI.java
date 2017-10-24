@@ -263,6 +263,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
+        System.out.println( p_votingAgent.name() + " gets belief regarding group with id " + l_group.id() );
+
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
         p_votingAgent.addGroupID( l_group );
         p_votingAgent.setChair( l_chairAgent );
