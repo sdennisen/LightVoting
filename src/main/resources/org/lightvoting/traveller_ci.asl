@@ -45,9 +45,9 @@ state(0, undefined).
         generic/print( "vote/submitted");
         //!diss/submitted
         !received/result
-//    : >>state(2, _)
-//    <-
-//        !vote/submitted
+  : >>state(2, _) && ~>>mychair(Chair)
+    <-
+        !vote/submitted
     .
 
 // TODO reinsert
