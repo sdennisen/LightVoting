@@ -247,7 +247,11 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             l_determinedGroup.add( p_votingAgent );
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
+            System.out.println( p_votingAgent.name() + " gets belief regarding group with id " + l_determinedGroup.id() );
+
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
+            System.out.println( p_votingAgent.name() + " gets belief regarding chair with chair name " + l_determinedGroup.chair().name() );
+
             p_votingAgent.addGroupID( l_determinedGroup );
             p_votingAgent.setChair( l_determinedGroup.chair() );
         //    m_chairs.add( l_determinedGroup.chair() );
@@ -266,6 +270,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         System.out.println( p_votingAgent.name() + " gets belief regarding group with id " + l_group.id() );
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
+        System.out.println( p_votingAgent.name() + " gets belief regarding chair with chair name " + l_chairAgent.name() );
+
         p_votingAgent.addGroupID( l_group );
         p_votingAgent.setChair( l_chairAgent );
         System.out.println( "created chair " + l_chairAgent.name() );
