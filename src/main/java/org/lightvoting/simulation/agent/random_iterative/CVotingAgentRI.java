@@ -118,6 +118,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * threshold for joining a group in the case of coordinated grouping
      */
     private double m_joinThreshold;
+    private List<CChairAgentRI> m_submittedTo = Collections.synchronizedList( new LinkedList<>() );
     private BitVector m_bitVote;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
@@ -312,20 +313,35 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     @IAgentActionName( name = "submit/vote" )
     private synchronized void submitVote( final CChairAgentRI p_chairAgent )
     {
-        System.out.println( "my name is " + this.name() );
-        System.out.println( "my vote is " + this.getBitVote() );
-        System.out.println( "my chair: " + p_chairAgent.name() );
+        if ( !m_submittedTo.contains( p_chairAgent ) )
 
-        p_chairAgent.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "stored/vote",
-                    CRawTerm.from( this ),
-                    CRawTerm.from( this.getBitVote() )
-                )
-            )
-        );
+            try
+            {
+                System.out.println( "my name is " + this.name() );
+                System.out.println( "my vote is " + this.getBitVote() );
+                System.out.println( "my chair: " + p_chairAgent.name() );
+
+                p_chairAgent.trigger(
+                    CTrigger.from(
+                        ITrigger.EType.ADDGOAL,
+                        CLiteral.from(
+                            "stored/vote",
+                            CRawTerm.from( this ),
+                            CRawTerm.from( this.getBitVote() )
+                        )
+                    )
+                );
+
+                m_submittedTo.add( p_chairAgent );
+
+
+                //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+
+            }
+            catch ( final StackOverflowError l_ex  )
+            {
+                System.out.println( "StackOverFlowError in agent " + this.name() );
+            }
 
         System.out.println( this.name() + " submitted vote to chair " + p_chairAgent.name() );
 
