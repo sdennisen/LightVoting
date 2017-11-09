@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -105,6 +106,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      * agent's preferences
      */
     private AtomicDoubleArray m_atomicPrefValues;
+    private final Map<Long, Double> m_atomicPrefMap = new ConcurrentHashMap<>(  );
 
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
@@ -122,9 +124,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      */
     private double m_joinThreshold;
     private BitVector m_bitVote;
+    private List<Long> m_cLinearOrder;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
     private AtomicLong m_cycle = new AtomicLong();
+
 
     // TODO refactor ctors
 
@@ -149,7 +153,6 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         super( p_configuration );
         m_name = p_name;
         m_environment = p_environment;
-
         m_chair = (CChairAgentRB) p_chairagent;
 
         m_storage.put( "chair", p_chairagent.raw() );
@@ -171,6 +174,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      //   m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        m_cLinearOrder = this.convertPreferencestoCLO();
         m_voted = false;
         m_joinThreshold = p_joinThr;
     }
@@ -437,8 +441,21 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         return l_voteValues;
     }
 
+    private List<Long> convertPreferencestoCLO()
+    {
+        return m_atomicPrefMap.entrySet().stream().sorted( ( e1, e2 ) -> {
+            if ( e1.getValue() < e2.getValue() )
+                return -1;
+            if ( e1.getValue() > e2.getValue() )
+                return 1;
+            return 0;
+        } ).map( Map.Entry::getKey ).collect( Collectors.toList() );
 
-//    private List<CGroupRB> determineActiveGroups( final String p_grouping )
+    }
+
+
+
+    //    private List<CGroupRB> determineActiveGroups( final String p_grouping )
 //    {
 //        final AtomicReference<List<CGroupRB>> l_groupList = new AtomicReference<>();
 //
