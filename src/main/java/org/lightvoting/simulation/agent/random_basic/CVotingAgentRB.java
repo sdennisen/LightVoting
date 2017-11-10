@@ -171,10 +171,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 
         m_atomicPrefValues = p_preferences;
         System.out.println( p_preferences );
-     //   m_atomicPrefValues = this.generatePreferences( m_altNum );
+
+            //   m_atomicPrefValues = this.generatePreferences( m_altNum );
         m_vote = this.convertPreferences( m_atomicPrefValues );
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
-        m_cLinearOrder = this.convertPreferencestoCLO();
+
         m_voted = false;
         m_joinThreshold = p_joinThr;
     }
@@ -197,11 +198,15 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         m_name = p_name;
         m_altNum = p_altNum;
         m_atomicPrefValues = p_atomicDoubleArray;
+        for ( int i=0; i < m_altNum; i++ )
+            m_atomicPrefMap.put( (long) i, m_atomicPrefValues.get( i ) );
 
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
 
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        m_cLinearOrder = this.convertPreferencestoCLO();
+        System.out.println( "Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
     }
@@ -444,9 +449,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private List<Long> convertPreferencestoCLO()
     {
         return m_atomicPrefMap.entrySet().stream().sorted( ( e1, e2 ) -> {
-            if ( e1.getValue() < e2.getValue() )
-                return -1;
             if ( e1.getValue() > e2.getValue() )
+                return -1;
+            if ( e1.getValue() < e2.getValue() )
                 return 1;
             return 0;
         } ).map( Map.Entry::getKey ).collect( Collectors.toList() );
