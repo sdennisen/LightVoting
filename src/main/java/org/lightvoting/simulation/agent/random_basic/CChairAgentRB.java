@@ -39,6 +39,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_basic.CGroupRB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+import org.lightvoting.simulation.rule.CMinisumRanksum;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -88,7 +89,10 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
     private String m_grouping;
 
+    // votes in form of 01-vectors
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+    // votes in form of complete linear orders
+    private List<List<Long>> m_cLinearOrders;
     private List<CVotingAgentRB> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentRB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
@@ -113,6 +117,9 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     private int m_groupNum;
     private final double m_voteTimeout;
     private CGroupRB m_group;
+
+    // todo set via config
+    private String m_rule = "MINISUM_APPROVAL";
 
 
     // TODO merge ctors
@@ -424,20 +431,43 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     {
         try
         {
-            final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+            final BitVector l_comResultBV;
 
-            final List<String> l_alternatives = new LinkedList<>();
+            if ( m_rule.equals( "MINISUM_APPROVAL" ) )
+            {
+                final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
-            System.out.println( "number of alternatives: " + m_altnum );
+                final List<String> l_alternatives = new LinkedList<>();
 
-            for ( int i = 0; i < m_altnum; i++ )
-                l_alternatives.add( "POI" + i );
+                System.out.println( "number of alternatives: " + m_altnum );
 
-            System.out.println( " Alternatives: " + l_alternatives );
+                for ( int i = 0; i < m_altnum; i++ )
+                    l_alternatives.add( "POI" + i );
 
-            System.out.println( " Votes: " + m_bitVotes );
+                System.out.println( " Alternatives: " + l_alternatives );
 
-            final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+                System.out.println( " Votes: " + m_bitVotes );
+
+                l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+            }
+            else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
+            {
+                final CMinisumRanksum l_minisumRanksum = new CMinisumRanksum();
+
+                final List<String> l_alternatives = new LinkedList<>();
+
+                System.out.println( "number of alternatives: " + m_altnum );
+
+                for ( int i = 0; i < m_altnum; i++ )
+                    l_alternatives.add( "POI" + i );
+
+                System.out.println( " Alternatives: " + l_alternatives );
+
+                System.out.println( " Votes: " + m_cLinearOrders );
+
+                l_comResultBV = l_minisumRanksum.applyRuleBV( l_alternatives, m_cLinearOrders, m_comsize );
+
+            }
 
             System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
