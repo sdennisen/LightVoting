@@ -55,6 +55,9 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -126,6 +129,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private CopyOnWriteArrayList<CGroupRI> m_visitedGroups = new CopyOnWriteArrayList<>();
     private AtomicLong m_cycle = new AtomicLong();
 
+    private static final Logger LOGGER = CCommon.logger( CVotingAgentRI.class );
+
     // TODO refactor ctors
 
     /**
@@ -139,6 +144,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * @param p_preferences preferences
      */
 
+
     public CVotingAgentRI( final String p_name, final IAgentConfiguration<CVotingAgentRI> p_configuration, final IBaseAgent<CChairAgentRI> p_chairagent,
                            final CEnvironmentRI p_environment,
                            final int p_altNum,
@@ -147,6 +153,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     )
     {
         super( p_configuration );
+
         m_name = p_name;
         m_environment = p_environment;
 
@@ -287,7 +294,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private void updateCycle()
     {
         m_cycle.incrementAndGet();
-        System.out.println( "cycle counter incremented to " + m_cycle );
+        LOGGER.info("cycle counter incremented to " + m_cycle);
+        //System.out.println( "cycle counter incremented to " + m_cycle );
     }
 
     @IAgentActionFilter

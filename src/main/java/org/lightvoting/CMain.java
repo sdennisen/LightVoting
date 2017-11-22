@@ -25,6 +25,7 @@ package org.lightvoting;
 
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightvoting.simulation.action.message.coordinated_basic.CSendCB;
@@ -54,12 +55,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.LogManager;
 import java.util.stream.IntStream;
 
 /**
@@ -582,6 +579,8 @@ public final class CMain
 
             //   System.out.println( "Next simulation run " );
         }
+
+        FileUtils.writeByteArrayToFile( new File( l_name + ".bin" ), SerializationUtils.serialize( s_map ) );
 
         EDataWriter.INSTANCE.storeMap( l_name, s_map );
 
