@@ -224,6 +224,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     {
 
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+        m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     //    m_agents = Collections.synchronizedList( new LinkedList<>() );
@@ -363,6 +364,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 //        l_group.triggerAgents( this );
 //    }
 
+    // TODO refactor method
+
     /**
      * store vote
      *
@@ -370,16 +373,27 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentRB p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentRB p_votingAgent, final Object p_vote )
     {
     //    final CGroupRB l_group = this.determineGroup();
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        m_bitVotes.add( p_vote );
-        m_voters.add( p_votingAgent );
+        // for rule MS-AV or MM-AV, votes are 01-vectors
+        if ( p_vote instanceof BitVector )
+        {
+            m_bitVotes.add( (BitVector) p_vote );
+            m_voters.add( p_votingAgent );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+            System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        }
+        else if ( p_vote instanceof List )
+        {
+            m_cLinearOrders.add( (List<Long>) p_vote );
+            m_voters.add( p_votingAgent );
+        }
+
+
 
 //        if ( m_bitVotes.size() != l_group.size() )
 //            return;
@@ -419,6 +433,9 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         m_group.setSubmitted();
 
     }
+
+
+    // TODO refactor method
 
         /**
          * compute result of election

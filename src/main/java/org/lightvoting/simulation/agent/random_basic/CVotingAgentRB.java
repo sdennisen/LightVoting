@@ -129,6 +129,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private AtomicLong m_liningCounter = new AtomicLong();
     private AtomicLong m_cycle = new AtomicLong();
 
+    // TODO set via config
+    private String m_rule = "MINISUM_APPROVAL";
+
 
     // TODO refactor ctors
 
@@ -204,8 +207,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
 
-        m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
-        m_cLinearOrder = this.convertPreferencestoCLO();
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+            m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        else
+            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+            m_cLinearOrder = this.convertPreferencestoCLO();
         System.out.println( "Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
@@ -249,6 +255,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     public BitVector getBitVote()
     {
         return m_bitVote;
+    }
+
+    public List<Long> getCLOVote()
+    {
+        return m_cLinearOrder;
     }
 
     /**
@@ -312,20 +323,44 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     @IAgentActionName( name = "submit/vote" )
     private void submitVote( final CChairAgentRB p_chairAgent )
     {
-        System.out.println( "my name is " + this.name() );
-        System.out.println( "my vote is " + this.getBitVote() );
-        System.out.println( "my chair: " + p_chairAgent.name() );
+        // for MS-AV and MM-AV, the votes are 01-vectors
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+        {
 
-        p_chairAgent.trigger(
-            CTrigger.from(
-                ITrigger.EType.ADDGOAL,
-                CLiteral.from(
-                    "stored/vote",
-                    CRawTerm.from( this ),
-                    CRawTerm.from( this.getBitVote() )
+            System.out.println( "my name is " + this.name() );
+            System.out.println( "my vote is " + this.getBitVote() );
+            System.out.println( "my chair: " + p_chairAgent.name() );
+
+            p_chairAgent.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "stored/vote",
+                        CRawTerm.from( this ),
+                        CRawTerm.from( this.getBitVote() )
+                    )
                 )
-            )
-        );
+            );
+        }
+        else
+            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+            // for MS-RS, the votes are complete linear orders
+        {
+            System.out.println( "my name is " + this.name() );
+            System.out.println( "my vote is " + this.getCLOVote() );
+            System.out.println( "my chair: " + p_chairAgent.name() );
+
+            p_chairAgent.trigger(
+                CTrigger.from(
+                    ITrigger.EType.ADDGOAL,
+                    CLiteral.from(
+                        "stored/vote",
+                        CRawTerm.from( this ),
+                        CRawTerm.from( this.getCLOVote() )
+                    )
+                )
+            );
+        }
 
         //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
