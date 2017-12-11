@@ -376,23 +376,16 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     public synchronized void storeVote( final CVotingAgentRB p_votingAgent, final Object p_vote )
     {
     //    final CGroupRB l_group = this.determineGroup();
-
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        // for rule MS-AV or MM-AV, votes are 01-vectors
-        if ( p_vote instanceof BitVector )
-        {
-            m_bitVotes.add( (BitVector) p_vote );
-            m_voters.add( p_votingAgent );
+        // for MS-AV and MM-AV, the votes are 01-vectors
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+            this.storeAV( p_votingAgent, p_vote );
 
-            System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
-        }
-        else if ( p_vote instanceof List )
-        {
-            m_cLinearOrders.add( (List<Long>) p_vote );
-            m_voters.add( p_votingAgent );
-        }
-
+        else
+        // if ( m_rule.equals( "MINISUM_RANKSUM") )
+        // for MS-RS, the votes are complete linear orders
+            this.storeCLO( p_votingAgent, p_vote );
 
 
 //        if ( m_bitVotes.size() != l_group.size() )
@@ -410,7 +403,25 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 //        this.trigger( l_trigger );
     }
 
-//    /**
+    private void storeAV( final CVotingAgentRB p_votingAgent, final Object p_vote )
+    {
+        m_bitVotes.add( (BitVector) p_vote );
+        m_voters.add( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+    }
+
+    private void storeCLO( final CVotingAgentRB p_votingAgent, final Object p_vote )
+    {
+        m_cLinearOrders.add( (List<Long>) p_vote );
+        m_voters.add( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+
+    }
+
+
+    //    /**
 //     * close group
 //     */
 //    @IAgentActionFilter
