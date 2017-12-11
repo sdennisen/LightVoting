@@ -466,8 +466,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-                l_comResultBV = this.computeMSRS();
-
+              //  l_comResultBV = this.computeMSRS();
+              l_comResultBV = new BitVector( m_altnum );
 
             System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
