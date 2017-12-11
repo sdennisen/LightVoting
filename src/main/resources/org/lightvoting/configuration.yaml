@@ -7,7 +7,8 @@ variables:
   altnum: '10'
   comsize: '5'
   capacity: '5'
-  dissthr:  '-1'
-  jointhr: '10'
-  preferences: 'uniform'
+  dissthr:  '3.9'
+  jointhr: '-1'
+  preferences: 'FSquare'
+
 

@@ -325,47 +325,56 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     {
         // for MS-AV and MM-AV, the votes are 01-vectors
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
-        {
 
-            System.out.println( "my name is " + this.name() );
-            System.out.println( "my vote is " + this.getBitVote() );
-            System.out.println( "my chair: " + p_chairAgent.name() );
+            this.submitAV( p_chairAgent );
 
-            p_chairAgent.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "stored/vote",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( this.getBitVote() )
-                    )
-                )
-            );
-        }
         else
             // if ( m_rule.equals( "MINISUM_RANKSUM") )
             // for MS-RS, the votes are complete linear orders
-        {
-            System.out.println( "my name is " + this.name() );
-            System.out.println( "my vote is " + this.getCLOVote() );
-            System.out.println( "my chair: " + p_chairAgent.name() );
-
-            p_chairAgent.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "stored/vote",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( this.getCLOVote() )
-                    )
-                )
-            );
-        }
+            this.submitCLO( p_chairAgent );
 
         //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
-
     }
+
+    // submit Approval vote to chair
+    private void submitAV( final CChairAgentRB p_chairAgent )
+    {
+        System.out.println( "my name is " + this.name() );
+        System.out.println( "my vote is " + this.getBitVote() );
+        System.out.println( "my chair: " + p_chairAgent.name() );
+
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "stored/vote",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( this.getBitVote() )
+                )
+            )
+        );
+    }
+
+    // submit complete linear order to chair
+    private void submitCLO( final CChairAgentRB p_chairAgent )
+    {
+        System.out.println( "my name is " + this.name() );
+        System.out.println( "my vote is " + this.getCLOVote() );
+        System.out.println( "my chair: " + p_chairAgent.name() );
+
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "stored/vote",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( this.getCLOVote() )
+                )
+            )
+        );
+    }
+
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/diss" )
