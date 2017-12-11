@@ -462,40 +462,12 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             final BitVector l_comResultBV;
 
             if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-            {
-                final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+               l_comResultBV = this.computeMSAV();
 
-                final List<String> l_alternatives = new LinkedList<>();
-
-                System.out.println( "number of alternatives: " + m_altnum );
-
-                for ( int i = 0; i < m_altnum; i++ )
-                    l_alternatives.add( "POI" + i );
-
-                System.out.println( " Alternatives: " + l_alternatives );
-
-                System.out.println( " Votes: " + m_bitVotes );
-
-                l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
-            }
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
-            {
-                final CMinisumRanksum l_minisumRanksum = new CMinisumRanksum();
 
-                final List<String> l_alternatives = new LinkedList<>();
+                l_comResultBV = this.computeMSRS();
 
-                System.out.println( "number of alternatives: " + m_altnum );
-
-                for ( int i = 0; i < m_altnum; i++ )
-                    l_alternatives.add( "POI" + i );
-
-                System.out.println( " Alternatives: " + l_alternatives );
-
-                System.out.println( " Votes: " + m_cLinearOrders );
-
-                l_comResultBV = l_minisumRanksum.applyRuleBV( l_alternatives, m_cLinearOrders, m_comsize );
-
-            }
 
             System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
@@ -552,6 +524,43 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             System.out.println( "ConcurrentModificationException in computeResult" );
             System.exit( 1 );
         }
+    }
+
+    private BitVector computeMSAV()
+    {
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_bitVotes );
+
+        return l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+    }
+
+    private BitVector computeMSRS()
+    {
+        final CMinisumRanksum l_minisumRanksum = new CMinisumRanksum();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_cLinearOrders );
+
+        return l_minisumRanksum.applyRuleBV( l_alternatives, m_cLinearOrders, m_comsize );
+
     }
 
     private String asString( final List<CVotingAgentRB> p_voters )
