@@ -416,14 +416,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
     private void storeCLO( final CVotingAgentRB p_votingAgent, final Object p_vote )
     {
-        System.out.println( this.name() + " test print: " + p_vote + " " + p_votingAgent.name() );
-
         ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
-
-     /*   List<Long> l_vote = new ArrayList<>();
-
-        for ( int i = 0; i < 11; i++ )
-            l_vote.add( (long) i );*/
 
         m_cLinearOrders.add( l_vote );
         m_voters.add( p_votingAgent );
