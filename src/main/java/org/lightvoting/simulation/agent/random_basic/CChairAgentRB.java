@@ -418,7 +418,14 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     {
         System.out.println( this.name() + " test print: " + p_vote + " " + p_votingAgent.name() );
 
-        m_cLinearOrders.add( (List<Long>) p_vote );
+        // ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
+
+        List<Long> l_vote = new ArrayList<>();
+
+        for ( int i = 0; i < 11; i++ )
+            l_vote.add( (long) i );
+
+        m_cLinearOrders.add( l_vote );
         m_voters.add( p_votingAgent );
 
         System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
