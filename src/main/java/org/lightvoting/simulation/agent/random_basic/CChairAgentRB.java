@@ -385,7 +385,10 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         else
         // if ( m_rule.equals( "MINISUM_RANKSUM") )
         // for MS-RS, the votes are complete linear orders
+        {
+            System.out.println( "store complete linear order" );
             this.storeCLO( p_votingAgent, p_vote );
+        }
 
 
 //        if ( m_bitVotes.size() != l_group.size() )
@@ -413,6 +416,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
     private void storeCLO( final CVotingAgentRB p_votingAgent, final Object p_vote )
     {
+        System.out.println( this.name() + " test print: " + p_vote + " " + p_votingAgent.name() );
+
         m_cLinearOrders.add( (List<Long>) p_vote );
         m_voters.add( p_votingAgent );
 
