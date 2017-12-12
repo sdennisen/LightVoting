@@ -363,14 +363,15 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         System.out.println( "my vote is " + this.getCLOVote() );
         System.out.println( "my chair: " + p_chairAgent.name() );
 
-        // dummy vote (list)
+   /*     // dummy vote (list)
         List<Long> l_vote = new ArrayList<>();
 
         for ( int i = 0; i < m_altNum; i++ )
-            l_vote.add( (long) i );
+            l_vote.add( (long) i ); */
 
         // original vote
-        // l_vote = this.getCLOVote();
+
+        List<Long> l_vote = this.getCLOVote();
 
         p_chairAgent.trigger(
             CTrigger.from(
