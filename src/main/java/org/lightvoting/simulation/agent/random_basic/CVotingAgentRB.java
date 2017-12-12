@@ -130,7 +130,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private AtomicLong m_cycle = new AtomicLong();
 
     // TODO set via config
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
 
     // TODO refactor ctors
