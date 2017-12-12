@@ -92,7 +92,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     // votes in form of 01-vectors
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
     // votes in form of complete linear orders
-    private List<List<Long>> m_cLinearOrders;
+    private List<List<Long>> m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentRB> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentRB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
