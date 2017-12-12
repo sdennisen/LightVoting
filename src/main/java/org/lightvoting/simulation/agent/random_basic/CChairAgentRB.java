@@ -119,7 +119,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     private CGroupRB m_group;
 
     // todo set via config
-    private String m_rule = "MINISUM_RANKSUM";
+    private String m_rule = "MINISUM_APPROVAL";
 
 
     // TODO merge ctors
