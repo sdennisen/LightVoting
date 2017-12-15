@@ -212,7 +212,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         else
             // if ( m_rule.equals( "MINISUM_RANKSUM") )
             m_cLinearOrder = this.convertPreferencestoCLO();
-        System.out.println( "Vote as complete linear order " + m_cLinearOrder );
+        System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
     }
@@ -495,7 +495,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private List<Long> convertPreferencestoCLO()
     {
         return m_atomicPrefMap.entrySet().stream().sorted( ( e1, e2 ) -> {
-            if ( e1.getValue() > e2.getValue() )
+            if (  e1.getValue() > e2.getValue() )
                 return -1;
             if ( e1.getValue() < e2.getValue() )
                 return 1;
@@ -793,7 +793,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         {
             System.out.println( "creating new voter, m_count is " + m_count );
             final AtomicDoubleArray l_preferences = m_prefList.get( m_count );
-            System.out.println( "Preferences: " + l_preferences );
+
 
             final CVotingAgentRB l_votingAgent = new CVotingAgentRB(
 
@@ -809,6 +809,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 m_joinThr,
                 m_prefList.get( m_count++ )
             );
+
+            System.out.println( l_votingAgent.name() + " Preferences: " + l_preferences );
 
             return m_send.register( l_votingAgent );
         }
