@@ -39,6 +39,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
 import org.lightvoting.simulation.environment.coordinated_basic.CGroupCB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+import org.lightvoting.simulation.rule.CMinisumRanksum;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -88,6 +89,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private String m_grouping;
 
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+    private List<List<Long>> m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentCB> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentCB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
@@ -113,6 +115,9 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private final double m_voteTimeout;
     private CGroupCB m_group;
     private int m_imNum;
+
+    // todo set via config
+    private String m_rule = "MINISUM_APPROVAL";
 
 
     // TODO merge ctors
@@ -217,6 +222,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     {
 
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+        m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
     //    m_agents = Collections.synchronizedList( new LinkedList<>() );
@@ -360,28 +366,39 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     @IAgentActionName( name = "store/vote" )
     public synchronized void storeVote( final CVotingAgentCB p_votingAgent, final BitVector p_vote )
     {
-    //    final CGroupCB l_group = this.determineGroup();
+        //    final CGroupRB l_group = this.determineGroup();
+        //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-    //    m_agents.add( l_group.determineAgent( p_agentName ) );
+        // for MS-AV and MM-AV, the votes are 01-vectors
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+            this.storeAV( p_votingAgent, p_vote );
 
-        m_bitVotes.add( p_vote );
+        else
+        // if ( m_rule.equals( "MINISUM_RANKSUM") )
+        // for MS-RS, the votes are complete linear orders
+        {
+            System.out.println( "store complete linear order" );
+            this.storeCLO( p_votingAgent, p_vote );
+        }
+    }
+
+    private void storeAV( final CVotingAgentCB p_votingAgent, final Object p_vote )
+    {
+        m_bitVotes.add( (BitVector) p_vote );
+        m_voters.add( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+    }
+
+    private void storeCLO( final CVotingAgentCB p_votingAgent, final Object p_vote )
+    {
+        ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
+
+        m_cLinearOrders.add( l_vote );
         m_voters.add( p_votingAgent );
 
         System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
 
-//        if ( m_bitVotes.size() != l_group.size() )
-//            return;
-//
-//        final ITrigger l_trigger = CTrigger.from(
-//            ITrigger.EType.ADDGOAL,
-//            CLiteral.from(
-//                "all/votes/received" )
-//
-//        );
-//
-//        System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
-//
-//        this.trigger( l_trigger );
     }
 
 //    /**
@@ -417,7 +434,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
 
     public synchronized void computeResult()
     {
-        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+      /*  final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
         final List<String> l_alternatives = new LinkedList<>();
 
@@ -431,6 +448,18 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         System.out.println( " Votes: " + m_bitVotes );
 
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+*/
+
+        final BitVector l_comResultBV;
+
+        if ( m_rule.equals( "MINISUM_APPROVAL" ) )
+            l_comResultBV = this.computeMSAV();
+
+        else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
+
+            l_comResultBV = this.computeMSRS();
+        // l_comResultBV = new BitVector( m_altnum );
+
 
         System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
 
@@ -489,6 +518,43 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         m_imNum++;
 
         // m_dissStored = false;
+
+    }
+
+    private BitVector computeMSAV()
+    {
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_bitVotes );
+
+        return l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+    }
+
+    private BitVector computeMSRS()
+    {
+        final CMinisumRanksum l_minisumRanksum = new CMinisumRanksum();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_cLinearOrders );
+
+        return l_minisumRanksum.applyRuleBV( l_alternatives, m_cLinearOrders, m_comsize );
 
     }
 

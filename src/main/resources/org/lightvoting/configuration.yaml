@@ -2,13 +2,13 @@
 
 variables:
   runs: '1'
-  setting1: 'RANDOM_BASIC'
+  setting1: 'COORDINATED_BASIC'
   agnum: '11'
   altnum: '10'
   comsize: '5'
   capacity: '5'
   dissthr:  '3.9'
   jointhr: '-1'
-  preferences: 'FSquare'
+  preferences: 'uniform'
 
 
