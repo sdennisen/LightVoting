@@ -216,7 +216,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
                 final int l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
-                System.out.println( "Hamming distance: " + l_newDist );
+                System.out.println( "Ranksum: " + l_newDist );
                 if ( l_newDist < m_joinThr && l_newDist < l_ranksum )
                 {
                     l_ranksum = l_newDist;
@@ -259,6 +259,27 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         System.out.println( "Vote: " + p_voteCLO );
         System.out.println( "Result: " + p_result );
 
+        int l_sum = 0;
+
+        for ( int i=0; i < m_altnum; i++ )
+        {
+            if ( p_result.get( i ) )
+            {
+                l_sum = l_sum + this.getPos( i, p_voteCLO );
+            }
+        }
+
+        // normalisation: subtract (k*(k+1))/2
+        l_sum = l_sum -( m_comsize * ( m_comsize + 1 ) )/2;
+
+        return l_sum;
+    }
+
+    private int getPos( final int p_i, final List<Long> p_voteCLO )
+    {
+        for ( int j = 0; j < p_voteCLO.size(); j++ )
+            if ( p_voteCLO.get( j ) == p_i )
+                return ( j+1 );
         return 0;
     }
 

@@ -216,8 +216,6 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
             m_cLinearOrder = this.convertPreferencestoCLO();
         System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
-        System.out.println("FOO");
-
         System.out.println( this );
     }
 
