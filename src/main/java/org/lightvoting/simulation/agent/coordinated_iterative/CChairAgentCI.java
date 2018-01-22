@@ -39,6 +39,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 import org.lightvoting.simulation.environment.coordinated_iterative.CGroupCI;
 import org.lightvoting.simulation.rule.CMinisumApproval;
+import org.lightvoting.simulation.rule.CMinisumRanksum;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -91,6 +92,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private String m_grouping;
 
     private List<BitVector> m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+    private List<List<Long>> m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentCI> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentCI> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
@@ -127,6 +129,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private ConcurrentHashMap<CVotingAgentCI, List<Integer>> m_dissReceived  = new ConcurrentHashMap<>();
     private List<Integer> m_iterations = new CopyOnWriteArrayList<>();
 
+    private String m_rule = "MINISUM_APPROVAL";
 
     // TODO merge ctors
 
@@ -242,6 +245,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     {
 
         m_bitVotes = Collections.synchronizedList( new LinkedList<>() );
+        m_cLinearOrders = Collections.synchronizedList( new LinkedList<>() );
         m_dissList = Collections.synchronizedList( new LinkedList<>() );
         m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
         m_dissMap = new ConcurrentHashMap<>();
@@ -499,11 +503,17 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         if ( !this.group().timedout() && !m_voters.contains( p_votingAgent ) )
         {
 
-            m_bitVotes.add( p_vote );
-            m_voters.add( p_votingAgent );
+            // for MS-AV and MM-AV, the votes are 01-vectors
+            if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+                this.storeAV( p_votingAgent, p_vote );
 
-            System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
-
+            else
+            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+            // for MS-RS, the votes are complete linear orders
+            {
+                System.out.println( "store complete linear order" );
+                this.storeCLO( p_votingAgent, p_vote );
+            }
             this.computeIM();
         }
 
@@ -531,6 +541,25 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //        System.out.println( " xxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + this.name() + " all votes received " );
 //
 //        this.trigger( l_trigger );
+    }
+
+    private void storeAV( final CVotingAgentCI p_votingAgent, final Object p_vote )
+    {
+        m_bitVotes.add( (BitVector) p_vote );
+        m_voters.add( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+    }
+
+    private void storeCLO( final CVotingAgentCI p_votingAgent, final Object p_vote )
+    {
+        ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
+
+        m_cLinearOrders.add( l_vote );
+        m_voters.add( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+
     }
 
 
@@ -768,22 +797,16 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     {
         try
         {
-            final CMinisumApproval l_minisumApproval = new CMinisumApproval();
-
-            final List<String> l_alternatives = new LinkedList<>();
+            final BitVector l_comResultBV;
 
             System.out.println( "Iteration:" + p_iteration );
 
-            System.out.println( "number of alternatives: " + m_altnum );
+            if ( m_rule.equals( "MINISUM_APPROVAL" ) )
+                l_comResultBV = this.computeMSAV();
 
-            for ( int i = 0; i < m_altnum; i++ )
-                l_alternatives.add( "POI" + i );
+            else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-            System.out.println( " Alternatives: " + l_alternatives );
-
-            System.out.println( " Votes: " + m_bitVotes );
-
-            final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+                l_comResultBV = this.computeMSRS();
 
             System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
 
@@ -851,6 +874,44 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         }
 
     }
+
+    private BitVector computeMSAV()
+    {
+        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_bitVotes );
+
+        return l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+    }
+
+    private BitVector computeMSRS()
+    {
+        final CMinisumRanksum l_minisumRanksum = new CMinisumRanksum();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_cLinearOrders );
+
+        return l_minisumRanksum.applyRuleBV( l_alternatives, m_cLinearOrders, m_comsize );
+
+    }
+
 
     /**
      * remove most dissatisfied voter
