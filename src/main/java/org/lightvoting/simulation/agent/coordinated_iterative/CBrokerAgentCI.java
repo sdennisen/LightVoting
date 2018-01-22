@@ -92,7 +92,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final CEnvironmentCI m_environmentCI;
     private final double m_dissthr;
     private HashMap<String, Object> m_map = new HashMap<>();
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
     /**
      * ctor

@@ -129,7 +129,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private ConcurrentHashMap<CVotingAgentCI, List<Integer>> m_dissReceived  = new ConcurrentHashMap<>();
     private List<Integer> m_iterations = new CopyOnWriteArrayList<>();
 
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
     // TODO merge ctors
 
@@ -493,7 +493,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentCI p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentCI p_votingAgent, final Object p_vote )
     {
     //    final CGroupCI l_group = this.determineGroup();
 
@@ -710,22 +710,16 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     public synchronized void computeIM()
     {
-        final CMinisumApproval l_minisumApproval = new CMinisumApproval();
+        final BitVector l_comResultBV;
 
-        final List<String> l_alternatives = new LinkedList<>();
+        if ( m_rule.equals( "MINISUM_APPROVAL" ) )
+            l_comResultBV = this.computeMSAV();
 
-        System.out.println( "number of alternatives: " + m_altnum );
+        else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-        for ( int i = 0; i < m_altnum; i++ )
-            l_alternatives.add( "POI" + i );
+            l_comResultBV = this.computeMSRS();
 
-        System.out.println( " Alternatives: " + l_alternatives );
-
-        System.out.println( " Votes: " + m_bitVotes );
-
-        final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
-
-        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + " Result of intermediate election as BV: " + l_comResultBV );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(

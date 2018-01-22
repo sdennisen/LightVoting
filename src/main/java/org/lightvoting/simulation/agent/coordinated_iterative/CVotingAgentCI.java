@@ -139,7 +139,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private AtomicLong m_cycle = new AtomicLong();
     //  private Set<Number> m_iterations = new CopyOnWriteArraySet<Number>();
 
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
     // TODO refactor ctors
 
