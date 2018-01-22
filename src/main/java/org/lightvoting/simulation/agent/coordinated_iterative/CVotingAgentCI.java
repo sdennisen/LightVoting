@@ -108,6 +108,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
      */
     private AtomicDoubleArray m_atomicPrefValues;
 
+    private final Map<Long, Double> m_atomicPrefMap = new ConcurrentHashMap<>(  );
+
     /**
      * grouping algorithm: "RANDOM" or "COORDINATED"
      */
@@ -124,6 +126,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
      */
     private double m_joinThreshold;
     private BitVector m_bitVote;
+    private List<Long> m_cLinearOrder;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
     private boolean m_hasDiss;
@@ -135,6 +138,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private ConcurrentHashMap<CChairAgentCI, Number> m_iterationSent = new ConcurrentHashMap<CChairAgentCI, Number>();
     private AtomicLong m_cycle = new AtomicLong();
     //  private Set<Number> m_iterations = new CopyOnWriteArraySet<Number>();
+
+    private String m_rule = "MINISUM_APPROVAL";
 
     // TODO refactor ctors
 
@@ -204,11 +209,20 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         m_altNum = p_altNum;
         m_atomicPrefValues = p_atomicDoubleArray;
 
+        for ( int i=0; i < m_altNum; i++ )
+            m_atomicPrefMap.put( (long) i, m_atomicPrefValues.get( i ) );
+
+        System.out.println( "AtomicPrefMap: " + m_atomicPrefMap.entrySet() );
 
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
 
-        m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+            m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        else
+            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+            m_cLinearOrder = this.convertPreferencestoCLO();
+        System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
     }
@@ -251,6 +265,11 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     public BitVector getBitVote()
     {
         return m_bitVote;
+    }
+
+    public List<Long> getCLOVote()
+    {
+        return m_cLinearOrder;
     }
 
     private AtomicLong cycleCounter()
@@ -343,20 +362,16 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
             try
             {
-                System.out.println( "my name is " + this.name() );
-                System.out.println( "my vote is " + this.getBitVote() );
-                System.out.println( "my chair: " + p_chairAgent.name() );
+                // for MS-AV and MM-AV, the votes are 01-vectors
+                if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
 
-                p_chairAgent.trigger(
-                    CTrigger.from(
-                        ITrigger.EType.ADDGOAL,
-                        CLiteral.from(
-                            "stored/vote",
-                            CRawTerm.from( this ),
-                            CRawTerm.from( this.getBitVote() )
-                        )
-                    )
-                );
+                    this.submitAV( p_chairAgent );
+
+                else
+                    // if ( m_rule.equals( "MINISUM_RANKSUM") )
+                    // for MS-RS, the votes are complete linear orders
+                    this.submitCLO( p_chairAgent );
+
 
                 m_submittedTo.add( p_chairAgent );
 
@@ -368,6 +383,46 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             {
                 System.out.println( "StackOverFlowError in agent " + this.name() );
             }
+    }
+
+    // submit Approval vote to chair
+    private void submitAV( final CChairAgentCI p_chairAgent )
+    {
+        System.out.println( "my name is " + this.name() );
+        System.out.println( "my vote is " + this.getBitVote() );
+        System.out.println( "my chair: " + p_chairAgent.name() );
+
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "stored/vote",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( this.getBitVote() )
+                )
+            )
+        );
+    }
+
+    // submit complete linear order to chair
+    private void submitCLO( final CChairAgentCI p_chairAgent )
+    {
+        System.out.println( "my name is " + this.name() );
+        System.out.println( "my vote is " + this.getCLOVote() );
+        System.out.println( "my chair: " + p_chairAgent.name() );
+
+        List<Long> l_vote = this.getCLOVote();
+
+        p_chairAgent.trigger(
+            CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                    "stored/vote",
+                    CRawTerm.from( this ),
+                    CRawTerm.from( l_vote )
+                )
+            )
+        );
     }
 
 
@@ -526,6 +581,18 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 l_voteValues.put( i, false );
         System.out.println( "Vote as BitVector: " + l_voteValues  );
         return l_voteValues;
+    }
+
+    private List<Long> convertPreferencestoCLO()
+    {
+        return m_atomicPrefMap.entrySet().stream().sorted( ( e1, e2 ) -> {
+            if (  e1.getValue() > e2.getValue() )
+                return -1;
+            if ( e1.getValue() < e2.getValue() )
+                return 1;
+            return 0;
+        } ).map( Map.Entry::getKey ).collect( Collectors.toList() );
+
     }
 
     public void addGroupID( final CGroupCI p_group )
