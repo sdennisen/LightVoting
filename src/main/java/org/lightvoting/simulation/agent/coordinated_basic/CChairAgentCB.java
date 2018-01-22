@@ -117,7 +117,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private int m_imNum;
 
     // todo set via config
-    private String m_rule = "MINISUM_RANKSUM";
+    private String m_rule = "MINISUM_APPROVAL";
 
 
     // TODO merge ctors

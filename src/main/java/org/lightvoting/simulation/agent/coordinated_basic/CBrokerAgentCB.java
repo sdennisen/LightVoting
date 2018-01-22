@@ -89,6 +89,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     private final HashMap<CVotingAgentCB, Long> m_lineHashMap = new HashMap<CVotingAgentCB, Long>();
     private final CEnvironmentCB m_environmentCB;
     private HashMap<String, Object> m_map = new HashMap<>();
+    private String m_rule = "MINISUM_APPROVAL";
 
     /**
      * ctor
@@ -203,7 +204,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     private synchronized void assignGroup( final CVotingAgentCB p_votingAgent ) throws Exception
     {
         CGroupCB l_determinedGroup = null;
-        int l_ranksum = Integer.MAX_VALUE;
+        int l_dist = Integer.MAX_VALUE;
 
         System.out.println( "Assigning group to " + p_votingAgent.name() );
         System.out.println( "join threshold: " + m_joinThr );
@@ -215,11 +216,15 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             {
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
-                final int l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
-                System.out.println( "Ranksum: " + l_newDist );
-                if ( l_newDist < m_joinThr && l_newDist < l_ranksum )
+                final int l_newDist;
+                if ( m_rule.equals( "MINISUM_APPROVAL"))
+                    l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
+                else
+                    l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
+                System.out.println( "Distance: " + l_newDist );
+                if ( l_newDist < m_joinThr && l_newDist < l_dist )
                 {
-                    l_ranksum = l_newDist;
+                    l_dist = l_newDist;
                     l_determinedGroup = l_group;
                 }
             }

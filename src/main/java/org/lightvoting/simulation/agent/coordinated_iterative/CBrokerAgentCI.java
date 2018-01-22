@@ -92,7 +92,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final CEnvironmentCI m_environmentCI;
     private final double m_dissthr;
     private HashMap<String, Object> m_map = new HashMap<>();
-
+    private String m_rule = "MINISUM_APPROVAL";
 
     /**
      * ctor
@@ -216,7 +216,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private synchronized void assignGroup( final CVotingAgentCI p_votingAgent ) throws Exception
     {
         CGroupCI l_determinedGroup = null;
-        int l_hammingDist = Integer.MAX_VALUE;
+        int l_dist = Integer.MAX_VALUE;
 
         System.out.println( "Assigning group to " + p_votingAgent.name() );
 
@@ -230,11 +230,16 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             {
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
-                final int l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
-                System.out.println( "Hamming distance: " + l_newDist );
-                if ( l_newDist < m_joinThr && l_newDist < l_hammingDist )
+                final int l_newDist;
+
+                if ( m_rule.equals( "MINISUM_APPROVAL"))
+                    l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
+                else
+                    l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
+                System.out.println( "Distance: " + l_newDist );
+                if ( l_newDist < m_joinThr && l_newDist < l_dist )
                 {
-                    l_hammingDist = l_newDist;
+                    l_dist = l_newDist;
                     l_determinedGroup = l_group;
                 }
             }
@@ -288,6 +293,36 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         l_diff.xor( p_bitVote );
         System.out.println( "diff: " + l_diff + " cardinality: " + l_diff.cardinality() );
         return l_diff.cardinality();
+    }
+
+
+    private int ranksum( final List<Long> p_voteCLO, final BitVector p_result )
+    {
+        System.out.println( "Vote: " + p_voteCLO );
+        System.out.println( "Result: " + p_result );
+
+        int l_sum = 0;
+
+        for ( int i=0; i < m_altnum; i++ )
+        {
+            if ( p_result.get( i ) )
+            {
+                l_sum = l_sum + this.getPos( i, p_voteCLO );
+            }
+        }
+
+        // normalisation: subtract (k*(k+1))/2
+        l_sum = l_sum -( m_comsize * ( m_comsize + 1 ) )/2;
+
+        return l_sum;
+    }
+
+    private int getPos( final int p_i, final List<Long> p_voteCLO )
+    {
+        for ( int j = 0; j < p_voteCLO.size(); j++ )
+            if ( p_voteCLO.get( j ) == p_i )
+                return ( j+1 );
+        return 0;
     }
 
     @IAgentActionFilter
