@@ -203,7 +203,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     private synchronized void assignGroup( final CVotingAgentCB p_votingAgent ) throws Exception
     {
         CGroupCB l_determinedGroup = null;
-        int l_hammingDist = Integer.MAX_VALUE;
+        int l_ranksum = Integer.MAX_VALUE;
 
         System.out.println( "Assigning group to " + p_votingAgent.name() );
         System.out.println( "join threshold: " + m_joinThr );
@@ -215,11 +215,11 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             {
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
-                final int l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
+                final int l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
                 System.out.println( "Hamming distance: " + l_newDist );
-                if ( l_newDist < m_joinThr && l_newDist < l_hammingDist )
+                if ( l_newDist < m_joinThr && l_newDist < l_ranksum )
                 {
-                    l_hammingDist = l_newDist;
+                    l_ranksum = l_newDist;
                     l_determinedGroup = l_group;
                 }
             }
@@ -252,6 +252,14 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         m_chairs.add( l_chairAgent );
         m_map.put( "chairNum", m_chairs.size() );
 
+    }
+
+    private int ranksum( final List<Long> p_voteCLO, final BitVector p_result )
+    {
+        System.out.println( "Vote: " + p_voteCLO );
+        System.out.println( "Result: " + p_result );
+
+        return 0;
     }
 
     private int hammingDistance( final BitVector p_bitVote, final BitVector p_result )

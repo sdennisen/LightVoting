@@ -132,7 +132,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     private AtomicLong m_cycle = new AtomicLong();
 
     // TODO set via config
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
     // TODO refactor ctors
 
@@ -204,6 +204,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         for ( int i=0; i < m_altNum; i++ )
             m_atomicPrefMap.put( (long) i, m_atomicPrefValues.get( i ) );
 
+        System.out.println( "AtomicPrefMap: " + m_atomicPrefMap.entrySet() );
 
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
@@ -215,6 +216,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
             m_cLinearOrder = this.convertPreferencestoCLO();
         System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
+        System.out.println("FOO");
 
         System.out.println( this );
     }

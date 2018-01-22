@@ -117,7 +117,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private int m_imNum;
 
     // todo set via config
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
 
     // TODO merge ctors
@@ -364,7 +364,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentCB p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final CVotingAgentCB p_votingAgent, final Object p_vote )
     {
         //    final CGroupRB l_group = this.determineGroup();
         //    m_agents.add( l_group.determineAgent( p_agentName ) );
