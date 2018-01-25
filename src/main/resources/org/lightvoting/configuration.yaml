@@ -2,7 +2,7 @@
 
 variables:
   runs: '1'
-  setting1: 'COORDINATED_BASIC'
+  setting1: 'COORDINATED_ITERATIVE'
   rule: 'MINISUM_APPROVAL'
   agnum: '11'
   altnum: '10'

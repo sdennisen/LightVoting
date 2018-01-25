@@ -139,7 +139,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private AtomicLong m_cycle = new AtomicLong();
     //  private Set<Number> m_iterations = new CopyOnWriteArraySet<Number>();
 
-    private String m_rule = "MINISUM_RANKSUM";
+    private final String m_rule;
 
     // TODO refactor ctors
 
@@ -158,7 +158,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                            final CEnvironmentCI p_environment,
                            final int p_altNum,
                            final double p_joinThr,
-                           final AtomicDoubleArray p_preferences
+                           final AtomicDoubleArray p_preferences,
+                           final String p_rule
     )
     {
         super( p_configuration );
@@ -188,6 +189,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         m_voted = false;
         m_joinThreshold = p_joinThr;
+        m_rule = p_rule;
     }
 
     /**
@@ -201,7 +203,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
      */
     public CVotingAgentCI( final String p_name, final IAgentConfiguration<CVotingAgentCI> p_configuration, final CEnvironmentCI p_environment, final int p_altNum,
                            final double p_joinThr,
-                           final AtomicDoubleArray p_atomicDoubleArray
+                           final AtomicDoubleArray p_atomicDoubleArray,
+                           final String p_rule
     )
     {
         super( p_configuration );
@@ -216,6 +219,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
         // store preferences in map
         m_map.put( this.name() + "/preferences", m_atomicPrefValues );
+
+        m_rule = p_rule;
 
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
@@ -776,6 +781,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         private double m_joinThr;
         private final List<AtomicDoubleArray> m_prefList;
         private int m_count;
+        private String m_rule;
 
         /**
          * constructor of the generator
@@ -789,7 +795,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         public CVotingAgentGenerator( final CSendCI p_send, final InputStream p_stream, final CEnvironmentCI p_environment, final int p_altNum,
                                       final String p_fileName,
                                       final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_preferences
+                                      final List<AtomicDoubleArray> p_preferences,
+                                      final String p_rule
         ) throws Exception
         {
 
@@ -826,6 +833,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             m_fileName = p_fileName;
             m_joinThr = p_joinThr;
             m_prefList = p_preferences;
+            m_rule = p_rule;
         }
 
         // unregister an agent
@@ -878,7 +886,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 m_environment,
                 m_altNum,
                 m_joinThr,
-                m_prefList.get( m_count )
+                m_prefList.get( m_count ),
+                m_rule
             );
 
             m_count++;
@@ -907,7 +916,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 m_environment,
                 m_altNum,
                 m_joinThr,
-                m_prefList.get( m_count++ )
+                m_prefList.get( m_count++ ),
+                m_rule
             );
 
             return m_send.register( l_votingAgent );

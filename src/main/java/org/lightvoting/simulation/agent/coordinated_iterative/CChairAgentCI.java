@@ -129,7 +129,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private ConcurrentHashMap<CVotingAgentCI, List<Integer>> m_dissReceived  = new ConcurrentHashMap<>();
     private List<Integer> m_iterations = new CopyOnWriteArrayList<>();
 
-    private String m_rule = "MINISUM_RANKSUM";
+    private final String m_rule;
 
     // TODO merge ctors
 
@@ -152,7 +152,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                           final int p_comsize,
                           final int p_altnum,
                           final int p_capacity,
-                          final CBrokerAgentCI p_broker
+                          final CBrokerAgentCI p_broker,
+                          final String p_rule
     )
     {
         super( p_configuration );
@@ -167,6 +168,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_voteTimeout = 20;
         m_capacity = p_capacity;
         m_broker = p_broker;
+        m_rule = p_rule;
     }
 
     /**
@@ -182,7 +184,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     public CChairAgentCI( final String p_name, final IAgentConfiguration<CChairAgentCI> p_configuration, final CEnvironmentCI p_environment, final int p_altnum,
                           final int p_comsize, final int p_capacity,
                           final CBrokerAgentCI p_broker,
-                          final double p_dissthr
+                          final double p_dissthr, final String p_rule
     )
     {
         super( p_configuration );
@@ -194,6 +196,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_capacity = p_capacity;
         m_broker = p_broker;
         m_dissThreshold = p_dissthr;
+        m_rule = p_rule;
     }
 
 
@@ -1389,6 +1392,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         private int m_altnum;
         private int m_capacity;
         private CBrokerAgentCI m_broker;
+        private String m_rule;
 
         /**
          * constructor of the generator
@@ -1407,7 +1411,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                                      final int p_run,
                                      final double p_dissthr, final int p_comsize, final int p_altnum,
                                      final int p_capacity,
-                                     final CBrokerAgentCI p_broker
+                                     final CBrokerAgentCI p_broker,
+                                     final String p_rule
 
         ) throws Exception
         {
@@ -1443,6 +1448,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_altnum = p_altnum;
             m_capacity = p_capacity;
             m_broker = p_broker;
+            m_rule = p_rule;
         }
 
         /**
@@ -1460,7 +1466,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCI p_environment, final String p_name, final int p_altnum,
                                      final int p_comsize, final int p_capacity,
                                      final CBrokerAgentCI p_broker,
-                                     final double p_dissthr
+                                     final double p_dissthr,
+                                     final String p_rule
         )
         throws Exception
         {
@@ -1496,6 +1503,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_capacity = p_capacity;
             m_broker = p_broker;
             m_dissthr = p_dissthr;
+            m_rule = p_rule;
         }
 
         /**
@@ -1513,7 +1521,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_capacity,
-                m_broker
+                m_broker, m_rule
             );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
@@ -1533,7 +1541,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 // name with message format (see Java documentation)
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_capacity,
                 m_broker,
-                m_dissthr
+                m_dissthr,
+                m_rule
             );
             return l_chairAgent;
         }
