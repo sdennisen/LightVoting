@@ -129,7 +129,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private CopyOnWriteArrayList<CGroupRI> m_visitedGroups = new CopyOnWriteArrayList<>();
     private AtomicLong m_cycle = new AtomicLong();
 
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
     // TODO refactor ctors
 

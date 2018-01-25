@@ -153,6 +153,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                       )
         );
 
+
 //        this.beliefbase().beliefbase().add( CLiteral.from(
 //
 //            "agnum",

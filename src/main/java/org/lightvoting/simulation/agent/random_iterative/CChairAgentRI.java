@@ -120,7 +120,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     // private long m_dissCounter;
     private boolean m_waitingForDiss;
 
-    private String m_rule = "MINISUM_APPROVAL";
+    private String m_rule = "MINISUM_RANKSUM";
 
 
     // TODO merge ctors

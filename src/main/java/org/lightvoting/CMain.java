@@ -107,6 +107,7 @@ public final class CMain
     private static boolean s_coordinatedBasic;
     private static boolean s_coordinatedIterative;
     private static int s_checkAgNum;
+    private static String s_rule;
 
 
     /**
@@ -676,7 +677,8 @@ public final class CMain
                                                                         p_name,
                                                                         s_joinThr,
                                                                         s_prefList,
-                                                                        s_comsize
+                                                                        s_comsize,
+                                                                        s_rule
         );
 
         s_brokerRandomBasic = s_brokerGeneratorRB.generatesingle();
@@ -763,6 +765,9 @@ public final class CMain
                     s_altnum = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 else if ( "comsize".equals( l_subValueKey ) )
                     s_comsize = Integer.parseInt( l_subValues.get( l_subValueKey ) );
+                else if ( "rule".equals( l_subValueKey ) )
+                    s_rule = l_subValues.get( l_subValueKey );
+
 
                 else if ( l_subValueKey.contains( "setting" ) )
                 {
