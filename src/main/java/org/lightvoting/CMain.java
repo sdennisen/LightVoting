@@ -611,7 +611,8 @@ public final class CMain
                                                                         p_name,
                                                                         s_joinThr,
                                                                         s_prefList,
-                                                                        s_comsize
+                                                                        s_comsize,
+                                                                        s_rule
         );
 
         s_brokerCoordinatedBasic = s_brokerGeneratorCB.generatesingle();

@@ -89,7 +89,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     private final HashMap<CVotingAgentCB, Long> m_lineHashMap = new HashMap<CVotingAgentCB, Long>();
     private final CEnvironmentCB m_environmentCB;
     private HashMap<String, Object> m_map = new HashMap<>();
-    private String m_rule = "MINISUM_APPROVAL";
+    private final String m_rule;
 
     /**
      * ctor
@@ -116,7 +116,8 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                            final String p_name,
                            final double p_joinThr,
                            final List<AtomicDoubleArray> p_prefList,
-                           final int p_comsize
+                           final int p_comsize,
+                           final String p_rule
     ) throws Exception
     {
         super( p_configuration );
@@ -133,10 +134,11 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         m_capacity = 5;
         m_timeout = new AtomicLong( 20 );
         m_comsize = p_comsize;
+        m_rule = p_rule;
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCB(), m_stream, m_environmentCB, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentCB.CChairAgentGenerator( m_chairstream, m_environmentCB, m_name, m_altnum, m_comsize );
+                                                                           m_joinThr, m_prefList, m_rule );
+        m_chairagentgenerator = new CChairAgentCB.CChairAgentGenerator( m_chairstream, m_environmentCB, m_name, m_altnum, m_comsize, m_rule );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -394,6 +396,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         private final InputStream m_chairstream;
         private int m_altnum;
         private int m_comsize;
+        private String m_rule;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -420,7 +423,8 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                                       final String p_name,
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList,
-                                      final int p_comsize
+                                      final int p_comsize,
+                                      final String p_rule
         ) throws Exception
         {
             super(
@@ -458,6 +462,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             m_joinThr = p_joinThr;
             m_prefList = p_prefList;
             m_comsize = p_comsize;
+            m_rule = p_rule;
         }
 
         @Nullable
@@ -484,7 +489,8 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                     m_name,
                     m_joinThr,
                     m_prefList,
-                    m_comsize
+                    m_comsize,
+                    m_rule
                 );
             }
             catch ( final Exception l_ex )

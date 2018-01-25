@@ -117,7 +117,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
     private int m_imNum;
 
     // todo set via config
-    private String m_rule = "MINISUM_APPROVAL";
+    private final String m_rule;
 
 
     // TODO merge ctors
@@ -138,7 +138,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                           final int p_run,
                           final double p_dissthr,
                           final int p_comsize,
-                          final int p_altnum
+                          final int p_altnum,
+                          final String p_rule
     )
     {
         super( p_configuration );
@@ -151,6 +152,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         m_altnum = p_altnum;
         // TODO via parameters
         m_voteTimeout = 10;
+        m_rule = p_rule;
     }
 
     /**
@@ -162,7 +164,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
      * @param p_comsize committee size
      */
     public CChairAgentCB( final String p_name, final IAgentConfiguration<CChairAgentCB> p_configuration, final CEnvironmentCB p_environment, final int p_altnum,
-                          final int p_comsize
+                          final int p_comsize, final String p_rule
     )
     {
         super( p_configuration );
@@ -171,6 +173,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         m_comsize = p_comsize;
         // TODO via parameters
         m_voteTimeout = 10;
+        m_rule = p_rule;
     }
 
 
@@ -919,6 +922,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         private double m_dissthr;
         private int m_comsize;
         private int m_altnum;
+        private String m_rule;
 
         /**
          * constructor of the generator
@@ -933,7 +937,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentCB p_environment,
                                      final String p_fileName,
                                      final int p_run,
-                                     final double p_dissthr, final int p_comsize, final int p_altnum
+                                     final double p_dissthr, final int p_comsize, final int p_altnum,
+                                     final String p_rule
         ) throws Exception
         {
             super(
@@ -966,6 +971,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             m_dissthr = p_dissthr;
             m_comsize = p_comsize;
             m_altnum = p_altnum;
+            m_rule = p_rule;
         }
 
         /**
@@ -977,7 +983,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCB p_environment, final String p_name, final int p_altnum, final int p_comsize )
+        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCB p_environment, final String p_name, final int p_altnum, final int p_comsize, final String p_rule )
         throws Exception
         {
             super(
@@ -1009,6 +1015,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             m_fileName = p_name;
             m_altnum = p_altnum;
             m_comsize = p_comsize;
+            m_rule = p_rule;
         }
 
         /**
@@ -1025,7 +1032,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_rule );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
@@ -1042,7 +1049,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_rule );
             return l_chairAgent;
         }
 
