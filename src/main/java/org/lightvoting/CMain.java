@@ -706,7 +706,8 @@ public final class CMain
                                                                         s_joinThr,
                                                                         s_prefList,
                                                                         s_comsize,
-                                                                        s_dissthr
+                                                                        s_dissthr,
+                                                                        s_rule
         );
 
         s_brokerRandomIterative = s_brokerGeneratorRI.generatesingle();

@@ -93,6 +93,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     private final HashMap<CVotingAgentRI, Long> m_lineHashMap = new HashMap<>();
     private final double m_dissthr;
     private HashMap<String, Object> m_map = new HashMap<>();
+    private final String m_rule;
 
     /**
      * ctor
@@ -121,7 +122,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                            final double p_joinThr,
                            final List<AtomicDoubleArray> p_prefList,
                            final int p_comsize,
-                           final double p_dissthr
+                           final double p_dissthr,
+                           final String p_rule
     ) throws Exception
     {
         super( p_configuration );
@@ -138,12 +140,13 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_timeout = 20;
         m_comsize = p_comsize;
         m_dissthr = p_dissthr;
+        m_rule = p_rule;
 
         System.out.println( "Broker: dissthr: " + m_dissthr );
 
         m_votingagentgenerator = new CVotingAgentRI.CVotingAgentGenerator( new CSendRI(), m_stream, m_environment, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList );
-        m_chairagentgenerator = new CChairAgentRI.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize, m_dissthr, this );
+                                                                           m_joinThr, m_prefList, m_rule );
+        m_chairagentgenerator = new CChairAgentRI.CChairAgentGenerator( m_chairstream, m_environment, m_name, m_altnum, m_comsize, m_dissthr, this, m_rule );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -463,6 +466,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         private int m_altnum;
         private int m_comsize;
         private double m_dissthr;
+        private String m_rule;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -491,7 +495,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                                       final double p_joinThr,
                                       final List<AtomicDoubleArray> p_prefList,
                                       final int p_comsize,
-                                      final double p_dissthr
+                                      final double p_dissthr,
+                                      final String p_rule
         ) throws Exception
         {
             super(
@@ -530,6 +535,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             m_prefList = p_prefList;
             m_comsize = p_comsize;
             m_dissthr = p_dissthr;
+            m_rule = p_rule;
         }
 
         @Nullable
@@ -557,7 +563,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                     m_joinThr,
                     m_prefList,
                     m_comsize,
-                    m_dissthr
+                    m_dissthr,
+                    m_rule
                 );
             }
             catch ( final Exception l_ex )
