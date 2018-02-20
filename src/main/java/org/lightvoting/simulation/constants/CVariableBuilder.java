@@ -33,9 +33,9 @@ import org.lightvoting.simulation.agent.coordinated_iterative.CVotingAgentCI;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
 import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
+import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
-import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 
 import java.util.stream.Stream;
 
