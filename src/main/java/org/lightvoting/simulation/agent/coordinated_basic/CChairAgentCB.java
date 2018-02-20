@@ -24,7 +24,7 @@
 package org.lightvoting.simulation.agent.coordinated_basic;
 
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
 import org.lightjason.agentspeak.action.binding.IAgentActionName;
@@ -43,11 +43,7 @@ import org.lightvoting.simulation.rule.CMinisumRanksum;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;

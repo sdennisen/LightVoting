@@ -26,14 +26,9 @@ package org.lightvoting.simulation.rule;
 
 //import java.util.Arrays;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 

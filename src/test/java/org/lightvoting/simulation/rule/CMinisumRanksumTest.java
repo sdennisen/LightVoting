@@ -26,7 +26,7 @@ package org.lightvoting.simulation.rule;
 /* TODO add test further cases for lexicographic tie-breaking */
 
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

@@ -23,7 +23,7 @@
 
 package org.lightvoting.simulation.environment.random_basic;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 

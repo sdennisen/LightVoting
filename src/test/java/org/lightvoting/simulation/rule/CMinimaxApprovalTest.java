@@ -23,7 +23,7 @@
 
 package org.lightvoting.simulation.rule;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

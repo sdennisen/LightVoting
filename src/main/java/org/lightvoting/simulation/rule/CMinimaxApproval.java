@@ -23,16 +23,10 @@
 
 package org.lightvoting.simulation.rule;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import org.lightvoting.simulation.combinations.CCombination;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -51,7 +45,7 @@ public class CMinimaxApproval
          * @return elected committee
          */
 
-    public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
+    public BitVector applyRuleBV(final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
     {
         /* compute all possible committees, i.e. all {0,1}^m vectors with exactly k ones */
 

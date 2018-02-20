@@ -24,7 +24,7 @@
 package org.lightvoting.simulation.agent.random_iterative;
 
 import cern.colt.Arrays;
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
@@ -44,14 +44,7 @@ import org.lightvoting.simulation.environment.random_iterative.CGroupRI;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -515,7 +508,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         return new AtomicIntegerArray( l_voteValues );
     }
 
-    private BitVector convertPreferencesToBits( final AtomicDoubleArray p_atomicPrefValues )
+    private BitVector convertPreferencesToBits(final AtomicDoubleArray p_atomicPrefValues )
     {
         final BitVector l_voteValues = new BitVector( m_altNum );
         for ( int i = 0; i < m_altNum; i++ )

@@ -23,13 +23,9 @@
 
 package org.lightvoting.simulation.statistics;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.IntPointer;
-import org.bytedeco.javacpp.LongPointer;
-import org.bytedeco.javacpp.hdf5;
+import org.bytedeco.javacpp.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,7 +77,7 @@ public enum EDataWriter
 
         try
         {
-            l_group = s_file.asCommonFG().openGroup( l_path[0] );
+            l_group = s_file.openGroup( l_path[0] );
         }
         catch ( final Exception l_ex )
         {
@@ -89,7 +85,7 @@ public enum EDataWriter
         finally
         {
             if ( l_group == null )
-                l_group = s_file.asCommonFG().createGroup( l_path[0] );
+                l_group = s_file.createGroup( l_path[0] );
         }
 
 
@@ -100,7 +96,7 @@ public enum EDataWriter
             try
             {
                 System.out.println( "trying to open " + l_path[i] );
-                l_newGroup = l_group.asCommonFG().openGroup( l_path[i] );
+                l_newGroup = l_group.openGroup( l_path[i] );
             }
             catch ( final Exception l_ex )
             {
@@ -108,7 +104,7 @@ public enum EDataWriter
             finally
             {
                 if ( l_newGroup == null )
-                    l_newGroup = l_group.asCommonFG().createGroup( l_path[i] );
+                    l_newGroup = l_group.createGroup( l_path[i] );
             }
 
 
@@ -123,7 +119,7 @@ public enum EDataWriter
     private void writeData( final hdf5.Group p_group, final String p_datasetName, final Object p_data )
     {
 
-        if ( p_data instanceof BitVector )
+        if ( p_data instanceof BitVector)
             this.writeBitVector( p_group, p_datasetName, (BitVector) p_data );
 
 
@@ -155,7 +151,7 @@ public enum EDataWriter
         final int l_length = p_data.length();
         final AtomicDoubleArray l_array = p_data;
 
-        final hdf5.DataSet l_dataSet =  p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+        final hdf5.DataSet l_dataSet =  p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
                                                                             new hdf5.DataSpace( 2, new long[]{1, l_length} ), new hdf5.DSetCreatPropList()
 
         );
@@ -179,7 +175,7 @@ public enum EDataWriter
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
         l_predType.setSize( 256 );
 
-        final hdf5.DataSet l_dataSet = p_group.asCommonFG().createDataSet( p_datasetName, l_predType,
+        final hdf5.DataSet l_dataSet = p_group.createDataSet( p_datasetName, l_predType,
                                                                            new hdf5.DataSpace( 1, new long[]{1} )
         );
 
@@ -190,7 +186,7 @@ public enum EDataWriter
 
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
+            p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_INT() ),
                                                 new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
             )
         );
@@ -205,7 +201,7 @@ public enum EDataWriter
     private void writeDouble( final hdf5.Group p_group, final String p_datasetName, final Double p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
+            p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
                                                 new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
             )
         );
@@ -220,7 +216,7 @@ public enum EDataWriter
     private void writeLong( final hdf5.Group p_group, final String p_datasetName, final Long p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
+            p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
                                                 new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
             )
         );
@@ -235,7 +231,7 @@ public enum EDataWriter
     private void writeAtomicLong( final hdf5.Group p_group, final String p_datasetName, final AtomicLong p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
-            p_group.asCommonFG().createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
+            p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
                                                 new hdf5.DataSpace( 2, new long[]{1, 1} ), new hdf5.DSetCreatPropList()
             )
         );
@@ -253,7 +249,7 @@ public enum EDataWriter
 
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
         l_predType.setSize( 256 );
-        final hdf5.DataSet l_configNamesDataSet =  p_group.asCommonFG().createDataSet( p_datasetName, l_predType,
+        final hdf5.DataSet l_configNamesDataSet =  p_group.createDataSet( p_datasetName, l_predType,
                                                                                        new hdf5.DataSpace( 1, new long[]{1} )
         );
 

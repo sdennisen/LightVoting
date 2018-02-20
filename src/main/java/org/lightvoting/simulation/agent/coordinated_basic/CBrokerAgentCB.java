@@ -23,7 +23,7 @@
 
 package org.lightvoting.simulation.agent.coordinated_basic;
 
-import cern.colt.bitvector.BitVector;
+import cern.colt.matrix.tbit.BitVector;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import org.lightjason.agentspeak.action.binding.IAgentAction;
 import org.lightjason.agentspeak.action.binding.IAgentActionFilter;
