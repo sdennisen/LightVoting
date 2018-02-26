@@ -43,6 +43,7 @@ public enum EDataWriter
     private static hdf5.H5File s_file;
     private static int s_groups;
 
+
     /**
      * write data from data list to h5
      * @param p_name name of h5 file
@@ -73,40 +74,20 @@ public enum EDataWriter
         // last name in path is dataset name
         final String l_datasetName = l_path[l_path.length - 1];
 
-        hdf5.Group l_group = null;
+        hdf5.Group l_group; // = null;
 
-        try
-        {
+        if ( s_file.exists( l_path[0] ) )
             l_group = s_file.openGroup( l_path[0] );
-        }
-        catch ( final Exception l_ex )
-        {
-        }
-        finally
-        {
-            if ( l_group == null )
-                l_group = s_file.createGroup( l_path[0] );
-        }
 
+        else l_group = s_file.createGroup( l_path[0] );
 
         for ( int i = 1; i < l_path.length - 1; i++ )
         {
-            hdf5.Group l_newGroup = null;
-
-            try
-            {
-                System.out.println( "trying to open " + l_path[i] );
+            hdf5.Group l_newGroup; // = null;
+            if ( l_group.exists( l_path[i] ) )
                 l_newGroup = l_group.openGroup( l_path[i] );
-            }
-            catch ( final Exception l_ex )
-            {
-            }
-            finally
-            {
-                if ( l_newGroup == null )
-                    l_newGroup = l_group.createGroup( l_path[i] );
-            }
-
+            else
+                l_newGroup = l_group.createGroup( l_path[i] );
 
             l_group = l_newGroup;
 
