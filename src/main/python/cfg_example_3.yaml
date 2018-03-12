@@ -14,7 +14,7 @@ categories:
     Chelsea Market: {popularity: 9.5}
   scenic lookout:
     Top of the Rock Observation Deck: {popularity: 9.6}
-    Empire State Building 86th Floor Observation Deck: {popularity: 9.0}
+    Empirtate Building 86th Floor Observation Deck: {popularity: 9.0}
 distributions:  # for 'cluster' approach
   mu: 1
   preferences:

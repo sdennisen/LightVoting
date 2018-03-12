@@ -1,15 +1,15 @@
 # LightVoting Config
 
 variables:
-  runs: '1'
-  setting1: 'RANDOM_BASIC'
+  runs: '100'
+  setting1: 'RANDOM_ITERATIVE'
   rule: 'MINISUM_APPROVAL'
   agnum: '11'
   altnum: '10'
   comsize: '5'
   capacity: '5'
-  dissthr:  '3.9'
-  jointhr: '-1'
-  preferences: 'uniform'
+  dissthr:  '3'
+  jointhr: '3'
+  preferences: 'FSquare'
 
 
