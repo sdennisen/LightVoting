@@ -122,7 +122,7 @@ public enum EDataWriter
 
             if (p_data instanceof String)
                 writeString(p_group, p_datasetName, (String) p_data);
-            
+
     }
 
     private static synchronized void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
