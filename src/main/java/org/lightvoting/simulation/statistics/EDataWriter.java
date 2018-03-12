@@ -49,7 +49,7 @@ public enum EDataWriter
      * @param p_name name of h5 file
      * @param p_map map to be written to h5
      */
-    public void storeMap( final String p_name, final HashMap<String, Object> p_map )
+    public static synchronized void storeMap( final String p_name, final HashMap<String, Object> p_map )
     {
         s_file = new hdf5.H5File( p_name, hdf5.H5F_ACC_TRUNC );
         s_file.openFile( p_name, hdf5.H5F_ACC_RDWR );
@@ -59,71 +59,73 @@ public enum EDataWriter
         while ( l_iterator.hasNext() )
         {
             final Map.Entry l_entry = (Map.Entry)l_iterator.next();
-            this.writeDataSet( (String) l_entry.getKey(), l_entry.getValue() );
+            writeDataSet( (String) l_entry.getKey(), l_entry.getValue() );
         }
 
         s_file.close();
     }
 
-    private void writeDataSet( final String p_path, final Object p_data )
+    private static synchronized void writeDataSet( final String p_path, final Object p_data )
     {
+
         String[] l_path;
 
-        System.out.println( "String: " + p_path );
-        l_path = p_path.split( "/" );
+        System.out.println("String: " + p_path);
+        l_path = p_path.split("/");
         // last name in path is dataset name
         final String l_datasetName = l_path[l_path.length - 1];
 
-        hdf5.Group l_group; // = null;
+        hdf5.Group l_group;
 
-        if ( s_file.exists( l_path[0] ) )
-            l_group = s_file.openGroup( l_path[0] );
+        if (s_file.exists(l_path[0]))
+            l_group = s_file.openGroup(l_path[0]);
 
-        else l_group = s_file.createGroup( l_path[0] );
+        else l_group = s_file.createGroup(l_path[0]);
 
-        for ( int i = 1; i < l_path.length - 1; i++ )
-        {
+        for (int i = 1; i < l_path.length - 1; i++) {
             hdf5.Group l_newGroup; // = null;
-            if ( l_group.exists( l_path[i] ) )
-                l_newGroup = l_group.openGroup( l_path[i] );
+            if (l_group.exists(l_path[i]))
+                l_newGroup = l_group.openGroup(l_path[i]);
             else
-                l_newGroup = l_group.createGroup( l_path[i] );
+                l_newGroup = l_group.createGroup(l_path[i]);
 
+            l_group.close();
             l_group = l_newGroup;
 
         }
 
-        this.writeData( l_group, l_datasetName, p_data );
+        writeData(l_group, l_datasetName, p_data);
+        l_group.close();
 
     }
 
-    private void writeData( final hdf5.Group p_group, final String p_datasetName, final Object p_data )
+    private static synchronized void writeData( final hdf5.Group p_group, final String p_datasetName, final Object p_data )
     {
 
-        if ( p_data instanceof BitVector)
-            this.writeBitVector( p_group, p_datasetName, (BitVector) p_data );
+            if (p_data instanceof BitVector)
+                writeBitVector(p_group, p_datasetName, (BitVector) p_data);
 
+            if (p_data instanceof AtomicDoubleArray)
+                writeAtomicDoubleArray(p_group, p_datasetName, (AtomicDoubleArray) p_data);
 
-        if ( p_data instanceof AtomicDoubleArray )
-            this.writeAtomicDoubleArray( p_group, p_datasetName, (AtomicDoubleArray) p_data );
+            if (p_data instanceof Integer)
+                writeInteger(p_group, p_datasetName, (Integer) p_data);
 
-        if ( p_data instanceof Integer )
-            this.writeInteger( p_group, p_datasetName, (Integer) p_data );
+            if (p_data instanceof Double)
+                writeDouble(p_group, p_datasetName, (Double) p_data);
 
-        if ( p_data instanceof Double )
-            this.writeDouble( p_group, p_datasetName, (Double) p_data );
+            if (p_data instanceof Long)
+                writeLong(p_group, p_datasetName, (Long) p_data);
 
-        if ( p_data instanceof Long )
-            this.writeLong( p_group, p_datasetName, (Long) p_data );
+            if (p_data instanceof AtomicLong)
+                writeAtomicLong(p_group, p_datasetName, (AtomicLong) p_data);
 
-        if ( p_data instanceof AtomicLong )
-            this.writeAtomicLong( p_group, p_datasetName, (AtomicLong) p_data );
-
-        if ( p_data instanceof String )
-            this.writeString( p_group, p_datasetName, (String) p_data );
+            if (p_data instanceof String)
+                writeString(p_group, p_datasetName, (String) p_data);
+            
     }
 
-    private void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
+    private static synchronized void writeAtomicDoubleArray( final hdf5.Group p_group, final String p_datasetName, final AtomicDoubleArray p_data )
     {
 
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
@@ -146,11 +148,11 @@ public enum EDataWriter
         }
 
         l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
-
+        l_dataSet.close();
     }
 
 
-    private void writeBitVector( final hdf5.Group p_group, final String p_datasetName, final BitVector p_data )
+    private static synchronized void writeBitVector( final hdf5.Group p_group, final String p_datasetName, final BitVector p_data )
     {
 
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
@@ -161,9 +163,10 @@ public enum EDataWriter
         );
 
         l_dataSet.write( new BytePointer( p_data.toString() ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
+        l_dataSet.close();
     }
 
-    private void writeInteger( final hdf5.Group p_group, final String p_datasetName, final Integer p_data )
+    private static synchronized void writeInteger( final hdf5.Group p_group, final String p_datasetName, final Integer p_data )
 
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
@@ -177,9 +180,10 @@ public enum EDataWriter
         l_buf[0] = p_data;
 
         l_dataSet.write( new IntPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_INT() ) );
+        l_dataSet.close();
     }
 
-    private void writeDouble( final hdf5.Group p_group, final String p_datasetName, final Double p_data )
+    private static synchronized void writeDouble( final hdf5.Group p_group, final String p_datasetName, final Double p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
             p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ),
@@ -192,9 +196,11 @@ public enum EDataWriter
         l_buf[0] = Math.round( p_data * 100.0 ) / 100.0;
 
         l_dataSet.write( new DoublePointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_DOUBLE() ) );
+        l_dataSet.close();
+
     }
 
-    private void writeLong( final hdf5.Group p_group, final String p_datasetName, final Long p_data )
+    private static synchronized void writeLong( final hdf5.Group p_group, final String p_datasetName, final Long p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
             p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
@@ -207,9 +213,10 @@ public enum EDataWriter
         l_buf[0] = p_data;
 
         l_dataSet.write( new LongPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ) );
+        l_dataSet.close();
     }
 
-    private void writeAtomicLong( final hdf5.Group p_group, final String p_datasetName, final AtomicLong p_data )
+    private static synchronized void writeAtomicLong( final hdf5.Group p_group, final String p_datasetName, final AtomicLong p_data )
     {
         final hdf5.DataSet l_dataSet = new hdf5.DataSet(
             p_group.createDataSet( p_datasetName, new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ),
@@ -222,10 +229,11 @@ public enum EDataWriter
         l_buf[0] = p_data.longValue();
 
         l_dataSet.write( new LongPointer( l_buf ), new hdf5.DataType( hdf5.PredType.NATIVE_LONG() ) );
+        l_dataSet.close();
     }
 
 
-    private void writeString( final hdf5.Group p_group, final String p_datasetName, final String p_data )
+    private static synchronized void writeString( final hdf5.Group p_group, final String p_datasetName, final String p_data )
     {
 
         final hdf5.PredType l_predType = hdf5.PredType.C_S1();
@@ -235,6 +243,7 @@ public enum EDataWriter
         );
 
         l_configNamesDataSet.write( new BytePointer( p_data ), new hdf5.DataType( hdf5.PredType.C_S1() ) );
+        l_configNamesDataSet.close();
 
     }
     //    /**
