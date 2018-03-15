@@ -47,7 +47,7 @@ import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
 import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
-import org.lightvoting.simulation.statistics.EDataWriter;
+import org.lightvoting.simulation.statistics.EDataDB;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -129,6 +129,8 @@ public final class CMain
     //    s_agNum = Integer.parseInt( p_args[2] );
 
         // creater BrokerAgent
+
+        EDataDB.openCon( "playground" );
 
         readYaml();
 
@@ -579,8 +581,10 @@ public final class CMain
             //   System.out.println( "Next simulation run " );
         }
 
-        EDataWriter.INSTANCE.storeMap( l_name, s_map );
+      //  EDataWriter.INSTANCE.storeMap( l_name, s_map );
 
+        // close connection
+        EDataDB.closeCon();
     }
 
 

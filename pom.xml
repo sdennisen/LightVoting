@@ -40,6 +40,11 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.19</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.1</version>
+        </dependency>
     </dependencies>
 
 
@@ -97,6 +102,14 @@
 
         </plugins>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>central.maven</id>
+            <url>http://central.maven.org/maven2/</url>
+        </repository>
+
+    </repositories>
 
     <build>
         <!-- default goal is set to package and checking dependency & plugin updates -->
