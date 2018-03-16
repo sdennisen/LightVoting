@@ -103,6 +103,8 @@ public final class CMain
     private static boolean s_coordinatedIterative;
     private static int s_checkAgNum;
     private static String s_rule;
+    private static boolean s_dbSet;
+    private static String s_dbName;
 
 
     /**
@@ -123,14 +125,19 @@ public final class CMain
         // https://lightjason.github.io/tutorial/tutorial-agentspeak-in-fifteen-minutes/
         //
         // parameter of the command-line arguments:
-        // 1. ASL file
-        // 2. number of iterations (if not set maximum)
-
-    //    s_agNum = Integer.parseInt( p_args[2] );
+        // 1. cycle number
+        // 2. database name (optional)
 
         // creater BrokerAgent
 
-        EDataDB.openCon( "playground" );
+        if ( p_args.length > 1 ) {
+            s_dbSet = true;
+            s_dbName = p_args[1];
+            EDataDB.openCon(s_dbName);
+            System.out.println( "connected to database " + s_dbName );
+        }
+        else
+            System.out.println( "No database specified for saving results" );
 
         readYaml();
 
@@ -142,23 +149,6 @@ public final class CMain
 
         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
-
-        // clear file
-
-        final File l_preferenceFile;
-
-//        l_preferenceFile = new File( "src/main/resources/org/lightvoting/preferences.yaml" );
-//        final PrintWriter l_writer = new PrintWriter( l_preferenceFile );
-//        l_writer.print( "runs:" );
-//        l_writer.close();
-
-       // create preferences for all runs before conducting the runs
-//        for ( int r = 0; r < s_runs; r++ )
-//        {
-//            s_prefList.clear();
-//            setPreferences( r );
-//
-//        }
 
         for ( int c = 0; c < s_settingStrs.size(); c++ )
         {
@@ -175,20 +165,8 @@ public final class CMain
                 final Set<CVotingAgentRB> l_agents;
                 final CVotingAgentRB.CVotingAgentGenerator l_votingagentgenerator;
 
-                // TODO reinsert?
-                //            final String l_pathConfNr = r + "/" + "configs" + "/" + "config num";
-                //            s_map.put( l_pathConfNr, s_settingStrs.size() );
-                //            final String l_pathConfStr = r + "/" + "confignames" + "/" + "config names";
-                //
-                //            s_map.put( l_pathConfStr, s_settingStr );
-
                 try
                 {
-                    //                    final FileInputStream l_stream = new FileInputStream( p_args[0] );
-                    //                    final FileInputStream l_chairstream = new FileInputStream( p_args[1] );
-
-
-
                     // TODO separate creation of broker and setting of parameters
                     if ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
                     {
@@ -205,28 +183,10 @@ public final class CMain
                         l_stream.close();
                         l_chairstream.close();
 
-
-                        //            for ( int c = 0; c < s_settingStrs.size(); c++ )
-                        //            {
-                        //
-                        //                s_environment.setConf( r, s_settingStrs.get( c ) );
-                        //
-                        //                final int l_finalC = c;
-
-
-                        //                l_agents.parallelStream().forEach( i ->
-                        //                {
-                        //                    i.setConf( s_groupings.get( l_finalC ) );
-                        //                    i.getChair().setConf( s_settingStrs.get( l_finalC ), s_groupings.get( l_finalC ), s_protocols.get( l_finalC ) );
-                        //                } );
-
                         IntStream
                             // define cycle range, i.e. number of cycles to run sequentially
                             .range(
-                                0,
-                                p_args.length < 1
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[0] )
+                                0, Integer.parseInt( p_args[0] )
                             )
                             .forEach( j ->
                             {
@@ -250,23 +210,6 @@ public final class CMain
                                 {
                                     l_ex.printStackTrace();
                                 }
-
-                                //                        l_agents.parallelStream().forEach( i ->
-                                //                        {
-                                //                            try
-                                //                            {
-                                //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                //                                // call each agent, i.e. trigger a new agent cycle
-                                //                                i.call();
-                                //                                //   i.getChair().sleep( 0 );
-                                //                                i.getChair().call();
-                                //                            }
-                                //                            catch ( final Exception l_exception )
-                                //                            {
-                                //                                l_exception.printStackTrace();
-                                //                                throw new RuntimeException();
-                                //                            }
-                                //                        } );
                             } );
 
                         // reset properties for next configuration
@@ -309,10 +252,7 @@ public final class CMain
                         IntStream
                             // define cycle range, i.e. number of cycles to run sequentially
                             .range(
-                                0,
-                                p_args.length < 1
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[0] )
+                                0, Integer.parseInt( p_args[0] )
                             )
                             .forEach( j ->
                             {
@@ -336,23 +276,6 @@ public final class CMain
                                 {
                                     l_ex.printStackTrace();
                                 }
-
-                                //                        l_agents.parallelStream().forEach( i ->
-                                //                        {
-                                //                            try
-                                //                            {
-                                //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                //                                // call each agent, i.e. trigger a new agent cycle
-                                //                                i.call();
-                                //                                //   i.getChair().sleep( 0 );
-                                //                                i.getChair().call();
-                                //                            }
-                                //                            catch ( final Exception l_exception )
-                                //                            {
-                                //                                l_exception.printStackTrace();
-                                //                                throw new RuntimeException();
-                                //                            }
-                                //                        } );
                             } );
 
                         // reset properties for next configuration
@@ -391,10 +314,7 @@ public final class CMain
                         IntStream
                             // define cycle range, i.e. number of cycles to run sequentially
                             .range(
-                                0,
-                                p_args.length < 1
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[0] )
+                                0, Integer.parseInt( p_args[0] )
                             )
                             .forEach( j ->
                             {
@@ -418,23 +338,6 @@ public final class CMain
                                 {
                                     l_ex.printStackTrace();
                                 }
-
-                                //                        l_agents.parallelStream().forEach( i ->
-                                //                        {
-                                //                            try
-                                //                            {
-                                //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                //                                // call each agent, i.e. trigger a new agent cycle
-                                //                                i.call();
-                                //                                //   i.getChair().sleep( 0 );
-                                //                                i.getChair().call();
-                                //                            }
-                                //                            catch ( final Exception l_exception )
-                                //                            {
-                                //                                l_exception.printStackTrace();
-                                //                                throw new RuntimeException();
-                                //                            }
-                                //                        } );
                             } );
 
                         // reset properties for next configuration
@@ -480,10 +383,7 @@ public final class CMain
                         IntStream
                             // define cycle range, i.e. number of cycles to run sequentially
                             .range(
-                                0,
-                                p_args.length < 1
-                                ? Integer.MAX_VALUE
-                                : Integer.parseInt( p_args[0] )
+                                0, Integer.parseInt( p_args[0] )
                             )
                             .forEach( j ->
                             {
@@ -508,22 +408,6 @@ public final class CMain
                                     l_ex.printStackTrace();
                                 }
 
-                                          //                        l_agents.parallelStream().forEach( i ->
-                                          //                        {
-                                          //                            try
-                                          //                            {
-                                          //                                // check if the conditions for triggering a new cycle are fulfilled in the environment
-                                          //                                // call each agent, i.e. trigger a new agent cycle
-                                          //                                i.call();
-                                          //                                //   i.getChair().sleep( 0 );
-                                          //                                i.getChair().call();
-                                          //                            }
-                                          //                            catch ( final Exception l_exception )
-                                          //                            {
-                                          //                                l_exception.printStackTrace();
-                                          //                                throw new RuntimeException();
-                                          //                            }
-                                          //                        } );
                             } );
 
                         // reset properties for next configuration
@@ -570,21 +454,12 @@ public final class CMain
                 }
             }
 
-                    //    l_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), l_stream, s_environment, s_altnum, l_name, s_joinThr, s_prefList );
-                    //    l_agents = l_votingagentgenerator
-                    //        .generatemultiplenew(
-                    //    Integer.parseInt( p_args[2] ), new CChairAgent.CChairAgentGenerator( l_chairstream, s_environment, l_name, r, s_dissthr, s_comsize, s_altnum ) )
-                    //        .collect( Collectors.toSet() );
-
-
-
             //   System.out.println( "Next simulation run " );
         }
 
-      //  EDataWriter.INSTANCE.storeMap( l_name, s_map );
-
         // close connection
-        EDataDB.closeCon();
+        if ( s_dbSet )
+            EDataDB.closeCon();
     }
 
 
@@ -877,79 +752,6 @@ public final class CMain
         }
 
     }
-
-
-//            for ( final String l_number : l_numbers.keySet() )
-//            {
-//                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
-//                if ( l_number.contains( "number" ) )
-//                {
-//                    final Map<String, Map<String, ArrayList<Double>>> l_agents = l_numbers.get( l_number );
-//                    System.out.println( l_agents );
-//                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
-//
-//                    if ( Integer.parseInt( l_number.split( "_" )[1] ) == p_run )
-//                    {
-//                        System.out.println( "run " +  l_number.split( "_" )[1] );
-//
-//                        for ( final String l_agent : l_agents.keySet()  )
-//                        {
-//                            final Map<String, ArrayList<Double>> l_preferences = l_agents.get( l_agent );
-//                            ArrayList<Double> l_preferenceVector = new ArrayList<>();
-//                            System.out.println( l_preferences );
-//
-//                            for ( final String l_preference: l_preferences.keySet() )
-//                            {
-//                                if ( l_preference.contains( "poi_preferences" ) )
-//                                {
-//                                    l_preferenceVector = l_preferences.get( l_preference );
-//                                    l_list.add( l_preferenceVector );
-//                                }
-//                            }
-//
-//                            readPreferenceList( l_list );
-//                        }
-//
-//                    }
-//                }
-//
-//            }
-//        }
-//    }
-
-    // old method
-//    private static void readPreferences( final int p_run ) throws FileNotFoundException
-//    {
-//        final Yaml l_yaml = new Yaml();
-//
-//        final Map<String, Map<String, Object>> l_values = (Map<String, Map<String, Object>>) l_yaml
-//            .load( new FileInputStream( "src/main/resources/org/lightvoting/preferences.yaml" ) );
-//
-//        for ( final String l_key : l_values.keySet() )
-//        {
-//            final Map<String, Object> l_subValues = l_values.get( l_key );
-//            System.out.println( l_subValues );
-//
-//
-//            for ( final String l_subkey : l_subValues.keySet() )
-//            {
-//                // System.out.println( String.valueOf( l_subValues.get( l_subkey ) ) );
-//                if ( l_subkey.contains( "number" ) )
-//                {
-//                    // System.out.println( "run " +  l_subkey.split( "_" )[1] );
-//
-//                    if ( Integer.parseInt( l_subkey.split( "_" )[1] ) == p_run )
-//                    {
-//                        System.out.println( "run " +  l_subkey.split( "_" )[1] );
-//                        final ArrayList<ArrayList<Double>> l_list = (ArrayList<ArrayList<Double>>) l_subValues.get( l_subkey );
-//
-//                        readPreferenceList( l_list );
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private static void readPreferenceList( final ArrayList<ArrayList<Double>> p_list )
     {
