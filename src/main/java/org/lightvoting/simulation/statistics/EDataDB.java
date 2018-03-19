@@ -94,7 +94,6 @@ public enum EDataDB {
         return s_con;
     }
 
-    // TODO write method and JUnit Test
     // TODO if necessary, adapt method to include commit id
 
     /**
