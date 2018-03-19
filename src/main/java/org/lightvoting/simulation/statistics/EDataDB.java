@@ -136,7 +136,7 @@ public enum EDataDB {
 
         PreparedStatement l_stmt = s_con.prepareStatement("INSERT into configuration " +
                 "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
-                "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype))");
+                "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype)) RETURNING id");
        l_stmt.setInt( 1, p_runs );
        l_stmt.setInt( 2, p_agnum );
        l_stmt.setInt( 3, p_altnum );
@@ -148,20 +148,11 @@ public enum EDataDB {
        l_stmt.setFloat( 9, p_dissthr );
        l_stmt.setString( 10, p_prefs );
 
-       l_stmt.execute();
+       final ResultSet l_rs = l_stmt.executeQuery();
+       l_rs.next();
 
-       return getMaxID( );
-    }
+       return l_rs.getInt( "id" );
 
-    public static int getMaxID() throws SQLException
-    {
-        Statement l_stmt = EDataDB.getCon().createStatement(
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_READ_ONLY );
-        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from " +
-                "configuration WHERE id = (SELECT MAX(ID) FROM configuration)" );
-        l_rs.first();
-        return l_rs.getInt( "id" );
     }
 
     // TODO write method and JUnit Test
