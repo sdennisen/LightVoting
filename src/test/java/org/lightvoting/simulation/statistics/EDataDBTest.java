@@ -53,7 +53,32 @@ public class EDataDBTest extends TestCase {
 
         EDataDB.closeCon();
 
-        assertEquals( l_newMax, l_oldMax + 1 );
+        assertTrue( l_newMax > l_oldMax );
+
+    }
+
+
+
+    public void testAddSim() throws SQLException {
+        try
+        {
+            EDataDB.openCon("playground");
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        Statement l_stmt = EDataDB.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        int l_oldSim = this.getMaxNumber( l_stmt );
+
+        int l_newSim = EDataDB.addSim(1);
+
+        EDataDB.closeCon();
+
+        assertTrue( l_newSim > l_oldSim );
 
     }
 
@@ -62,6 +87,13 @@ public class EDataDBTest extends TestCase {
         ResultSet l_rs = p_stmt.executeQuery( "SELECT * from configuration WHERE id = (SELECT MAX(ID) FROM configuration)" );
         l_rs.first();
         return l_rs.getInt( "id" );
+    }
+
+    private int getMaxNumber(Statement p_stmt) throws SQLException
+    {
+        ResultSet l_rs = p_stmt.executeQuery( "SELECT * from simulation WHERE number = (SELECT MAX(number) FROM simulation)" );
+        l_rs.first();
+        return l_rs.getInt( "number" );
     }
 
 }

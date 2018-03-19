@@ -103,11 +103,18 @@ public enum EDataDB {
      * @param p_configID config id
      * @return simulation number
      */
-    public int addSim( int p_configID )
-    {
+    public static int addSim(int p_configID) throws SQLException {
 
-        return -1;
+        PreparedStatement l_stmt = s_con.prepareStatement( "INSERT into simulation (configuration) VALUES (?) RETURNING number");
+        l_stmt.setInt( 1, p_configID );
+        final ResultSet l_rs = l_stmt.executeQuery();
+        l_rs.next();
+
+        return l_rs.getInt( "number" );
+
     }
+
+
 
     /**
      * add new configuration entity to database
@@ -245,4 +252,5 @@ public enum EDataDB {
         s_con.close();
         System.out.println( "Closed connection" );
     }
+
 }
