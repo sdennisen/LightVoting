@@ -25,9 +25,7 @@ package org.lightvoting.simulation.statistics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -38,13 +36,16 @@ import java.util.Scanner;
 public enum EDataDB {
     INSTANCE;
 
-    static Connection m_con;
+    static Connection s_con;
+
 
     /**
      * connect to given database
      * @param p_dbName
      */
     static public void openCon( String p_dbName ) throws FileNotFoundException {
+
+
         try
         {
             Class.forName( "org.postgresql.Driver" );
@@ -72,7 +73,7 @@ public enum EDataDB {
             l_props.setProperty("ssl","true");
 
 
-            m_con = DriverManager.getConnection(
+            s_con = DriverManager.getConnection(
                     l_url +
                             "/" + p_dbName +
                             "?user=" + l_usr +
@@ -86,11 +87,162 @@ public enum EDataDB {
             l_ex.printStackTrace();
             return;
         }
+    }
+
+    public static Connection getCon()
+    {
+        return s_con;
+    }
+
+    // TODO write method and JUnit Test
+    // TODO if necessary, adapt method to include commit id
+
+    /**
+     * add new simulation entry to database
+     * number and startdate are set only in postgres
+     * @param p_configID config id
+     * @return simulation number
+     */
+    public int addSim( int p_configID )
+    {
+
+        return -1;
+    }
+
+    /**
+     * add new configuration entity to database
+     * @param p_runs number of runs
+     * @param p_agnum number of agents
+     * @param p_altnum number of alternatives/candidates
+     * @param p_comsize size of committee to be elected
+     * @param p_capacity maximal group size
+     * @param p_rule voting rule
+     * @param p_setting grouping and voting protocol
+     * @param p_jointhr join threshold for coordinated grouping
+     * @param p_dissthr dissatisfaction threshold for iterative voting
+     * @param p_prefs used preference type
+     * @return configuration id
+     */
+    public static int addConfig( int p_runs, int p_agnum, int p_altnum, int p_comsize,
+                          int p_capacity, String p_rule, String p_setting,
+                          float p_jointhr, float p_dissthr, String p_prefs ) throws SQLException {
+
+        PreparedStatement l_stmt = s_con.prepareStatement("INSERT into configuration " +
+                "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
+                "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype))");
+       l_stmt.setInt( 1, p_runs );
+       l_stmt.setInt( 2, p_agnum );
+       l_stmt.setInt( 3, p_altnum );
+       l_stmt.setInt( 4, p_comsize );
+       l_stmt.setInt( 5, p_capacity );
+       l_stmt.setString( 6, p_rule );
+       l_stmt.setString( 7, p_setting );
+       l_stmt.setFloat( 8, p_jointhr );
+       l_stmt.setFloat( 9, p_dissthr );
+       l_stmt.setString( 10, p_prefs );
+
+       l_stmt.execute();
+
+       return getMaxID( );
+    }
+
+    public static int getMaxID() throws SQLException
+    {
+        Statement l_stmt = EDataDB.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from " +
+                "configuration WHERE id = (SELECT MAX(ID) FROM configuration)" );
+        l_rs.first();
+        return l_rs.getInt( "id" );
+    }
+
+    // TODO write method and JUnit Test
+
+    /**
+     * add new run entity to database
+     * @param p_simID
+     * @return run number
+     */
+    public int addRun( int p_simID )
+    {
+
+        return -1;
+    }
+
+    // TODO write method and JUnit Test
+
+    /**
+     * add new voter entity to database
+     * @param p_voterID name of voter
+     * @param p_simID simulation number
+     * @param p_runID run number
+     */
+    public void addVoter( String p_voterID, int p_simID, int p_runID )
+    {
 
     }
 
+    // TODO write method and JUnit Test
+
+    /**
+     * set time for specified voter entity in database
+     * @param p_id name of voter
+     */
+    public void setTime( String p_id )
+    {
+
+    }
+
+    // TODO write method and JUnit Test
+
+    /**
+     * add Group
+     * @param p_chairID name of chair
+     * @return group id
+     */
+    public int addGroup( String p_chairID )
+    {
+
+        return -1;
+    }
+
+    // TODO write method and JUnit Test
+
+    /**
+     * extend Group
+     * @param p_chairID name of chair
+     * @param p_pred predecessor id
+     * @return group id
+     */
+    public int extendGroup( String p_chairID, int p_pred )
+    {
+
+        return -1;
+    }
+
+    // TODO write method and JUnit Test
+
+    /**
+     * add new election result entity to database
+     * @param p_groupID group id
+     * @param p_com committee
+     * @param p_type type of election
+     * @param p_lastElection specifies if election was last election
+     * @param p_itNum id of iteration if applicable
+     * @param p_imNum id of intermediate election if applicable
+     * @return id of election result
+     */
+    public int addResult( int p_groupID, String p_com, String p_type,
+                          boolean p_lastElection, int p_itNum, int p_imNum )
+    {
+
+        return -1;
+    }
+
+
     public static void closeCon() throws SQLException {
-        m_con.close();
+        s_con.close();
         System.out.println( "Closed connection" );
     }
 }

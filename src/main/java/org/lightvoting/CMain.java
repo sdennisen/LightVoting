@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -105,6 +106,7 @@ public final class CMain
     private static String s_rule;
     private static boolean s_dbSet;
     private static String s_dbName;
+    private static Connection s_con;
 
 
     /**
