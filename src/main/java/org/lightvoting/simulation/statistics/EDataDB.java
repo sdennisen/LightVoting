@@ -37,55 +37,60 @@ public enum EDataDB {
     INSTANCE;
 
     static Connection s_con;
-
+    static PreparedStatement s_stmt_conf;
+    static PreparedStatement s_stmt_sim;
 
     /**
      * connect to given database
      * @param p_dbName
      */
-    static public void openCon( String p_dbName ) throws FileNotFoundException {
+    static public void openCon( String p_dbName ) throws FileNotFoundException, SQLException {
+
+        if ( ( s_con == null ) || ( s_con.isClosed() ) ) {
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException l_ex) {
+                System.out.println("PostgreSQL JDBC driver not found");
+                l_ex.printStackTrace();
+                return;
+            }
+
+            try {
+                File l_file = new File("/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
+
+                Scanner l_sc;
+                l_sc = new Scanner(l_file);
+                String l_url = l_sc.nextLine();
+                String l_usr = l_sc.nextLine();
+                String l_pw = l_sc.nextLine();
+
+                l_sc.close();
+
+                Properties l_props = new Properties();
+                l_props.setProperty("ssl", "true");
 
 
-        try
-        {
-            Class.forName( "org.postgresql.Driver" );
-        }
-        catch ( ClassNotFoundException l_ex )
-        {
-            System.out.println( "PostgreSQL JDBC driver not found" );
-            l_ex.printStackTrace();
-            return;
-        }
+                s_con = DriverManager.getConnection(
+                        l_url +
+                                "/" + p_dbName +
+                                "?user=" + l_usr +
+                                "&password=" + l_pw,
+                        l_props);
 
-        try
-        {
-            File l_file = new File( "/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
+            } catch (SQLException l_ex)
+            {
+                System.out.println("Connection failed");
+                l_ex.printStackTrace();
+                return;
+            }
 
-            Scanner l_sc;
-            l_sc = new Scanner( l_file );
-            String l_url = l_sc.nextLine();
-            String l_usr = l_sc.nextLine();
-            String l_pw = l_sc.nextLine();
+            if ( ( s_stmt_sim == null ) || ( s_stmt_sim.isClosed() ) )
+                s_stmt_sim = s_con.prepareStatement("INSERT into simulation (configuration) VALUES (?) RETURNING number");
 
-            l_sc.close();
-
-            Properties l_props = new Properties();
-            l_props.setProperty("ssl","true");
-
-
-            s_con = DriverManager.getConnection(
-                    l_url +
-                            "/" + p_dbName +
-                            "?user=" + l_usr +
-                            "&password=" + l_pw,
-                    l_props );
-
-        }
-        catch (SQLException l_ex )
-        {
-            System.out.println( "Connection failed" );
-            l_ex.printStackTrace();
-            return;
+            if ( ( s_stmt_conf == null ) || ( s_stmt_conf.isClosed() ) )
+                s_stmt_conf = s_con.prepareStatement("INSERT into configuration " +
+                        "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
+                        "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype)) RETURNING id");
         }
     }
 
@@ -102,17 +107,17 @@ public enum EDataDB {
      * @param p_configID config id
      * @return simulation number
      */
-    public static int addSim(int p_configID) throws SQLException {
+    public static int addSim(int p_configID) throws SQLException
+    {
+        s_stmt_sim.setInt(1, p_configID);
 
-        PreparedStatement l_stmt = s_con.prepareStatement( "INSERT into simulation (configuration) VALUES (?) RETURNING number");
-        l_stmt.setInt( 1, p_configID );
-        final ResultSet l_rs = l_stmt.executeQuery();
-        l_rs.next();
+        try( final ResultSet l_rs = s_stmt_sim.executeQuery(); )
+        {
+            l_rs.next();
 
-        return l_rs.getInt( "number" );
-
+            return l_rs.getInt("number");
+        }
     }
-
 
 
     /**
@@ -130,28 +135,25 @@ public enum EDataDB {
      * @return configuration id
      */
     public static int addConfig( int p_runs, int p_agnum, int p_altnum, int p_comsize,
-                          int p_capacity, String p_rule, String p_setting,
-                          float p_jointhr, float p_dissthr, String p_prefs ) throws SQLException {
+                                 int p_capacity, String p_rule, String p_setting,
+                                 float p_jointhr, float p_dissthr, String p_prefs ) throws SQLException {
 
-        PreparedStatement l_stmt = s_con.prepareStatement("INSERT into configuration " +
-                "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
-                "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype)) RETURNING id");
-       l_stmt.setInt( 1, p_runs );
-       l_stmt.setInt( 2, p_agnum );
-       l_stmt.setInt( 3, p_altnum );
-       l_stmt.setInt( 4, p_comsize );
-       l_stmt.setInt( 5, p_capacity );
-       l_stmt.setString( 6, p_rule );
-       l_stmt.setString( 7, p_setting );
-       l_stmt.setFloat( 8, p_jointhr );
-       l_stmt.setFloat( 9, p_dissthr );
-       l_stmt.setString( 10, p_prefs );
+        s_stmt_conf.setInt(1, p_runs);
+        s_stmt_conf.setInt(2, p_agnum);
+        s_stmt_conf.setInt(3, p_altnum);
+        s_stmt_conf.setInt(4, p_comsize);
+        s_stmt_conf.setInt(5, p_capacity);
+        s_stmt_conf.setString(6, p_rule);
+        s_stmt_conf.setString(7, p_setting);
+        s_stmt_conf.setFloat(8, p_jointhr);
+        s_stmt_conf.setFloat(9, p_dissthr);
+        s_stmt_conf.setString(10, p_prefs);
 
-       final ResultSet l_rs = l_stmt.executeQuery();
-       l_rs.next();
+        try (final ResultSet l_rs = s_stmt_conf.executeQuery();) {
+            l_rs.next();
 
-       return l_rs.getInt( "id" );
-
+            return l_rs.getInt("id");
+        }
     }
 
     // TODO write method and JUnit Test
@@ -238,7 +240,10 @@ public enum EDataDB {
     }
 
 
-    public static void closeCon() throws SQLException {
+    public static void closeCon() throws SQLException
+    {
+        s_stmt_conf.close();
+        s_stmt_sim.close();
         s_con.close();
         System.out.println( "Closed connection" );
     }
