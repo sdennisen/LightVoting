@@ -39,6 +39,7 @@ public enum EDataDB {
     static Connection s_con;
     static PreparedStatement s_stmt_conf;
     static PreparedStatement s_stmt_sim;
+    static PreparedStatement s_stmt_run;
 
     /**
      * connect to given database
@@ -47,7 +48,8 @@ public enum EDataDB {
     static public void openCon( String p_dbName ) throws FileNotFoundException, SQLException {
 
         if ( ( s_con == null ) || ( s_con.isClosed() ) ) {
-            try {
+            try
+            {
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException l_ex) {
                 System.out.println("PostgreSQL JDBC driver not found");
@@ -55,7 +57,8 @@ public enum EDataDB {
                 return;
             }
 
-            try {
+            try
+            {
                 File l_file = new File("/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
 
                 Scanner l_sc;
@@ -86,11 +89,12 @@ public enum EDataDB {
 
             if ( ( s_stmt_sim == null ) || ( s_stmt_sim.isClosed() ) )
                 s_stmt_sim = s_con.prepareStatement("INSERT into simulation (configuration) VALUES (?) RETURNING number");
-
             if ( ( s_stmt_conf == null ) || ( s_stmt_conf.isClosed() ) )
                 s_stmt_conf = s_con.prepareStatement("INSERT into configuration " +
                         "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
                         "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS rule), ?, ?, ?, CAST (? AS preftype)) RETURNING id");
+            if ( ( s_stmt_run == null )  || ( s_stmt_run.isClosed() ) )
+                s_stmt_run = s_con.prepareStatement( "INSERT into run (simulation, number) VALUES (?, ?) RETURNING number" );
         }
     }
 
@@ -156,17 +160,16 @@ public enum EDataDB {
         }
     }
 
-    // TODO write method and JUnit Test
-
     /**
      * add new run entity to database
      * @param p_simID
-     * @return run number
+     * @param p_number
      */
-    public int addRun( int p_simID )
+    public void addRun( int p_simID, int p_number ) throws SQLException
     {
-
-        return -1;
+        s_stmt_run.setInt( 1, p_simID );
+        s_stmt_run.setInt( 2, 1 );
+        s_stmt_run.execute();
     }
 
     // TODO write method and JUnit Test
@@ -244,6 +247,7 @@ public enum EDataDB {
     {
         s_stmt_conf.close();
         s_stmt_sim.close();
+        s_stmt_run.close();
         s_con.close();
         System.out.println( "Closed connection" );
     }

@@ -30,55 +30,85 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class EDataDBTest extends TestCase {
+public class EDataDBTest extends TestCase
+{
 
-    public void testAddConfig() throws SQLException {
+    public void testAddConfig() throws SQLException
+    {
         try
         {
-            EDataDB.openCon("playground");
+            EDataDB.INSTANCE.openCon("playground");
         } catch (FileNotFoundException l_ex)
         {
             l_ex.printStackTrace();
         }
 
-        Statement l_stmt = EDataDB.getCon().createStatement(
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
                 ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_READ_ONLY );
 
         int l_oldMax = this.getMaxID( l_stmt );
 
-        int l_newMax = EDataDB.addConfig(10, 10, 10, 10,
+        int l_newMax = EDataDB.INSTANCE.addConfig(10, 10, 10, 10,
                 10, "MINISUM_APPROVAL", "RANDOM_BASIC",
                 (float) 3.5, (float) 3.5, "uniform");
 
-        EDataDB.closeCon();
+        EDataDB.INSTANCE.closeCon();
 
         assertTrue( l_newMax > l_oldMax );
 
     }
 
 
-
-    public void testAddSim() throws SQLException {
+    public void testAddSim() throws SQLException
+    {
         try
         {
-            EDataDB.openCon("playground");
+            EDataDB.INSTANCE.openCon("playground");
         } catch (FileNotFoundException l_ex)
         {
             l_ex.printStackTrace();
         }
 
-        Statement l_stmt = EDataDB.getCon().createStatement(
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
                 ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_READ_ONLY );
 
         int l_oldSim = this.getMaxNumber( l_stmt );
 
-        int l_newSim = EDataDB.addSim(1);
+        int l_newSim = EDataDB.INSTANCE.addSim(1);
 
-        EDataDB.closeCon();
+        EDataDB.INSTANCE.closeCon();
 
         assertTrue( l_newSim > l_oldSim );
+
+    }
+
+    public void testAddRun() throws SQLException
+    {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        EDataDB.INSTANCE.addRun( 3, 1 );
+
+        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from run WHERE number = 1 AND simulation = 3" );
+
+        l_rs.next();
+        assertEquals( 3, l_rs.getInt( "simulation" ) );
+        assertEquals( 1, l_rs.getInt( "number" ) );
+
+        l_stmt.execute( "DELETE from run WHERE number = 1 AND simulation = 3" );
+
+        EDataDB.INSTANCE.closeCon();
 
     }
 

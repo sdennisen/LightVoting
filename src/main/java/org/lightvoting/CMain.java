@@ -135,7 +135,7 @@ public final class CMain
         if ( p_args.length > 1 ) {
             s_dbSet = true;
             s_dbName = p_args[1];
-            EDataDB.openCon(s_dbName);
+            EDataDB.INSTANCE.openCon(s_dbName);
             System.out.println( "connected to database " + s_dbName );
         }
         else
@@ -461,7 +461,7 @@ public final class CMain
 
         // close connection
         if ( s_dbSet )
-            EDataDB.closeCon();
+            EDataDB.INSTANCE.closeCon();
     }
 
 
