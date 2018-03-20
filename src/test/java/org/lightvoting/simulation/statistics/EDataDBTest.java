@@ -112,6 +112,34 @@ public class EDataDBTest extends TestCase
 
     }
 
+    public void testVoter() throws SQLException
+    {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        EDataDB.INSTANCE.addVoter( "agent 1", 1, 7 );
+
+
+        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from voter WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
+
+        l_rs.next();
+        assertEquals( "agent 1", l_rs.getString( "id" ) );
+        assertEquals( 7, l_rs.getInt( "simulation" ) );
+        assertEquals( 1, l_rs.getInt( "run" ) );
+
+        l_stmt.execute( "DELETE from voter WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
+        
+    }
+
     private int getMaxID(Statement p_stmt) throws SQLException
     {
         ResultSet l_rs = p_stmt.executeQuery( "SELECT * from configuration WHERE id = (SELECT MAX(ID) FROM configuration)" );
