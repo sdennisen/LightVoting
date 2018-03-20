@@ -41,6 +41,7 @@ public enum EDataDB {
     static PreparedStatement s_stmt_sim;
     static PreparedStatement s_stmt_run;
     static PreparedStatement s_stmt_voter;
+    static PreparedStatement s_stmt_setTime;
 
     /**
      * connect to given database
@@ -95,6 +96,9 @@ public enum EDataDB {
                 s_stmt_run = s_con.prepareStatement("INSERT INTO run (simulation, number) VALUES (?, ?) RETURNING number");
             if ((s_stmt_voter == null) || (s_stmt_voter.isClosed()))
                 s_stmt_voter = s_con.prepareStatement("INSERT INTO voter (id, run, simulation) VALUES (?, ?, ?)");
+            if ((s_stmt_setTime == null) || (s_stmt_setTime.isClosed()))
+                s_stmt_setTime = s_con.prepareStatement("UPDATE voter SET time=? WHERE id = ? AND run = ? and simulation = ?");
+
         }
     }
 
@@ -178,12 +182,21 @@ public enum EDataDB {
      * @param p_runID run number
      * @param p_simID simulation number
      */
-    public void addVoter( String p_voterID, int p_runID, int p_simID ) throws SQLException {
-
+    public void addVoter( String p_voterID, int p_runID, int p_simID ) throws SQLException
+    {
         s_stmt_voter.setString( 1, p_voterID );
         s_stmt_voter.setInt( 2, p_runID );
         s_stmt_voter.setInt( 3, p_simID );
         s_stmt_voter.execute();
+    }
+
+    public void setTime( int p_time, String p_voterID, int p_runID, int p_simID ) throws SQLException
+    {
+        s_stmt_setTime.setInt( 1, p_time );
+        s_stmt_setTime.setString( 2, p_voterID );
+        s_stmt_setTime.setInt( 3, p_runID );
+        s_stmt_setTime.setInt( 4, p_simID );
+        s_stmt_setTime.execute();
     }
 
     // TODO write method and JUnit Test
@@ -250,6 +263,7 @@ public enum EDataDB {
         s_stmt_sim.close();
         s_stmt_run.close();
         s_stmt_voter.close();
+        s_stmt_setTime.close();
         s_con.close();
         System.out.println( "Closed connection" );
     }

@@ -128,7 +128,6 @@ public class EDataDBTest extends TestCase
 
         EDataDB.INSTANCE.addVoter( "agent 1", 1, 7 );
 
-
         ResultSet l_rs = l_stmt.executeQuery( "SELECT * from voter WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
 
         l_rs.next();
@@ -136,8 +135,33 @@ public class EDataDBTest extends TestCase
         assertEquals( 7, l_rs.getInt( "simulation" ) );
         assertEquals( 1, l_rs.getInt( "run" ) );
 
-        l_stmt.execute( "DELETE from voter WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
-        
+        l_stmt.execute( "DELETE from voter * WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
+        EDataDB.INSTANCE.closeCon();
+
+    }
+
+    public void testSetTime() throws SQLException {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        EDataDB.INSTANCE.setTime( 10, "agent 1", 2, 3 );
+
+        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from voter WHERE id = 'agent 1' AND run = 2 AND simulation = 3" );
+
+        l_rs.next();
+        assertEquals( 10, l_rs.getInt( "time" ) );
+        l_stmt.execute( "DELETE from voter time WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
+        EDataDB.INSTANCE.closeCon();
+
     }
 
     private int getMaxID(Statement p_stmt) throws SQLException
