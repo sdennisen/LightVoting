@@ -26,6 +26,7 @@ package org.lightvoting.simulation.statistics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -46,6 +47,8 @@ public enum EDataDB {
     static PreparedStatement s_stmt_group;
     static PreparedStatement s_stmt_addVoterToGroup;
     static PreparedStatement s_stmt_newGroup;
+    static PreparedStatement s_stmt_Result;
+    static PreparedStatement s_stmt_addVoterToResult;
 
     /**
      * connect to given database
@@ -108,10 +111,16 @@ public enum EDataDB {
             // needed for creating new groups
             if ((s_stmt_newGroup == null) || (s_stmt_newGroup.isClosed()))
                 s_stmt_newGroup = s_con.prepareStatement("INSERT into group_table (chair, predecessor) VALUES (?,?) RETURNING id");
-//           // needed for creating initial groups as well as for subsequent groups
+            // needed for creating initial groups as well as for subsequent groups
             if ((s_stmt_addVoterToGroup == null) || (s_stmt_addVoterToGroup.isClosed()))
                 s_stmt_addVoterToGroup = s_con.prepareStatement("INSERT into voter_group (voter, run, simulation, group_column) VALUES (?,?,?,?)");
-            }
+
+            if ((s_stmt_Result == null) || (s_stmt_Result.isClosed()))
+                s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,?,CAST (? as electiontype),?,?,?)");
+            if ((s_stmt_addVoterToResult == null) || (s_stmt_addVoterToResult.isClosed()))
+                s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?,?)");
+
+        }
     }
 
     public static Connection getCon()
@@ -243,8 +252,6 @@ public enum EDataDB {
         s_stmt_addVoterToGroup.setInt( 4, l_groupID );
         s_stmt_addVoterToGroup.execute();
 
-        System.out.println( "Created group " + l_groupID );
-
         return l_groupID;
 
     }
@@ -286,8 +293,6 @@ public enum EDataDB {
         return l_groupID;
     }
 
-    // TODO write method and JUnit Test
-
     /**
      * add new election result entity to database
      * @param p_groupID group id
@@ -296,14 +301,31 @@ public enum EDataDB {
      * @param p_lastElection specifies if election was last election
      * @param p_itNum id of iteration if applicable
      * @param p_imNum id of intermediate election if applicable
-     * @return id of election result
      */
-    public int addResult( int p_groupID, String p_com, String p_type,
-                          boolean p_lastElection, int p_itNum, int p_imNum )
+    public void addResult(int p_groupID, String p_com, String p_type,
+                          boolean p_lastElection, int p_itNum, int p_imNum, HashMap<String, Float> p_voterDiss, int p_run, int p_sim ) throws SQLException
     {
+        s_stmt_Result.setInt( 1, p_groupID );
+        s_stmt_Result.setString( 2, p_com );
+        s_stmt_Result.setString( 3, p_type );
+        s_stmt_Result.setInt( 4, p_itNum );
+        s_stmt_Result.setInt( 5, p_imNum );
+        s_stmt_Result.setBoolean( 6, p_lastElection );
 
-        return -1;
+        s_stmt_Result.execute();
+
+        // add entries to elects table
+
+        for ( String l_key: p_voterDiss.keySet() )
+        {
+            s_stmt_addVoterToResult.setString( 1, l_key );
+            s_stmt_addVoterToResult.setInt( 2, p_groupID );
+            s_stmt_addVoterToResult.setFloat( 3, p_voterDiss.get( l_key) );
+            s_stmt_addVoterToResult.setInt( 4, p_sim );
+            s_stmt_addVoterToResult.setInt( 5, p_run );
+        }
     }
+
 
 
     public static void closeCon() throws SQLException
@@ -316,6 +338,7 @@ public enum EDataDB {
         s_stmt_group.close();
         s_stmt_addVoterToGroup.close();
         s_stmt_newGroup.close();
+        s_stmt_Result.close();
         s_con.close();
         System.out.println( "Closed connection" );
     }

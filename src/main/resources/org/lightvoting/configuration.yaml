@@ -1,8 +1,8 @@
 # LightVoting Config
 
 variables:
-  runs: '100'
-  setting1: 'RANDOM_ITERATIVE'
+  runs: '1'
+  setting1: 'RANDOM_BASIC'
   rule: 'MINISUM_APPROVAL'
   agnum: '11'
   altnum: '10'

@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EDataDBTest extends TestCase
@@ -210,6 +211,40 @@ public class EDataDBTest extends TestCase
 
         int l_pred = this.getPred( l_stmt, l_newgroupID );
         assertEquals( l_pred, 7 );
+
+        EDataDB.INSTANCE.closeCon();
+    }
+
+    public void testAddResult() throws SQLException
+    {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+
+
+        HashMap<String, Float> l_voterDiss = new HashMap<>();
+
+        l_voterDiss.put( "agent 1", (float) 3.2 );
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        EDataDB.INSTANCE.addResult( 7, "{0,1,0}", "BASIC",
+       true, 0, -1, l_voterDiss, 2, 3 );
+
+        ResultSet l_rs = l_stmt.executeQuery( "SELECT * from election_result WHERE group_column = 7" );
+        l_rs.first();
+
+        assertEquals( l_rs.getInt( "group_column"), 7 );
+
+        l_stmt.execute( "DELETE from election_result * WHERE group_column = 7" );
+        l_stmt.execute( "DELETE from elects * WHERE electionresult = 7" );
 
         EDataDB.INSTANCE.closeCon();
     }
