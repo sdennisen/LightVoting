@@ -172,8 +172,6 @@ public enum EDataDB {
         s_stmt_run.execute();
     }
 
-    // TODO write method and JUnit Test
-
     /**
      * add new voter entity to database
      * @param p_voterID name of voter
@@ -186,7 +184,6 @@ public enum EDataDB {
         s_stmt_voter.setInt( 2, p_runID );
         s_stmt_voter.setInt( 3, p_simID );
         s_stmt_voter.execute();
-
     }
 
     // TODO write method and JUnit Test
