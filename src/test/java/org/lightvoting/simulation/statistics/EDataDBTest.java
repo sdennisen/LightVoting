@@ -29,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EDataDBTest extends TestCase
 {
@@ -159,9 +161,71 @@ public class EDataDBTest extends TestCase
 
         l_rs.next();
         assertEquals( 10, l_rs.getInt( "time" ) );
-        l_stmt.execute( "DELETE from voter time WHERE id = 'agent 1' AND run = 1 AND simulation = 7" );
         EDataDB.INSTANCE.closeCon();
 
+    }
+
+    public void testAddGroup() throws SQLException
+    {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        int l_groupID = this.getLastGroup( l_stmt );
+
+        int l_newgroupID = EDataDB.INSTANCE.addGroup( "chair 1", "agent 1", 2, 3);
+
+        assertTrue( l_newgroupID > l_groupID );
+
+        EDataDB.INSTANCE.closeCon();
+    }
+
+    public void testExtendGroup() throws SQLException
+    {
+        try
+        {
+            EDataDB.INSTANCE.openCon( "playground" );
+        } catch (FileNotFoundException l_ex)
+        {
+            l_ex.printStackTrace();
+        }
+
+        List<String> l_ags = new ArrayList<>();
+        l_ags.add( "agent 1" );
+        l_ags.add( "agent 2" );
+
+        int l_newgroupID = EDataDB.INSTANCE.newGroup( "chair 1", 7, l_ags, 2, 3 );
+
+        Statement l_stmt = EDataDB.INSTANCE.getCon().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY );
+
+        int l_pred = this.getPred( l_stmt, l_newgroupID );
+        assertEquals( l_pred, 7 );
+
+        EDataDB.INSTANCE.closeCon();
+    }
+
+    private int getPred(Statement p_stmt, int p_id ) throws SQLException
+    {
+        ResultSet l_rs = p_stmt.executeQuery( "SELECT * from group_table WHERE id = " + p_id );
+        l_rs.first();
+        return l_rs.getInt( "predecessor" );
+    }
+
+    private int getLastGroup(Statement p_stmt) throws SQLException
+    {
+        ResultSet l_rs = p_stmt.executeQuery( "SELECT * from group_table WHERE id = (SELECT MAX(ID) FROM group_table)" );
+        l_rs.first();
+        return l_rs.getInt( "id" );
     }
 
     private int getMaxID(Statement p_stmt) throws SQLException

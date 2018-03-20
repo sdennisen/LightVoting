@@ -26,6 +26,7 @@ package org.lightvoting.simulation.statistics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -42,6 +43,9 @@ public enum EDataDB {
     static PreparedStatement s_stmt_run;
     static PreparedStatement s_stmt_voter;
     static PreparedStatement s_stmt_setTime;
+    static PreparedStatement s_stmt_group;
+    static PreparedStatement s_stmt_addVoterToGroup;
+    static PreparedStatement s_stmt_newGroup;
 
     /**
      * connect to given database
@@ -98,8 +102,16 @@ public enum EDataDB {
                 s_stmt_voter = s_con.prepareStatement("INSERT INTO voter (id, run, simulation) VALUES (?, ?, ?)");
             if ((s_stmt_setTime == null) || (s_stmt_setTime.isClosed()))
                 s_stmt_setTime = s_con.prepareStatement("UPDATE voter SET time=? WHERE id = ? AND run = ? and simulation = ?");
-
-        }
+            // needed for creating initial groups
+            if ((s_stmt_group == null) || (s_stmt_group.isClosed()))
+                s_stmt_group = s_con.prepareStatement("INSERT into group_table (chair) VALUES (?) RETURNING id");
+            // needed for creating new groups
+            if ((s_stmt_newGroup == null) || (s_stmt_newGroup.isClosed()))
+                s_stmt_newGroup = s_con.prepareStatement("INSERT into group_table (chair, predecessor) VALUES (?,?) RETURNING id");
+//           // needed for creating initial groups as well as for subsequent groups
+            if ((s_stmt_addVoterToGroup == null) || (s_stmt_addVoterToGroup.isClosed()))
+                s_stmt_addVoterToGroup = s_con.prepareStatement("INSERT into voter_group (voter, run, simulation, group_column) VALUES (?,?,?,?)");
+            }
     }
 
     public static Connection getCon()
@@ -190,6 +202,14 @@ public enum EDataDB {
         s_stmt_voter.execute();
     }
 
+    /**
+     * set time for specified voter entit in database
+     * @param p_time time
+     * @param p_voterID name of voter
+     * @param p_runID run number
+     * @param p_simID simulation number
+     * @throws SQLException
+     */
     public void setTime( int p_time, String p_voterID, int p_runID, int p_simID ) throws SQLException
     {
         s_stmt_setTime.setInt( 1, p_time );
@@ -199,42 +219,71 @@ public enum EDataDB {
         s_stmt_setTime.execute();
     }
 
-    // TODO write method and JUnit Test
-
-    /**
-     * set time for specified voter entity in database
-     * @param p_id name of voter
-     */
-    public void setTime( String p_id )
-    {
-
-    }
-
-    // TODO write method and JUnit Test
-
     /**
      * add Group
      * @param p_chairID name of chair
+     * @param p_voterID name of voter creating the group
      * @return group id
      */
-    public int addGroup( String p_chairID )
-    {
+    public int addGroup( String p_chairID, String p_voterID, int p_run, int p_sim ) throws SQLException {
 
-        return -1;
+        s_stmt_group.setString( 1, p_chairID );
+        int l_groupID;
+
+        try( final ResultSet l_rs = s_stmt_group.executeQuery(); )
+        {
+            l_rs.next();
+
+            l_groupID = l_rs.getInt("id");
+        }
+        // add entry to table voter_group
+        s_stmt_addVoterToGroup.setString(1, p_voterID );
+        s_stmt_addVoterToGroup.setInt( 2, p_run );
+        s_stmt_addVoterToGroup.setInt( 3, p_sim );
+        s_stmt_addVoterToGroup.setInt( 4, l_groupID );
+        s_stmt_addVoterToGroup.execute();
+
+        System.out.println( "Created group " + l_groupID );
+
+        return l_groupID;
+
     }
-
-    // TODO write method and JUnit Test
 
     /**
      * extend Group
      * @param p_chairID name of chair
      * @param p_pred predecessor id
+     * @param p_voters name of agents
+     * @param p_run run number
+     * @param p_sim simulation number
      * @return group id
      */
-    public int extendGroup( String p_chairID, int p_pred )
+    public int newGroup(String p_chairID, int p_pred, List<String> p_voters, int p_run, int p_sim ) throws SQLException
     {
+        s_stmt_newGroup.setString( 1, p_chairID );
+        s_stmt_newGroup.setInt( 2, p_pred );
+        int l_groupID;
 
-        return -1;
+        try( final ResultSet l_rs = s_stmt_newGroup.executeQuery(); )
+        {
+            l_rs.next();
+
+            l_groupID = l_rs.getInt("id");
+        }
+
+        // add specified voters to group
+
+        for ( int i = 0; i < p_voters.size(); i++ ) {
+
+            // add entry to table voter_group for current voter
+            s_stmt_addVoterToGroup.setString(1, p_voters.get( i ));
+            s_stmt_addVoterToGroup.setInt(2, p_run);
+            s_stmt_addVoterToGroup.setInt(3, p_sim);
+            s_stmt_addVoterToGroup.setInt(4, l_groupID);
+            s_stmt_addVoterToGroup.execute();
+        }
+
+        return l_groupID;
     }
 
     // TODO write method and JUnit Test
@@ -264,6 +313,9 @@ public enum EDataDB {
         s_stmt_run.close();
         s_stmt_voter.close();
         s_stmt_setTime.close();
+        s_stmt_group.close();
+        s_stmt_addVoterToGroup.close();
+        s_stmt_newGroup.close();
         s_con.close();
         System.out.println( "Closed connection" );
     }
