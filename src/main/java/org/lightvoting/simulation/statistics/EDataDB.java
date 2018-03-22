@@ -193,7 +193,7 @@ public enum EDataDB {
     public void addRun( int p_simID, int p_number ) throws SQLException
     {
         s_stmt_run.setInt( 1, p_simID );
-        s_stmt_run.setInt( 2, 1 );
+        s_stmt_run.setInt( 2, p_number );
         s_stmt_run.execute();
     }
 
