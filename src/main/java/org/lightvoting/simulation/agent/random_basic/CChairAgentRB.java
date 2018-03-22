@@ -40,8 +40,10 @@ import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_basic.CGroupRB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 import org.lightvoting.simulation.rule.CMinisumRanksum;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -92,6 +94,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     private List<CVotingAgentRB> m_voters = Collections.synchronizedList( new LinkedList<>() );
     private List<Double> m_dissList = Collections.synchronizedList( new LinkedList<>() );
     private List<CVotingAgentRB> m_dissVoters = Collections.synchronizedList( new LinkedList<>() );
+
+    private HashMap<String, Float> m_dissMap = new HashMap<>();
     private int m_iteration;
    // private List<CVotingAgentRB> m_agents = Collections.synchronizedList( new LinkedList<>() );
     private boolean m_iterative;
@@ -116,6 +120,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
     // todo set via config
     private String m_rule; // = "MINISUM_RANKSUM";
+    private BitVector m_comResultBV;
 
 
     // TODO merge ctors
@@ -464,17 +469,19 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     {
         try
         {
-            final BitVector l_comResultBV;
+           // final BitVector l_comResultBV;
 
             if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-               l_comResultBV = this.computeMSAV();
+               m_comResultBV = this.computeMSAV();
 
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-              l_comResultBV = this.computeMSRS();
+              m_comResultBV = this.computeMSRS();
              // l_comResultBV = new BitVector( m_altnum );
 
-            System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+            System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + m_comResultBV );
+
+
 
             //        m_voters.stream().forEach( i ->
             //            i.trigger(
@@ -495,7 +502,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                     CLiteral.from(
                         "result",
                         CRawTerm.from( this ),
-                        CRawTerm.from( l_comResultBV )
+                        CRawTerm.from( m_comResultBV )
                     )
                 );
                 System.out.println( "addbelief result to agent " + i.name() );
@@ -515,7 +522,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             );
 
             // store election result in map
-            m_map.put( this.name() + "/election result", l_comResultBV );
+            m_map.put( this.name() + "/election result", m_comResultBV );
             // store group size in map
             m_map.put( this.name() + "/group size", m_voters.size() );
             // store names of agents
@@ -586,9 +593,9 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public synchronized void storeDiss( final String p_votingAgent, final Double p_diss )
-    {
+    public synchronized void storeDiss( final String p_votingAgent, final Double p_diss ) throws SQLException {
         m_dissList.add( p_diss );
+        m_dissMap.put( p_votingAgent, p_diss.floatValue() );
 
         System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent );
 
@@ -597,6 +604,15 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 
         //   m_map.put( l_path, l_dissVals );
+
+        if ( m_dissList.size() == this.group().agents().count() ) {
+
+            // in the case of RANDOM_BASIC, it is clear that it is the last election as well
+            // write election_result entity to database
+
+            EDataDB.INSTANCE.addResult(this.group().getDB(), m_comResultBV.toString(), "BASIC", true, 0, -1,
+                    m_dissMap, m_run, m_sim  );
+        }
 
         // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );

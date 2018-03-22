@@ -113,7 +113,7 @@ public enum EDataDB {
                 s_stmt_addVoterToGroup = s_con.prepareStatement("INSERT into voter_group (voter, run, simulation, group_column) VALUES (?,?,?,?)");
 
             if ((s_stmt_Result == null) || (s_stmt_Result.isClosed()))
-                s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,?,CAST (? as electiontype),?,?,?)");
+                s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,CAST (? as SMALLINT[]),CAST (? as electiontype),?,?,?)");
             if ((s_stmt_addVoterToResult == null) || (s_stmt_addVoterToResult.isClosed()))
                 s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?,?)");
 
