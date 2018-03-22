@@ -145,8 +145,10 @@ public final class CMain
 
         if ( s_dbSet )
         {
-            int l_configID = EDataDB.addConfig( s_runs, s_agNum, s_altnum,
+            int l_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
                     s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType );
+
+            int l_simID = EDataDB.INSTANCE.addSim( l_configID );
         }
 
         s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
