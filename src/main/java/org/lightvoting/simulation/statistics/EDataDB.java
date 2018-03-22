@@ -98,7 +98,7 @@ public enum EDataDB {
             if ((s_stmt_conf == null) || (s_stmt_conf.isClosed()))
                 s_stmt_conf = s_con.prepareStatement("INSERT INTO configuration " +
                         "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
-                        "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS RULE), ?, ?, ?, CAST (? AS PREFTYPE)) RETURNING id");
+                        "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS RULE), CAST (? AS SETTING), ?, ?, CAST (? AS PREFTYPE)) RETURNING id");
             if ((s_stmt_run == null) || (s_stmt_run.isClosed()))
                 s_stmt_run = s_con.prepareStatement("INSERT INTO run (simulation, number) VALUES (?, ?) RETURNING number");
             if ((s_stmt_voter == null) || (s_stmt_voter.isClosed()))

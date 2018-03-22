@@ -54,7 +54,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -106,7 +105,7 @@ public final class CMain
     private static String s_rule;
     private static boolean s_dbSet;
     private static String s_dbName;
-    private static Connection s_con;
+    private static String s_prefType;
 
 
     /**
@@ -141,7 +140,14 @@ public final class CMain
         else
             System.out.println( "No database specified for saving results" );
 
+
         readYaml();
+
+        if ( s_dbSet )
+        {
+            int l_configID = EDataDB.addConfig( s_runs, s_agNum, s_altnum,
+                    s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType );
+        }
 
         s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
 
@@ -646,12 +652,13 @@ public final class CMain
                     s_comsize = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 else if ( "rule".equals( l_subValueKey ) )
                     s_rule = l_subValues.get( l_subValueKey );
-
+                else if ( "preferences".equals( l_subValueKey ) )
+                    s_prefType = l_subValues.get( l_subValueKey );
 
                 else if ( l_subValueKey.contains( "setting" ) )
                 {
                     s_settingStrs.add( l_subValues.get( l_subValueKey ) );
-                    s_settingStr = s_settingStr.concat( " " + l_subValues.get( l_subValueKey ) );
+                    s_settingStr = s_settingStr.concat( "" + l_subValues.get( l_subValueKey ) );
                     final String[] l_confStr = l_subValues.get( l_subValueKey ).split( "_" );
                     s_groupings.add( l_confStr[0] );
                     System.out.println( l_confStr[0] );
