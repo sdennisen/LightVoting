@@ -240,6 +240,11 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             {
                 l_group.add( p_votingAgent );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
+
+                // add new group entity to database
+
+                l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
                 p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
            //     m_chairs.add( l_group.chair() );
@@ -261,7 +266,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_chairs.add( l_chairAgent );
 
         // create group in database
-        EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim );
+        l_group.setDB( EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim ) );
       //  m_map.put( "chairNum", m_chairs.size() );
 
 
@@ -334,6 +339,11 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                         CRawTerm.from( 1 )
                     )
                 );
+
+                // if agents have been removed, add new group entry to database
+                if ( l_toRemoveList.size() > 0 )
+                    l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
             }
         }
     }

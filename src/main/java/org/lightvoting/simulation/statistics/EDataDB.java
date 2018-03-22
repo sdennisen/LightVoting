@@ -26,10 +26,7 @@ package org.lightvoting.simulation.statistics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by sophie on 15.03.18.
@@ -277,6 +274,8 @@ public enum EDataDB {
 
             l_groupID = l_rs.getInt("id");
         }
+
+        System.out.println( "id for new group: " + l_groupID );
 
         // add specified voters to group
 

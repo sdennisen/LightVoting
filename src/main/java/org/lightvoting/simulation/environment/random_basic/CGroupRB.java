@@ -27,7 +27,9 @@ import cern.colt.matrix.tbit.BitVector;
 import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -54,6 +56,7 @@ public class CGroupRB
     private int m_currentAg;
     private AtomicLong m_timeout;
     private boolean m_votesSubmitted;
+    private int m_dbID;
 
     /**
      * constructor
@@ -141,7 +144,9 @@ public class CGroupRB
     public void removeAll( final CopyOnWriteArrayList<String> p_toRemoveList )
     {
         for ( int i = 0; i < p_toRemoveList.size(); i++ )
-            m_agentMap.remove( p_toRemoveList.get( i ) );
+        {
+            m_agentMap.remove(p_toRemoveList.get(i));
+        }
     }
 
     public void setSubmitted()
@@ -167,6 +172,23 @@ public class CGroupRB
     public boolean timedout()
     {
         return m_timeout.longValue() == 0;
+    }
+
+    public void setDB(int p_dbID )
+    {
+        m_dbID = p_dbID;
+    }
+
+    public int getDB()
+    {
+        return m_dbID;
+    }
+
+    public List<String> getVoters()
+    {
+        List<String> l_tmpList = new ArrayList<>();
+        l_tmpList.addAll(m_agentMap.keySet());
+        return l_tmpList;
     }
 
     //    public void close()
