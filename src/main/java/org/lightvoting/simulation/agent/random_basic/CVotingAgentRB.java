@@ -41,8 +41,10 @@ import org.lightvoting.simulation.action.message.random_basic.CSendRB;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_basic.CGroupRB;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,6 +70,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      */
 
     private static final long serialVersionUID = 8515283969360402946L;
+    private final int m_sim;
+    private final int m_run;
 
     /**
      * name of the agent
@@ -137,14 +141,16 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      * @param p_altNum number of alternatives
      * @param p_joinThr join threshold
      * @param p_preferences preferences
+     * @param p_sim
+     * @param p_run
      */
 
-    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final IBaseAgent<CChairAgentRB> p_chairagent,
-                           final CEnvironmentRB p_environment,
-                           final int p_altNum,
-                           final double p_joinThr,
-                           final AtomicDoubleArray p_preferences
-    )
+    public CVotingAgentRB(final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final IBaseAgent<CChairAgentRB> p_chairagent,
+                          final CEnvironmentRB p_environment,
+                          final int p_altNum,
+                          final double p_joinThr,
+                          final AtomicDoubleArray p_preferences,
+                          int p_sim, int p_run)
     {
         super( p_configuration );
         m_name = p_name;
@@ -174,6 +180,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 
         m_voted = false;
         m_joinThreshold = p_joinThr;
+        m_sim = p_sim;
+        m_run = p_run;
     }
 
     /**
@@ -184,15 +192,20 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      * @param p_altNum number of alternatives
      * @param p_joinThr join threshold
      * @param p_atomicDoubleArray preferences
+     * @param p_sim
+     * @param p_run
      */
-    public CVotingAgentRB( final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altNum,
-                           final double p_joinThr,
-                           final AtomicDoubleArray p_atomicDoubleArray, final String p_rule
-    )
+    public CVotingAgentRB(final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altNum,
+                          final double p_joinThr,
+                          final AtomicDoubleArray p_atomicDoubleArray, final String p_rule,
+                          int p_sim, int p_run)
     {
         super( p_configuration );
         m_name = p_name;
         m_altNum = p_altNum;
+        m_sim = p_sim;
+        m_run = p_run;
+
         m_atomicPrefValues = p_atomicDoubleArray;
         for ( int i=0; i < m_altNum; i++ )
             m_atomicPrefMap.put( (long) i, m_atomicPrefValues.get( i ) );
@@ -376,13 +389,17 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/diss" )
-    private void submitDiss( final CChairAgentRB p_chairAgent, final BitVector p_result ) throws InterruptedException
-    {
+    private void submitDiss( final CChairAgentRB p_chairAgent, final BitVector p_result ) throws InterruptedException, SQLException {
         // store dissatisfaction with election result in map
         m_map.put( this.name() + "/diss", this.computeDissBV( p_result ) );
         // store waiting time in map
         System.out.println( "cycle " + this.cycleCounter() );
         m_map.put( this.name() + "/waiting time", this.cycleCounter().longValue() );
+
+        // store waiting time in database
+
+        EDataDB.INSTANCE.setTime( this.cycleCounter().intValue(), this.name(), m_run, m_sim );
+
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
@@ -673,6 +690,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         private final List<AtomicDoubleArray> m_prefList;
         private int m_count;
         private String m_rule;
+        private int m_sim;
+        private int m_run;
 
         /**
          * constructor of the generator
@@ -681,14 +700,16 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
          * @param p_fileName h5 file
          * @param p_joinThr join threshold
          * @param p_preferences preferences
+         * @param p_sim
+         * @param p_run
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CVotingAgentGenerator( final CSendRB p_send, final InputStream p_stream, final CEnvironmentRB p_environment, final int p_altNum,
-                                      final String p_fileName,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_preferences,
-                                      final String p_rule
-        ) throws Exception
+        public CVotingAgentGenerator(final CSendRB p_send, final InputStream p_stream, final CEnvironmentRB p_environment, final int p_altNum,
+                                     final String p_fileName,
+                                     final double p_joinThr,
+                                     final List<AtomicDoubleArray> p_preferences,
+                                     final String p_rule,
+                                     int p_sim, int p_run) throws Exception
         {
 
             super(
@@ -725,6 +746,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
             m_joinThr = p_joinThr;
             m_prefList = p_preferences;
             m_rule = p_rule;
+            m_sim = p_sim;
+            m_run = p_run;
         }
 
         // unregister an agent
@@ -777,8 +800,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 m_environment,
                 m_altNum,
                 m_joinThr,
-                m_prefList.get( m_count )
-            );
+                m_prefList.get( m_count ),
+                m_sim,
+                m_run);
 
             m_count++;
             l_votingAgent.sleep( Integer.MAX_VALUE  );
@@ -807,8 +831,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 m_altNum,
                 m_joinThr,
                 m_prefList.get( m_count++ ),
-                m_rule
-            );
+                m_rule,
+                m_sim,
+                m_run);
 
             System.out.println( l_votingAgent.name() + " Preferences: " + l_preferences );
 
