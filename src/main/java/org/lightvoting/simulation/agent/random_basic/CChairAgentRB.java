@@ -605,13 +605,21 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
         //   m_map.put( l_path, l_dissVals );
 
-        if ( m_dissList.size() == this.group().agents().count() ) {
+        if ( m_dissList.size() == this.group().agents().count() )
+        {
 
             // in the case of RANDOM_BASIC, it is clear that it is the last election as well
             // write election_result entity to database
 
-            EDataDB.INSTANCE.addResult(this.group().getDB(), m_comResultBV.toString(), "BASIC", true, 0, -1,
-                    m_dissMap, m_run, m_sim  );
+            EDataDB.INSTANCE.addResult(this.group().getDB(),
+                    m_comResultBV.toString(),
+                    "BASIC",
+                    true,
+                    0,
+                    -1,
+                    m_dissMap,
+                    m_run,
+                    m_sim  );
         }
 
         // TODO write data to list instead

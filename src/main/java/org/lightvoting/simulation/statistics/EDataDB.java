@@ -115,7 +115,7 @@ public enum EDataDB {
             if ((s_stmt_Result == null) || (s_stmt_Result.isClosed()))
                 s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,CAST (? as SMALLINT[]),CAST (? as electiontype),?,?,?)");
             if ((s_stmt_addVoterToResult == null) || (s_stmt_addVoterToResult.isClosed()))
-                s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?,?)");
+                s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?)");
 
         }
     }
@@ -322,6 +322,7 @@ public enum EDataDB {
             s_stmt_addVoterToResult.setFloat( 3, p_voterDiss.get( l_key) );
             s_stmt_addVoterToResult.setInt( 4, p_sim );
             s_stmt_addVoterToResult.setInt( 5, p_run );
+            s_stmt_addVoterToResult.execute();
         }
     }
 
