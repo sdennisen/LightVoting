@@ -84,8 +84,8 @@ public final class CVotingAgentRandomBasicGeneratorTest extends TestCase
                 CVotingAgentRB.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList(), "MINISUM_APPROVAL" )
                     .generatemultiple( 23, new CChairAgentRB.CChairAgentGenerator( l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ),
                                                                                    "foo.h5", 0,
-                                                                                   3, 1, 5
-                    ) )
+                                                                                   3, 1, 5,
+                            1 ) )
                     .collect( Collectors.toSet() );
 
             assertEquals( 23, l_agents.size() );

@@ -39,6 +39,7 @@ import org.lightvoting.simulation.action.message.random_basic.CSendRB;
 import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 import org.lightvoting.simulation.environment.random_basic.CGroupRB;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,6 +63,8 @@ import java.util.stream.Stream;
 @IAgentAction
 public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 {
+    private final int m_sim;
+    private final int m_run;
     private List<CVotingAgentRB> m_voters = new ArrayList<>();
     private HashSet<CChairAgentRB> m_chairs = new HashSet<>();
     private HashSet<CGroupRB> m_groups = new HashSet<>();
@@ -105,20 +108,21 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
      * @param p_joinThr join threshold
      * @param p_prefList preference list
      * @param p_comsize committee size
+     * @param p_sim
      * @throws Exception exception
      */
-    public CBrokerAgentRB( final String p_broker,
-                           @Nonnull final IAgentConfiguration p_configuration,
-                           final int p_agNum,
-                           final InputStream p_stream,
-                           final InputStream p_chairstream,
-                           final CEnvironmentRB p_environment,
-                           final int p_altnum,
-                           final String p_name,
-                           final double p_joinThr,
-                           final List<AtomicDoubleArray> p_prefList,
-                           final int p_comsize, final String p_rule
-    ) throws Exception
+    public CBrokerAgentRB(final String p_broker,
+                          @Nonnull final IAgentConfiguration p_configuration,
+                          final int p_agNum,
+                          final InputStream p_stream,
+                          final InputStream p_chairstream,
+                          final CEnvironmentRB p_environment,
+                          final int p_altnum,
+                          final String p_name,
+                          final double p_joinThr,
+                          final List<AtomicDoubleArray> p_prefList,
+                          final int p_comsize, final String p_rule,
+                          int p_sim, int p_run ) throws Exception
     {
         super( p_configuration );
         m_broker = p_broker;
@@ -135,10 +139,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_timeout = new AtomicLong( 20 );
         m_comsize = p_comsize;
         m_rule = p_rule;
+        m_sim = p_sim;
+        m_run = p_run;
 
         m_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), m_stream, m_environmentRB, m_altnum, m_name,
                                                                            m_joinThr, m_prefList, m_rule );
-        m_chairagentgenerator = new CChairAgentRB.CChairAgentGenerator( m_chairstream, m_environmentRB, m_name, m_altnum, m_comsize, m_rule );
+        m_chairagentgenerator = new CChairAgentRB.CChairAgentGenerator( m_chairstream, m_environmentRB, m_name, m_altnum, m_comsize, m_rule, m_sim, m_run);
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -203,7 +209,6 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     @IAgentActionName( name = "create/ag" )
     private CVotingAgentRB createAgent( final Number p_createdNum ) throws Exception
     {
-
         System.out.println( "voters generated so far: " + p_createdNum );
 
         final CVotingAgentRB l_testvoter = m_votingagentgenerator.generatesinglenew();
@@ -211,6 +216,12 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         System.out.println( "new voter:" + l_testvoter.name() );
 
         m_voters.add( l_testvoter );
+
+        String l_name = l_testvoter.name();
+
+        // add voter entity to database
+
+        EDataDB.INSTANCE.addVoter(l_name, m_run, m_sim);
 
         return l_testvoter;
 
@@ -248,6 +259,9 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
 
         m_chairs.add( l_chairAgent );
+
+        // create group in database
+        EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim );
       //  m_map.put( "chairNum", m_chairs.size() );
 
 
@@ -345,6 +359,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         private int m_altnum;
         private int m_comsize;
         private String m_rule;
+        private int m_sim;
+        private int m_run;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -359,22 +375,24 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
          * @param p_joinThr join threshold
          * @param p_prefList preference list
          * @param p_comsize committee size
+         * @param p_sim
+         * @param p_run
          * @throws Exception exception
          */
 
-        public CBrokerAgentGenerator( final CSendRB p_send,
-                                      final FileInputStream p_brokerStream,
-                                      final int p_agNum,
-                                      final InputStream p_stream,
-                                      final InputStream p_chairStream,
-                                      final CEnvironmentRB p_environment,
-                                      final int p_altnum,
-                                      final String p_name,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_prefList,
-                                      final int p_comsize,
-                                      final String p_rule
-        ) throws Exception
+        public CBrokerAgentGenerator(final CSendRB p_send,
+                                     final FileInputStream p_brokerStream,
+                                     final int p_agNum,
+                                     final InputStream p_stream,
+                                     final InputStream p_chairStream,
+                                     final CEnvironmentRB p_environment,
+                                     final int p_altnum,
+                                     final String p_name,
+                                     final double p_joinThr,
+                                     final List<AtomicDoubleArray> p_prefList,
+                                     final int p_comsize,
+                                     final String p_rule,
+                                     int p_sim, int p_run) throws Exception
         {
             super(
                     // input ASL stream
@@ -412,6 +430,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             m_prefList = p_prefList;
             m_comsize = p_comsize;
             m_rule = p_rule;
+            m_sim = p_sim;
+            m_run = p_run;
         }
 
         @Nullable
@@ -439,8 +459,9 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                     m_joinThr,
                     m_prefList,
                     m_comsize,
-                    m_rule
-                );
+                    m_rule,
+                    m_sim,
+                    m_run);
             }
             catch ( final Exception l_ex )
             {

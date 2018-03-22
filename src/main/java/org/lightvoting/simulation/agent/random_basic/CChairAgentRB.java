@@ -66,6 +66,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      * serialUID
      */
     private static final long serialVersionUID = -4459675039048514445L;
+    private final int m_sim;
 
     /**
      * name of chair
@@ -135,7 +136,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                           final int p_run,
                           final double p_dissthr,
                           final int p_comsize,
-                          final int p_altnum
+                          final int p_altnum,
+                          final int p_sim
     )
     {
         super( p_configuration );
@@ -148,6 +150,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         m_altnum = p_altnum;
         // TODO via parameters
         m_voteTimeout = 10;
+        m_sim = p_sim;
 
     }
 
@@ -160,7 +163,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      * @param p_comsize committee size
      */
     public CChairAgentRB( final String p_name, final IAgentConfiguration<CChairAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altnum,
-                          final int p_comsize, final String p_rule
+                          final int p_comsize, final String p_rule, int p_sim, int p_run
     )
     {
         super( p_configuration );
@@ -170,6 +173,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         // TODO via parameters
         m_voteTimeout = 10;
         m_rule = p_rule;
+        m_sim = p_sim;
+        m_run = p_run;
     }
 
 
@@ -345,8 +350,6 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             i -> l_groupAtomic.set( i .values().findFirst().get().raw() ) );
         return l_groupAtomic.get();
     }
-
-
 
 
 //    /**
@@ -927,6 +930,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         private int m_comsize;
         private int m_altnum;
         private String m_rule;
+        private int m_sim;
 
         /**
          * constructor of the generator
@@ -936,13 +940,14 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
          * @param p_run run number
          * @param p_dissthr dissatisfaction threshold
          * @param p_comsize size of committee to be elected
+         * @param p_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentRB p_environment,
-                                     final String p_fileName,
-                                     final int p_run,
-                                     final double p_dissthr, final int p_comsize, final int p_altnum
-        ) throws Exception
+        public CChairAgentGenerator(final InputStream p_stream, final CEnvironmentRB p_environment,
+                                    final String p_fileName,
+                                    final int p_run,
+                                    final double p_dissthr, final int p_comsize, final int p_altnum,
+                                    int p_sim) throws Exception
         {
             super(
                 // input ASL stream
@@ -974,6 +979,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             m_dissthr = p_dissthr;
             m_comsize = p_comsize;
             m_altnum = p_altnum;
+            m_sim = p_sim;
         }
 
         /**
@@ -982,10 +988,12 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
          * @param p_environment environment
          * @param p_name file name
          * @param p_altnum number of alternatives
+         * @param p_sim
+         * @param p_run
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentRB p_environment, final String p_name, final int p_altnum, final int p_comsize, final String p_rule )
+        public CChairAgentGenerator(final InputStream p_chairstream, final CEnvironmentRB p_environment, final String p_name, final int p_altnum, final int p_comsize, final String p_rule, int p_sim, int p_run)
         throws Exception
         {
             super(
@@ -1018,6 +1026,8 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
             m_altnum = p_altnum;
             m_comsize = p_comsize;
             m_rule = p_rule;
+            m_sim = p_sim;
+            m_run = p_run;
         }
 
         /**
@@ -1034,7 +1044,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_sim );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
@@ -1051,7 +1061,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_rule );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_rule, m_sim, m_run );
             return l_chairAgent;
         }
 
