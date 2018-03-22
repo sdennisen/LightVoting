@@ -106,6 +106,8 @@ public final class CMain
     private static boolean s_dbSet;
     private static String s_dbName;
     private static String s_prefType;
+    private static int s_configID;
+    private static int s_simID;
 
 
     /**
@@ -145,10 +147,10 @@ public final class CMain
 
         if ( s_dbSet )
         {
-            int l_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
+            s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
                     s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType );
 
-            int l_simID = EDataDB.INSTANCE.addSim( l_configID );
+            s_simID = EDataDB.INSTANCE.addSim( s_configID );
         }
 
         s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
@@ -166,6 +168,8 @@ public final class CMain
 
             for ( int r = 0; r < s_runs; r++ )
             {
+                EDataDB.INSTANCE.addRun( s_simID, r );
+
                 readPreferences( r );
                 System.out.println( s_prefList );
 
@@ -188,7 +192,7 @@ public final class CMain
                         final String l_brokerRB = "src/main/resources/org/lightvoting/broker_rb.asl";
 
                         createBrokerRandomBasic(
-                            l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList );
+                            l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList, r, s_simID );
 
                         l_stream.close();
                         l_chairstream.close();
@@ -542,13 +546,14 @@ public final class CMain
 
     }
 
-    private static void createBrokerRandomBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendRB p_send,
-                                      final FileInputStream p_stream,
-                                      final CEnvironmentRB p_environment,
-                                      final int p_altnum, final String p_name,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_prefList
-    ) throws Exception
+    private static void createBrokerRandomBasic(final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendRB p_send,
+                                                final FileInputStream p_stream,
+                                                final CEnvironmentRB p_environment,
+                                                final int p_altnum, final String p_name,
+                                                final double p_joinThr,
+                                                final List<AtomicDoubleArray> p_prefList,
+                                                final int p_run,
+                                                int p_sim) throws Exception
     {
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
@@ -564,8 +569,9 @@ public final class CMain
                                                                         s_joinThr,
                                                                         s_prefList,
                                                                         s_comsize,
-                                                                        s_rule
-        );
+                                                                        s_rule,
+                                                                        p_sim,
+                                                                        p_run);
 
         s_brokerRandomBasic = s_brokerGeneratorRB.generatesingle();
     }
