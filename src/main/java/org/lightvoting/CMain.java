@@ -103,7 +103,6 @@ public final class CMain
     private static boolean s_coordinatedIterative;
     private static int s_checkAgNum;
     private static String s_rule;
-    private static boolean s_dbSet;
     private static String s_dbName;
     private static String s_prefType;
     private static int s_configID;
@@ -133,8 +132,8 @@ public final class CMain
 
         // creater BrokerAgent
 
-        if ( p_args.length > 1 ) {
-            s_dbSet = true;
+        if ( p_args.length > 1 )
+        {
             s_dbName = p_args[1];
             EDataDB.INSTANCE.openCon(s_dbName);
             System.out.println( "connected to database " + s_dbName );
@@ -142,16 +141,11 @@ public final class CMain
         else
             System.out.println( "No database specified for saving results" );
 
-
         readYaml();
 
-        if ( s_dbSet )
-        {
-            s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
+        s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
                     s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType );
-
-            s_simID = EDataDB.INSTANCE.addSim( s_configID );
-        }
+        s_simID = EDataDB.INSTANCE.addSim( s_configID );
 
         s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
 
@@ -472,8 +466,7 @@ public final class CMain
         }
 
         // close connection
-        if ( s_dbSet )
-            EDataDB.INSTANCE.closeCon();
+        EDataDB.INSTANCE.closeCon();
     }
 
 

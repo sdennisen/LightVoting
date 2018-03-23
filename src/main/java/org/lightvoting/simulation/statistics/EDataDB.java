@@ -26,13 +26,17 @@ package org.lightvoting.simulation.statistics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
 
 /**
  * Created by sophie on 15.03.18.
  * https://www.mkyong.com/jdbc/how-do-connect-to-postgresql-with-jdbc-driver-java/
  */
-public enum EDataDB {
+public enum EDataDB
+{
     INSTANCE;
 
     static Connection s_con;
@@ -46,6 +50,7 @@ public enum EDataDB {
     static PreparedStatement s_stmt_newGroup;
     static PreparedStatement s_stmt_Result;
     static PreparedStatement s_stmt_addVoterToResult;
+    private static boolean m_open;
 
     /**
      * connect to given database
@@ -53,8 +58,10 @@ public enum EDataDB {
      */
     static public void openCon( String p_dbName ) throws FileNotFoundException, SQLException {
 
-        if ((s_con == null) || (s_con.isClosed())) {
-            try {
+        if ((s_con == null) || (s_con.isClosed()))
+        {
+            try
+            {
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException l_ex) {
                 System.out.println("PostgreSQL JDBC driver not found");
@@ -62,7 +69,8 @@ public enum EDataDB {
                 return;
             }
 
-            try {
+            try
+            {
                 File l_file = new File("/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
 
                 Scanner l_sc;
@@ -84,7 +92,8 @@ public enum EDataDB {
                                 "&password=" + l_pw,
                         l_props);
 
-            } catch (SQLException l_ex) {
+            } catch (SQLException l_ex)
+            {
                 System.out.println("Connection failed");
                 l_ex.printStackTrace();
                 return;
@@ -116,7 +125,7 @@ public enum EDataDB {
                 s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,CAST (? as SMALLINT[]),CAST (? as electiontype),?,?,?)");
             if ((s_stmt_addVoterToResult == null) || (s_stmt_addVoterToResult.isClosed()))
                 s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?)");
-
+            m_open = true;
         }
     }
 
@@ -135,14 +144,18 @@ public enum EDataDB {
      */
     public static int addSim(int p_configID) throws SQLException
     {
-        s_stmt_sim.setInt(1, p_configID);
-
-        try( final ResultSet l_rs = s_stmt_sim.executeQuery(); )
+        if ( m_open )
         {
-            l_rs.next();
+            s_stmt_sim.setInt(1, p_configID);
 
-            return l_rs.getInt("number");
+            try (final ResultSet l_rs = s_stmt_sim.executeQuery();)
+            {
+                l_rs.next();
+
+                return l_rs.getInt("number");
+            }
         }
+        return -1;
     }
 
 
@@ -164,22 +177,27 @@ public enum EDataDB {
                                  int p_capacity, String p_rule, String p_setting,
                                  float p_jointhr, float p_dissthr, String p_prefs ) throws SQLException {
 
-        s_stmt_conf.setInt(1, p_runs);
-        s_stmt_conf.setInt(2, p_agnum);
-        s_stmt_conf.setInt(3, p_altnum);
-        s_stmt_conf.setInt(4, p_comsize);
-        s_stmt_conf.setInt(5, p_capacity);
-        s_stmt_conf.setString(6, p_rule);
-        s_stmt_conf.setString(7, p_setting);
-        s_stmt_conf.setFloat(8, p_jointhr);
-        s_stmt_conf.setFloat(9, p_dissthr);
-        s_stmt_conf.setString(10, p_prefs);
+        if ( m_open )
+        {
+            s_stmt_conf.setInt(1, p_runs);
+            s_stmt_conf.setInt(2, p_agnum);
+            s_stmt_conf.setInt(3, p_altnum);
+            s_stmt_conf.setInt(4, p_comsize);
+            s_stmt_conf.setInt(5, p_capacity);
+            s_stmt_conf.setString(6, p_rule);
+            s_stmt_conf.setString(7, p_setting);
+            s_stmt_conf.setFloat(8, p_jointhr);
+            s_stmt_conf.setFloat(9, p_dissthr);
+            s_stmt_conf.setString(10, p_prefs);
 
-        try (final ResultSet l_rs = s_stmt_conf.executeQuery();) {
-            l_rs.next();
+            try (final ResultSet l_rs = s_stmt_conf.executeQuery();)
+            {
+                l_rs.next();
 
-            return l_rs.getInt("id");
+                return l_rs.getInt("id");
+            }
         }
+        return -1;
     }
 
     /**
@@ -189,9 +207,12 @@ public enum EDataDB {
      */
     public void addRun( int p_simID, int p_number ) throws SQLException
     {
-        s_stmt_run.setInt( 1, p_simID );
-        s_stmt_run.setInt( 2, p_number );
-        s_stmt_run.execute();
+        if ( m_open )
+        {
+            s_stmt_run.setInt(1, p_simID);
+            s_stmt_run.setInt(2, p_number);
+            s_stmt_run.execute();
+        }
     }
 
     /**
@@ -202,10 +223,13 @@ public enum EDataDB {
      */
     public void addVoter( String p_voterID, int p_runID, int p_simID ) throws SQLException
     {
-        s_stmt_voter.setString( 1, p_voterID );
-        s_stmt_voter.setInt( 2, p_runID );
-        s_stmt_voter.setInt( 3, p_simID );
-        s_stmt_voter.execute();
+        if ( m_open )
+        {
+            s_stmt_voter.setString(1, p_voterID);
+            s_stmt_voter.setInt(2, p_runID);
+            s_stmt_voter.setInt(3, p_simID);
+            s_stmt_voter.execute();
+        }
     }
 
     /**
@@ -218,11 +242,14 @@ public enum EDataDB {
      */
     public void setTime( int p_time, String p_voterID, int p_runID, int p_simID ) throws SQLException
     {
-        s_stmt_setTime.setInt( 1, p_time );
-        s_stmt_setTime.setString( 2, p_voterID );
-        s_stmt_setTime.setInt( 3, p_runID );
-        s_stmt_setTime.setInt( 4, p_simID );
-        s_stmt_setTime.execute();
+        if ( m_open )
+        {
+            s_stmt_setTime.setInt(1, p_time);
+            s_stmt_setTime.setString(2, p_voterID);
+            s_stmt_setTime.setInt(3, p_runID);
+            s_stmt_setTime.setInt(4, p_simID);
+            s_stmt_setTime.execute();
+        }
     }
 
     /**
@@ -233,24 +260,26 @@ public enum EDataDB {
      */
     public int addGroup( String p_chairID, String p_voterID, int p_run, int p_sim ) throws SQLException {
 
-        s_stmt_group.setString( 1, p_chairID );
-        int l_groupID;
-
-        try( final ResultSet l_rs = s_stmt_group.executeQuery(); )
+        if ( m_open )
         {
-            l_rs.next();
+            s_stmt_group.setString(1, p_chairID);
+            int l_groupID;
 
-            l_groupID = l_rs.getInt("id");
+            try (final ResultSet l_rs = s_stmt_group.executeQuery();) {
+                l_rs.next();
+
+                l_groupID = l_rs.getInt("id");
+            }
+            // add entry to table voter_group
+            s_stmt_addVoterToGroup.setString(1, p_voterID);
+            s_stmt_addVoterToGroup.setInt(2, p_run);
+            s_stmt_addVoterToGroup.setInt(3, p_sim);
+            s_stmt_addVoterToGroup.setInt(4, l_groupID);
+            s_stmt_addVoterToGroup.execute();
+
+            return l_groupID;
         }
-        // add entry to table voter_group
-        s_stmt_addVoterToGroup.setString(1, p_voterID );
-        s_stmt_addVoterToGroup.setInt( 2, p_run );
-        s_stmt_addVoterToGroup.setInt( 3, p_sim );
-        s_stmt_addVoterToGroup.setInt( 4, l_groupID );
-        s_stmt_addVoterToGroup.execute();
-
-        return l_groupID;
-
+        return -1;
     }
 
     /**
@@ -264,32 +293,37 @@ public enum EDataDB {
      */
     public int newGroup(String p_chairID, int p_pred, List<String> p_voters, int p_run, int p_sim ) throws SQLException
     {
-        s_stmt_newGroup.setString( 1, p_chairID );
-        s_stmt_newGroup.setInt( 2, p_pred );
-        int l_groupID;
-
-        try( final ResultSet l_rs = s_stmt_newGroup.executeQuery(); )
+        if ( m_open )
         {
-            l_rs.next();
+            s_stmt_newGroup.setString(1, p_chairID);
+            s_stmt_newGroup.setInt(2, p_pred);
+            int l_groupID;
 
-            l_groupID = l_rs.getInt("id");
+            try (final ResultSet l_rs = s_stmt_newGroup.executeQuery();)
+            {
+                l_rs.next();
+
+                l_groupID = l_rs.getInt("id");
+            }
+
+            System.out.println("id for new group: " + l_groupID);
+
+            // add specified voters to group
+
+            for (int i = 0; i < p_voters.size(); i++)
+            {
+
+                // add entry to table voter_group for current voter
+                s_stmt_addVoterToGroup.setString(1, p_voters.get(i));
+                s_stmt_addVoterToGroup.setInt(2, p_run);
+                s_stmt_addVoterToGroup.setInt(3, p_sim);
+                s_stmt_addVoterToGroup.setInt(4, l_groupID);
+                s_stmt_addVoterToGroup.execute();
+            }
+
+            return l_groupID;
         }
-
-        System.out.println( "id for new group: " + l_groupID );
-
-        // add specified voters to group
-
-        for ( int i = 0; i < p_voters.size(); i++ ) {
-
-            // add entry to table voter_group for current voter
-            s_stmt_addVoterToGroup.setString(1, p_voters.get( i ));
-            s_stmt_addVoterToGroup.setInt(2, p_run);
-            s_stmt_addVoterToGroup.setInt(3, p_sim);
-            s_stmt_addVoterToGroup.setInt(4, l_groupID);
-            s_stmt_addVoterToGroup.execute();
-        }
-
-        return l_groupID;
+        return -1;
     }
 
     /**
@@ -304,25 +338,28 @@ public enum EDataDB {
     public void addResult(int p_groupID, String p_com, String p_type,
                           boolean p_lastElection, int p_itNum, int p_imNum, HashMap<String, Float> p_voterDiss, int p_run, int p_sim ) throws SQLException
     {
-        s_stmt_Result.setInt( 1, p_groupID );
-        s_stmt_Result.setString( 2, p_com );
-        s_stmt_Result.setString( 3, p_type );
-        s_stmt_Result.setInt( 4, p_itNum );
-        s_stmt_Result.setInt( 5, p_imNum );
-        s_stmt_Result.setBoolean( 6, p_lastElection );
-
-        s_stmt_Result.execute();
-
-        // add entries to elects table
-
-        for ( String l_key: p_voterDiss.keySet() )
+        if ( m_open )
         {
-            s_stmt_addVoterToResult.setString( 1, l_key );
-            s_stmt_addVoterToResult.setInt( 2, p_groupID );
-            s_stmt_addVoterToResult.setFloat( 3, p_voterDiss.get( l_key) );
-            s_stmt_addVoterToResult.setInt( 4, p_sim );
-            s_stmt_addVoterToResult.setInt( 5, p_run );
-            s_stmt_addVoterToResult.execute();
+            s_stmt_Result.setInt(1, p_groupID);
+            s_stmt_Result.setString(2, p_com);
+            s_stmt_Result.setString(3, p_type);
+            s_stmt_Result.setInt(4, p_itNum);
+            s_stmt_Result.setInt(5, p_imNum);
+            s_stmt_Result.setBoolean(6, p_lastElection);
+
+            s_stmt_Result.execute();
+
+            // add entries to elects table
+
+            for (String l_key : p_voterDiss.keySet())
+            {
+                s_stmt_addVoterToResult.setString(1, l_key);
+                s_stmt_addVoterToResult.setInt(2, p_groupID);
+                s_stmt_addVoterToResult.setFloat(3, p_voterDiss.get(l_key));
+                s_stmt_addVoterToResult.setInt(4, p_sim);
+                s_stmt_addVoterToResult.setInt(5, p_run);
+                s_stmt_addVoterToResult.execute();
+            }
         }
     }
 
@@ -330,17 +367,21 @@ public enum EDataDB {
 
     public static void closeCon() throws SQLException
     {
-        s_stmt_conf.close();
-        s_stmt_sim.close();
-        s_stmt_run.close();
-        s_stmt_voter.close();
-        s_stmt_setTime.close();
-        s_stmt_group.close();
-        s_stmt_addVoterToGroup.close();
-        s_stmt_newGroup.close();
-        s_stmt_Result.close();
-        s_con.close();
-        System.out.println( "Closed connection" );
+        if ( m_open )
+        {
+            s_stmt_conf.close();
+            s_stmt_sim.close();
+            s_stmt_run.close();
+            s_stmt_voter.close();
+            s_stmt_setTime.close();
+            s_stmt_group.close();
+            s_stmt_addVoterToGroup.close();
+            s_stmt_newGroup.close();
+            s_stmt_Result.close();
+            s_con.close();
+            System.out.println("Closed connection");
+            m_open = false;
+        }
     }
 
 }
