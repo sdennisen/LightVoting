@@ -27,7 +27,9 @@ import cern.colt.matrix.tbit.BitVector;
 import org.lightvoting.simulation.agent.random_iterative.CChairAgentRI;
 import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -109,6 +111,13 @@ public class CGroupRI
     public int getDB()
     {
         return m_dbID;
+    }
+
+    public List<String> getVoters()
+    {
+        List<String> l_tmpList = new ArrayList<>();
+        l_tmpList.addAll(m_agentMap.keySet());
+        return l_tmpList;
     }
 
     public AtomicLong counter()

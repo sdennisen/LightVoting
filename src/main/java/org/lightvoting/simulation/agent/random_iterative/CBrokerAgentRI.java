@@ -239,6 +239,12 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             {
                 l_group.add( p_votingAgent );
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
+
+                // add new group entity to database
+
+                l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
+
                 p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
                 p_votingAgent.addGroupID( l_group );
                 p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_group.chair() ) ) );
@@ -412,6 +418,10 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                         );
 
                         l_group.endWaitForDiss();
+
+                        // if agents have been removed, add new group entry to database
+                        if ( l_toRemoveList.size() > 0 )
+                            l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
 
                     }
                 }
