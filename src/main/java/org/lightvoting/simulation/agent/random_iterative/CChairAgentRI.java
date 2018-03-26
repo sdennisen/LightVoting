@@ -119,6 +119,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     private final String m_rule;
     private int m_sim;
+    private HashMap<String,Float> m_dissMapStr = new HashMap<>();
 
 
     // TODO merge ctors
@@ -155,6 +156,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_voteTimeout = 20;
         m_rule = p_rule;
         m_sim = p_sim;
+
+        System.out.println( "sim in chair " + m_sim);
     }
 
     /**
@@ -188,6 +191,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_rule = p_rule;
         m_run = p_run;
         m_sim = p_sim;
+
+        System.out.println( "sim in chair " + m_sim);
     }
 
 
@@ -487,8 +492,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "compute/result" )
 
-    public synchronized void computeResult( final Number p_iteration )
-    {
+    public synchronized void computeResult( final Number p_iteration ) throws SQLException {
         try
         {
             final BitVector l_comResultBV;
@@ -503,6 +507,18 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                 l_comResultBV = this.computeMSRS();
 
             System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
+
+            // for iterative election, set lastElection to false per default, is set to true later
+
+            EDataDB.INSTANCE.addResult(this.group().getDB(),
+                    l_comResultBV.toString(),
+                    "ITERATIVE",
+                    false,
+                    p_iteration.intValue(),
+                    -1,
+                    m_dissMapStr,
+                    m_run,
+                    m_sim  );
 
             //        m_voters.stream().forEach( i ->
             //            i.trigger(
@@ -637,6 +653,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
         m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+        m_dissMapStr.put( p_votingAgent, p_diss.floatValue() );
 
 //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
 //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
@@ -936,6 +953,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         {
             System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
 
+            EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
 
@@ -944,7 +962,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         else if ( m_newdissMap.size() == 1 )
         {
             System.out.println( this.name() + ": only one voter left, we are done " );
-
+            EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
 
@@ -1130,15 +1148,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
          * @param p_altnum number of alternatives
          * @param p_dissthr dissatisfaction threshold
          * @param p_broker broker agent
-         * @param m_run
-         * @param m_sim
+         * @param p_run
+         * @param p_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
         public CChairAgentGenerator(final InputStream p_chairstream, final CEnvironmentRI p_environment, final String p_name, final int p_altnum,
                                     final int p_comsize, final double p_dissthr,
                                     final CBrokerAgentRI p_broker, final String p_rule,
-                                    int m_run, int m_sim)
+                                    int p_run, int p_sim)
         throws Exception
         {
             super(
@@ -1173,6 +1191,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             m_dissthr = p_dissthr;
             m_broker = p_broker;
             m_rule = p_rule;
+            m_run = p_run;
+            m_sim = p_sim;
 
         }
 

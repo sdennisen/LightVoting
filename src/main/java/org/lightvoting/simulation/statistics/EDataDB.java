@@ -50,6 +50,7 @@ public enum EDataDB
     static PreparedStatement s_stmt_newGroup;
     static PreparedStatement s_stmt_Result;
     static PreparedStatement s_stmt_addVoterToResult;
+    static PreparedStatement s_stmt_setLastElection;
     private static boolean m_open;
 
     /**
@@ -125,6 +126,9 @@ public enum EDataDB
                 s_stmt_Result = s_con.prepareStatement("INSERT into election_result ( group_column, committee, type, itNum, imNum, lastElection ) VALUES (?,CAST (? as SMALLINT[]),CAST (? as electiontype),?,?,?)");
             if ((s_stmt_addVoterToResult == null) || (s_stmt_addVoterToResult.isClosed()))
                 s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?)");
+            if ((s_stmt_setLastElection == null) || (s_stmt_setLastElection.isClosed()))
+                s_stmt_setLastElection = s_con.prepareStatement("UPDATE election_result SET lastelection = ? WHERE group_column = ?");
+
             m_open = true;
         }
     }
@@ -384,4 +388,10 @@ public enum EDataDB
         }
     }
 
+    public void setLastElection(int p_groupID, boolean p_boolean ) throws SQLException
+    {
+        s_stmt_setLastElection.setBoolean( 1, p_boolean );
+        s_stmt_setLastElection.setInt( 2, p_groupID );
+        s_stmt_setLastElection.execute();
+    }
 }
