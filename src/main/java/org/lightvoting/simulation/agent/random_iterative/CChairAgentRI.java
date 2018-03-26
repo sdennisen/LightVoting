@@ -952,7 +952,6 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         if ( l_max <= m_dissThreshold )
         {
             System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
-
             EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }

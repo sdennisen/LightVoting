@@ -41,8 +41,10 @@ import org.lightvoting.simulation.action.message.random_iterative.CSendRI;
 import org.lightvoting.simulation.constants.CVariableBuilder;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.environment.random_iterative.CGroupRI;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -123,6 +125,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private AtomicLong m_cycle = new AtomicLong();
 
     private final String m_rule;
+    private int m_run;
+    int m_sim;
 
     // TODO refactor ctors
 
@@ -183,11 +187,14 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * @param p_altNum number of alternatives
      * @param p_joinThr join threshold
      * @param p_atomicDoubleArray preferences
+     * @param p_run run number
+     * @param p_sim simulation number
      */
-    public CVotingAgentRI( final String p_name, final IAgentConfiguration<CVotingAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altNum,
-                           final double p_joinThr,
-                           final AtomicDoubleArray p_atomicDoubleArray, final String p_rule
-    )
+    public CVotingAgentRI(final String p_name, final IAgentConfiguration<CVotingAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altNum,
+                          final double p_joinThr,
+                          final AtomicDoubleArray p_atomicDoubleArray, final String p_rule,
+                          int p_run,
+                          int p_sim)
     {
         super( p_configuration );
         m_name = p_name;
@@ -214,6 +221,10 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
+
+        m_run = p_run;
+
+        m_sim = p_sim;
     }
 
     // overload agent-cycle
@@ -407,8 +418,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     @IAgentActionFilter
     @IAgentActionName( name = "submit/diss" )
-    private void submitDiss( final CChairAgentRI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException
-    {
+    private void submitDiss( final CChairAgentRI p_chairAgent, final BitVector p_result, final Number p_iteration ) throws InterruptedException, SQLException {
         // store dissatisfaction with result in map
         m_map.put( this.name() + "/" + p_chairAgent.name() + "/" + p_iteration + "/diss", this.computeDissBV( p_result ) );
         // store final dissatisfaction with election result in map
@@ -419,6 +429,10 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
         m_map.put( this.name() + "/lining counter", m_liningCounter );
+
+        // set time in database for agent
+
+        EDataDB.INSTANCE.setTime( this.cycleCounter().intValue(), this.name(), m_run, m_sim );
 
         p_chairAgent.trigger(
             CTrigger.from(
@@ -703,6 +717,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         private final List<AtomicDoubleArray> m_prefList;
         private int m_count;
         private String m_rule;
+        private int m_run;
+        private int m_sim;
 
         /**
          * constructor of the generator
@@ -711,14 +727,16 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
          * @param p_fileName h5 file
          * @param p_joinThr join threshold
          * @param p_preferences preferences
+         * @param p_run
+         * @param p_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CVotingAgentGenerator( final CSendRI p_send, final InputStream p_stream, final CEnvironmentRI p_environment, final int p_altNum,
-                                      final String p_fileName,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_preferences,
-                                      final String p_rule
-        ) throws Exception
+        public CVotingAgentGenerator(final CSendRI p_send, final InputStream p_stream, final CEnvironmentRI p_environment, final int p_altNum,
+                                     final String p_fileName,
+                                     final double p_joinThr,
+                                     final List<AtomicDoubleArray> p_preferences,
+                                     final String p_rule,
+                                     int p_run, int p_sim) throws Exception
         {
 
             super(
@@ -755,6 +773,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
             m_joinThr = p_joinThr;
             m_prefList = p_preferences;
             m_rule = p_rule;
+            m_run = p_run;
+            m_sim = p_sim;
         }
 
         // unregister an agent
@@ -831,7 +851,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 // create a string with the agent name "agent <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "agent {0}", m_count ),
+                MessageFormat.format( "agent {0}", m_count, m_run, m_sim ),
 
                 // add the agent configuration
                 m_configuration,
@@ -839,7 +859,9 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 m_altNum,
                 m_joinThr,
                 m_prefList.get( m_count++ ),
-                m_rule
+                m_rule,
+                m_run,
+                m_sim
             );
 
             return m_send.register( l_votingAgent );
