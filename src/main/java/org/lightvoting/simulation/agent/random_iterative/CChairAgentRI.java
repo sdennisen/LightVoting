@@ -40,8 +40,10 @@ import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.environment.random_iterative.CGroupRI;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 import org.lightvoting.simulation.rule.CMinisumRanksum;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -116,6 +118,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private boolean m_waitingForDiss;
 
     private final String m_rule;
+    private int m_sim;
 
 
     // TODO merge ctors
@@ -127,17 +130,18 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      * @param p_run run number
      * @param p_dissthr dissatisfaction threshold
      * @param p_comsize size of committee to be elected
+     * @param p_sim
      */
 
 
-    public CChairAgentRI( final String p_name, final IAgentConfiguration<CChairAgentRI> p_configuration, final CEnvironmentRI p_environment,
-                          final String p_fileName,
-                          final int p_run,
-                          final double p_dissthr,
-                          final int p_comsize,
-                          final int p_altnum,
-                          final String p_rule
-    )
+    public CChairAgentRI(final String p_name, final IAgentConfiguration<CChairAgentRI> p_configuration, final CEnvironmentRI p_environment,
+                         final String p_fileName,
+                         final int p_run,
+                         final double p_dissthr,
+                         final int p_comsize,
+                         final int p_altnum,
+                         final String p_rule,
+                         int p_sim)
     {
         super( p_configuration );
         m_name = p_name;
@@ -150,6 +154,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // TODO via parameters
         m_voteTimeout = 20;
         m_rule = p_rule;
+        m_sim = p_sim;
     }
 
     /**
@@ -161,13 +166,16 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      * @param p_comsize committee size
      * @param p_dissthr dissatisfaction threshold
      * @param p_broker broker agent
+     * @param p_run run number
+     * @param p_sim sim number
      */
-    public CChairAgentRI( final String p_name, final IAgentConfiguration<CChairAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altnum,
-                          final int p_comsize,
-                          final double p_dissthr,
-                          final CBrokerAgentRI p_broker,
-                          final String p_rule
-    )
+    public CChairAgentRI(final String p_name, final IAgentConfiguration<CChairAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altnum,
+                         final int p_comsize,
+                         final double p_dissthr,
+                         final CBrokerAgentRI p_broker,
+                         final String p_rule,
+                         int p_run,
+                         int p_sim)
     {
         super( p_configuration );
         m_name = p_name;
@@ -178,6 +186,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_voteTimeout = 20;
         m_broker = p_broker;
         m_rule = p_rule;
+        m_run = p_run;
+        m_sim = p_sim;
     }
 
 
@@ -909,8 +919,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "remove/voter" )
-    public void removeVoter( )
-    {
+    public void removeVoter( ) throws SQLException {
         m_removedGoalAdded = false;
 
         System.out.println( "removing voter " );
@@ -950,6 +959,11 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         // remove vote of most dissatisfied voter from list
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
         l_group.remove( l_maxDissAg );
+
+        // add altered group to database
+
+        l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
         m_voters.remove( l_maxDissAg );
 
         // add belief in broker
@@ -1047,6 +1061,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         private final AtomicLong m_agentcounter = new AtomicLong();
 
         private final String m_fileName;
+        private int m_sim;
         private int m_run;
         private double m_dissthr;
         private int m_comsize;
@@ -1062,14 +1077,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
          * @param p_dissthr dissatisfaction threshold
          * @param p_comsize size of committee to be elected
          * @param p_broker broker agent
+         * @param p_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CChairAgentGenerator( final InputStream p_stream, final CEnvironmentRI p_environment,
-                                     final String p_fileName,
-                                     final int p_run,
-                                     final double p_dissthr, final int p_comsize, final int p_altnum,
-                                     final CBrokerAgentRI p_broker, final String p_rule
-        ) throws Exception
+        public CChairAgentGenerator(final InputStream p_stream, final CEnvironmentRI p_environment,
+                                    final String p_fileName,
+                                    final int p_run,
+                                    final double p_dissthr, final int p_comsize, final int p_altnum,
+                                    final CBrokerAgentRI p_broker, final String p_rule,
+                                    int p_sim) throws Exception
         {
             super(
                 // input ASL stream
@@ -1103,6 +1119,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             m_altnum = p_altnum;
             m_broker = p_broker;
             m_rule = p_rule;
+            m_sim = p_sim;
         }
 
         /**
@@ -1113,13 +1130,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
          * @param p_altnum number of alternatives
          * @param p_dissthr dissatisfaction threshold
          * @param p_broker broker agent
+         * @param m_run
+         * @param m_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentRI p_environment, final String p_name, final int p_altnum,
-                                     final int p_comsize, final double p_dissthr,
-                                     final CBrokerAgentRI p_broker, final String p_rule
-        )
+        public CChairAgentGenerator(final InputStream p_chairstream, final CEnvironmentRI p_environment, final String p_name, final int p_altnum,
+                                    final int p_comsize, final double p_dissthr,
+                                    final CBrokerAgentRI p_broker, final String p_rule,
+                                    int m_run, int m_sim)
         throws Exception
         {
             super(
@@ -1154,6 +1173,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             m_dissthr = p_dissthr;
             m_broker = p_broker;
             m_rule = p_rule;
+
         }
 
         /**
@@ -1170,7 +1190,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_rule );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_rule, m_sim);
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
@@ -1188,7 +1208,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
                 MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_dissthr,
-                m_broker, m_rule
+                m_broker, m_rule, m_run, m_sim
             );
             return l_chairAgent;
         }
