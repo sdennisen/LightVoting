@@ -261,8 +261,12 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
         m_chairs.add( l_chairAgent );
 
-        m_map.put( "chairs", this.asString( m_chairs ) );
-        m_map.put( "chairNum", m_chairs.size());
+        // create group in database
+        l_group.setDB( EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim ) );
+
+
+//        m_map.put( "chairs", this.asString( m_chairs ) );
+//        m_map.put( "chairNum", m_chairs.size());
 
     }
 
@@ -512,28 +516,27 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                                      final int p_comsize,
                                      final double p_dissthr,
                                      final String p_rule,
-                                     int p_run, int p_sim) throws Exception
-        {
+                                     int p_run, int p_sim) throws Exception {
             super(
                     // input ASL stream
                     p_brokerStream,
 
                     // a set with all possible actions for the agent
                     Stream.concat(
-                        // we use all build-in actions of LightJason
-                        CCommon.actionsFromPackage(),
-                        Stream.concat(
-                            // use the actions which are defined inside the agent class
-                            CCommon.actionsFromAgentClass( CBrokerAgentRI.class ),
-                            // add VotingAgent related external actions
-                            Stream.of(
-                                p_send
+                            // we use all build-in actions of LightJason
+                            CCommon.actionsFromPackage(),
+                            Stream.concat(
+                                    // use the actions which are defined inside the agent class
+                                    CCommon.actionsFromAgentClass(CBrokerAgentRI.class),
+                                    // add VotingAgent related external actions
+                                    Stream.of(
+                                            p_send
+                                    )
                             )
-                        )
-                        // build the set with a collector
-                    ).collect( Collectors.toSet() ) );
+                            // build the set with a collector
+                    ).collect(Collectors.toSet()));
 
-            System.out.println( "actions defined in broker class: " + CCommon.actionsFromAgentClass( CBrokerAgentRI.class ).collect( Collectors.toSet() ) );
+            System.out.println("actions defined in broker class: " + CCommon.actionsFromAgentClass(CBrokerAgentRI.class).collect(Collectors.toSet()));
 
 
             // aggregation function for the optimization function, here

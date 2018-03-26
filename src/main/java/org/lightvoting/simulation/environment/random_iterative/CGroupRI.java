@@ -57,6 +57,7 @@ public class CGroupRI
     private boolean m_dissValsSubmitted;
     private boolean m_waitingForDiss;
     private AtomicLong m_dissCounter;
+    private int m_dbID;
 
     /**
      * constructor
@@ -98,6 +99,16 @@ public class CGroupRI
     public boolean timedout()
     {
         return m_timeout.longValue() == 0;
+    }
+
+    public void setDB(int p_dbID )
+    {
+        m_dbID = p_dbID;
+    }
+
+    public int getDB()
+    {
+        return m_dbID;
     }
 
     public AtomicLong counter()
