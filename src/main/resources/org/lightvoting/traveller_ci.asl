@@ -6,6 +6,8 @@ state(0, undefined).
 +!start
     : >>state(0, S)
         <-
+        -mychair(_);
+        -mygroup(_);
         -state(0, S);
         +state(1, start);
         generic/print(MyName, " start" );
