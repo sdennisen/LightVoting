@@ -173,6 +173,11 @@ public class CGroupCB
         return m_result;
     }
 
+    public CVotingAgentCB get(String p_votingAgent)
+    {
+        return m_agentMap.get ( p_votingAgent );
+    }
+
     //    public void close()
 //    {
 //        m_open = false;
