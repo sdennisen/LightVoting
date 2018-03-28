@@ -358,7 +358,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "stored/vote",
-                    CRawTerm.from( this ),
+                    CRawTerm.from( this.name() ),
                     CRawTerm.from( this.getBitVote() )
                 )
             )
@@ -379,7 +379,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "stored/vote",
-                    CRawTerm.from( this ),
+                    CRawTerm.from( this.name() ),
                     CRawTerm.from( l_vote )
                 )
             )

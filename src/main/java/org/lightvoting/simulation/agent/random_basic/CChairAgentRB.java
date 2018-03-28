@@ -378,7 +378,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentRB p_votingAgent, final Object p_vote )
+    public synchronized void storeVote( final String p_votingAgent, final Object p_vote )
     {
     //    final CGroupRB l_group = this.determineGroup();
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
@@ -411,22 +411,23 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 //        this.trigger( l_trigger );
     }
 
-    private void storeAV( final CVotingAgentRB p_votingAgent, final Object p_vote )
+    private void storeAV( final String p_votingAgent, final Object p_vote )
     {
         m_bitVotes.add( (BitVector) p_vote );
-        m_voters.add( p_votingAgent );
+        m_voters.add( this.group().get( p_votingAgent ) );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
     }
 
-    private void storeCLO( final CVotingAgentRB p_votingAgent, final Object p_vote )
+    private void storeCLO( final String p_votingAgent, final Object p_vote )
     {
         ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
 
         m_cLinearOrders.add( l_vote );
-        m_voters.add( p_votingAgent );
+        m_voters.add( this.group().get( p_votingAgent ) );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
 
     }
 

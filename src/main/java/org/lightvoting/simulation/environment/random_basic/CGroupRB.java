@@ -191,6 +191,11 @@ public class CGroupRB
         return l_tmpList;
     }
 
+    public CVotingAgentRB get(String p_votingAgent)
+    {
+        return m_agentMap.get( p_votingAgent );
+    }
+
     //    public void close()
 //    {
 //        m_open = false;
