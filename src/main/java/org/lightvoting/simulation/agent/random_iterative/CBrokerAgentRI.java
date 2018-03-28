@@ -330,7 +330,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                                         l_toRemoveAgents.add( j );
                                         m_lineHashMap.put( j, j.liningCounter() );
                                     } );
-                            // System.out.println( "XXXXXXX" + l_toRemoveList );
+                            System.out.println( "XXXXXXX" + l_toRemoveList );
 
                             l_group.removeAll( l_toRemoveList );
 
@@ -375,6 +375,11 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                             //    )
 
                             l_cleanGroups.add( l_group );
+
+                            // if agents have been removed, add new group entry to database
+                            if ( l_toRemoveList.size() > 0 )
+                                l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
                         }
                         catch ( final NullPointerException l_nex )
                         {
@@ -428,7 +433,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                                        l_toRemoveAgents.add( j );
                                        m_lineHashMap.put( j, j.liningCounter() );
                                    } );
-                        System.out.println( "toRemoveList:" + l_toRemoveList );
+                        // System.out.println( "toRemoveList:" + l_toRemoveList );
 
                         l_group.removeAll( l_toRemoveList );
 
