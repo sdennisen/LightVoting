@@ -225,7 +225,8 @@ public class CGroupRI
     public void removeAll( final CopyOnWriteArrayList<String> p_toRemoveList )
     {
         for ( int i = 0; i < p_toRemoveList.size(); i++ )
-            m_agentMap.remove( p_toRemoveList.get( i ) );
+            m_agentMap.remove(p_toRemoveList.get(i));
+
     }
 
     public void setSubmitted()
@@ -253,6 +254,10 @@ public class CGroupRI
         return m_dissValsSubmitted;
     }
 
+    public CVotingAgentRI getAgent(String p_votingAgent)
+    {
+        return m_agentMap.get( p_votingAgent );
+    }
 
 
     //    public void close()

@@ -45,12 +45,7 @@ import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -323,11 +318,34 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
                         // TODO test
                         // remove voters from group who didn't vote/whose votes didn't reach the chair
-                        // TODO reinsert
 
                         try
                         {
-                           /* final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                            final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                            final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                            l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
+                                    .forEach( j ->
+                                    {
+                                        l_toRemoveList.add( j.name() );
+                                        l_toRemoveAgents.add( j );
+                                        m_lineHashMap.put( j, j.liningCounter() );
+                                    } );
+                            // System.out.println( "XXXXXXX" + l_toRemoveList );
+
+                            l_group.removeAll( l_toRemoveList );
+
+                            // "re-queue" removed voters
+
+                            l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
+                                    CLiteral.from(
+                                            "newag",
+                                            CRawTerm.from( i ),
+                                            CRawTerm.from( m_lineHashMap.get( i ) )
+                                    )
+                                    )
+                            );
+
+                            /*final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
                             final CopyOnWriteArrayList<CVotingAgentRI> l_toRemoveAgents = new CopyOnWriteArrayList();
                             l_group.agents().filter( i -> !l_group.chair().voters().contains( i ) )
                                    .forEach( j ->
@@ -344,6 +362,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
                             l_toRemoveAgents.parallelStream().forEach( i ->
                                                                            this.removeAndAddAg( i ) );*/
+
 
 
                             //this.beliefbase().add(

@@ -115,7 +115,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * threshold for joining a group in the case of coordinated grouping
      */
     private double m_joinThreshold;
-    private List<CChairAgentRI> m_submittedTo = Collections.synchronizedList( new LinkedList<>() );
+  //  private List<CChairAgentRI> m_submittedTo = Collections.synchronizedList( new LinkedList<>() );
     private BitVector m_bitVote;
     private List<Long> m_cLinearOrder;
     private HashMap<String, Object> m_map = new HashMap<>();
@@ -127,6 +127,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private final String m_rule;
     private int m_run;
     int m_sim;
+    private List<String> m_submittedToStr = Collections.synchronizedList( new LinkedList<>() );
 
     // TODO refactor ctors
 
@@ -343,34 +344,36 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     @IAgentActionName( name = "submit/vote" )
     private synchronized void submitVote( final CChairAgentRI p_chairAgent )
     {
-        if ( !m_submittedTo.contains( p_chairAgent ) )
+       // System.out.println( p_chairAgent );
 
-            try
-            {
+        try {
+            if ( !m_submittedToStr.contains( p_chairAgent.name() ) ) {
                 // for MS-AV and MM-AV, the votes are 01-vectors
-                if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+                if (m_rule.equals("MINISUM_APPROVAL") || m_rule.equals("MINIMAX_APPROVAL"))
 
-                    this.submitAV( p_chairAgent );
+                    this.submitAV(p_chairAgent);
 
                 else
                     // if ( m_rule.equals( "MINISUM_RANKSUM") )
                     // for MS-RS, the votes are complete linear orders
-                    this.submitCLO( p_chairAgent );
+                    this.submitCLO(p_chairAgent);
 
-                m_submittedTo.add( p_chairAgent );
+            //    m_submittedTo.add(p_chairAgent);
+                m_submittedToStr.add( p_chairAgent.name() );
 
                 //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
             }
-            catch ( final StackOverflowError l_ex  )
-            {
-                System.out.println( "StackOverFlowError in agent " + this.name() );
-            }
 
-        System.out.println( this.name() + " submitted vote to chair " + p_chairAgent.name() );
+            System.out.println(this.name() + " submitted vote to chair " + p_chairAgent.name());
 
-        //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
+            //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
+        }
+        catch ( StackOverflowError l_er )
+        {
+            l_er.printStackTrace();
+        }
 
     }
 
@@ -386,7 +389,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 ITrigger.EType.ADDGOAL,
                 CLiteral.from(
                     "stored/vote",
-                    CRawTerm.from( this ),
+                    CRawTerm.from( this.name() ),
                     CRawTerm.from( this.getBitVote() )
                 )
             )

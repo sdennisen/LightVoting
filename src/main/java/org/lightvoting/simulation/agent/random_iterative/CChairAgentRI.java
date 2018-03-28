@@ -120,6 +120,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private final String m_rule;
     private int m_sim;
     private HashMap<String,Float> m_dissMapStr = new HashMap<>();
+    private List<String> m_votersStr = Collections.synchronizedList( new LinkedList<>() );;
 
 
     // TODO merge ctors
@@ -394,13 +395,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentRI p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final String p_votingAgent, final BitVector p_vote )
     {
     //    final CGroupRI l_group = this.determineGroup();
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        if ( !this.group().timedout() && !m_voters.contains( p_votingAgent ) )
+        if ( !this.group().timedout() && !m_votersStr.contains( p_votingAgent ) )
         {
 
             // for MS-AV and MM-AV, the votes are 01-vectors
@@ -418,13 +419,13 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         else if ( this.group().timedout() )
         {
-            System.out.println( this.name() + " timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+            System.out.println( this.name() + " timeout reached, not accepting vote of agent " + p_votingAgent );
 
         }
 
-        else if ( m_voters.contains( p_votingAgent ) )
+        else if ( m_votersStr.contains( p_votingAgent ) )
 
-            System.out.println( this.name() + " already containing " + p_votingAgent.name() );
+            System.out.println( this.name() + " already containing " + p_votingAgent );
 
 
 //        if ( m_bitVotes.size() != l_group.size() )
@@ -442,22 +443,25 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        this.trigger( l_trigger );
     }
 
-    private void storeAV( final CVotingAgentRI p_votingAgent, final Object p_vote )
+    private void storeAV( final String p_votingAgent, final Object p_vote )
     {
         m_bitVotes.add( (BitVector) p_vote );
-        m_voters.add( p_votingAgent );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        m_voters.add( this.group().getAgent( p_votingAgent ) );
+        m_votersStr.add ( p_votingAgent );
+
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
     }
 
-    private void storeCLO( final CVotingAgentRI p_votingAgent, final Object p_vote )
+    private void storeCLO( final String p_votingAgent, final Object p_vote )
     {
         ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
 
         m_cLinearOrders.add( l_vote );
-        m_voters.add( p_votingAgent );
+        m_voters.add( this.group().getAgent( p_votingAgent ) );
+        m_votersStr.add( p_votingAgent );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
 
     }
 
@@ -493,6 +497,22 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionName( name = "compute/result" )
 
     public synchronized void computeResult( final Number p_iteration ) throws SQLException {
+
+        // TODO check
+        if ( m_voters.size() == 0 )
+        {
+            System.out.println( this.name() + " I have received no voters, cannot conduct election" );
+            System.out.println( Arrays.toString( this.group().getVoters().toArray() ) );
+            // reset timeout for diss vals
+
+            this.group().setWaitingForDiss();
+
+            this.group().setDissCounter( new AtomicLong( 50 ) );
+
+
+            return;
+        }
+
         try
         {
             final BitVector l_comResultBV;
@@ -952,6 +972,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         if ( l_max <= m_dissThreshold )
         {
             System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
+            System.out.println( Arrays.toString( l_group.getVoters().toArray() ) );
             EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
@@ -961,6 +982,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         else if ( m_newdissMap.size() == 1 )
         {
             System.out.println( this.name() + ": only one voter left, we are done " );
+            System.out.println( Arrays.toString( l_group.getVoters().toArray() ) );
             EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
@@ -982,6 +1004,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
 
         m_voters.remove( l_maxDissAg );
+        m_votersStr.remove( l_maxDissAg.name() );
 
         // add belief in broker
         m_broker.removeAndAddAg( l_maxDissAg );
@@ -1007,8 +1030,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_newdissMap.clear();
 
         // update map
-        m_map.remove( this.name() + "/" + l_maxDissAg.name() );
-        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+   //     m_map.remove( this.name() + "/" + l_maxDissAg.name() );
+   //     m_map.put( this.name() + "/agents", this.asString( m_voters ) );
 
 //        m_iterative = true;
 //        l_group.makeReady();
