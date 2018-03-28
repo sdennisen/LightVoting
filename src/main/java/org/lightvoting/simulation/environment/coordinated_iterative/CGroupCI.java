@@ -248,6 +248,11 @@ public class CGroupCI
         m_open = false;
     }
 
+    public CVotingAgentCI get(String p_votingAgent)
+    {
+        return m_agentMap.get( p_votingAgent );
+    }
+
     //    public void close()
 //    {
 //        m_open = false;

@@ -491,7 +491,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final CVotingAgentCI p_votingAgent, final Object p_vote )
+    public synchronized void storeVote( final String p_votingAgent, final Object p_vote )
     {
     //    final CGroupCI l_group = this.determineGroup();
 
@@ -517,13 +517,13 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         else if ( this.group().timedout() )
         {
-            System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent.name() );
+            System.out.println( "timeout reached, not accepting vote of agent " + p_votingAgent );
 
         }
 
-        else if ( m_voters.contains( p_votingAgent ) )
+        else if ( m_voters.contains( this.group().get( p_votingAgent ) ) )
 
-            System.out.println( "already containing " + p_votingAgent.name() );
+            System.out.println( "already containing " + p_votingAgent );
 
 
         //        if ( m_bitVotes.size() != l_group.size() )
@@ -541,22 +541,22 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //        this.trigger( l_trigger );
     }
 
-    private void storeAV( final CVotingAgentCI p_votingAgent, final Object p_vote )
+    private void storeAV( final String p_votingAgent, final Object p_vote )
     {
         m_bitVotes.add( (BitVector) p_vote );
-        m_voters.add( p_votingAgent );
+        m_voters.add( this.group().get( p_votingAgent ) );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
     }
 
-    private void storeCLO( final CVotingAgentCI p_votingAgent, final Object p_vote )
+    private void storeCLO( final String p_votingAgent, final Object p_vote )
     {
         ArrayList<Long> l_vote = (ArrayList<Long>) p_vote;
 
         m_cLinearOrders.add( l_vote );
-        m_voters.add( p_votingAgent );
+        m_voters.add( this.group().get( p_votingAgent ) );
 
-        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent.name() );
+        System.out.println( " --------------------- " + this.name() + " received vote from " + p_votingAgent );
 
     }
 
