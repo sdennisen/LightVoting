@@ -86,7 +86,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final int m_comsize;
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
-    private final HashMap<CVotingAgentCI, Long> m_lineHashMap = new HashMap<CVotingAgentCI, Long>();
+    private final HashMap<String, Long> m_lineHashMap = new HashMap<String, Long>();
     // TODO via config
     private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
@@ -327,7 +327,114 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         return 0;
     }
 
+    // TODO refactor method
+
     @IAgentActionFilter
+    @IAgentActionName( name = "update/groups" )
+    private synchronized void updateGroups() throws Exception
+    {
+        try {
+            boolean l_allReady = true;
+
+            final CopyOnWriteArrayList<CGroupCI> l_cleanGroups = new CopyOnWriteArrayList<>();
+
+            for (final CGroupCI l_group : m_groups) {
+                // System.out.println( l_group.id() + "result: " + l_group.result() );
+
+                // if chair is timed out or group is full, update info on current election
+
+                if (l_group.timedout() || l_group.chair().full())
+
+                    l_group.chair().updateElection();
+
+                if (l_group.result() == null)
+                    l_allReady = false;
+
+                if (l_group.areVotesSubmitted() || l_group.timedout()) {
+
+                    // remove voters from group who didn't vote/whose votes didn't reach the chair
+                    final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                    final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                    l_group.agents().filter(i -> !l_group.chair().voters().contains(i))
+                            .forEach(j ->
+                            {
+                                l_toRemoveList.add(j.name());
+                                l_toRemoveAgents.add(j);
+                                m_lineHashMap.put(j.name(), j.liningCounter());
+                            });
+                    System.out.println(l_group.chair().name() + " toRemoveList:" + l_toRemoveList);
+
+                    l_group.removeAll(l_toRemoveList);
+
+                    // "re-queue" removed voters
+
+                    l_toRemoveAgents.parallelStream().forEach(i ->
+                            this.removeAndAddAg(i));
+
+                    l_cleanGroups.add(l_group);
+                }
+
+
+                if (l_group.areDissValsSubmitted()) {
+                    System.out.println("All diss vals are submitted");
+                } else if (l_group.waitingforDiss())
+                    if (l_group.dissTimedOut()) {
+                        // if there are agents whose diss vals were not stored by the chair, remove them
+                        final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
+                        final CopyOnWriteArrayList<CVotingAgentCI> l_toRemoveAgents = new CopyOnWriteArrayList();
+                        l_group.agents().filter(i -> !l_group.chair().dissvoters().contains(i))
+                                .forEach(
+                                        j ->
+                                        {
+                                            l_toRemoveList.add(j.name());
+                                            l_toRemoveAgents.add(j);
+                                            //     m_lineHashMap.put( j.name(), j.liningCounter() );
+                                        });
+                        System.out.println("toRemoveList:" + l_toRemoveList);
+
+                        l_group.removeAll(l_toRemoveList);
+
+                        // "re-queue" removed voters
+
+                        l_toRemoveAgents.parallelStream().forEach(
+                                i -> this.removeAndAddAg(i)
+                        );
+
+                        l_group.endWaitForDiss();
+
+                    }
+
+                // check if chair is timedout, if yes, the chair needs to send the result to the agents to be sure that all agents received the final result
+
+                if (l_group.timedout() && l_group.result() != null) {
+                    l_group.chair().resendResult();
+                }
+
+            }
+
+
+            if (l_allReady) {
+                System.out.println("all groups ready");
+
+                this.beliefbase().add(
+                        CLiteral.from(
+                                "allgroupsready",
+                                CRawTerm.from(1)
+                        )
+                );
+            }
+        }
+        catch ( IndexOutOfBoundsException l_ex )
+        {
+            System.out.println( "IndexOutOfBoundsException" );
+            l_ex.printStackTrace();
+        }
+    }
+
+
+    // old method
+
+  /*   @IAgentActionFilter
     @IAgentActionName( name = "update/groups" )
     private synchronized void updateGroups() throws Exception
     {
@@ -497,7 +604,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                 )
             );
         }
-    }
+    }*/
 
 
 
@@ -524,13 +631,13 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         System.out.println( "adding Agent " + p_Ag.name() );
         // increase lining counter of ag
-        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+        m_lineHashMap.put( p_Ag.name(), p_Ag.liningCounter() );
 
         this.beliefbase().add(
             CLiteral.from(
                 "newag",
                 CRawTerm.from( p_Ag ),
-                CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+                CRawTerm.from( m_lineHashMap.get( p_Ag.name() ) )
             )
         );
     }

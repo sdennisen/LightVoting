@@ -358,10 +358,10 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         this.m_group.close();
 
-        System.out.println( this.name() + " updating last intermediate election with agents " + this.asString( m_voters ) );
+  //      System.out.println( m_name + " updating last intermediate election with agents " + asString( m_voters ) );
         // close group
 
-        // store intermediate election results
+  /*      // store intermediate election results
         m_map.put( this.name() + "/iteration_" + 0 + "/election result", this.group().result() );
         // store contributing agents
         m_map.put( this.name() + "/iteration_" + 0 + "/agents", this.asString( m_voters ) );
@@ -379,7 +379,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_map.put( this.name() + "/itNum", 0 );
 
         // store group ID
-        m_map.put( this.name() + "/groupID", this.group().id() );
+        m_map.put( this.name() + "/groupID", this.group().id() );*/
 
 
         m_voters.stream().forEach( i ->
