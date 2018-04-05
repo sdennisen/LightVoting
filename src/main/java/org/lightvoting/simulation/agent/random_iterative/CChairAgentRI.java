@@ -121,6 +121,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     private int m_sim;
     private HashMap<String,Float> m_dissMapStr = new HashMap<>();
     private List<String> m_votersStr = Collections.synchronizedList( new LinkedList<>() );;
+    private BitVector m_comResultBV;
 
 
     // TODO merge ctors
@@ -498,6 +499,8 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     public synchronized void computeResult( final Number p_iteration ) throws SQLException {
 
+        m_iteration = p_iteration.intValue();
+
         // TODO check
         if ( m_voters.size() == 0 )
         {
@@ -515,30 +518,19 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
         try
         {
-            final BitVector l_comResultBV;
 
             System.out.println( "Iteration:" + p_iteration );
 
             if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-                l_comResultBV = this.computeMSAV();
+                m_comResultBV = this.computeMSAV();
 
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-                l_comResultBV = this.computeMSRS();
+                m_comResultBV = this.computeMSRS();
 
-            System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + l_comResultBV );
+            System.out.println( " ------------------------ " + this.name() + ", Iteration " + p_iteration + ", Result of election as BV: " + m_comResultBV );
 
-            // for iterative election, set lastElection to false per default, is set to true later
 
-            EDataDB.INSTANCE.addResult(this.group().getDB(),
-                    l_comResultBV.toString(),
-                    "ITERATIVE",
-                    false,
-                    p_iteration.intValue(),
-                    -1,
-                    m_dissMapStr,
-                    m_run,
-                    m_sim  );
 
             //        m_voters.stream().forEach( i ->
             //            i.trigger(
@@ -559,7 +551,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
                         CLiteral.from(
                             "result",
                             CRawTerm.from( this ),
-                            CRawTerm.from( l_comResultBV ),
+                            CRawTerm.from( m_comResultBV ),
                             CRawTerm.from( p_iteration )
                         )
                     );
@@ -569,12 +561,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             );
 
             // store intermediate election results
-            m_map.put( this.name() + "/" + p_iteration + "/election result", l_comResultBV );
+            m_map.put( this.name() + "/" + p_iteration + "/election result", m_comResultBV );
             // store contributing agents
             m_map.put( this.name() + "/" + p_iteration + "/agents", this.asString( m_voters ) );
 
             // store election result in map
-            m_map.put( this.name() + "/election result", l_comResultBV );
+            m_map.put( this.name() + "/election result", m_comResultBV );
             // store group size in map
             m_map.put( this.name() + "/group size", m_voters.size() );
             // store names of agents
@@ -661,8 +653,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration )
-    {
+    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_fill, final Number p_iteration ) throws SQLException {
 
         if ( this.group().dissTimedOut() )
         {
@@ -702,6 +693,18 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
         {
             System.out.println( "Number of voters and diss vals: " + m_voters.size() );
+
+            // for iterative election, set lastElection to false per default, is set to true later
+
+            EDataDB.INSTANCE.addResult(this.group().getDB(),
+                    m_comResultBV.toString(),
+                    "ITERATIVE",
+                    false,
+                    m_iteration,
+                    -1,
+                    m_dissMapStr,
+                    m_run,
+                    m_sim  );
 
             this.group().setDissSubmitted();
 
@@ -956,7 +959,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "remove/voter" )
-    public void removeVoter( ) throws SQLException {
+    public synchronized void removeVoter( ) throws SQLException {
         m_removedGoalAdded = false;
 
         System.out.println( "removing voter " );
@@ -999,10 +1002,6 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         m_bitVotes.remove( l_maxDissAg.getBitVote() );
         l_group.remove( l_maxDissAg );
 
-        // add altered group to database
-
-        l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
-
         m_voters.remove( l_maxDissAg );
         m_votersStr.remove( l_maxDissAg.name() );
 
@@ -1027,7 +1026,14 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 //        m_dissList.clear();
 
  //       m_dissMap.clear();
+
+        m_dissMapStr.clear();
         m_newdissMap.clear();
+
+
+        // add altered group to database
+        l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
 
         // update map
    //     m_map.remove( this.name() + "/" + l_maxDissAg.name() );

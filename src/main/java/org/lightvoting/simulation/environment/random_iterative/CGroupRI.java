@@ -116,7 +116,7 @@ public class CGroupRI
     public List<String> getVoters()
     {
         List<String> l_tmpList = new ArrayList<>();
-        l_tmpList.addAll(m_agentMap.keySet());
+        l_tmpList.addAll( m_agentMap.keySet() );
         return l_tmpList;
     }
 
