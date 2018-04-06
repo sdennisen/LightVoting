@@ -314,7 +314,7 @@ public final class CMain
                         final String l_brokerCB = "src/main/resources/org/lightvoting/broker_cb.asl";
 
                         createBrokerCoordinatedBasic(
-                            l_brokerCB, l_chairstream, s_agNum, new CSendCB(), l_stream, s_environmentCB, s_altnum, l_name, s_joinThr, s_prefList );
+                            l_brokerCB, l_chairstream, s_agNum, new CSendCB(), l_stream, s_environmentCB, s_altnum, l_name, s_joinThr, s_prefList, s_simID, r );
 
                         l_stream.close();
                         l_chairstream.close();
@@ -470,14 +470,14 @@ public final class CMain
     }
 
 
-    private static void createBrokerCoordinatedBasic( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCB p_send,
-                                                      final FileInputStream p_stream,
-                                                      final CEnvironmentCB p_environmentCB,
-                                                      final int p_altnum,
-                                                      final String p_name,
-                                                      final double p_joinThr,
-                                                      final List<AtomicDoubleArray> p_prefList
-    ) throws Exception
+    private static void createBrokerCoordinatedBasic(final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCB p_send,
+                                                     final FileInputStream p_stream,
+                                                     final CEnvironmentCB p_environmentCB,
+                                                     final int p_altnum,
+                                                     final String p_name,
+                                                     final double p_joinThr,
+                                                     final List<AtomicDoubleArray> p_prefList,
+                                                     int p_sim, int p_run ) throws Exception
     {
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
@@ -493,8 +493,9 @@ public final class CMain
                                                                         s_joinThr,
                                                                         s_prefList,
                                                                         s_comsize,
-                                                                        s_rule
-        );
+                                                                        s_rule,
+                                                                        p_sim,
+                                                                        p_run );
 
         s_brokerCoordinatedBasic = s_brokerGeneratorCB.generatesingle();
     }
