@@ -253,7 +253,13 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
             p_votingAgent.setChair( l_determinedGroup.chair() );
-          //  m_chairs.add( l_determinedGroup.chair() );
+
+            // add new group entity to database
+
+            l_determinedGroup.setDB( EDataDB.INSTANCE.newGroup(l_determinedGroup.chair().name(), l_determinedGroup.getDB(), l_determinedGroup.getVoters(), m_run, m_sim ) );
+
+
+            //  m_chairs.add( l_determinedGroup.chair() );
             return;
         }
 
@@ -271,6 +277,11 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
         m_chairs.add( l_chairAgent );
         m_map.put( "chairNum", m_chairs.size() );
+
+
+        // create group in database
+        l_group.setDB( EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim ) );
+
 
     }
 

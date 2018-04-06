@@ -27,7 +27,9 @@ import cern.colt.matrix.tbit.BitVector;
 import org.lightvoting.simulation.agent.coordinated_basic.CChairAgentCB;
 import org.lightvoting.simulation.agent.coordinated_basic.CVotingAgentCB;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -54,6 +56,7 @@ public class CGroupCB
     private int m_currentAg;
     private AtomicLong m_timeout;
     private boolean m_votesSubmitted;
+    private int m_dbID;
 
     /**
      * constructor
@@ -176,6 +179,24 @@ public class CGroupCB
     public CVotingAgentCB get(String p_votingAgent)
     {
         return m_agentMap.get ( p_votingAgent );
+    }
+
+    public void setDB( int p_dbID )
+    {
+        m_dbID = p_dbID;
+
+    }
+
+    public int getDB()
+    {
+        return m_dbID;
+    }
+
+    public List<String> getVoters()
+    {
+        List<String> l_tmpList = new ArrayList<>();
+        l_tmpList.addAll(m_agentMap.keySet());
+        return l_tmpList;
     }
 
     //    public void close()
