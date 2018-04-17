@@ -437,7 +437,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
 
         // write election_result entity to database
 
-        if (! m_dbIDs.contains( p_dbGroup ) )
+        if ( ( m_dissMap.size() == m_voters.size() ) && (! m_dbIDs.contains( p_dbGroup ) ) )
         {
 
             EDataDB.INSTANCE.addResult(p_dbGroup,
@@ -1044,8 +1044,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
          * @param p_environment environment
          * @param p_name file name
          * @param p_altnum number of alternatives
-         * @param m_sim
-         * @param m_run
+         * @param p_sim number of simulation
+         * @param p_run number of run
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
