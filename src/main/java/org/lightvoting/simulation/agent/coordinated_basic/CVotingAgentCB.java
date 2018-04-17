@@ -735,14 +735,16 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
          * @param p_fileName h5 file
          * @param p_joinThr join threshold
          * @param p_preferences preferences
+         * @param p_run
+         * @param p_sim
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
-        public CVotingAgentGenerator( final CSendCB p_send, final InputStream p_stream, final CEnvironmentCB p_environment, final int p_altNum,
-                                      final String p_fileName,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_preferences,
-                                      final String p_rule
-        ) throws Exception
+        public CVotingAgentGenerator(final CSendCB p_send, final InputStream p_stream, final CEnvironmentCB p_environment, final int p_altNum,
+                                     final String p_fileName,
+                                     final double p_joinThr,
+                                     final List<AtomicDoubleArray> p_preferences,
+                                     final String p_rule,
+                                     int p_run, int p_sim) throws Exception
         {
 
             super(
@@ -779,6 +781,9 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
             m_joinThr = p_joinThr;
             m_prefList = p_preferences;
             m_rule = p_rule;
+            m_run = p_run;
+            m_sim = p_sim;
+
         }
 
         // unregister an agent
