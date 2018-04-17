@@ -61,6 +61,8 @@ started(0).
          !started/voting(NewF)
      .
 
+
+
 //+!clean/up/vote
 //    <-
 //	    // broker needs to remove the voters who didn't vote
@@ -75,11 +77,27 @@ started(0).
     <-
         -started(S);
         -clean/group(C);
-        +dissatisfaction( 0, F);
+    //    +dissatisfaction( 0, F);
         // compute result of election according to given voting rule
         // add belief result/computed when done
         generic/print( "compute result", "fill is", F );
         compute/result()
+    .
+
+
+// store received diss value in Java datastructure
++!stored/diss(Traveller, Diss, Intermediate, Group )
+   // : >>dissatisfaction(D, F) //&& D < math/sum(F,-1)
+    <-
+        generic/print( "store diss from Traveller ", Traveller); //D, " fill", F);
+        store/diss(Traveller, Diss, Intermediate, Group )
+//        NewD = D+1;
+//        -dissatisfaction(D, F);
+//        +dissatisfaction(NewD, F)
+//    : >>dissatisfaction(D, F) && D == math/sum(F,-1)
+//    <-
+//        store/diss(Traveller, Diss, Intermediate, Group);
+//        !done
     .
 
 //// store received diss value in Java datastructure

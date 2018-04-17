@@ -40,8 +40,10 @@ import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
 import org.lightvoting.simulation.environment.coordinated_basic.CGroupCB;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 import org.lightvoting.simulation.rule.CMinisumRanksum;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -66,6 +68,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
      * serialUID
      */
     private static final long serialVersionUID = -4459675039048514445L;
+    private final int m_sim;
+
 
     /**
      * name of chair
@@ -114,6 +118,10 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
 
     // todo set via config
     private final String m_rule;
+    private HashMap<String,Float> m_dissMap = new HashMap<>();
+    private BitVector m_comResultBV;
+    private int m_dbGroup;
+    private List<Integer> m_dbIDs = new ArrayList<>();
 
 
     // TODO merge ctors
@@ -135,7 +143,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                           final double p_dissthr,
                           final int p_comsize,
                           final int p_altnum,
-                          final String p_rule
+                          final String p_rule,
+                          final int p_sim
     )
     {
         super( p_configuration );
@@ -149,6 +158,9 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         // TODO via parameters
         m_voteTimeout = 10;
         m_rule = p_rule;
+        m_imNum = 0;
+        m_sim = p_sim;
+        m_run = p_run;
     }
 
     /**
@@ -158,10 +170,12 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
      * @param p_environment environment
      * @param p_altnum number of alternatives
      * @param p_comsize committee size
+     * @param p_sim
+     * @param p_run
      */
-    public CChairAgentCB( final String p_name, final IAgentConfiguration<CChairAgentCB> p_configuration, final CEnvironmentCB p_environment, final int p_altnum,
-                          final int p_comsize, final String p_rule
-    )
+    public CChairAgentCB(final String p_name, final IAgentConfiguration<CChairAgentCB> p_configuration, final CEnvironmentCB p_environment, final int p_altnum,
+                         final int p_comsize, final String p_rule,
+                         int p_sim, int p_run)
     {
         super( p_configuration );
         m_name = p_name;
@@ -170,7 +184,10 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         // TODO via parameters
         m_voteTimeout = 10;
         m_rule = p_rule;
-    }
+        m_imNum = 0;
+        m_sim = p_sim;
+        m_run = p_run;
+}
 
 
     // overload agent-cycle
@@ -400,6 +417,49 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
 
     }
 
+    /**
+     * store dissatisfaction value
+     *
+     * @param p_diss dissatisfaction value
+     * @param p_dbGroup
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "store/diss" )
+
+    public synchronized void storeDiss(final String p_votingAgent, final Double p_diss, final int p_imNum, final int p_dbGroup) throws SQLException {
+        m_dissList.add( p_diss );
+        m_dissMap.put( p_votingAgent, p_diss.floatValue() );
+
+        System.out.println( "Storing diss " + p_diss + " from agent " + p_votingAgent + ", db group id " + p_dbGroup );
+
+        m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
+
+
+        // write election_result entity to database
+
+        if (! m_dbIDs.contains( p_dbGroup ) )
+        {
+
+            EDataDB.INSTANCE.addResult(p_dbGroup,
+                    m_comResultBV.toString(),
+                    "BASIC",
+                    true,
+                    -1,
+                    p_imNum,
+                    m_dissMap,
+                    m_run,
+                    m_sim);
+
+            m_dbIDs.add( p_dbGroup );
+        }
+
+
+        // TODO write data to list instead
+        //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
+        //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
+
+    }
+
 //    /**
 //     * close group
 //     */
@@ -433,6 +493,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
 
     public synchronized void computeResult()
     {
+        int l_dbGroup = this.group().getDB();
+
       /*  final CMinisumApproval l_minisumApproval = new CMinisumApproval();
 
         final List<String> l_alternatives = new LinkedList<>();
@@ -449,20 +511,20 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         final BitVector l_comResultBV = l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
 */
 
-        final BitVector l_comResultBV;
+
 
         if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-            l_comResultBV = this.computeMSAV();
+            m_comResultBV = this.computeMSAV();
 
         else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-            l_comResultBV = this.computeMSRS();
+            m_comResultBV = this.computeMSRS();
         // l_comResultBV = new BitVector( m_altnum );
 
 
-        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + m_comResultBV );
 
-//        m_voters.stream().forEach( i ->
+ //        m_voters.stream().forEach( i ->
 //            i.trigger(
 //                CTrigger.from(
 //                    ITrigger.EType.ADDGOAL,
@@ -481,15 +543,18 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                     CLiteral.from(
                         "result",
                         CRawTerm.from( this ),
-                        CRawTerm.from( l_comResultBV )
+                        CRawTerm.from( m_comResultBV ),
+                        CRawTerm.from( m_imNum ),
+                        CRawTerm.from( l_dbGroup )
+
                     )
                 );
-                System.out.println( "addbelief result to agent " + i.name() );
+                System.out.println( "addbelief result to agent " + i.name() + " with imNum " + m_imNum + " and db group id " + l_dbGroup );
                 System.out.println( "result " + i.toString() );
             }
         );
 
-        this.group().setResult( l_comResultBV );
+        this.group().setResult( m_comResultBV );
 
         this.trigger(
             CTrigger.from(
@@ -501,7 +566,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             )
         );
 
-        // store intermediate election results
+  /*      // store intermediate election results
         m_map.put( this.name() + "/" + m_imNum + "/election result", l_comResultBV );
         // store contributing agents
         m_map.put( this.name() + "/" + m_imNum + "/agents", this.asString( m_voters ) );
@@ -512,7 +577,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         // store group size in map
         m_map.put( this.name() + "/group size", m_voters.size() );
         // store names of agents
-        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+        m_map.put( this.name() + "/agents", this.asString( m_voters ) );*/
 
         m_imNum++;
 
@@ -919,6 +984,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         private int m_comsize;
         private int m_altnum;
         private String m_rule;
+        private int m_sim;
 
         /**
          * constructor of the generator
@@ -934,7 +1000,8 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                                      final String p_fileName,
                                      final int p_run,
                                      final double p_dissthr, final int p_comsize, final int p_altnum,
-                                     final String p_rule
+                                     final String p_rule,
+                                     final int p_sim
         ) throws Exception
         {
             super(
@@ -968,6 +1035,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             m_comsize = p_comsize;
             m_altnum = p_altnum;
             m_rule = p_rule;
+            m_sim = p_sim;
         }
 
         /**
@@ -976,10 +1044,12 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
          * @param p_environment environment
          * @param p_name file name
          * @param p_altnum number of alternatives
+         * @param m_sim
+         * @param m_run
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 
-        public CChairAgentGenerator( final InputStream p_chairstream, final CEnvironmentCB p_environment, final String p_name, final int p_altnum, final int p_comsize, final String p_rule )
+        public CChairAgentGenerator(final InputStream p_chairstream, final CEnvironmentCB p_environment, final String p_name, final int p_altnum, final int p_comsize, final String p_rule, int p_sim, int p_run)
         throws Exception
         {
             super(
@@ -1012,6 +1082,9 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
             m_altnum = p_altnum;
             m_comsize = p_comsize;
             m_rule = p_rule;
+            m_sim = p_sim;
+            m_run = p_run;
+
         }
 
         /**
@@ -1028,7 +1101,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_rule );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_fileName, m_run, m_dissthr, m_comsize, m_altnum, m_rule, m_sim );
             l_chairAgent.sleep( Integer.MAX_VALUE );
             System.out.println( "Creating chair " + l_chairAgent.name() );
             return l_chairAgent;
@@ -1045,7 +1118,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                 // create a string with the agent name "chair <number>"
                 // get the value of the counter first and increment, build the agent
                 // name with message format (see Java documentation)
-                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_rule );
+                MessageFormat.format( "chair {0}", m_agentcounter.getAndIncrement() ), m_configuration, m_environment, m_altnum, m_comsize, m_rule, m_sim, m_run);
             return l_chairAgent;
         }
 

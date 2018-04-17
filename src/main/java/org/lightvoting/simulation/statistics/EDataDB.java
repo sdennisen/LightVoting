@@ -51,7 +51,9 @@ public enum EDataDB
     static PreparedStatement s_stmt_Result;
     static PreparedStatement s_stmt_addVoterToResult;
     static PreparedStatement s_stmt_setLastElection;
+    private static PreparedStatement s_stmt_setElectionType;
     private static boolean m_open;
+
 
     /**
      * connect to given database
@@ -128,6 +130,8 @@ public enum EDataDB
                 s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?)");
             if ((s_stmt_setLastElection == null) || (s_stmt_setLastElection.isClosed()))
                 s_stmt_setLastElection = s_con.prepareStatement("UPDATE election_result SET lastelection = ? WHERE group_column = ?");
+            if ((s_stmt_setElectionType == null) || (s_stmt_setElectionType.isClosed()))
+                s_stmt_setElectionType = s_con.prepareStatement("UPDATE election_result SET type = CAST (? AS electiontype) WHERE group_column = ?");
 
             m_open = true;
         }
@@ -382,6 +386,9 @@ public enum EDataDB
             s_stmt_addVoterToGroup.close();
             s_stmt_newGroup.close();
             s_stmt_Result.close();
+            s_stmt_addVoterToResult.close();
+            s_stmt_setLastElection.close();
+            s_stmt_setElectionType.close();
             s_con.close();
             System.out.println("Closed connection");
             m_open = false;
@@ -393,5 +400,12 @@ public enum EDataDB
         s_stmt_setLastElection.setBoolean( 1, p_boolean );
         s_stmt_setLastElection.setInt( 2, p_groupID );
         s_stmt_setLastElection.execute();
+    }
+
+    public void setElectionType(int p_groupID, String p_type ) throws SQLException {
+
+        s_stmt_setElectionType.setString( 1, p_type );
+        s_stmt_setElectionType.setInt( 2, p_groupID );
+        s_stmt_setElectionType.execute();
     }
 }

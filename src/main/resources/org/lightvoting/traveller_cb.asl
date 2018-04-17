@@ -54,11 +54,13 @@ state(0, undefined).
     .
 
 
-    +!received/result
-        : >>result(Chair, Result)
+   +!received/result
+        : >>result(Chair, Result, Intermediate, Group)
         <-
-            !diss/computed(Chair, Result);
-            -result(Chair, Result)
+            generic/print( MyName, "add goal !diss/submitted" );
+            !diss/submitted(Chair, Result, Intermediate, Group);
+            +received(Intermediate, Group);
+            -result(Chair, Result, Intermediate, Group)
         <-
             !received/result;
             generic/print( MyName, " added goal !received/result")
@@ -75,10 +77,16 @@ state(0, undefined).
 //        !received/result
 //    .
 
-+!diss/computed(Chair,Result)
+//+!diss/computed(Chair,Result)
+//    <-
+//        generic/print(MyName, "compute diss for result", Result);
+//        compute/diss(Chair,Result)
+//    .
+
++!diss/submitted(Chair,Result,Intermediate, Group)
     <-
-        generic/print(MyName, "compute diss for result", Result);
-        compute/diss(Chair,Result)
+        generic/print(MyName, "submit diss for result", Result, "intermediate", Intermediate, " group ", Group);
+        submit/diss(Chair,Result,Intermediate,Group)
     .
 
 

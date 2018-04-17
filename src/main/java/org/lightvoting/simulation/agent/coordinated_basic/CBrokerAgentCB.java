@@ -145,7 +145,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCB(), m_stream, m_environmentCB, m_altnum, m_name,
                                                                            m_joinThr, m_prefList, m_rule );
-        m_chairagentgenerator = new CChairAgentCB.CChairAgentGenerator( m_chairstream, m_environmentCB, m_name, m_altnum, m_comsize, m_rule );
+        m_chairagentgenerator = new CChairAgentCB.CChairAgentGenerator( m_chairstream, m_environmentCB, m_name, m_altnum, m_comsize, m_rule, m_sim, m_run );
 
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
@@ -254,7 +254,10 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
             p_votingAgent.setChair( l_determinedGroup.chair() );
 
-            // add new group entity to database
+            // add new group entity to database, update lastelection and type
+
+            EDataDB.INSTANCE.setLastElection( l_determinedGroup.getDB(), false );
+            EDataDB.INSTANCE.setElectionType( l_determinedGroup.getDB(), "INTERMEDIATE" );
 
             l_determinedGroup.setDB( EDataDB.INSTANCE.newGroup(l_determinedGroup.chair().name(), l_determinedGroup.getDB(), l_determinedGroup.getVoters(), m_run, m_sim ) );
 
