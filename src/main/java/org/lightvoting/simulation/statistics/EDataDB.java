@@ -51,8 +51,10 @@ public enum EDataDB
     static PreparedStatement s_stmt_Result;
     static PreparedStatement s_stmt_addVoterToResult;
     static PreparedStatement s_stmt_setLastElection;
+    static PreparedStatement s_stmt_getLastElection;
     private static PreparedStatement s_stmt_setElectionType;
     private static boolean m_open;
+
 
 
     /**
@@ -130,6 +132,8 @@ public enum EDataDB
                 s_stmt_addVoterToResult = s_con.prepareStatement("INSERT into elects ( voter, electionresult, diss, simulation, run ) VALUES (?,?,?,?,?)");
             if ((s_stmt_setLastElection == null) || (s_stmt_setLastElection.isClosed()))
                 s_stmt_setLastElection = s_con.prepareStatement("UPDATE election_result SET lastelection = ? WHERE group_column = ?");
+            if ((s_stmt_getLastElection == null) || (s_stmt_getLastElection.isClosed()))
+                s_stmt_getLastElection = s_con.prepareStatement("SELECT * from election_result WHERE group_column = ?");
             if ((s_stmt_setElectionType == null) || (s_stmt_setElectionType.isClosed()))
                 s_stmt_setElectionType = s_con.prepareStatement("UPDATE election_result SET type = CAST (? AS electiontype) WHERE group_column = ?");
 
@@ -388,6 +392,7 @@ public enum EDataDB
             s_stmt_Result.close();
             s_stmt_addVoterToResult.close();
             s_stmt_setLastElection.close();
+            s_stmt_getLastElection.close();
             s_stmt_setElectionType.close();
             s_con.close();
             System.out.println("Closed connection");
@@ -402,10 +407,30 @@ public enum EDataDB
         s_stmt_setLastElection.execute();
     }
 
-    public void setElectionType(int p_groupID, String p_type ) throws SQLException {
+    public boolean getLastElection(int p_groupID ) throws SQLException
+    {
+        boolean l_lastElection = false;
 
+        s_stmt_getLastElection.setInt( 1, p_groupID );
+        try (final ResultSet l_rs = s_stmt_getLastElection.executeQuery();)
+        {
+            if ( l_rs.next() )
+            {
+
+                l_lastElection = l_rs.getBoolean("lastelection");
+            }
+        }
+
+        return l_lastElection;
+    }
+
+
+    public void setElectionType(int p_groupID, String p_type ) throws SQLException
+    {
         s_stmt_setElectionType.setString( 1, p_type );
         s_stmt_setElectionType.setInt( 2, p_groupID );
         s_stmt_setElectionType.execute();
     }
+
+
 }

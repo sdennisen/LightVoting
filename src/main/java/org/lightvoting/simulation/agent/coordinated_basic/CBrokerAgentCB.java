@@ -93,6 +93,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     private final String m_rule;
     private int m_run;
     private int m_sim;
+    private List<Integer> l_imGroups = new ArrayList<>();
 
     /**
      * ctor
@@ -256,8 +257,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 
             // add new group entity to database, update lastelection and type
 
-            EDataDB.INSTANCE.setLastElection( l_determinedGroup.getDB(), false );
-            EDataDB.INSTANCE.setElectionType( l_determinedGroup.getDB(), "INTERMEDIATE" );
+            l_imGroups.add( l_determinedGroup.getDB() );
 
             l_determinedGroup.setDB( EDataDB.INSTANCE.newGroup(l_determinedGroup.chair().name(), l_determinedGroup.getDB(), l_determinedGroup.getVoters(), m_run, m_sim ) );
 
@@ -390,6 +390,15 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
 //            }
         }
 
+        for ( int i = 0; i < l_imGroups.size(); i++ )
+        {
+            // only update if last election has not yet been set to false
+            if ( EDataDB.INSTANCE.getLastElection( l_imGroups.get(i) ) )
+            {
+                EDataDB.INSTANCE.setLastElection(l_imGroups.get(i), false);
+                EDataDB.INSTANCE.setElectionType(l_imGroups.get(i), "INTERMEDIATE");
+            }
+        }
         if ( l_allReady )
         {
             System.out.println( "all groups ready" );
