@@ -957,7 +957,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         if ( l_max <= m_dissThreshold )
         {
             System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
-
+            EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
 
@@ -966,7 +966,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         else if ( m_newdissMap.size() == 1 )
         {
             System.out.println( this.name() + ": only one voter left, we are done " );
-
+            EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
             return;
         }
 
