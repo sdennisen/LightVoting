@@ -695,6 +695,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
             System.out.println( "Number of voters and diss vals: " + m_voters.size() );
 
             // for iterative election, set lastElection to false per default, is set to true later
+            // TODO use p_dbGroup instead?
 
             EDataDB.INSTANCE.addResult(this.group().getDB(),
                     m_comResultBV.toString(),

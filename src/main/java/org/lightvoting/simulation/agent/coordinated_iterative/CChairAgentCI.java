@@ -128,6 +128,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     private final String m_rule;
     private int m_sim;
+    private BitVector m_comResultBV;
+    private List<Integer> m_dbIDs = new ArrayList<>();
+    private HashMap<String,Float> m_dissMapStr = new HashMap<>();
 
     // TODO merge ctors
 
@@ -578,8 +581,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     @IAgentActionFilter
     @IAgentActionName( name = "store/diss" )
 
-    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_iteration )
-    {
+    public synchronized void storeDiss( final String p_votingAgent, final Number p_diss, final Number p_iteration ) throws SQLException {
         try
         {
             final CVotingAgentCI l_votingAg = this.getAgent( p_votingAgent );
@@ -600,6 +602,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
             m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+            m_dissMapStr.put( p_votingAgent, p_diss.floatValue() );
 
             //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
             //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
@@ -628,6 +631,26 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_iterations.add( p_iteration.intValue() );
             m_dissReceived.put( l_votingAg, m_iterations );
             System.out.println( "put in iteration value " +  p_iteration.intValue() + " for agent " + l_votingAg.name() );
+
+            // write election_result entity to database
+
+            if ( ( m_dissMap.size() == m_voters.size() ) && (! m_dbIDs.contains( this.group().getDB() ) ) )
+            {
+
+                // TODO use p_dbGroup instead?
+
+                EDataDB.INSTANCE.addResult(this.group().getDB(),
+                        m_comResultBV.toString(),
+                        "ITERATIVE",
+                        false,
+                        p_iteration.intValue(),
+                        -1,
+                        m_dissMapStr,
+                        m_run,
+                        m_sim);
+
+                m_dbIDs.add( this.group().getDB());
+            }
 
             if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
             {
@@ -717,16 +740,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     public synchronized void computeIM()
     {
-        final BitVector l_comResultBV;
 
         if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-            l_comResultBV = this.computeMSAV();
+            m_comResultBV = this.computeMSAV();
 
         else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
-            l_comResultBV = this.computeMSRS();
+            m_comResultBV = this.computeMSRS();
 
-        System.out.println( " ------------------------ " + this.name() + " Result of intermediate election as BV: " + l_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + " Result of intermediate election as BV: " + m_comResultBV );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(
@@ -748,7 +770,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 CLiteral.from(
                     "result",
                     CRawTerm.from( this ),
-                    CRawTerm.from( l_comResultBV )
+                    CRawTerm.from( m_comResultBV )
                 )
             );
             System.out.println( "addbelief result to agent " + i.name() );
@@ -756,7 +778,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         } );
 
 
-        this.group().setResult( l_comResultBV );
+        this.group().setResult( m_comResultBV );
 
         this.trigger(
             CTrigger.from(
@@ -769,13 +791,13 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         );
 
         // store intermediate election results
-        m_map.put( this.name() + "/join_" + m_imNum + "/election result", l_comResultBV );
+        m_map.put( this.name() + "/join_" + m_imNum + "/election result", m_comResultBV );
         // store contributing agents
         m_map.put( this.name() + "/join_" + m_imNum + "/agents", this.asString( m_voters ) );
 
 
         // store election result in map
-        m_map.put( this.name() + "/election result", l_comResultBV );
+        m_map.put( this.name() + "/election result", m_comResultBV );
         // store group size in map
         m_map.put( this.name() + "/group size", m_voters.size() );
         // store names of agents
@@ -1469,8 +1491,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
          * @param p_capacity group capacity
          * @param p_broker broker agent
          * @param p_dissthr dissatisfaction threshold
-         * @param m_run
-         * @param m_sim
+         * @param p_run run number
+         * @param p_sim simulation number
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
 

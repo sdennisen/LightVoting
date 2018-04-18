@@ -366,6 +366,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
                     l_group.chair().updateElection();
 
+                // TODO adapt in database accordingly
+
                 if (l_group.result() == null)
                     l_allReady = false;
 
