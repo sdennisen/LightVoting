@@ -768,9 +768,10 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         {
             i.beliefbase().add(
                 CLiteral.from(
-                    "result",
+                    "resultIM",
                     CRawTerm.from( this ),
-                    CRawTerm.from( m_comResultBV )
+                    CRawTerm.from( m_comResultBV ),
+                    CRawTerm.from( m_imNum )
                 )
             );
             System.out.println( "addbelief result to agent " + i.name() );

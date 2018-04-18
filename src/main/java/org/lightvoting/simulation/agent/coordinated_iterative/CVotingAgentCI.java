@@ -137,6 +137,9 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private final String m_rule;
     private int m_run;
     private int m_sim;
+    private ConcurrentHashMap<CChairAgentCI, Number> m_intermediateSent = new ConcurrentHashMap<CChairAgentCI, Number>();
+    private int m_im;
+
 
     // TODO refactor ctors
 
@@ -436,6 +439,42 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             )
         );
     }
+
+    @IAgentActionFilter
+    @IAgentActionName( name = "im/submit/diss" )
+    private synchronized void submitDissIM( final CChairAgentCI p_chairAgent, final BitVector p_result, final Number p_intermediate ) throws SQLException {
+        if ( m_intermediateSent.keySet().contains( p_chairAgent ) )
+            if ( m_intermediateSent.get( p_chairAgent ).intValue() >= p_intermediate.intValue() )
+            {
+                System.out.println( "I already submitted my diss for this intermediate" );
+                return;
+            }
+
+
+        System.out.println( this.name() + " submitting diss for intermediate " + p_intermediate );
+
+       // set time in database for agent
+
+        EDataDB.INSTANCE.setTime( this.cycleCounter().intValue(), this.name(), m_run, m_sim );
+
+        p_chairAgent.trigger(
+                CTrigger.from(
+                        ITrigger.EType.ADDGOAL,
+                        CLiteral.from(
+                                "im/stored/diss",
+                                CRawTerm.from( this.name() ),
+                                CRawTerm.from( this.computeDissBV( p_result ) ),
+                                CRawTerm.from( p_intermediate )                )
+                )
+        );
+
+        // m_dissSent.add( p_iteration.intValue() );
+        // m_iterations.add( p_iteration );
+        m_intermediateSent.put( p_chairAgent, p_intermediate );
+        m_im = p_intermediate.intValue();
+        m_hasDiss=true;
+    }
+
 
 
     @IAgentActionFilter
