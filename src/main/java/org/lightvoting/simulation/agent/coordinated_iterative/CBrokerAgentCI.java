@@ -154,9 +154,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
                                                                            m_joinThr, m_prefList, m_rule );
         m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this,
-                                                                        m_dissthr, m_rule
-        );
-
+                                                                        m_dissthr, m_rule, m_run, m_sim );
         this.trigger( CTrigger.from(
             ITrigger.EType.ADDBELIEF,
             CLiteral.from(
@@ -274,7 +272,12 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
             p_votingAgent.addGroupID( l_determinedGroup );
             p_votingAgent.setChair( l_determinedGroup.chair() );
-        //    m_chairs.add( l_determinedGroup.chair() );
+
+            // add new group entity to database
+
+            l_determinedGroup.setDB( EDataDB.INSTANCE.newGroup(l_determinedGroup.chair().name(), l_determinedGroup.getDB(), l_determinedGroup.getVoters(), m_run, m_sim ) );
+
+            //    m_chairs.add( l_determinedGroup.chair() );
             return;
         }
 
@@ -388,6 +391,11 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                             this.removeAndAddAg(i));
 
                     l_cleanGroups.add(l_group);
+
+                    // if agents have been removed, add new group entry to database
+                    if ( l_toRemoveList.size() > 0 )
+                        l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
                 }
 
 
@@ -417,6 +425,11 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                         );
 
                         l_group.endWaitForDiss();
+
+                        // if agents have been removed, add new group entry to database
+                        if ( l_toRemoveList.size() > 0 )
+                            l_group.setDB( EDataDB.INSTANCE.newGroup(l_group.chair().name(), l_group.getDB(), l_group.getVoters(), m_run, m_sim ) );
+
 
                     }
 
