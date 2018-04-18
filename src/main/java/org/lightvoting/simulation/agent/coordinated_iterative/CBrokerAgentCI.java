@@ -40,6 +40,7 @@ import org.lightvoting.simulation.action.message.coordinated_iterative.CSendCI;
 import org.lightvoting.simulation.agent.coordinated_iterative.CVotingAgentCI.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
 import org.lightvoting.simulation.environment.coordinated_iterative.CGroupCI;
+import org.lightvoting.simulation.statistics.EDataDB;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -93,6 +94,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final double m_dissthr;
     private HashMap<String, Object> m_map = new HashMap<>();
     private String m_rule;
+    private int m_run;
+    private int m_sim;
 
     /**
      * ctor
@@ -108,22 +111,24 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
      * @param p_prefList preference list
      * @param p_comsize committee size
      * @param p_dissthr
+     * @param p_run
+     * @param p_sim
      * @throws Exception exception
      */
-    public CBrokerAgentCI( final String p_broker,
-                           @Nonnull final IAgentConfiguration p_configuration,
-                           final int p_agNum,
-                           final InputStream p_stream,
-                           final InputStream p_chairstream,
-                           final CEnvironmentCI p_environment,
-                           final int p_altnum,
-                           final String p_name,
-                           final double p_joinThr,
-                           final List<AtomicDoubleArray> p_prefList,
-                           final int p_comsize,
-                           final double p_dissthr,
-                           final String p_rule
-    ) throws Exception
+    public CBrokerAgentCI(final String p_broker,
+                          @Nonnull final IAgentConfiguration p_configuration,
+                          final int p_agNum,
+                          final InputStream p_stream,
+                          final InputStream p_chairstream,
+                          final CEnvironmentCI p_environment,
+                          final int p_altnum,
+                          final String p_name,
+                          final double p_joinThr,
+                          final List<AtomicDoubleArray> p_prefList,
+                          final int p_comsize,
+                          final double p_dissthr,
+                          final String p_rule,
+                          int p_run, int p_sim) throws Exception
     {
         super( p_configuration );
         m_broker = p_broker;
@@ -141,6 +146,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_comsize = p_comsize;
         m_dissthr = p_dissthr;
         m_rule = p_rule;
+        m_run = p_run;
+        m_sim = p_sim;
 
         System.out.println( "dissthr in broker: " + m_dissthr );
 
@@ -208,6 +215,12 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         System.out.println( "new voter:" + l_testvoter.name() );
 
         m_voters.add( l_testvoter );
+
+        String l_name = l_testvoter.name();
+
+        // add voter instance to database
+
+        EDataDB.INSTANCE.addVoter(l_name, m_run, m_sim);
 
         return l_testvoter;
 
@@ -664,6 +677,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         private int m_comsize;
         private double m_dissthr;
         private String m_rule;
+        private int m_run;
+        private int m_sim;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -679,22 +694,24 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
          * @param p_prefList preference list
          * @param p_comsize committee size
          * @param p_dissthr
+         * @param p_run
+         * @param p_sim
          * @throws Exception exception
          */
-        public CBrokerAgentGenerator( final CSendCI p_send,
-                                      final FileInputStream p_brokerStream,
-                                      final int p_agNum,
-                                      final InputStream p_stream,
-                                      final InputStream p_chairStream,
-                                      final CEnvironmentCI p_environment,
-                                      final int p_altnum,
-                                      final String p_name,
-                                      final double p_joinThr,
-                                      final List<AtomicDoubleArray> p_prefList,
-                                      final int p_comsize,
-                                      final double p_dissthr,
-                                      final String p_rule
-        ) throws Exception
+        public CBrokerAgentGenerator(final CSendCI p_send,
+                                     final FileInputStream p_brokerStream,
+                                     final int p_agNum,
+                                     final InputStream p_stream,
+                                     final InputStream p_chairStream,
+                                     final CEnvironmentCI p_environment,
+                                     final int p_altnum,
+                                     final String p_name,
+                                     final double p_joinThr,
+                                     final List<AtomicDoubleArray> p_prefList,
+                                     final int p_comsize,
+                                     final double p_dissthr,
+                                     final String p_rule,
+                                     int p_run, int p_sim) throws Exception
         {
             super(
                     // input ASL stream
@@ -733,6 +750,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             m_comsize = p_comsize;
             m_dissthr = p_dissthr;
             m_rule = p_rule;
+            m_run = p_run;
+            m_sim = p_sim;
         }
 
         @Nullable
@@ -761,8 +780,9 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                     m_prefList,
                     m_comsize,
                     m_dissthr,
-                    m_rule
-                );
+                    m_rule,
+                    m_run,
+                    m_sim);
             }
             catch ( final Exception l_ex )
             {

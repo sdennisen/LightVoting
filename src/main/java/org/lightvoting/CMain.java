@@ -383,7 +383,7 @@ public final class CMain
                         final String l_brokerCI = "src/main/resources/org/lightvoting/broker_ci.asl";
 
                         createBrokerCoordinatedIterative(
-                            l_brokerCI, l_chairstream, s_agNum, new CSendCI(), l_stream, s_environmentCI, s_altnum, l_name, s_joinThr, s_prefList );
+                            l_brokerCI, l_chairstream, s_agNum, new CSendCI(), l_stream, s_environmentCI, s_altnum, l_name, s_joinThr, s_prefList, r, s_simID );
 
                         l_stream.close();
                         l_chairstream.close();
@@ -500,14 +500,14 @@ public final class CMain
         s_brokerCoordinatedBasic = s_brokerGeneratorCB.generatesingle();
     }
 
-    private static void createBrokerCoordinatedIterative( final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCI p_send,
-                                                          final FileInputStream p_stream,
-                                                          final CEnvironmentCI p_environmentCI,
-                                                          final int p_altnum,
-                                                          final String p_name,
-                                                          final double p_joinThr,
-                                                          final List<AtomicDoubleArray> p_prefList
-    ) throws Exception
+    private static void createBrokerCoordinatedIterative(final String p_arg, final FileInputStream p_chrStream, final int p_agNum, final CSendCI p_send,
+                                                         final FileInputStream p_stream,
+                                                         final CEnvironmentCI p_environmentCI,
+                                                         final int p_altnum,
+                                                         final String p_name,
+                                                         final double p_joinThr,
+                                                         final List<AtomicDoubleArray> p_prefList,
+                                                         int p_run, int p_sim) throws Exception
     {
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
@@ -526,8 +526,9 @@ public final class CMain
                                                                         s_prefList,
                                                                         s_comsize,
                                                                         s_dissthr,
-                                                                        s_rule
-        );
+                                                                        s_rule,
+                                                                        p_run,
+                                                                        p_sim);
 
         s_brokerCoordinatedIterative = s_brokerGeneratorCI.generatesingle();
     }
