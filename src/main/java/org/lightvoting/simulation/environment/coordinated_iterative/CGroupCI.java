@@ -57,6 +57,7 @@ public class CGroupCI
     private boolean m_dissValsSubmitted;
     private AtomicLong m_dissCounter;
     private boolean m_waitingForDiss;
+    private int m_dbID;
 
     /**
      * constructor
@@ -231,6 +232,17 @@ public class CGroupCI
     public BitVector result()
     {
         return m_result;
+    }
+
+    public void setDB( int p_dbID )
+    {
+        m_dbID = p_dbID;
+
+    }
+
+    public int getDB()
+    {
+        return m_dbID;
     }
 
     public synchronized boolean areDissValsSubmitted()

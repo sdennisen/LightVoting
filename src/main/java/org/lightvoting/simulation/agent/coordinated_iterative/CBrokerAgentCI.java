@@ -299,6 +299,9 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_chairs.add( l_chairAgent );
         m_map.put( "chairNum", m_chairs.size() );
 
+        // create group in database
+        l_group.setDB( EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim ) );
+
     }
 
     private int hammingDistance( final BitVector p_bitVote, final BitVector p_result )
