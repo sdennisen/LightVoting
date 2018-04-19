@@ -63,6 +63,10 @@ state(0, undefined).
         <-
             !received/result;
             generic/print( MyName, " added goal !received/result")
+        : >>resultIM(Chair, Result, Intermediate)
+        <-
+            !im/diss/computed(Chair, Result, Intermediate);
+            -resultIM(Chair, Result, Intermediate)
         .
 
 // TODO re-insert?
@@ -75,6 +79,12 @@ state(0, undefined).
 //    <-
 //        !received/result
 //    .
+
++!im/diss/computed(Chair,Result, Intermediate)
+    <-
+        generic/print(MyName, "submit diss for intermediate result", Result, "intermediate", Intermediate);
+        im/submit/diss(Chair,Result,Intermediate)
+    .
 
 +!diss/computed(Chair,Result, Iteration)
     <-

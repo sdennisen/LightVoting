@@ -574,7 +574,53 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
 
     /**
-     * store dissatisfaction value
+     * store dissatisfaction value for intermediate election
+     *
+     * @param p_diss dissatisfaction value
+     */
+    @IAgentActionFilter
+    @IAgentActionName( name = "im/store/diss" )
+
+    public synchronized void storeDissIM( final String p_votingAgent, final Number p_diss, final Number p_intermediate ) throws SQLException
+    {
+
+// TODO fix NullPointerException here: diss counter is null
+//        if (this.group().dissTimedOut())
+//        {
+//            System.out.println("diss timeout reached, not accepting diss of agent " + p_votingAgent);
+//            return;
+//        }
+
+        m_dissMap.put(this.getAgent(p_votingAgent), p_diss.doubleValue());
+        m_dissMapStr.put(p_votingAgent, p_diss.floatValue());
+
+        System.out.println(this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for intermediate" + p_intermediate
+                + " dissMap " + m_dissMap.size() + " voters " + m_voters.size());
+
+        // write election_result entity to database
+
+        if ((m_dissMap.size() == m_voters.size()) && (!m_dbIDs.contains(this.group().getDB())))
+        {
+
+            // TODO use p_dbGroup instead?
+
+            EDataDB.INSTANCE.addResult(this.group().getDB(),
+                    m_comResultBV.toString(),
+                    "INTERMEDIATE",
+                    false,
+                    -1,
+                    p_intermediate.intValue(),
+                    m_dissMapStr,
+                    m_run,
+                    m_sim);
+
+            m_dbIDs.add(this.group().getDB());
+        }
+    }
+
+
+    /**
+     * store dissatisfaction value for iterative election
      *
      * @param p_diss dissatisfaction value
      */
@@ -593,11 +639,13 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //                    return;
 //                }
 
-            if ( this.group().dissTimedOut() )
-            {
-                System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
-                return;
-            }
+
+// TODO fix NullPointerException here: diss counter is null
+//            if ( this.group().dissTimedOut() )
+//            {
+//                System.out.println( "diss timeout reached, not accepting diss of agent " + p_votingAgent );
+//                return;
+//            }
                 //        m_dissList.add( p_diss.doubleValue() );
                 //        m_dissVoters.add( this.getAgent( p_votingAgent ) );
 
@@ -610,11 +658,11 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
                                 + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
 
-            // store diss for each iteration
-
-            m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
-
-            m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
+//            // store diss for each iteration
+//
+//            m_map.put( this.name() + "/" + p_iteration + "/" + p_votingAgent, p_diss.doubleValue() );
+//
+//            m_map.put( this.name() + "/" + p_votingAgent, p_diss.doubleValue() );
 
             //  final String l_path = m_run + l_slash + m_conf + l_slash + "group " + this.getGroupID() + l_slash + p_iteration + l_slash + "dissVals";
 

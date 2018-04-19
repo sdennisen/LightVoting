@@ -48,7 +48,14 @@ started(0).
         compute/result( 0 )
     .
 
-// store received diss value in Java datastructure
+// store received diss value for intermediate election in Java datastructure
++!im/stored/diss(Traveller, Diss, Intermediate)
+     <-
+         im/store/diss(Traveller, Diss, Intermediate)
+       .
+
+
+// store received diss value for iterative election in Java datastructure
 +!stored/diss(Traveller, Diss, Iteration)
     // : >>dissatisfaction(D, F) //, D < F-1)
     <-
