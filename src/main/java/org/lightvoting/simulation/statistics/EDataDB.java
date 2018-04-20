@@ -39,20 +39,21 @@ public enum EDataDB
 {
     INSTANCE;
 
-    static Connection s_con;
-    static PreparedStatement s_stmt_conf;
-    static PreparedStatement s_stmt_sim;
-    static PreparedStatement s_stmt_run;
-    static PreparedStatement s_stmt_voter;
-    static PreparedStatement s_stmt_setTime;
-    static PreparedStatement s_stmt_group;
-    static PreparedStatement s_stmt_addVoterToGroup;
-    static PreparedStatement s_stmt_newGroup;
-    static PreparedStatement s_stmt_Result;
-    static PreparedStatement s_stmt_addVoterToResult;
-    static PreparedStatement s_stmt_setLastElection;
-    static PreparedStatement s_stmt_getLastElection;
+    private static Connection s_con;
+    private static PreparedStatement s_stmt_conf;
+    private static PreparedStatement s_stmt_sim;
+    private static PreparedStatement s_stmt_run;
+    private static PreparedStatement s_stmt_voter;
+    private static PreparedStatement s_stmt_setTime;
+    private static PreparedStatement s_stmt_group;
+    private static PreparedStatement s_stmt_addVoterToGroup;
+    private static PreparedStatement s_stmt_newGroup;
+    private static PreparedStatement s_stmt_Result;
+    private static PreparedStatement s_stmt_addVoterToResult;
+    private static PreparedStatement s_stmt_setLastElection;
+    private static PreparedStatement s_stmt_getLastElection;
     private static PreparedStatement s_stmt_setElectionType;
+    private static PreparedStatement s_stmt_setIteration;
     private static boolean m_open;
 
 
@@ -136,6 +137,8 @@ public enum EDataDB
                 s_stmt_getLastElection = s_con.prepareStatement("SELECT * from election_result WHERE group_column = ?");
             if ((s_stmt_setElectionType == null) || (s_stmt_setElectionType.isClosed()))
                 s_stmt_setElectionType = s_con.prepareStatement("UPDATE election_result SET type = CAST (? AS electiontype) WHERE group_column = ?");
+            if ((s_stmt_setIteration == null) || (s_stmt_setIteration.isClosed()))
+                s_stmt_setIteration = s_con.prepareStatement("UPDATE election_result SET itNum = ? WHERE group_column = ?");
 
             m_open = true;
         }
@@ -394,6 +397,7 @@ public enum EDataDB
             s_stmt_setLastElection.close();
             s_stmt_getLastElection.close();
             s_stmt_setElectionType.close();
+            s_stmt_setIteration.close();
             s_con.close();
             System.out.println("Closed connection");
             m_open = false;
@@ -433,4 +437,9 @@ public enum EDataDB
     }
 
 
+    public void setIteration( int p_groupID, int p_iteration ) throws SQLException {
+        s_stmt_setIteration.setInt( 1, p_iteration );
+        s_stmt_setIteration.setInt( 2, p_groupID );
+        s_stmt_setIteration.execute();
+    }
 }

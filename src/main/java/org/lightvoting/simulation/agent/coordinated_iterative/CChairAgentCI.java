@@ -682,22 +682,33 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             // write election_result entity to database
 
-            if ( ( m_dissMap.size() == m_voters.size() ) && (! m_dbIDs.contains( this.group().getDB() ) ) )
+            if ( m_dissMap.size() == m_voters.size() )
             {
-
                 // TODO use p_dbGroup instead?
 
-                EDataDB.INSTANCE.addResult(this.group().getDB(),
-                        m_comResultBV.toString(),
-                        "ITERATIVE",
-                        false,
-                        p_iteration.intValue(),
-                        -1,
-                        m_dissMapStr,
-                        m_run,
-                        m_sim);
+                // if it is iteration 0, we need to change the already existing entry in the database
 
-                m_dbIDs.add( this.group().getDB());
+                if ( p_iteration.intValue() == 0 )
+                {
+
+                    EDataDB.INSTANCE.setElectionType(this.group().getDB(), "ITERATIVE");
+                    EDataDB.INSTANCE.setIteration(this.group().getDB(), 0);
+                }
+
+                else if (! m_dbIDs.contains( this.group().getDB() ) )
+
+                {
+                    EDataDB.INSTANCE.addResult(this.group().getDB(),
+                            m_comResultBV.toString(),
+                            "ITERATIVE",
+                            false,
+                            p_iteration.intValue(),
+                            -1,
+                            m_dissMapStr,
+                            m_run,
+                            m_sim);
+                    m_dbIDs.add(this.group().getDB());
+                }
             }
 
             if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
