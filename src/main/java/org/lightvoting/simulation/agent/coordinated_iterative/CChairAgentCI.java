@@ -132,6 +132,12 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     private List<Integer> m_dbIDs = new ArrayList<>();
     private HashMap<String,Float> m_dissMapStr = new HashMap<>();
 
+    // HashMap to keep track of the diss vals for intermediate elections
+    private HashMap<Integer, HashMap<CVotingAgentCI,Double>> m_dissMapIM = new HashMap<>();
+
+    // HashMap to keep track of the diss vals for iterative elections
+    private HashMap<Integer, HashMap<CVotingAgentCI,Double>> m_dissMapIT = new HashMap<>();
+
     // TODO merge ctors
 
     /**
@@ -584,6 +590,8 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
     public synchronized void storeDissIM( final String p_votingAgent, final Number p_diss, final Number p_intermediate ) throws SQLException
     {
 
+        try {
+
 // TODO fix NullPointerException here: diss counter is null
 //        if (this.group().dissTimedOut())
 //        {
@@ -591,30 +599,48 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //            return;
 //        }
 
-        m_dissMap.put(this.getAgent(p_votingAgent), p_diss.doubleValue());
-        m_dissMapStr.put(p_votingAgent, p_diss.floatValue());
+            m_dissMap.put(this.getAgent(p_votingAgent), p_diss.doubleValue());
+            m_dissMapStr.put(p_votingAgent, p_diss.floatValue());
 
-        System.out.println(this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for intermediate" + p_intermediate
-                + " dissMap " + m_dissMap.size() + " voters " + m_voters.size());
+            // if key does not exist yet, you need to create the HashMap for the key
+            if (!m_dissMapIM.containsKey(p_intermediate.intValue())) {
+                HashMap l_firstDiss = new HashMap();
+                l_firstDiss.put(this.getAgent(p_votingAgent), p_diss.doubleValue());
+                m_dissMapIM.put(p_intermediate.intValue(), l_firstDiss);
+            }
+            else
+                m_dissMapIM.get(p_intermediate.intValue()).put(this.getAgent(p_votingAgent), p_diss.doubleValue());
 
-        // write election_result entity to database
+            System.out.println(this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for intermediate" + p_intermediate
+                    + " dissMap " + m_dissMapIM.get(p_intermediate.intValue()).size() + " voters " + m_voters.size());
 
-        if ((m_dissMap.size() == m_voters.size()) && (!m_dbIDs.contains(this.group().getDB())))
+
+            // write election_result entity to database
+
+            if ((m_dissMapIM.get(p_intermediate.intValue()).size() == m_voters.size()) && (!m_dbIDs.contains(this.group().getDB()))) {
+
+                // TODO use p_dbGroup instead?
+
+                EDataDB.INSTANCE.addResult(this.group().getDB(),
+                        m_comResultBV.toString(),
+                        "INTERMEDIATE",
+                        false,
+                        -1,
+                        p_intermediate.intValue(),
+                        m_dissMapStr,
+                        m_run,
+                        m_sim);
+
+                m_dbIDs.add(this.group().getDB());
+                m_dissMap.clear();
+
+                System.out.println(this.name() + " Clear diss map for im " + p_intermediate);
+            }
+        }
+        catch ( final NullPointerException l_ex )
         {
-
-            // TODO use p_dbGroup instead?
-
-            EDataDB.INSTANCE.addResult(this.group().getDB(),
-                    m_comResultBV.toString(),
-                    "INTERMEDIATE",
-                    false,
-                    -1,
-                    p_intermediate.intValue(),
-                    m_dissMapStr,
-                    m_run,
-                    m_sim);
-
-            m_dbIDs.add(this.group().getDB());
+            System.out.println(  "storeDissIM(): NullPointerException in " + this.name() + " with " + p_votingAgent );
+            System.exit( 1 );
         }
     }
 
@@ -652,11 +678,22 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_dissMap.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
             m_dissMapStr.put( p_votingAgent, p_diss.floatValue() );
 
+            // if key does not exist yet, you need to create the HashMap for the key
+            if ( !m_dissMapIT.containsKey( p_iteration.intValue() ) )
+            {
+                HashMap l_firstDiss = new HashMap();
+                l_firstDiss.put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+                m_dissMapIT.put( p_iteration.intValue(), l_firstDiss );
+            }
+
+            else
+                m_dissMapIT.get( p_iteration.intValue() ).put( this.getAgent( p_votingAgent ), p_diss.doubleValue() );
+
             //        System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
             //                            + " dissMap " + m_dissMap.size() + " fill " + p_fill );
 
             System.out.println( this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for iteration " + p_iteration
-                                + " dissMap " + m_dissMap.size() + " voters " + m_voters.size() );
+                                + " dissMap " + m_dissMapIT.get( p_iteration.intValue() ).size() + " voters " + m_voters.size() );
 
 //            // store diss for each iteration
 //
@@ -682,20 +719,18 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             // write election_result entity to database
 
-            if ( m_dissMap.size() == m_voters.size() )
+            if ( m_dissMapIT.get( p_iteration.intValue() ).size() == m_voters.size() )
             {
                 // TODO use p_dbGroup instead?
 
                 // if it is iteration 0, we need to change the already existing entry in the database
 
-                if ( p_iteration.intValue() == 0 )
+                if (p_iteration.intValue() == 0)
                 {
 
                     EDataDB.INSTANCE.setElectionType(this.group().getDB(), "ITERATIVE");
                     EDataDB.INSTANCE.setIteration(this.group().getDB(), 0);
-                }
-
-                else if (! m_dbIDs.contains( this.group().getDB() ) )
+                } else if (!m_dbIDs.contains(this.group().getDB()))
 
                 {
                     EDataDB.INSTANCE.addResult(this.group().getDB(),
@@ -709,29 +744,31 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                             m_sim);
                     m_dbIDs.add(this.group().getDB());
                 }
-            }
 
-            if ( ( m_dissMap.size() == m_voters.size() ) && !m_removedGoalAdded )
-            {
-                this.group().setDissSubmitted();
-
-                this.trigger(
-                    CTrigger.from(
-                        ITrigger.EType.ADDGOAL,
-                        CLiteral.from(
-                            "removed/voter"
-                        )
-                    )
-                );
-
-                System.out.println( "fill: " + m_dissMap.size() + " add goal !removed/voter" );
-                if ( !( m_dissMap.isEmpty() ) )
+                if (!m_removedGoalAdded)
                 {
-                    m_newdissMap = new ConcurrentHashMap<>( m_dissMap );
-                    m_dissMap.clear();
-                }
-                m_removedGoalAdded = true;
+                    this.group().setDissSubmitted();
 
+                    this.trigger(
+                            CTrigger.from(
+                                    ITrigger.EType.ADDGOAL,
+                                    CLiteral.from(
+                                            "removed/voter"
+                                    )
+                            )
+                    );
+
+                    System.out.println("fill: " + m_dissMap.size() + " add goal !removed/voter");
+
+                    m_removedGoalAdded = true;
+                }
+
+                if (!( m_dissMapIT.get( p_iteration.intValue() ).isEmpty()) )
+                {
+                    m_newdissMap = new ConcurrentHashMap<>( m_dissMapIT.get( p_iteration.intValue() ));
+                    m_dissMap.clear();
+                    System.out.println( this.name() + " Clear diss map for it " + p_iteration );
+                }
             }
         }
         catch ( final NullPointerException l_ex )

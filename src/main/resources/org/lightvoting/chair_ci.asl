@@ -81,7 +81,7 @@ started(0).
    //      NewF = F-1;
 //         -dissatisfaction(D, F);
 //         +dissatisfaction(D, New F);
-         generic/print( "re-compute result of election" );
+         generic/print( "re-compute result of election, iteration ", I);
          compute/result(I)
      .
 

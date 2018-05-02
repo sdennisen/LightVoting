@@ -65,6 +65,7 @@ state(0, undefined).
             generic/print( MyName, " added goal !received/result")
         : >>resultIM(Chair, Result, Intermediate)
         <-
+            generic/print( MyName, "add goal !im/diss/computed" );
             !im/diss/computed(Chair, Result, Intermediate);
             -resultIM(Chair, Result, Intermediate)
         .
