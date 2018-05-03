@@ -831,9 +831,6 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
          * compute result of intermediate election (last intermediate election = iteration 0)
          */
 
-    @IAgentActionFilter
-    @IAgentActionName( name = "compute/im" )
-
     public synchronized void computeIM()
     {
 
@@ -844,7 +841,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             m_comResultBV = this.computeMSRS();
 
-        System.out.println( " ------------------------ " + this.name() + " Result of intermediate election as BV: " + m_comResultBV );
+        System.out.println( " ------------------------ " + this.name() + " Result of intermediate election " + m_imNum + " as BV: " + m_comResultBV );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(
