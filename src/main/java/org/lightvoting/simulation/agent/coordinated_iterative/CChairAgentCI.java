@@ -137,6 +137,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
     // HashMap to keep track of the diss vals for iterative elections
     private HashMap<Integer, HashMap<CVotingAgentCI,Double>> m_dissMapIT = new HashMap<>();
+    private HashMap<Integer, List<CVotingAgentCI>> m_votersIM = new HashMap<>();
 
     // TODO merge ctors
 
@@ -530,7 +531,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 System.out.println( "store complete linear order" );
                 this.storeCLO( p_votingAgent, p_vote );
             }
-            this.computeIM();
+            this.computeIM( new ArrayList<>( m_voters ) );
         }
 
         else if ( this.group().timedout() )
@@ -612,12 +613,12 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
                 m_dissMapIM.get(p_intermediate.intValue()).put(this.getAgent(p_votingAgent), p_diss.doubleValue());
 
             System.out.println(this.name() + " storing diss " + p_diss + " from agent " + p_votingAgent + " for intermediate" + p_intermediate
-                    + " dissMap " + m_dissMapIM.get(p_intermediate.intValue()).size() + " voters " + m_voters.size());
+                    + " dissMap " + m_dissMapIM.get(p_intermediate.intValue()).size() + " voters " + ( m_votersIM.get( p_intermediate.intValue() ) .size() ) );
 
 
             // write election_result entity to database
 
-            if ((m_dissMapIM.get(p_intermediate.intValue()).size() == m_voters.size()) && (!m_dbIDs.contains(this.group().getDB()))) {
+            if (( m_dissMapIM.get(p_intermediate.intValue()).size() == ( m_votersIM.get( p_intermediate.intValue() ) .size() ) ) && ( !m_dbIDs.contains(this.group().getDB() ) ) ) {
 
                 // TODO use p_dbGroup instead?
 
@@ -824,14 +825,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         if ( this.group().timedout() )
             this.computeResult( 0 );
         else
-            this.computeIM( );
+            this.computeIM( new ArrayList<CVotingAgentCI>( m_voters ) );
     }
 
         /**
          * compute result of intermediate election (last intermediate election = iteration 0)
+         * @param p_voters voters at time of calling
          */
 
-    public synchronized void computeIM()
+    public synchronized void computeIM( ArrayList<CVotingAgentCI> p_voters )
     {
 
         if ( m_rule.equals( "MINISUM_APPROVAL" ) )
@@ -842,6 +844,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
             m_comResultBV = this.computeMSRS();
 
         System.out.println( " ------------------------ " + this.name() + " Result of intermediate election " + m_imNum + " as BV: " + m_comResultBV );
+
+        // store voters which contributed to the result
+        m_votersIM.put( m_imNum, p_voters );
 
 //        m_voters.stream().forEach( i ->
 //            i.trigger(
@@ -857,7 +862,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 //        );
 
 
-        m_voters.stream().forEach( i ->
+        this.m_voters.stream().forEach(i ->
         {
             i.beliefbase().add(
                 CLiteral.from(
@@ -887,15 +892,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         // store intermediate election results
         m_map.put( this.name() + "/join_" + m_imNum + "/election result", m_comResultBV );
         // store contributing agents
-        m_map.put( this.name() + "/join_" + m_imNum + "/agents", this.asString( m_voters ) );
+        m_map.put( this.name() + "/join_" + m_imNum + "/agents", this.asString(this.m_voters) );
 
 
         // store election result in map
         m_map.put( this.name() + "/election result", m_comResultBV );
         // store group size in map
-        m_map.put( this.name() + "/group size", m_voters.size() );
+        m_map.put( this.name() + "/group size", this.m_voters.size() );
         // store names of agents
-        m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+        m_map.put( this.name() + "/agents", this.asString(this.m_voters) );
 
         m_imNum++;
 
