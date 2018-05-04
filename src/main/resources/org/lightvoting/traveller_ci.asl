@@ -27,7 +27,7 @@ state(0, undefined).
     : >>mygroup(Group) // && >>state(1, S)
     <-  -state(1, S);
         +state(2, group/joined);
-        generic/print( "group/joined");
+        generic/print( MyName, " group/joined");
         !vote/submitted
     <-
         !group/joined
@@ -40,7 +40,7 @@ state(0, undefined).
 +!vote/submitted
     : >>mychair(Chair) && >>state(2, S)
     <-
-        generic/print( "submit vote ");
+        generic/print( MyName, " submit vote ");
         submit/vote(Chair);
         -state(2, S);
         +state(3, vote/submitted);

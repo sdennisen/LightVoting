@@ -390,7 +390,6 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
                 m_submittedTo.add( p_chairAgent );
 
-
                 //       p_chairAgent.beliefbase().beliefbase().add( CLiteral.from( "vote", CRawTerm.from( this ), CRawTerm.from( this.getBitVote() ) ) );
 
             }
@@ -398,6 +397,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             {
                 System.out.println( "StackOverFlowError in agent " + this.name() );
             }
+            else
+                System.out.println( "I already submitted my vote to chair " + p_chairAgent.name() );
     }
 
     // submit Approval vote to chair
