@@ -396,9 +396,10 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             catch ( final StackOverflowError l_ex  )
             {
                 System.out.println( "StackOverFlowError in agent " + this.name() );
+                System.exit( 1 );
             }
             else
-                System.out.println( "I already submitted my vote to chair " + p_chairAgent.name() );
+                System.out.println( this.name() + " I already submitted my vote to chair " + p_chairAgent.name() );
     }
 
     // submit Approval vote to chair

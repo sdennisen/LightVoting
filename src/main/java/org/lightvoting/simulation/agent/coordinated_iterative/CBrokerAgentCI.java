@@ -656,9 +656,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                       )
         );
 
-        // TODO possibly superfluous
-
-        p_Ag.beliefbase().remove( CLiteral.from( "mychair", CRawTerm.from( p_Ag.getChair() ) ) );
+    //  p_Ag.beliefbase().remove( CLiteral.from( "mychair", CRawTerm.from( p_Ag.getChair() ) ) );
 
         System.out.println( "adding Agent " + p_Ag.name() );
         // increase lining counter of ag
