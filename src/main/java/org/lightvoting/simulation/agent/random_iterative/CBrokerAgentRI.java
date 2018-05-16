@@ -336,13 +336,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
 
                             // "re-queue" removed voters
 
-                            l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-                                    CLiteral.from(
-                                            "newag",
-                                            CRawTerm.from( i ),
-                                            CRawTerm.from( m_lineHashMap.get( i ) )
-                                    )
-                                    )
+                            l_toRemoveAgents.parallelStream().forEach(
+                                    i -> this.removeAndAddAg( i )
                             );
 
                             /*final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
