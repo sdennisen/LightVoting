@@ -65,10 +65,15 @@ state(0, undefined).
 // -my/group(Group)
 // !start
 
-+!left/group()
-    : >>leavegroup(Broker)
++!leftgroup
+    : >>mygroup(G) && >>mychair(C)
+    //: >>leavegroup(Broker)
     <-
-        +group(0)
+        generic/print("I needed to leave my group, need a new one");
+        -mygroup(G);
+        -mychair(C);
+        +state(0, undefined);
+        !start
     .
 
 +!done()

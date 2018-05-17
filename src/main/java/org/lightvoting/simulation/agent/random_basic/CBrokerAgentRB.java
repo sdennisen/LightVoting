@@ -46,11 +46,7 @@ import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -322,13 +318,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
                 // "re-queue" removed voters
 
-                l_toRemoveAgents.parallelStream().forEach( i -> this.beliefbase().add(
-                    CLiteral.from(
-                        "newag",
-                        CRawTerm.from( i ),
-                        CRawTerm.from( m_lineHashMap.get( i ) )
-                    )
-                                                 )
+                l_toRemoveAgents.parallelStream().forEach(
+                        i -> this.removeAndAddAg( i )
                 );
 
                 // set belief in chair that group was "cleaned up"
@@ -346,6 +337,34 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
             }
         }
+    }
+
+    /**
+     * add Ag
+     * @param p_Ag agent
+     */
+
+    public void removeAndAddAg( final CVotingAgentRB p_Ag )
+    {
+        p_Ag.trigger( CTrigger.from(
+                ITrigger.EType.ADDGOAL,
+                CLiteral.from(
+                        "leftgroup" )
+                )
+        );
+
+
+        System.out.println( "adding Agent " + p_Ag.name() );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
+
+        this.beliefbase().add(
+                CLiteral.from(
+                        "newag",
+                        CRawTerm.from( p_Ag ),
+                        CRawTerm.from( m_lineHashMap.get( p_Ag ) )
+                )
+        );
     }
 
     /**
