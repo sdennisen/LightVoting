@@ -24,7 +24,7 @@ state(0, undefined).
 // Refactor
 
 +!group/joined
-    : >>mygroup(Group) // && >>state(1, S)
+    : >>mygroup(Group) && >>state(1, S)
     <-  -state(1, S);
         +state(2, group/joined);
         generic/print( "group/joined");
@@ -111,10 +111,17 @@ state(0, undefined).
 // -my/group(Group)
 // !start
 
-+!left/group()
-    : >>leavegroup(Broker)
+// not used at the moment
+
++!leftgroup
+    : >>mygroup(G) && >>mychair(C)
+    //: >>leavegroup(Broker)
     <-
-        +group(0)
+        generic/print("I needed to leave my group, need a new one");
+        -mygroup(G);
+        -mychair(C);
+        +state(0, undefined);
+        !start
     .
 
 +!done()

@@ -1106,6 +1106,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         //        m_dissList.clear();
 
         //       m_dissMap.clear();
+        m_dissMapStr.clear();
         m_newdissMap.clear();
 
         // update map
