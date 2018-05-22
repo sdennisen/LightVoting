@@ -640,8 +640,9 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         }
         catch ( final NullPointerException l_ex )
         {
-            System.out.println(  "storeDissIM(): NullPointerException in " + this.name() + " with " + p_votingAgent );
-            System.exit( 1 );
+            System.out.println(  "storeDissIM(): NullPointerException in " + this.name() + " with " + p_votingAgent +
+                    " in sim " + m_sim + ", run " + m_run );
+           // System.exit( 1 );
         }
     }
 
