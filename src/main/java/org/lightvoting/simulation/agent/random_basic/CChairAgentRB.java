@@ -470,67 +470,62 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     {
         try
         {
-           // final BitVector l_comResultBV;
+            m_comResultBV = new BitVector( 0 );
 
             if ( m_rule.equals( "MINISUM_APPROVAL" ) )
-               m_comResultBV = this.computeMSAV();
+            {
+                if ( m_bitVotes.isEmpty() )
+                    System.out.println("Received no votes, not conducting election");
+                else m_comResultBV = this.computeMSAV();
+            }
 
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
-
-              m_comResultBV = this.computeMSRS();
-             // l_comResultBV = new BitVector( m_altnum );
-
-            System.out.println( " ------------------------ " + this.name() + " Result of election as BV: " + m_comResultBV );
-
-
-
-            //        m_voters.stream().forEach( i ->
-            //            i.trigger(
-            //                CTrigger.from(
-            //                    ITrigger.EType.ADDGOAL,
-            //                    CLiteral.from(
-            //                        "submit/diss",
-            //                        CRawTerm.from( this ),
-            //                        CRawTerm.from( l_comResultBV )
-            //                    )
-            //                )
-            //            )
-            //        );
-
-            m_voters.stream().forEach( i ->
             {
-                i.beliefbase().add(
-                    CLiteral.from(
-                        "result",
-                        CRawTerm.from( this ),
-                        CRawTerm.from( m_comResultBV )
-                    )
-                );
-                System.out.println( "addbelief result to agent " + i.name() );
-                System.out.println( "result " + i.toString() );
+                if ( m_cLinearOrders.isEmpty() )
+                    System.out.println("Received no votes, not conducting election");
+                else m_comResultBV = this.computeMSRS();
             }
-            );
 
+            // if result is not empty, continue
+            if ( m_comResultBV.size() > 0 )
+            {
 
-            this.trigger(
-                CTrigger.from(
-                    ITrigger.EType.ADDGOAL,
-                    CLiteral.from(
-                        "wait/for/diss"
+                System.out.println(" ------------------------ " + this.name() + " Result of election as BV: " + m_comResultBV);
 
-                    )
-                )
-            );
+                m_voters.stream().forEach(i ->
+                        {
+                            i.beliefbase().add(
+                                    CLiteral.from(
+                                            "result",
+                                            CRawTerm.from(this),
+                                            CRawTerm.from(m_comResultBV)
+                                    )
+                            );
+                            System.out.println("addbelief result to agent " + i.name());
+                            System.out.println("result " + i.toString());
+                        }
+                );
 
-            // store election result in map
-            m_map.put( this.name() + "/election result", m_comResultBV );
-            // store group size in map
-            m_map.put( this.name() + "/group size", m_voters.size() );
-            // store names of agents
-            for ( int i = 0; i < m_voters.size(); i++ )
-                m_map.put( this.name() + "/agents", this.asString( m_voters ) );
+                this.trigger(
+                        CTrigger.from(
+                                ITrigger.EType.ADDGOAL,
+                                CLiteral.from(
+                                        "wait/for/diss"
 
-            // m_dissStored = false;
+                                )
+                        )
+                );
+
+//                // store election result in map
+//                m_map.put(this.name() + "/election result", m_comResultBV);
+//                // store group size in map
+//                m_map.put(this.name() + "/group size", m_voters.size());
+//                // store names of agents
+//                for (int i = 0; i < m_voters.size(); i++)
+//                    m_map.put(this.name() + "/agents", this.asString(m_voters));
+
+                // m_dissStored = false;
+            }
         }
         catch ( final ConcurrentModificationException l_ex )
         {

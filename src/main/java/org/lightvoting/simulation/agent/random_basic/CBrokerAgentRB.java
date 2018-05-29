@@ -131,7 +131,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
         // TODO set via yaml
-        m_capacity = 5;
+        m_capacity = 10;
         m_timeout = new AtomicLong( 20 );
         m_comsize = p_comsize;
         m_rule = p_rule;
