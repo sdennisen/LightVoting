@@ -78,7 +78,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
     // TODO read via yaml
     private int m_capacity;
     // TODO read via yaml
-    private long m_timeout;
+    final private long m_timeout;
     private Object m_fileName;
     private int m_chairNum;
     private CChairAgentRI.CChairAgentGenerator m_chairagentgenerator;
@@ -136,7 +136,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_name = p_name;
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
-        m_capacity = 5;
+        m_capacity = 10;
         m_timeout = 20;
         m_comsize = p_comsize;
         m_dissthr = p_dissthr;

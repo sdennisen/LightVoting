@@ -85,7 +85,7 @@ public class CGroupRI
         p_chair.setGroup( this );
         m_capacity = p_capacity;
         // group waits for new members at most 10 cycles
-        m_timeout = p_timeout;
+        m_timeout = new AtomicLong( p_timeout.longValue() );
     }
 
     public synchronized void decrementCounter()
