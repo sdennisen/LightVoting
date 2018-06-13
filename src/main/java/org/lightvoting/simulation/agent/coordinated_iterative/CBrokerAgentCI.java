@@ -80,7 +80,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     // TODO read via yaml
     private int m_capacity;
     // TODO read via yaml
-    private long m_timeout;
+    final private long m_timeout;
     private Object m_fileName;
     private CChairAgentCI.CChairAgentGenerator m_chairagentgenerator;
     private final InputStream m_chairstream;
