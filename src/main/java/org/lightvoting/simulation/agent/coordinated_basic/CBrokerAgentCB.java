@@ -79,7 +79,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
     // TODO read via yaml
     private int m_capacity;
     // TODO read via yaml
-    private AtomicLong m_timeout;
+    final private AtomicLong m_timeout;
     private Object m_fileName;
     private int m_chairNum;
     private CChairAgentCB.CChairAgentGenerator m_chairagentgenerator;
@@ -137,7 +137,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
         // TODO set via yaml
-        m_capacity = 5;
+        m_capacity = 10;
         m_timeout = new AtomicLong( 20 );
         m_comsize = p_comsize;
         m_rule = p_rule;

@@ -81,7 +81,7 @@ public class CGroupCB
         m_capacity = p_capacity;
         System.out.println( "Capacity: " + m_capacity );
         // group waits for new members at most 10 cycles
-        m_timeout = p_timeout;
+        m_timeout = new AtomicLong( p_timeout.longValue() );
     }
 
     public void decrementCounter()
