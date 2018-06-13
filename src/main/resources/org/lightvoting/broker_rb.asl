@@ -34,7 +34,7 @@ agnum(20).
         -newag(Ag, I);
         assign/group(Ag);
         !assigned/ag
-    : true
+    :true
     <-
         !assigned/ag
     .

@@ -69,7 +69,7 @@ state(0, undefined).
     : >>mygroup(G) && >>mychair(C)
     //: >>leavegroup(Broker)
     <-
-        generic/print("I needed to leave my group, need a new one");
+        generic/print(MyName, " I needed to leave my group, need a new one");
         -mygroup(G);
         -mychair(C);
         +state(0, undefined);

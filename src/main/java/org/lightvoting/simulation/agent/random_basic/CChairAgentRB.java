@@ -383,16 +383,20 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     //    final CGroupRB l_group = this.determineGroup();
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        // for MS-AV and MM-AV, the votes are 01-vectors
-        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
-            this.storeAV( p_votingAgent, p_vote );
-
-        else
-        // if ( m_rule.equals( "MINISUM_RANKSUM") )
-        // for MS-RS, the votes are complete linear orders
+        if (! this.group().timedout() )
         {
-            System.out.println( "store complete linear order" );
-            this.storeCLO( p_votingAgent, p_vote );
+
+            // for MS-AV and MM-AV, the votes are 01-vectors
+            if (m_rule.equals("MINISUM_APPROVAL") || m_rule.equals("MINIMAX_APPROVAL"))
+                this.storeAV(p_votingAgent, p_vote);
+
+            else
+            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+            // for MS-RS, the votes are complete linear orders
+            {
+                System.out.println("store complete linear order");
+                this.storeCLO(p_votingAgent, p_vote);
+            }
         }
 
 

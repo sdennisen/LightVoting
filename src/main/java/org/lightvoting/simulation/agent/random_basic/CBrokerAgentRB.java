@@ -78,7 +78,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
     // TODO read via yaml
     private int m_capacity;
     // TODO read via yaml
-    private AtomicLong m_timeout;
+    private final AtomicLong m_timeout;
     private Object m_fileName;
     private int m_chairNum;
     private CChairAgentRB.CChairAgentGenerator m_chairagentgenerator;
@@ -254,7 +254,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 
         final CGroupRB l_group = new CGroupRB( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, m_timeout );
         m_groups.add( l_group );
-        System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
+        System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() + ", timeout " + m_timeout );
 
         p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_group ) ) );
         p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_chairAgent ) ) );
@@ -311,8 +311,9 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                            l_toRemoveList.add( j.name() );
                            l_toRemoveAgents.add( j );
                            m_lineHashMap.put( j, j.liningCounter() );
+                           System.out.println( j.name() + " needs to be removed" );
                        } );
-               // System.out.println( "XXXXXXX" + l_toRemoveList );
+
 
                 l_group.removeAll( l_toRemoveList );
 
