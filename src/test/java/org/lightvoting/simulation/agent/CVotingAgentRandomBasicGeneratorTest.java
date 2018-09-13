@@ -28,11 +28,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.lightjason.agentspeak.agent.IAgent;
-import org.lightvoting.simulation.action.message.CSend;
-import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.action.message.random_basic.CSendRB;
+import org.lightvoting.simulation.agent.random_basic.CChairAgentRB;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,14 +43,14 @@ import java.util.stream.Collectors;
 /**
  * Unit test for CVotingAgentGenerator.
  */
-public final class CVotingAgentGeneratorTest extends TestCase
+public final class CVotingAgentRandomBasicGeneratorTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CVotingAgentGeneratorTest( final String p_testName )
+    public CVotingAgentRandomBasicGeneratorTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -59,11 +62,11 @@ public final class CVotingAgentGeneratorTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CVotingAgentGeneratorTest.class );
+        return new TestSuite( CVotingAgentRandomBasicGeneratorTest.class );
     }
 
     /**
-     * Testing CVotingAgent Class
+     * Testing CVotingAgentRB Class
      */
     public void testCVotingAgent()
     {
@@ -73,22 +76,23 @@ public final class CVotingAgentGeneratorTest extends TestCase
                     "!main.\n+!main.".getBytes( "UTF-8" )
             );
 
-            final CSend l_sendaction = new CSend();
+            final CSendRB l_sendaction = new CSendRB();
 
             /* TODO Check test */
-            final Set<CVotingAgent> l_agents = new
+            final Set<CVotingAgentRB> l_agents = new
 
-                CVotingAgent.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironment( 23, "foo.h5" ), 10,  "RANDOM", "foo.h5" )
-                    .generatemultiple( 23, new CChairAgent.CChairAgentGenerator( l_aslstream, new CEnvironment( 23, "foo.h5" ), "RANDOM", "BASIC",
-                                                                                 "foo.h5"
-                    ) )
+                CVotingAgentRB.CVotingAgentGenerator( l_sendaction, l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ), 10, "foo.h5", 5, new ArrayList(), "MINISUM_APPROVAL", 1, 1 )
+                    .generatemultiple( 23, new CChairAgentRB.CChairAgentGenerator( l_aslstream, new CEnvironmentRB( 23, "foo.h5", 3 ),
+                                                                                   "foo.h5", 0,
+                                                                                   3, 1, 5,
+                            1 ) )
                     .collect( Collectors.toSet() );
 
             assertEquals( 23, l_agents.size() );
 
             l_agents.forEach( i ->
             {
-                assertTrue( i instanceof CVotingAgent );
+                assertTrue( i instanceof CVotingAgentRB );
                 assertTrue( i instanceof IAgent );
             } );
         }

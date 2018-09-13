@@ -34,12 +34,12 @@ import java.util.Map.Entry;
 
 
 /**
- * Created by sophie on 10.01.17.
- * Computes result of election according to Minisum Approval voting rule.
+ * Created by sophie on 10.11.17.
+ * Computes result of election according to Minisum Rasnksum voting rule.
  * re-used code from http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
  */
 
-public class CMinisumApproval
+public class CMinisumRanksum
 {
 
     /* m_alternatives list */
@@ -49,10 +49,10 @@ public class CMinisumApproval
 
     private BitVector m_comBV;
 
-    private List<BitVector> m_bitVotes;
+    private List<List<Long>> m_cLinearOrders;
 
     /**
-     * compute the winning committee according to Minisum Approval
+     * compute the winning committee according to Minisum Ranksum
      *
      * @param p_alternatives available alternatives
      * @param p_votes submitted votes
@@ -60,12 +60,12 @@ public class CMinisumApproval
      * @return elected committee
      */
 
-    public BitVector applyRuleBV( final List<String> p_alternatives, final List<BitVector> p_votes, final int p_comSize )
+    public BitVector applyRuleBV( final List<String> p_alternatives, final List<List<Long>> p_votes, final int p_comSize )
     {
 
         m_alternatives = p_alternatives;
         m_comSize = p_comSize;
-        m_bitVotes = p_votes;
+        m_cLinearOrders = p_votes;
         m_comBV = new BitVector( m_alternatives.size() );
 
         final int[] l_valuesVect = new int[m_alternatives.size()];
@@ -74,12 +74,13 @@ public class CMinisumApproval
 
         for ( int i = 0; i < m_alternatives.size(); i++ )
         {
-            for ( int j = 0; j < m_bitVotes.size(); j++ )
+            for ( int j = 0; j < m_cLinearOrders.size(); j++ )
             {
-                if ( ( m_bitVotes.get( j ) ).get( i ) )
-                {
-                    l_valuesVect[i]++;
-                }
+                for ( int k = 0; k < m_alternatives.size(); k++ )
+                    // if candidate i is on k-th position in vote j, its score for this vote is
+                    // (m-1)-k
+                    if ( m_cLinearOrders.get( j ).get( k ) == i )
+                        l_valuesVect[i]= l_valuesVect[i]+ ( ( m_alternatives.size()-1 )-k );
             }
 
             /* create HashMap with index of alternative as key and score of alternative as value */

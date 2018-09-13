@@ -21,7 +21,7 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.action.message;
+package org.lightvoting.simulation.action.message.coordinated_iterative;
 
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.agent.IAgent;
@@ -31,12 +31,13 @@ import org.lightjason.agentspeak.language.CLiteral;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
-import org.lightjason.agentspeak.language.execution.fuzzy.CFuzzyValue;
-import org.lightjason.agentspeak.language.execution.fuzzy.IFuzzyValue;
+import org.lightjason.agentspeak.language.fuzzy.CFuzzyValue;
+import org.lightjason.agentspeak.language.fuzzy.IFuzzyValue;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
-import org.lightvoting.simulation.agent.CVotingAgent;
+import org.lightvoting.simulation.agent.coordinated_iterative.CVotingAgentCI;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,18 +47,24 @@ import java.util.concurrent.ConcurrentHashMap;
  * Action to send messages for communication.
  * Based on/credits to https://lightjason.github.io/tutorials/communication/
  */
-public final class CSend extends IBaseAction
+public final class CSendCI extends IBaseAction
 {
+    /**
+     * serialUID
+     */
+
+    private static final long serialVersionUID = 1967930733823348568L;
+
     /**
      * thread-safe map for storing name and agent object
      */
-    private final Map<String, CVotingAgent> m_agents = new ConcurrentHashMap<>();
+    private final Map<String, CVotingAgentCI> m_agents = new ConcurrentHashMap<>();
 
     /** Register a new agent.
      * @param p_agent agent object
      * @return object of registered agent
      */
-    public final CVotingAgent register( final CVotingAgent p_agent )
+    public final CVotingAgentCI register( final CVotingAgentCI p_agent )
     {
         m_agents.put( p_agent.name(), p_agent );
         return p_agent;
@@ -68,7 +75,7 @@ public final class CSend extends IBaseAction
      * @param p_agent agent object
      * @return object of unregistered agent
      */
-    public final CVotingAgent unregister( final CVotingAgent p_agent )
+    public final CVotingAgentCI unregister( final CVotingAgentCI p_agent )
     {
         m_agents.remove( p_agent.name() );
         return p_agent;
@@ -86,9 +93,10 @@ public final class CSend extends IBaseAction
         return 2;
     }
 
+    @Nonnull
     @Override
-    public final IFuzzyValue<Boolean> execute( final IContext p_context, final boolean p_parallel, final List<ITerm> p_argument,
-                                               final List<ITerm> p_return )
+    public final IFuzzyValue<Boolean> execute( final boolean p_parallel, @Nonnull final IContext p_context, @Nonnull final List<ITerm> p_argument,
+                                               @Nonnull final List<ITerm> p_return )
     {
         /**
          * first parameter of the action is the name of the receiving agent
@@ -120,7 +128,7 @@ public final class CSend extends IBaseAction
                                 // name of the sending agent in this the agent which calls the send action is read from
                                 // context and translate in the communication agent, the communication agent has got the
                                 // method name() to read the agent name
-                                CLiteral.from( "from", CRawTerm.from( p_context.agent().<CVotingAgent>raw().name() ) )
+                                CLiteral.from( "from", CRawTerm.from( p_context.agent().<CVotingAgentCI>raw().name() ) )
                         )
 
                 )
@@ -128,4 +136,5 @@ public final class CSend extends IBaseAction
 
         return CFuzzyValue.from( true );
     }
+
 }

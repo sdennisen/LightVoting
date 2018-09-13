@@ -21,67 +21,87 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.agent;
+package org.lightvoting.simulation.rule;
+
+/* TODO add test further cases for lexicographic tie-breaking */
 
 
+import cern.colt.matrix.tbit.BitVector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.lightjason.agentspeak.configuration.CDefaultAgentConfiguration;
-import org.lightvoting.simulation.environment.CEnvironment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * Unit test for CVotingAgent.
+ * Created by sophie on 01.02.17.
  */
-public final class CVotingAgentTest extends TestCase
+
+public class CMinisumRanksumTest extends TestCase
 {
-    /**
+
+/**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CVotingAgentTest( final String p_testName )
+
+    public CMinisumRanksumTest( final String p_testName )
     {
         super( p_testName );
     }
 
-    /**
+/**
      * Testsuite
      *
      * @return the suite of tests being tested
      */
+
     public static Test suite()
     {
-        return new TestSuite( CVotingAgentTest.class );
+        return new TestSuite( CMinisumRanksumTest.class );
     }
-
-    /* TODO fix test */
 
     /**
-     * Testing CVotingAgent Class
-     *
-     *
+     * test Minisum Ranksum for small instance
      */
-    public void testCVotingAgent()
+
+    public void testCMinisumRanksum()
     {
-        try
-        {
-            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironment( 23, "foo.h5" ),
-                                                              "RANDOM",
-                                                              "BASIC",
-                                                              "foo.h5"
-            );
-            final CVotingAgent l_agent = new CVotingAgent( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironment( 23, "foo.h5" ), 10,
-                                                           "RANDOM",
-                                                           "foo.h5"
-            );
-            l_agent.call();
-        }
-        catch ( final Exception l_exception )
-        {
-            l_exception.printStackTrace();
-        }
+
+        final CMinisumRanksum l_tester = new CMinisumRanksum();
+
+        final List<String> l_testAlternatives = new ArrayList<>();
+        l_testAlternatives.add( "POI1" );
+        l_testAlternatives.add( "POI2" );
+        l_testAlternatives.add( "POI3" );
+
+        final List<List<Long>> l_testVotes = new ArrayList<>();
+
+        final List<Long> l_vote1 = new ArrayList<>();
+        l_vote1.add( 0, (long) 0 );
+        l_vote1.add( 1, (long) 1 );
+        l_vote1.add( 2, (long) 2 );
+
+
+        final List<Long> l_vote2 = new ArrayList<>();
+
+        l_vote2.add( 0, (long) 1 );
+        l_vote2.add( 1, (long) 0 );
+        l_vote2.add( 2, (long) 2 );
+
+        l_testVotes.add( l_vote1 );
+        l_testVotes.add( l_vote2 );
+
+        final int l_testComSize = 2;
+        final BitVector l_result = l_tester.applyRuleBV( l_testAlternatives, l_testVotes, l_testComSize );
+
+        assertTrue( l_result.get( 0 ) );
+        assertTrue( l_result.get( 1 ) );
+        assertFalse( l_result.get( 2 ) );
     }
+
 }
 

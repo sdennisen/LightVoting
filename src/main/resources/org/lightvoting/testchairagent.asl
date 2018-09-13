@@ -9,7 +9,6 @@ iteration(0).
 
 +!nextcycle <-
     perceive/group();
-    check/conditions();
     !nextcycle
     .
 
@@ -28,6 +27,10 @@ iteration(0).
    store/diss(Traveller, Diss, Iteration)
    .
 
++!final/diss/received(Traveller, Diss, Iteration) <-
+   generic/print("Receiving final dissatisfaction" );
+   store/final/diss(Traveller, Diss, Iteration)
+   .
 
 +!all/votes/received() <-
    generic/print(" All voters submitted their votes" );
@@ -36,5 +39,5 @@ iteration(0).
 
 +!all/dissValues/received(Iteration) <-
    generic/print("Received all diss values");
-   remove/voter()
+   remove/voter(Iteration)
    .

@@ -21,29 +21,25 @@
  * @endcond
  */
 
-package org.lightvoting.simulation.rule;
+package org.lightvoting.simulation.agent;
 
-import cern.colt.matrix.tbit.BitVector;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
- * Created by sophie on 09.02.17.
+ * Unit test for CVotingAgentRB.
  */
-public class CMinimaxApprovalTest extends TestCase
+public final class CVotingAgentRandomBasicTest extends TestCase
 {
-
     /**
      * Create the test case
      *
      * @param p_testName name of the test case
      */
-    public CMinimaxApprovalTest( final String p_testName )
+    public CVotingAgentRandomBasicTest( final String p_testName )
     {
         super( p_testName );
     }
@@ -55,57 +51,37 @@ public class CMinimaxApprovalTest extends TestCase
      */
     public static Test suite()
     {
-        return new TestSuite( CMinimaxApprovalTest.class );
+        return new TestSuite( CVotingAgentRandomBasicTest.class );
     }
+
+    /* TODO fix test */
 
     /**
-     * test application of voting rule
+     * Testing CVotingAgentRB Class
+     *
+     *
      */
-    public void testApplyRule()
-    {
-        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
-
-        final List<String> l_alternatives = new ArrayList<String>();
-
-        l_alternatives.add( "POI1" );
-        l_alternatives.add( "POI2" );
-        l_alternatives.add( "POI3" );
-        l_alternatives.add( "POI4" );
-        l_alternatives.add( "POI5" );
-        l_alternatives.add( "POI6" );
-
-        final List<BitVector> l_votes = new ArrayList<>();
-
-        final BitVector l_vote1 = new BitVector( 6 );
-        l_vote1.put( 0, true );
-        l_vote1.put( 1, true );
-        l_vote1.put( 2, true );
-        l_vote1.put( 3, true );
-        l_vote1.put( 4, true );
-
-        final BitVector l_vote2 = l_vote1.copy();
-        final BitVector l_vote3 =  l_vote1.copy();
-        final BitVector l_vote4 = l_vote1.copy();
-        final BitVector l_vote5 = l_vote1.copy();
-
-        final BitVector l_vote6 = new BitVector( 6 );
-        l_vote6.put( 3, true );
-        l_vote6.put( 4, true );
-        l_vote6.put( 5, true );
-
-        l_votes.add( l_vote1 );
-        l_votes.add( l_vote2 );
-        l_votes.add( l_vote3 );
-        l_votes.add( l_vote4 );
-        l_votes.add( l_vote5 );
-        l_votes.add( l_vote6 );
-
-        final int l_comSize = 3;
-
-        final  BitVector l_bitVector = l_minimaxApproval.applyRuleBV( l_alternatives, l_votes, l_comSize );
-        System.out.println( l_bitVector );
-    }
-
+//    public void testCVotingAgent()
+//    {
+//        try
+//        {
+//            final CChairAgent l_chairAgent = new CChairAgent( "chair", new CDefaultAgentConfiguration<>(), new CEnvironmentRI( 23, "foo.h5", 3 ),
+//                                                                                                               "foo.h5",
+//                                                              0,
+//                                                              1
+//            );
+//            final CVotingAgentRB l_agent = new CVotingAgentRB( "agent", new CDefaultAgentConfiguration<>(), l_chairAgent, new CEnvironmentRI( 23, "foo.h5",
+//                                                                                                                                        3
+//            ), 10,
+//
+//                                                           5
+//            );
+//            l_agent.call();
+//        }
+//        catch ( final Exception l_exception )
+//        {
+//            l_exception.printStackTrace();
+//        }
+//    }
 }
 
-// TODO add more tests

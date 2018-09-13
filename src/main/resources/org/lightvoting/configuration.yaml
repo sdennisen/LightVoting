@@ -1,8 +1,15 @@
-# LightVoting Default Config
+# LightVoting Config
 
 variables:
-  grouping: RANDOM
-  protocol: BASIC
-  altnum: '6'
+  runs: '1'
+  setting1: 'RANDOM_BASIC'
+  rule: 'MINISUM_APPROVAL'
+  agnum: '11'
+  altnum: '10'
+  comsize: '5'
+  capacity: '10'
+  dissthr:  '4'
+  jointhr: '8'
+  preferences: 'FSquare'
 
-# TODO set other parameters here -> capacity, diss threshold, join threshold, (number of) alternatives
+

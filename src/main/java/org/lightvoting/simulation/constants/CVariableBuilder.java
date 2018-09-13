@@ -28,8 +28,14 @@ import org.lightjason.agentspeak.language.execution.IVariableBuilder;
 import org.lightjason.agentspeak.language.instantiable.IInstantiable;
 import org.lightjason.agentspeak.language.variable.CConstant;
 import org.lightjason.agentspeak.language.variable.IVariable;
-import org.lightvoting.simulation.agent.CVotingAgent;
-import org.lightvoting.simulation.environment.CEnvironment;
+import org.lightvoting.simulation.agent.coordinated_basic.CVotingAgentCB;
+import org.lightvoting.simulation.agent.coordinated_iterative.CVotingAgentCI;
+import org.lightvoting.simulation.agent.random_basic.CVotingAgentRB;
+import org.lightvoting.simulation.agent.random_iterative.CVotingAgentRI;
+import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
+import org.lightvoting.simulation.environment.coordinated_iterative.CEnvironmentCI;
+import org.lightvoting.simulation.environment.random_basic.CEnvironmentRB;
+import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 
 import java.util.stream.Stream;
 
@@ -45,23 +51,67 @@ public final class CVariableBuilder implements IVariableBuilder
      * environment reference
      */
 
-    private final CEnvironment m_environment;
+    private CEnvironmentRI m_environmentRI;
+    private CEnvironmentRB m_environmentRB;
+    private CEnvironmentCB m_environmentCB;
+    private CEnvironmentCI m_environmentCI;
 
     /**
      * constructor
      *
      * @param p_environment environment
      */
-    public CVariableBuilder( final CEnvironment p_environment )
+    public CVariableBuilder( final CEnvironmentRB p_environment )
     {
-        m_environment = p_environment;
+        m_environmentRB = p_environment;
+    }
+
+    public CVariableBuilder( final CEnvironmentRI p_environment )
+    {
+        m_environmentRI = p_environment;
+    }
+
+    public CVariableBuilder( final CEnvironmentCB p_environment )
+    {
+        m_environmentCB = p_environment;
+    }
+
+    public CVariableBuilder( final CEnvironmentCI p_environment )
+    {
+        m_environmentCI = p_environment;
     }
 
     @Override
-    public final Stream<IVariable<?>> generate( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
+    public final Stream<IVariable<?>> apply( final IAgent<?> p_agent, final IInstantiable p_runningcontext )
     {
-        return Stream.of(
-            new CConstant<>( "MyName", p_agent.<CVotingAgent>raw().name() )
+        if ( p_agent instanceof CVotingAgentRB )
+
+            return Stream.of(
+                new CConstant<>( "MyName", p_agent.<CVotingAgentRB>raw().name() )
+            );
+
+        // p_agent instanceof CVotingAgentRI
+
+        else if ( p_agent instanceof  CVotingAgentRI )
+            return Stream.of(
+                new CConstant<>( "MyName", p_agent.<CVotingAgentRI>raw().name() )
         );
+
+        // p_agent instanceof CVotingAgentCB
+
+        else if ( p_agent instanceof CVotingAgentCB )
+            return Stream.of(
+                new CConstant<>( "MyName", p_agent.<CVotingAgentCB>raw().name() )
+            );
+
+        // p_agent instance of CVotingAgentCI
+
+        else
+            return Stream.of(
+            new CConstant<>( "MyName", p_agent.<CVotingAgentCI>raw().name() )
+        );
+
+
     }
+
 }

@@ -1,12 +1,14 @@
 lookForGroup.
 iteration(0).
+nogroup(1).
 
 // initial-goal
 !main.
 
 // initial plan (triggered by the initial goal)
 
-+!main <-
++!main
+<-
 
    generic/print(MyName, "Hello World!");
    >>chair(Chair);
@@ -51,6 +53,12 @@ iteration(0).
 // plan for basic voting
 +!election/result(Chair, Result) <-
    generic/print(MyName, " heard result ", Result, " from chair ", Chair)
+   .
+
+// plan for submitting dissatisfaction regarding final result
++!submit/final/diss(Chair, Result, Iteration) <-
+   generic/print(MyName, " Submit final Dissatisfaction");
+   submit/final/diss(Chair, Result, Iteration)
    .
 
 // plan for iterative voting
