@@ -2,7 +2,7 @@
 fill(0, 10).
 // initial number of submitted diss vals
 
-waittimevote(0, 10).
+waittimevote(0, 20).
 
 // instead of 10 it can be any other (random) value
 //max/time/vote(10).
