@@ -7,7 +7,6 @@
 !*.py
 !*.asl
 !*.md
-!*.yaml
 
 !src/analysis/**/*.xml
 !src/analysis/**/*.txt
