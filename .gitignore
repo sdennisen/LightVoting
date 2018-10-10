@@ -17,6 +17,10 @@
 !src/main/resources/**/*.xml
 !src/main/resources/**/*.asl
 
+/src/main/resources_backup
+
+/src/main/python/*.yaml
+
 target/**
 
 /bin/
