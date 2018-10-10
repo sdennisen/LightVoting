@@ -20,3 +20,7 @@
 target/**
 
 /bin/
+
+/src/main/resources_backup/
+
+/src/main/python/*.yaml
