@@ -22,3 +22,7 @@ target/**
 /bin/
 
 /src/main/java/org/lightvoting/simulation/statistics/postgres.txt
+
+/src/main/python/*.yaml
+
+/src/main/resources_backup/
