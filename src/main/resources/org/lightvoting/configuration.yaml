@@ -4,12 +4,12 @@ variables:
   runs: '1'
   setting1: 'RANDOM_BASIC'
   rule: 'MINISUM_APPROVAL'
-  agnum: '11'
+  agnum: '41'
   altnum: '10'
   comsize: '5'
-  capacity: '10'
-  dissthr:  '4'
-  jointhr: '8'
+  capacity: '20'
+  dissthr:  '-1'
+  jointhr: '-1'
   preferences: 'FSquare'
 
 
