@@ -1,7 +1,7 @@
 // number of created voters
 
 created(0).
-agnum(11).
+agnum(41).
 
 !start.
 
