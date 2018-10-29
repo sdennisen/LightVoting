@@ -2,14 +2,14 @@
 
 variables:
   runs: '1'
-  setting1: 'RANDOM_ITERATIVE'
+  setting1: 'COORDINATED_ITERATIVE'
   rule: 'MINISUM_APPROVAL'
   agnum: '41'
   altnum: '10'
   comsize: '5'
   capacity: '20'
   dissthr:  '10'
-  jointhr: '-1'
+  jointhr: '100'
   preferences: 'FSquare'
 
 

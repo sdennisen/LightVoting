@@ -1,13 +1,13 @@
 // initial fill level is 0, capacity is 10, can be any other value defined by config file
-fill(0, 10).
+fill(0, 20).
 // initial number of submitted diss vals
 
-waittimevote(0, 10).
+waittimevote(0, 30).
 
 // instead of 10 it can be any other (random) value
 //max/time/vote(10).
 
-waittimediss(0, 10).
+waittimediss(0, 30).
 //max/time/diss(10).
 
 iteration(0).
