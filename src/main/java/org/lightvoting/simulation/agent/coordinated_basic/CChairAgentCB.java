@@ -156,7 +156,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         m_comsize = p_comsize;
         m_altnum = p_altnum;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 30;
         m_rule = p_rule;
         m_imNum = 0;
         m_sim = p_sim;
@@ -182,7 +182,7 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
         m_altnum = p_altnum;
         m_comsize = p_comsize;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 30;
         m_rule = p_rule;
         m_imNum = 0;
         m_sim = p_sim;
