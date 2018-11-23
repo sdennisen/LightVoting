@@ -136,8 +136,8 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         m_name = p_name;
         m_joinThr = p_joinThr;
         m_prefList = p_prefList;
-        m_capacity = 10;
-        m_timeout = 20;
+        m_capacity = 20;
+        m_timeout = 30;
         m_comsize = p_comsize;
         m_dissthr = p_dissthr;
         m_rule = p_rule;

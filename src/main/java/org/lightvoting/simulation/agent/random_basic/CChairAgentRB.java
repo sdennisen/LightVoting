@@ -381,7 +381,9 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
     public synchronized void storeVote( final String p_votingAgent, final Object p_vote )
     {
     //    final CGroupRB l_group = this.determineGroup();
-    //    m_agents.add( l_group.determineAgent( p_agentName ) );
+    //
+
+        System.out.println( "Try to store vote from agent " + p_votingAgent );
 
         if (! this.group().timedout() )
         {
@@ -417,6 +419,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
 
     private void storeAV( final String p_votingAgent, final Object p_vote )
     {
+
         m_bitVotes.add( (BitVector) p_vote );
         m_voters.add( this.group().get( p_votingAgent ) );
 

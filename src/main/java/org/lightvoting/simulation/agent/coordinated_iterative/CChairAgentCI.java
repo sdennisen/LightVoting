@@ -174,7 +174,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_comsize = p_comsize;
         m_altnum = p_altnum;
         // TODO via parameters
-        m_voteTimeout = 20;
+        m_voteTimeout = 30;
         m_capacity = p_capacity;
         m_broker = p_broker;
         m_rule = p_rule;
@@ -204,7 +204,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         m_altnum = p_altnum;
         m_comsize = p_comsize;
         // TODO via parameters
-        m_voteTimeout = 10;
+        m_voteTimeout = 30;
         m_capacity = p_capacity;
         m_broker = p_broker;
         m_dissThreshold = p_dissthr;
