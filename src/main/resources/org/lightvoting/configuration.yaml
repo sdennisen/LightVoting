@@ -7,7 +7,7 @@ variables:
   agnum: '41'
   altnum: '10'
   comsize: '5'
-  capacity: '20'
+  capacity: '1'
   dissthr:  '-1'
   jointhr: '-1'
   preferences: 'FSquare'
