@@ -73,8 +73,7 @@ public class CGroupRB
     {
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         m_currentAg++;
-        m_open = true;
-        m_result = null;
+          m_result = null;
         m_inProgress = false;
         m_ID = p_groupNum;
         m_chair = p_chair;
@@ -83,6 +82,14 @@ public class CGroupRB
         System.out.println( "Capacity: " + m_capacity );
         // group waits for new members at most 10 cycles
         m_timeout = new AtomicLong( p_timeout.longValue() );
+
+        if ( ( m_agentMap.size() == m_capacity ) || ( m_timeout.longValue() == 0 ) )
+        {
+            System.out.println( "Group " + m_ID + " with " + m_agentMap.size() + " agents" );
+            m_open = false;
+        }
+        else m_open = true;
+
     }
 
     public boolean open()
@@ -97,6 +104,7 @@ public class CGroupRB
      */
     public void add( final CVotingAgentRB p_votingAgent )
     {
+        System.out.println( "m_capacity: " + m_capacity + ", m_agentMap.size():" + m_agentMap.size() );
         m_agentMap.put( p_votingAgent.name(), p_votingAgent );
         if ( ( m_agentMap.size() == m_capacity ) || ( m_timeout.longValue() == 0 ) )
         {

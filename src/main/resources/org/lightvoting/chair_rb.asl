@@ -1,5 +1,5 @@
 // initial fill level is 0, capacity is 10, can be any other value defined by config file
-fill(0, 20).
+fill(0, 1).
 // initial number of submitted diss vals
 
 waittimevote(0, 30).
