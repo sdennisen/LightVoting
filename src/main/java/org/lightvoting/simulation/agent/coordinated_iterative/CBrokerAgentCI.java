@@ -155,7 +155,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         System.out.println( "dissthr in broker: " + m_dissthr );
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList, m_rule, m_run, m_sim, m_ndiss );
+                                                                           m_joinThr, m_prefList, m_rule, m_run, m_sim, m_ndiss, m_comsize );
         m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this,
                                                                         m_dissthr, m_rule, m_run, m_sim );
         this.trigger( CTrigger.from(
