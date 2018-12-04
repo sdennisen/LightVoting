@@ -4,7 +4,7 @@ variables:
   runs: '1'
   setting1: 'RANDOM_BASIC'
   rule: 'MINISUM_APPROVAL'
-  ndiss: 'true'
+  ndiss: 'false'
   agnum: '41'
   altnum: '20'
   comsize: '5'
