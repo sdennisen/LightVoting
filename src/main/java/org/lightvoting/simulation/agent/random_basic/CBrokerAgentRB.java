@@ -61,6 +61,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
 {
     private final int m_sim;
     private final int m_run;
+    private final Boolean m_ndiss;
     private List<CVotingAgentRB> m_voters = new ArrayList<>();
     private HashSet<CChairAgentRB> m_chairs = new HashSet<>();
     private HashSet<CGroupRB> m_groups = new HashSet<>();
@@ -118,7 +119,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                           final double p_joinThr,
                           final List<AtomicDoubleArray> p_prefList,
                           final int p_comsize, final String p_rule,
-                          int p_sim, int p_run ) throws Exception
+                          int p_sim, int p_run, Boolean p_ndiss ) throws Exception
     {
         super( p_configuration );
         m_broker = p_broker;
@@ -137,9 +138,10 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_rule = p_rule;
         m_sim = p_sim;
         m_run = p_run;
+        m_ndiss = p_ndiss;
 
         m_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), m_stream, m_environmentRB, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList, m_rule, m_sim, m_run);
+                                                                           m_joinThr, m_prefList, m_rule, m_sim, m_run, m_ndiss);
         m_chairagentgenerator = new CChairAgentRB.CChairAgentGenerator( m_chairstream, m_environmentRB, m_name, m_altnum, m_comsize, m_rule, m_sim, m_run);
 
         this.trigger( CTrigger.from(
@@ -391,6 +393,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         private String m_rule;
         private int m_sim;
         private int m_run;
+        private Boolean m_ndiss;
 
         /**
          * constructor of CBrokerAgentGenerator
@@ -407,6 +410,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
          * @param p_comsize committee size
          * @param p_sim
          * @param p_run
+         * @param p_ndiss
          * @throws Exception exception
          */
 
@@ -422,7 +426,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                                      final List<AtomicDoubleArray> p_prefList,
                                      final int p_comsize,
                                      final String p_rule,
-                                     int p_sim, int p_run) throws Exception
+                                     int p_sim, int p_run, Boolean p_ndiss ) throws Exception
         {
             super(
                     // input ASL stream
@@ -462,6 +466,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
             m_rule = p_rule;
             m_sim = p_sim;
             m_run = p_run;
+            m_ndiss = p_ndiss;
+
         }
 
         @Nullable
@@ -491,7 +497,8 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
                     m_comsize,
                     m_rule,
                     m_sim,
-                    m_run);
+                    m_run,
+                    m_ndiss );
             }
             catch ( final Exception l_ex )
             {

@@ -67,6 +67,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 {
 
     private static final long serialVersionUID = 5177441212784089728L;
+    private final Boolean m_ndiss;
 
     /**
      * name of the agent
@@ -147,7 +148,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                            final int p_altNum,
                            final double p_joinThr,
                            final AtomicDoubleArray p_preferences,
-                           final String p_rule
+                           final String p_rule,
+                           final Boolean p_ndiss
     )
     {
         super( p_configuration );
@@ -178,6 +180,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         m_voted = false;
         m_joinThreshold = p_joinThr;
         m_rule = p_rule;
+        m_ndiss = p_ndiss;
     }
 
     /**
@@ -195,7 +198,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                           final double p_joinThr,
                           final AtomicDoubleArray p_atomicDoubleArray, final String p_rule,
                           int p_run,
-                          int p_sim)
+                          int p_sim,
+                          Boolean p_ndiss )
     {
         super( p_configuration );
         m_name = p_name;
@@ -226,6 +230,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         m_run = p_run;
 
         m_sim = p_sim;
+
+        m_ndiss = p_ndiss;
     }
 
     // overload agent-cycle
@@ -722,6 +728,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         private String m_rule;
         private int m_run;
         private int m_sim;
+        private Boolean m_ndiss;
 
         /**
          * constructor of the generator
@@ -732,6 +739,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
          * @param p_preferences preferences
          * @param p_run
          * @param p_sim
+         * @param p_ndiss
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator(final CSendRI p_send, final InputStream p_stream, final CEnvironmentRI p_environment, final int p_altNum,
@@ -739,7 +747,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                                      final double p_joinThr,
                                      final List<AtomicDoubleArray> p_preferences,
                                      final String p_rule,
-                                     int p_run, int p_sim) throws Exception
+                                     int p_run, int p_sim, Boolean p_ndiss) throws Exception
         {
 
             super(
@@ -778,6 +786,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
             m_rule = p_rule;
             m_run = p_run;
             m_sim = p_sim;
+            m_ndiss = p_ndiss;
         }
 
         // unregister an agent
@@ -831,7 +840,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 m_altNum,
                 m_joinThr,
                 m_prefList.get( m_count ),
-                m_rule
+                m_rule,
+                m_ndiss
             );
 
             m_count++;
@@ -864,7 +874,8 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 m_prefList.get( m_count++ ),
                 m_rule,
                 m_run,
-                m_sim
+                m_sim,
+                m_ndiss
             );
 
             return m_send.register( l_votingAgent );

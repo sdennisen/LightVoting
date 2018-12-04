@@ -139,6 +139,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     private int m_sim;
     private ConcurrentHashMap<CChairAgentCI, Number> m_intermediateSent = new ConcurrentHashMap<CChairAgentCI, Number>();
     private int m_im;
+    private Boolean m_ndiss;
 
 
     // TODO refactor ctors
@@ -154,6 +155,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
      * @param p_preferences preferences
      * @param p_run
      * @param p_sim
+     * @param m_ndiss
      */
 
     public CVotingAgentCI(final String p_name, final IAgentConfiguration<CVotingAgentCI> p_configuration, final IBaseAgent<CChairAgentCI> p_chairagent,
@@ -162,7 +164,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                           final double p_joinThr,
                           final AtomicDoubleArray p_preferences,
                           final String p_rule,
-                          int p_run, int p_sim)
+                          int p_run, int p_sim, Boolean p_ndiss)
     {
         super( p_configuration );
         m_name = p_name;
@@ -194,6 +196,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
         m_rule = p_rule;
         m_run = p_run;
         m_sim = p_sim;
+        m_ndiss = p_ndiss;
     }
 
     /**
@@ -211,7 +214,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                           final double p_joinThr,
                           final AtomicDoubleArray p_atomicDoubleArray,
                           final String p_rule,
-                          int p_run, int p_sim)
+                          int p_run, int p_sim, Boolean p_ndiss )
     {
         super( p_configuration );
         m_name = p_name;
@@ -230,6 +233,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
         m_run = p_run;
         m_sim = p_sim;
+        m_ndiss = p_ndiss;
 
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
@@ -829,6 +833,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
          */
         private final int m_altNum;
         private final String m_fileName;
+        private final Boolean m_ndiss;
         private double m_joinThr;
         private final List<AtomicDoubleArray> m_prefList;
         private int m_count;
@@ -845,6 +850,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
          * @param p_preferences preferences
          * @param p_run
          * @param p_sim
+         * @param p_ndiss
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator(final CSendCI p_send, final InputStream p_stream, final CEnvironmentCI p_environment, final int p_altNum,
@@ -852,7 +858,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                                      final double p_joinThr,
                                      final List<AtomicDoubleArray> p_preferences,
                                      final String p_rule,
-                                     int p_run, int p_sim) throws Exception
+                                     int p_run, int p_sim, Boolean p_ndiss) throws Exception
         {
 
             super(
@@ -891,6 +897,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             m_rule = p_rule;
             m_run = p_run;
             m_sim = p_sim;
+            m_ndiss = p_ndiss;
         }
 
         // unregister an agent
@@ -946,7 +953,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 m_prefList.get( m_count ),
                 m_rule,
                 m_run,
-                m_sim);
+                m_sim,
+                m_ndiss );
 
             m_count++;
             l_votingAgent.sleep( Integer.MAX_VALUE  );
@@ -977,7 +985,8 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 m_prefList.get( m_count++ ),
                 m_rule,
                 m_run,
-                m_sim);
+                m_sim,
+                m_ndiss );
 
             return m_send.register( l_votingAgent );
         }

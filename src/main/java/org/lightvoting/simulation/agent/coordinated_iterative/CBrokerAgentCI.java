@@ -63,6 +63,7 @@ import java.util.stream.Stream;
 @IAgentAction
 public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 {
+    private final Boolean m_ndiss;
     private List<CVotingAgentCI> m_voters = new ArrayList<>();
     private HashSet<CChairAgentCI> m_chairs = new HashSet<>();
     private HashSet<CGroupCI> m_groups = new HashSet<>();
@@ -113,6 +114,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
      * @param p_dissthr
      * @param p_run
      * @param p_sim
+     * @param p_ndiss
      * @throws Exception exception
      */
     public CBrokerAgentCI(final String p_broker,
@@ -128,7 +130,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                           final int p_comsize,
                           final double p_dissthr,
                           final String p_rule,
-                          int p_run, int p_sim) throws Exception
+                          int p_run, int p_sim, Boolean p_ndiss) throws Exception
     {
         super( p_configuration );
         m_broker = p_broker;
@@ -148,11 +150,12 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         m_rule = p_rule;
         m_run = p_run;
         m_sim = p_sim;
+        m_ndiss = p_ndiss;
 
         System.out.println( "dissthr in broker: " + m_dissthr );
 
         m_votingagentgenerator = new CVotingAgentGenerator( new CSendCI(), m_stream, m_environmentCI, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList, m_rule, m_run, m_sim);
+                                                                           m_joinThr, m_prefList, m_rule, m_run, m_sim, m_ndiss );
         m_chairagentgenerator = new CChairAgentCI.CChairAgentGenerator( m_chairstream, m_environmentCI, m_name, m_altnum, m_comsize, m_capacity, this,
                                                                         m_dissthr, m_rule, m_run, m_sim );
         this.trigger( CTrigger.from(
@@ -682,6 +685,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
          */
         private final CSendCI m_send;
         private final int m_agNum;
+        private final Boolean m_ndiss;
         private int m_count;
         private final InputStream m_stream;
         private final CEnvironmentCI m_environment;
@@ -712,6 +716,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
          * @param p_dissthr
          * @param p_run
          * @param p_sim
+         * @param p_ndiss
          * @throws Exception exception
          */
         public CBrokerAgentGenerator(final CSendCI p_send,
@@ -727,7 +732,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                                      final int p_comsize,
                                      final double p_dissthr,
                                      final String p_rule,
-                                     int p_run, int p_sim) throws Exception
+                                     int p_run, int p_sim, Boolean p_ndiss) throws Exception
         {
             super(
                     // input ASL stream
@@ -768,6 +773,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
             m_rule = p_rule;
             m_run = p_run;
             m_sim = p_sim;
+            m_ndiss = p_ndiss;
         }
 
         @Nullable
@@ -798,7 +804,8 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                     m_dissthr,
                     m_rule,
                     m_run,
-                    m_sim);
+                    m_sim,
+                    m_ndiss );
             }
             catch ( final Exception l_ex )
             {

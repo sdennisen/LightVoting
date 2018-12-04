@@ -103,10 +103,12 @@ public final class CMain
     private static boolean s_coordinatedIterative;
     private static int s_checkAgNum;
     private static String s_rule;
+    private static Boolean s_ndiss;
     private static String s_dbName;
     private static String s_prefType;
     private static int s_configID;
     private static int s_simID;
+
 
 
     /**
@@ -495,7 +497,8 @@ public final class CMain
                                                                         s_comsize,
                                                                         s_rule,
                                                                         p_sim,
-                                                                        p_run );
+                                                                        p_run,
+                                                                        s_ndiss );
 
         s_brokerCoordinatedBasic = s_brokerGeneratorCB.generatesingle();
     }
@@ -528,7 +531,8 @@ public final class CMain
                                                                         s_dissthr,
                                                                         s_rule,
                                                                         p_run,
-                                                                        p_sim);
+                                                                        p_sim,
+                                                                        s_ndiss );
 
         s_brokerCoordinatedIterative = s_brokerGeneratorCI.generatesingle();
     }
@@ -566,7 +570,8 @@ public final class CMain
                                                                         s_comsize,
                                                                         s_rule,
                                                                         p_sim,
-                                                                        p_run);
+                                                                        p_run,
+                                                                        s_ndiss);
 
         s_brokerRandomBasic = s_brokerGeneratorRB.generatesingle();
     }
@@ -578,7 +583,8 @@ public final class CMain
                                                     final double p_joinThr,
                                                     final List<AtomicDoubleArray> p_prefList,
                                                     int p_run,
-                                                    int p_sim) throws Exception
+                                                    int p_sim
+                                                    ) throws Exception
     {
         final FileInputStream l_bkStr = new FileInputStream( p_arg );
 
@@ -597,7 +603,8 @@ public final class CMain
                                                                         s_dissthr,
                                                                         s_rule,
                                                                         p_run,
-                                                                        p_sim
+                                                                        p_sim,
+                                                                        s_ndiss
         );
 
         s_brokerRandomIterative = s_brokerGeneratorRI.generatesingle();
@@ -658,6 +665,8 @@ public final class CMain
                     s_comsize = Integer.parseInt( l_subValues.get( l_subValueKey ) );
                 else if ( "rule".equals( l_subValueKey ) )
                     s_rule = l_subValues.get( l_subValueKey );
+                else if ( "ndiss".equals( l_subValueKey ) )
+                    s_ndiss = Boolean.valueOf( l_subValues.get( l_subValueKey ) );
                 else if ( "preferences".equals( l_subValueKey ) )
                     s_prefType = l_subValues.get( l_subValueKey );
 

@@ -72,6 +72,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private static final long serialVersionUID = 8515283969360402946L;
     private final int m_sim;
     private final int m_run;
+    private final Boolean m_ndiss;
 
     /**
      * name of the agent
@@ -150,7 +151,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                           final int p_altNum,
                           final double p_joinThr,
                           final AtomicDoubleArray p_preferences,
-                          int p_sim, int p_run)
+                          int p_sim, int p_run, Boolean p_ndiss)
     {
         super( p_configuration );
         m_name = p_name;
@@ -182,6 +183,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         m_joinThreshold = p_joinThr;
         m_sim = p_sim;
         m_run = p_run;
+        m_ndiss = p_ndiss;
     }
 
     /**
@@ -194,17 +196,19 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
      * @param p_atomicDoubleArray preferences
      * @param p_sim
      * @param p_run
+     * @param p_ndiss
      */
     public CVotingAgentRB(final String p_name, final IAgentConfiguration<CVotingAgentRB> p_configuration, final CEnvironmentRB p_environment, final int p_altNum,
                           final double p_joinThr,
                           final AtomicDoubleArray p_atomicDoubleArray, final String p_rule,
-                          int p_sim, int p_run)
+                          int p_sim, int p_run, Boolean p_ndiss)
     {
         super( p_configuration );
         m_name = p_name;
         m_altNum = p_altNum;
         m_sim = p_sim;
         m_run = p_run;
+        m_ndiss = p_ndiss;
 
         m_atomicPrefValues = p_atomicDoubleArray;
         for ( int i=0; i < m_altNum; i++ )
@@ -692,6 +696,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         private String m_rule;
         private int m_sim;
         private int m_run;
+        private Boolean m_ndiss;
 
         /**
          * constructor of the generator
@@ -709,7 +714,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                                      final double p_joinThr,
                                      final List<AtomicDoubleArray> p_preferences,
                                      final String p_rule,
-                                     int p_sim, int p_run) throws Exception
+                                     int p_sim, int p_run, Boolean p_ndiss) throws Exception
         {
 
             super(
@@ -748,6 +753,7 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
             m_rule = p_rule;
             m_sim = p_sim;
             m_run = p_run;
+            m_ndiss = p_ndiss;
         }
 
         // unregister an agent
@@ -802,7 +808,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 m_joinThr,
                 m_prefList.get( m_count ),
                 m_sim,
-                m_run);
+                m_run,
+                m_ndiss);
 
             m_count++;
             l_votingAgent.sleep( Integer.MAX_VALUE  );
@@ -833,7 +840,8 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 m_prefList.get( m_count++ ),
                 m_rule,
                 m_sim,
-                m_run);
+                m_run,
+                m_ndiss);
 
             System.out.println( l_votingAgent.name() + " Preferences: " + l_preferences );
 
