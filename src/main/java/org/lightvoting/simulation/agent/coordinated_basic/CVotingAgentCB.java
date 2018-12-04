@@ -131,6 +131,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     private final String m_rule;
     private int m_run;
     private int m_sim;
+    private int m_comsize;
 
     // TODO refactor ctors
 
@@ -153,7 +154,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                           final int p_altNum,
                           final double p_joinThr,
                           final AtomicDoubleArray p_preferences, final String p_rule,
-                          int p_sim, int p_run, Boolean p_ndiss)
+                          int p_sim, int p_run, Boolean p_ndiss, int p_comsize )
     {
         super( p_configuration );
         m_name = p_name;
@@ -186,6 +187,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         m_sim = p_sim;
         m_run = p_run;
         m_ndiss = p_ndiss;
+        m_comsize = p_comsize;
     }
 
     /**
@@ -500,6 +502,9 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
 
     private Double computeDissBV( final BitVector p_result )
     {
+        if ( m_ndiss )
+            return this.computeNDissBV( p_result );
+
         double l_diss = 0;
 
         for ( int i = 0; i < p_result.size(); i++ )
@@ -508,6 +513,72 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                 l_diss = l_diss + ( 1 - m_atomicPrefValues.get( i ) );
         }
         return l_diss;
+    }
+
+
+    private Double computeNDissBV(BitVector p_result)
+    {
+
+        double l_sat = 0;
+
+        for ( int i = 0; i < p_result.size(); i++ )
+            if ( p_result.get( i ) )
+                l_sat = l_sat + m_atomicPrefValues.get( i );
+
+        /* create HashMap with index of alternative as key and preference for alternative as value */
+        Map<Integer, Double> l_valuesMap = new HashMap<>();
+
+        for ( int i = 0; i < m_atomicPrefValues.length(); i++ )
+            l_valuesMap.put( i, m_atomicPrefValues.get( i ) );
+
+        /* sort the HashMap in descending order according to values */
+
+        l_valuesMap = this.sortDoubleMapDESC( l_valuesMap );
+
+        /* sum up preference values for k best candidates */
+
+        /* Compute sum of pref values for the first k entries */
+
+        double l_prefSum = 0;
+        int l_numPos = 0;
+
+        for ( final Map.Entry<Integer, Double> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_numPos < m_comsize )
+            {
+                l_prefSum = l_prefSum + l_entry.getValue();
+                l_numPos++;
+            }
+            else
+                break;
+        }
+
+        System.out.println( m_atomicPrefValues );
+        System.out.println( "ndiss: " + ( 1 - l_sat/l_prefSum ) );
+
+        return 1 - l_sat/l_prefSum;
+
+    }
+
+    private Map<Integer,Double> sortDoubleMapDESC(Map<Integer, Double> p_valuesMap)
+    {
+        final List<Map.Entry<Integer, Double>> l_list = new LinkedList<>( p_valuesMap.entrySet() );
+
+        /* Sorting the list based on values in descending order */
+
+        Collections.sort( l_list, ( p_first, p_second ) ->
+                p_second.getValue().compareTo( p_first.getValue() ) );
+
+        /* Maintaining insertion order with the help of LinkedList */
+
+        final Map<Integer, Double> l_sortedMap = new LinkedHashMap<>();
+        for ( final Map.Entry<Integer, Double> l_entry : l_list )
+        {
+            l_sortedMap.put( l_entry.getKey(), l_entry.getValue() );
+        }
+
+        return l_sortedMap;
+
     }
 
     public HashMap<String, Object> map()
@@ -733,6 +804,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         private String m_rule;
         private int m_sim;
         private int m_run;
+        private int m_comsize;
 
         /**
          * constructor of the generator
@@ -744,6 +816,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
          * @param p_run
          * @param p_sim
          * @param p_ndiss
+         * @param m_comsize
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator(final CSendCB p_send, final InputStream p_stream, final CEnvironmentCB p_environment, final int p_altNum,
@@ -751,7 +824,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                                      final double p_joinThr,
                                      final List<AtomicDoubleArray> p_preferences,
                                      final String p_rule,
-                                     int p_run, int p_sim, Boolean p_ndiss) throws Exception
+                                     int p_run, int p_sim, Boolean p_ndiss, int p_comsize) throws Exception
         {
 
             super(
@@ -791,6 +864,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
             m_run = p_run;
             m_sim = p_sim;
             m_ndiss = p_ndiss;
+            m_comsize = p_comsize;
 
         }
 
@@ -848,7 +922,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                 m_rule,
                 m_sim,
                 m_run,
-                m_ndiss );
+                m_ndiss,
+                m_comsize );
 
             m_count++;
             l_votingAgent.sleep( Integer.MAX_VALUE  );
