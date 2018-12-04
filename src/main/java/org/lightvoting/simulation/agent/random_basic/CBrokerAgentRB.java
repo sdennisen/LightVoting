@@ -141,7 +141,7 @@ public class CBrokerAgentRB extends IBaseAgent<CBrokerAgentRB>
         m_ndiss = p_ndiss;
 
         m_votingagentgenerator = new CVotingAgentRB.CVotingAgentGenerator( new CSendRB(), m_stream, m_environmentRB, m_altnum, m_name,
-                                                                           m_joinThr, m_prefList, m_rule, m_sim, m_run, m_ndiss);
+                                                                           m_joinThr, m_prefList, m_rule, m_sim, m_run, m_ndiss, m_comsize );
         m_chairagentgenerator = new CChairAgentRB.CChairAgentGenerator( m_chairstream, m_environmentRB, m_name, m_altnum, m_comsize, m_rule, m_sim, m_run);
 
         this.trigger( CTrigger.from(
