@@ -503,6 +503,9 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     private Double computeDissBV( final BitVector p_result )
     {
+        if ( m_ndiss )
+            return this.computeNDissBV( p_result );
+
         double l_diss = 0;
 
         for ( int i = 0; i < p_result.size(); i++ )
@@ -515,9 +518,6 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
 
     private Double computeNDissBV(BitVector p_result)
     {
-        if ( m_ndiss )
-            return this.computeNDissBV( p_result );
-
         double l_sat = 0;
 
         for ( int i = 0; i < p_result.size(); i++ )
