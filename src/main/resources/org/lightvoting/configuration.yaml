@@ -2,15 +2,15 @@
 
 variables:
   runs: '1'
-  setting1: 'RANDOM_ITERATIVE'
+  setting1: 'COORDINATED_BASIC'
   rule: 'K_MINISUM_APPROVAL'
   ndiss: 'true'
   agnum: '41'
   altnum: '20'
   comsize: '5'
   capacity: '20'
-  dissthr:  '1'
-  jointhr: '-1'
+  dissthr:  '-1'
+  jointhr: '8'
   preferences: 'FSquare'
 
 

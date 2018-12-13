@@ -201,16 +201,18 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
      * @param p_sim simulation id
      * @param p_run run id
      * @param p_ndiss
+     * @param p_comsize
      */
     public CVotingAgentCB(final String p_name, final IAgentConfiguration<CVotingAgentCB> p_configuration, final CEnvironmentCB p_environment, final int p_altNum,
                           final double p_joinThr,
                           final AtomicDoubleArray p_atomicDoubleArray,
                           final String p_rule,
-                          int p_sim, int p_run, Boolean p_ndiss)
+                          int p_sim, int p_run, Boolean p_ndiss, int p_comsize)
     {
         super( p_configuration );
         m_name = p_name;
         m_altNum = p_altNum;
+        m_comsize = p_comsize;
         m_atomicPrefValues = p_atomicDoubleArray;
         m_sim = p_sim;
         m_run = p_run;
@@ -228,6 +230,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
 
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        else if ( m_rule.equals( "K_MINISUM_APPROVAL" ) )
+            m_bitVote = this.convertPreferencesToBitsKAV( m_atomicPrefValues );
         else
             // if ( m_rule.equals( "MINISUM_RANKSUM") )
             m_cLinearOrder = this.convertPreferencestoCLO();
@@ -354,7 +358,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
     {
 
         // for MS-AV and MM-AV, the votes are 01-vectors
-        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+        if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) || m_rule.equals( "K_MINISUM_APPROVAL") )
 
             this.submitAV( p_chairAgent );
 
@@ -617,6 +621,40 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
         return l_voteValues;
     }
 
+    private BitVector convertPreferencesToBitsKAV( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final BitVector l_voteValues = new BitVector( m_altNum );
+
+        /* create HashMap with index of alternative as key and preference for alternative as value */
+        Map<Integer, Double> l_valuesMap = new HashMap<>();
+
+        for ( int i = 0; i < p_atomicPrefValues.length(); i++ )
+            l_valuesMap.put( i, p_atomicPrefValues.get( i ) );
+
+        /* sort the HashMap in descending order according to values */
+
+        l_valuesMap = this.sortDoubleMapDESC( l_valuesMap );
+
+        /* set approval value to 1 for positions of k highest values */
+        int l_numPos = 0;
+
+        for ( final Map.Entry<Integer, Double> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_numPos < m_comsize )
+            {
+                l_voteValues.put( l_entry.getKey(), true );
+                l_numPos++;
+            }
+            else
+                break;
+        }
+
+        System.out.println( m_atomicPrefValues );
+        System.out.println( "Vote as BitVector: " + l_voteValues  );
+        return l_voteValues;
+
+    }
+
     private List<Long> convertPreferencestoCLO()
     {
         return m_atomicPrefMap.entrySet().stream().sorted( ( e1, e2 ) -> {
@@ -816,7 +854,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
          * @param p_run
          * @param p_sim
          * @param p_ndiss
-         * @param m_comsize
+         * @param p_comsize
          * @throws Exception Thrown if something goes wrong while generating agents.
          */
         public CVotingAgentGenerator(final CSendCB p_send, final InputStream p_stream, final CEnvironmentCB p_environment, final int p_altNum,
@@ -955,8 +993,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                 m_rule,
                 m_sim,
                 m_run,
-                m_ndiss
-            );
+                m_ndiss,
+                m_comsize);
 
             return m_send.register( l_votingAgent );
         }
