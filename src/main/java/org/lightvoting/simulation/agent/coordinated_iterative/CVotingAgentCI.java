@@ -243,8 +243,10 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
 
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
+        else if ( m_rule.equals( "K_MINISUM_APPROVAL" ) )
+            m_bitVote = this.convertPreferencesToBitsKAV( m_atomicPrefValues );
         else
-            // if ( m_rule.equals( "MINISUM_RANKSUM") )
+        // if ( m_rule.equals( "MINISUM_RANKSUM") )
             m_cLinearOrder = this.convertPreferencestoCLO();
         System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
@@ -388,7 +390,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
             try
             {
                 // for MS-AV and MM-AV, the votes are 01-vectors
-                if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+                if ( m_rule.contains( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
 
                     this.submitAV( p_chairAgent );
 
@@ -714,6 +716,40 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
                 l_voteValues.put( i, false );
         System.out.println( "Vote as BitVector: " + l_voteValues  );
         return l_voteValues;
+    }
+
+    private BitVector convertPreferencesToBitsKAV( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final BitVector l_voteValues = new BitVector( m_altNum );
+
+        /* create HashMap with index of alternative as key and preference for alternative as value */
+        Map<Integer, Double> l_valuesMap = new HashMap<>();
+
+        for ( int i = 0; i < p_atomicPrefValues.length(); i++ )
+            l_valuesMap.put( i, p_atomicPrefValues.get( i ) );
+
+        /* sort the HashMap in descending order according to values */
+
+        l_valuesMap = this.sortDoubleMapDESC( l_valuesMap );
+
+        /* set approval value to 1 for positions of k highest values */
+        int l_numPos = 0;
+
+        for ( final Map.Entry<Integer, Double> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_numPos < m_comsize )
+            {
+                l_voteValues.put( l_entry.getKey(), true );
+                l_numPos++;
+            }
+            else
+                break;
+        }
+
+        System.out.println( m_atomicPrefValues );
+        System.out.println( "Vote as BitVector: " + l_voteValues  );
+        return l_voteValues;
+
     }
 
     private List<Long> convertPreferencestoCLO()
