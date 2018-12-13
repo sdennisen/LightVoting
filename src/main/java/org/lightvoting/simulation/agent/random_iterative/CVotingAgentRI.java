@@ -142,7 +142,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * @param p_altNum number of alternatives
      * @param p_joinThr join threshold
      * @param p_preferences preferences
-     * @param m_comsize
+     * @param p_comsize
      */
 
     public CVotingAgentRI(final String p_name, final IAgentConfiguration<CVotingAgentRI> p_configuration, final IBaseAgent<CChairAgentRI> p_chairagent,
@@ -196,7 +196,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
      * @param p_atomicDoubleArray preferences
      * @param p_run run number
      * @param p_sim simulation number
-     * @param m_comsize
+     * @param p_comsize
      */
     public CVotingAgentRI(final String p_name, final IAgentConfiguration<CVotingAgentRI> p_configuration, final CEnvironmentRI p_environment, final int p_altNum,
                           final double p_joinThr,
@@ -208,6 +208,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         super( p_configuration );
         m_name = p_name;
         m_altNum = p_altNum;
+        m_comsize = p_comsize;
         m_atomicPrefValues = p_atomicDoubleArray;
 
         // store preferences in map
@@ -225,9 +226,12 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         else
+            if ( m_rule.equals( "K_MINISUM_APPROVAL" ) )
+                m_bitVote = this.convertPreferencesToBitsKAV( m_atomicPrefValues );
+        else
             // if ( m_rule.equals( "MINISUM_RANKSUM") )
             m_cLinearOrder = this.convertPreferencestoCLO();
-        System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
+      //System.out.println( this.name() + " Vote as complete linear order " + m_cLinearOrder );
 
         System.out.println( this );
 
@@ -236,8 +240,6 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         m_sim = p_sim;
 
         m_ndiss = p_ndiss;
-
-        m_comsize = p_comsize;
     }
 
     // overload agent-cycle
@@ -361,7 +363,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         try {
             if ( !m_submittedToStr.contains( p_chairAgent.name() ) ) {
                 // for MS-AV and MM-AV, the votes are 01-vectors
-                if (m_rule.equals("MINISUM_APPROVAL") || m_rule.equals("MINIMAX_APPROVAL"))
+                if ( m_rule.equals( "MINISUM_APPROVAL" ) || m_rule.equals( "MINIMAX_APPROVAL" ) || m_rule.equals( "K_MINISUM_APPROVAL" ) )
 
                     this.submitAV(p_chairAgent);
 
@@ -614,6 +616,40 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
                 l_voteValues.put( i, false );
         System.out.println( "Vote as BitVector: " + l_voteValues  );
         return l_voteValues;
+    }
+
+    private BitVector convertPreferencesToBitsKAV( final AtomicDoubleArray p_atomicPrefValues )
+    {
+        final BitVector l_voteValues = new BitVector( m_altNum );
+
+        /* create HashMap with index of alternative as key and preference for alternative as value */
+        Map<Integer, Double> l_valuesMap = new HashMap<>();
+
+        for ( int i = 0; i < p_atomicPrefValues.length(); i++ )
+            l_valuesMap.put( i, p_atomicPrefValues.get( i ) );
+
+        /* sort the HashMap in descending order according to values */
+
+        l_valuesMap = this.sortDoubleMapDESC( l_valuesMap );
+
+        /* set approval value to 1 for positions of k highest values */
+        int l_numPos = 0;
+
+        for ( final Map.Entry<Integer, Double> l_entry : l_valuesMap.entrySet() )
+        {
+            if ( l_numPos < m_comsize )
+            {
+                l_voteValues.put( l_entry.getKey(), true );
+                l_numPos++;
+            }
+            else
+                break;
+        }
+
+        System.out.println( m_atomicPrefValues );
+        System.out.println( "Vote as BitVector: " + l_voteValues  );
+        return l_voteValues;
+
     }
 
     private List<Long> convertPreferencestoCLO()
@@ -898,6 +934,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         @Override
         public final CVotingAgentRI generatesingle( final Object... p_data )
         {
+
             // register a new agent object at the send action and the register
             // method retruns the object reference
 

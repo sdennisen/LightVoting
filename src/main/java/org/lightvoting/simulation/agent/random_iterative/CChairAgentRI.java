@@ -38,6 +38,7 @@ import org.lightjason.agentspeak.language.instantiable.plan.trigger.CTrigger;
 import org.lightjason.agentspeak.language.instantiable.plan.trigger.ITrigger;
 import org.lightvoting.simulation.environment.random_iterative.CEnvironmentRI;
 import org.lightvoting.simulation.environment.random_iterative.CGroupRI;
+import org.lightvoting.simulation.rule.CMinimaxApproval;
 import org.lightvoting.simulation.rule.CMinisumApproval;
 import org.lightvoting.simulation.rule.CMinisumRanksum;
 import org.lightvoting.simulation.statistics.EDataDB;
@@ -406,7 +407,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         {
 
             // for MS-AV and MM-AV, the votes are 01-vectors
-            if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) )
+            if ( m_rule.equals( "MINISUM_APPROVAL") || m_rule.equals( "MINIMAX_APPROVAL" ) || m_rule.equals( "K_MINISUM_APPROVAL") )
                 this.storeAV( p_votingAgent, p_vote );
 
             else
@@ -521,9 +522,12 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
             System.out.println( "Iteration:" + p_iteration );
 
-            if ( m_rule.equals( "MINISUM_APPROVAL" ) )
+            if ( m_rule.equals( "MINISUM_APPROVAL" ) || m_rule.equals( "K_MINISUM_APPROVAL" ) )
                 m_comResultBV = this.computeMSAV();
 
+            else
+                if ( m_rule.equals( "MINIMAX_APPROVAL" ) )
+                    m_comResultBV = this.computeMMAV();
             else // if ( m_rule.equals( "MINISUM_RANKSUM" ) )
 
                 m_comResultBV = this.computeMSRS();
@@ -614,6 +618,24 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
         System.out.println( " Votes: " + m_bitVotes );
 
         return l_minisumApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
+    }
+
+    private BitVector computeMMAV()
+    {
+        final CMinimaxApproval l_minimaxApproval = new CMinimaxApproval();
+
+        final List<String> l_alternatives = new LinkedList<>();
+
+        System.out.println( "number of alternatives: " + m_altnum );
+
+        for ( int i = 0; i < m_altnum; i++ )
+            l_alternatives.add( "POI" + i );
+
+        System.out.println( " Alternatives: " + l_alternatives );
+
+        System.out.println( " Votes: " + m_bitVotes );
+
+        return l_minimaxApproval.applyRuleBV( l_alternatives, m_bitVotes, m_comsize );
     }
 
     private BitVector computeMSRS()
