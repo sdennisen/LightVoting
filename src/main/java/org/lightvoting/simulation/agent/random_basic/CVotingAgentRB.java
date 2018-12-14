@@ -125,11 +125,13 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     private List<Long> m_cLinearOrder;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
+    private AtomicLong m_electionCounter = new AtomicLong();
     private AtomicLong m_cycle = new AtomicLong();
 
     // TODO set via config
     private String m_rule;
     private int m_comsize;
+
 
 
     // TODO refactor ctors
@@ -311,6 +313,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         return m_liningCounter.incrementAndGet();
     }
 
+    private long electionCounter()
+    {
+        return m_electionCounter.incrementAndGet();
+    }
+
     // agent actions
 
     @IAgentActionFilter
@@ -417,7 +424,6 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 
         System.out.println( "lining counter " + m_liningCounter );
 
-
         m_map.put( this.name() + "/lining counter", m_liningCounter );
 
         p_chairAgent.trigger(
@@ -472,6 +478,12 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
     {
         // store lining counter in database
         EDataDB.INSTANCE.setLC( m_liningCounter.intValue(), this.name(), m_run, m_sim );
+    }
+
+    protected void storeEC() throws SQLException {
+        this.electionCounter();
+        // store lining counter in database
+        EDataDB.INSTANCE.setLC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
     }
 
     private AtomicLong cycleCounter()

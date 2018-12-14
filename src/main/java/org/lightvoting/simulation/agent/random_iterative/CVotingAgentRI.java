@@ -121,6 +121,7 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     private List<Long> m_cLinearOrder;
     private HashMap<String, Object> m_map = new HashMap<>();
     private AtomicLong m_liningCounter = new AtomicLong();
+    private AtomicLong m_electionCounter = new AtomicLong();
     // List of already known groups
     private CopyOnWriteArrayList<CGroupRI> m_visitedGroups = new CopyOnWriteArrayList<>();
     private AtomicLong m_cycle = new AtomicLong();
@@ -313,6 +314,11 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     public long liningCounter()
     {
         return m_liningCounter.incrementAndGet();
+    }
+
+    private long electionCounter()
+    {
+        return m_electionCounter.incrementAndGet();
     }
 
     public void addGroupID( final CGroupRI p_group )
@@ -591,6 +597,12 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
     {
         // store lining counter in database
         EDataDB.INSTANCE.setLC( m_liningCounter.intValue(), this.name(), m_run, m_sim );
+    }
+
+    protected void storeEC() throws SQLException {
+        this.electionCounter();
+        // store lining counter in database
+        EDataDB.INSTANCE.setLC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
     }
 
     private void setPreference( final AtomicDoubleArray p_atomicDoubleArray )

@@ -868,6 +868,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         this.m_voters.stream().forEach(i ->
         {
+            // store election counter in database
+            try
+            {
+                i.storeEC();
+            } catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+            // add result belief to agents
             i.beliefbase().add(
                 CLiteral.from(
                     "resultIM",
@@ -954,6 +963,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
             m_voters.stream().forEach( i ->
             {
+                // store election counter in database
+                try
+                {
+                    i.storeEC();
+                } catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+                // add result belief to agents
                 i.beliefbase().add(
                     CLiteral.from(
                         "result",

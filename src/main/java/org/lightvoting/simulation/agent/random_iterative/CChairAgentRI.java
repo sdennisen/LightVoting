@@ -551,6 +551,15 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
             m_voters.stream().forEach( i ->
                 {
+                    // store election counter in database
+                    try
+                    {
+                        i.storeEC();
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    // add result belief to agents
                     i.beliefbase().add(
                         CLiteral.from(
                             "result",
