@@ -363,7 +363,7 @@ public final class CVotingAgentCI extends IBaseAgent<CVotingAgentCI>
     protected void storeEC() throws SQLException {
         this.electionCounter();
         // store lining counter in database
-        EDataDB.INSTANCE.setLC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
+        EDataDB.INSTANCE.setEC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
     }
 
     // agent actions

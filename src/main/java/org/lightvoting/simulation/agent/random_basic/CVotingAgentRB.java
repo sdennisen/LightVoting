@@ -480,10 +480,11 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
         EDataDB.INSTANCE.setLC( m_liningCounter.intValue(), this.name(), m_run, m_sim );
     }
 
-    protected void storeEC() throws SQLException {
+    protected void storeEC() throws SQLException
+    {
         this.electionCounter();
         // store lining counter in database
-        EDataDB.INSTANCE.setLC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
+        EDataDB.INSTANCE.setEC( m_electionCounter.intValue(), this.name(), m_run, m_sim );
     }
 
     private AtomicLong cycleCounter()
