@@ -45,6 +45,8 @@ public enum EDataDB
     private static PreparedStatement s_stmt_run;
     private static PreparedStatement s_stmt_voter;
     private static PreparedStatement s_stmt_setTime;
+    private static PreparedStatement s_stmt_setLC;
+    private static PreparedStatement s_stmt_setEC;
     private static PreparedStatement s_stmt_group;
     private static PreparedStatement s_stmt_addVoterToGroup;
     private static PreparedStatement s_stmt_newGroup;
@@ -117,6 +119,10 @@ public enum EDataDB
                 s_stmt_voter = s_con.prepareStatement("INSERT INTO voter (id, run, simulation) VALUES (?, ?, ?)");
             if ((s_stmt_setTime == null) || (s_stmt_setTime.isClosed()))
                 s_stmt_setTime = s_con.prepareStatement("UPDATE voter SET time=? WHERE id = ? AND run = ? and simulation = ?");
+            if ((s_stmt_setLC == null) || (s_stmt_setLC.isClosed()))
+                s_stmt_setLC = s_con.prepareStatement("UPDATE voter SET lc=? WHERE id = ? AND run = ? and simulation = ?");
+            if ((s_stmt_setEC == null) || (s_stmt_setEC.isClosed()))
+                s_stmt_setEC = s_con.prepareStatement("UPDATE voter SET ec=? WHERE id = ? AND run = ? and simulation = ?");
             // needed for creating initial groups
             if ((s_stmt_group == null) || (s_stmt_group.isClosed()))
                 s_stmt_group = s_con.prepareStatement("INSERT into group_table (chair) VALUES (?) RETURNING id");
@@ -268,6 +274,46 @@ public enum EDataDB
     }
 
     /**
+     * set lining counter for specified voter entity in database
+     * @param p_lc lining counter
+     * @param p_voterID name of voter
+     * @param p_runID run number
+     * @param p_simID simulation number
+     * @throws SQLException
+     */
+    public void setLC( int p_lc, String p_voterID, int p_runID, int p_simID ) throws SQLException
+    {
+        if ( m_open )
+        {
+            s_stmt_setLC.setInt(1, p_lc);
+            s_stmt_setLC.setString(2, p_voterID);
+            s_stmt_setLC.setInt(3, p_runID);
+            s_stmt_setLC.setInt(4, p_simID);
+            s_stmt_setLC.execute();
+        }
+    }
+
+
+    /**
+     * set election counter for specified voter entity in database
+     * @param p_ec election counter
+     * @param p_voterID name of voter
+     * @param p_runID run number
+     * @param p_simID simulation number
+     * @throws SQLException
+     */
+    public void setEC( int p_ec, String p_voterID, int p_runID, int p_simID ) throws SQLException
+    {
+        if ( m_open )
+        {
+            s_stmt_setEC.setInt(1, p_ec);
+            s_stmt_setEC.setString(2, p_voterID);
+            s_stmt_setEC.setInt(3, p_runID);
+            s_stmt_setEC.setInt(4, p_simID);
+            s_stmt_setEC.execute();
+        }
+    }
+    /**
      * add Group
      * @param p_chairID name of chair
      * @param p_voterID name of voter creating the group
@@ -389,6 +435,8 @@ public enum EDataDB
             s_stmt_run.close();
             s_stmt_voter.close();
             s_stmt_setTime.close();
+            s_stmt_setLC.close();
+            s_stmt_setEC.close();
             s_stmt_group.close();
             s_stmt_addVoterToGroup.close();
             s_stmt_newGroup.close();

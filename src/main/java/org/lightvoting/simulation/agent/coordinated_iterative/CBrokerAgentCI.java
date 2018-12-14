@@ -88,7 +88,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
     private final int m_comsize;
     // TODO lining limit for allowing agents to drive alone
     // HashMap for storing how often an agent had to leave a group
-    private final HashMap<String, Long> m_lineHashMap = new HashMap<String, Long>();
+    private final HashMap<CVotingAgentCI, Long> m_lineHashMap = new HashMap<CVotingAgentCI, Long>();
     // TODO via config
     private final int m_maxLiningCount = 2;
     private final CEnvironmentCI m_environmentCI;
@@ -266,6 +266,10 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         if ( l_determinedGroup != null )
         {
             l_determinedGroup.add( p_votingAgent );
+            // increase lining counter of ag
+            m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+
+            p_votingAgent.storeLC();
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             System.out.println( p_votingAgent.name() + " gets belief regarding group with id " + l_determinedGroup.id() );
@@ -289,6 +293,10 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
         // if there was no available group, create a new group
 
         final CGroupCI l_group = new CGroupCI( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, new AtomicLong( m_timeout ) );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+
+        p_votingAgent.storeLC();
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 
@@ -384,7 +392,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
                             {
                                 l_toRemoveList.add(j.name());
                                 l_toRemoveAgents.add(j);
-                                m_lineHashMap.put(j.name(), j.liningCounter());
+                                m_lineHashMap.put(j, j.liningCounter());
                             });
                     System.out.println(l_group.chair().name() + " toRemoveList:" + l_toRemoveList);
 
@@ -663,7 +671,7 @@ public class CBrokerAgentCI extends IBaseAgent<CBrokerAgentCI>
 
         System.out.println( "adding Agent " + p_Ag.name() );
         // increase lining counter of ag
-        m_lineHashMap.put( p_Ag.name(), p_Ag.liningCounter() );
+        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
 
         this.beliefbase().add(
             CLiteral.from(

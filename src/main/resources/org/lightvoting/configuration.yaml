@@ -2,8 +2,8 @@
 
 variables:
   runs: '1'
-  setting1: 'COORDINATED_ITERATIVE'
-  rule: 'K_MINISUM_APPROVAL'
+  setting1: 'COORDINATED_BASIC'
+  rule: 'MINISUM_APPROVAL'
   ndiss: 'true'
   agnum: '41'
   altnum: '20'

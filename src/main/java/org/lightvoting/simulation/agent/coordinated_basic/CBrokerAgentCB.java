@@ -253,6 +253,10 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         if ( l_determinedGroup != null )
         {
             l_determinedGroup.add( p_votingAgent );
+            // increase lining counter of ag
+            m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+
+            p_votingAgent.storeLC();
             System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_determinedGroup.id() );
             p_votingAgent.beliefbase().add( CLiteral.from( "mygroup", CRawTerm.from( l_determinedGroup ) ) );
             p_votingAgent.beliefbase().add( CLiteral.from( "mychair", CRawTerm.from( l_determinedGroup.chair() ) ) );
@@ -274,6 +278,10 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         // if there was no available group, create a new group
 
         final CGroupCB l_group = new CGroupCB( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, m_timeout );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+        p_votingAgent.storeLC();
+
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() );
 

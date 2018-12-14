@@ -415,8 +415,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 
         EDataDB.INSTANCE.setTime( this.cycleCounter().intValue(), this.name(), m_run, m_sim );
 
-        // store lining counter in map
         System.out.println( "lining counter " + m_liningCounter );
+
+
         m_map.put( this.name() + "/lining counter", m_liningCounter );
 
         p_chairAgent.trigger(
@@ -466,6 +467,12 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
 //            )
 //        );
 //    }
+
+    protected void storeLC() throws SQLException
+    {
+        // store lining counter in database
+        EDataDB.INSTANCE.setLC( m_liningCounter.intValue(), this.name(), m_run, m_sim );
+    }
 
     private AtomicLong cycleCounter()
     {

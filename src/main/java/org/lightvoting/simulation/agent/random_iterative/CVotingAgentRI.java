@@ -587,7 +587,11 @@ public final class CVotingAgentRI extends IBaseAgent<CVotingAgentRI>
         return m_map;
     }
 
-    // private methods
+    protected void storeLC() throws SQLException
+    {
+        // store lining counter in database
+        EDataDB.INSTANCE.setLC( m_liningCounter.intValue(), this.name(), m_run, m_sim );
+    }
 
     private void setPreference( final AtomicDoubleArray p_atomicDoubleArray )
     {

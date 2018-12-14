@@ -44,6 +44,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -237,6 +238,11 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
             if ( l_group.open() && !l_group.timedout() && p_votingAgent.unknownGroup( l_group ) )
             {
                 l_group.add( p_votingAgent );
+
+                // increase lining counter of ag
+                m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+                p_votingAgent.storeLC();
+
                 System.out.println( "Adding agent " + p_votingAgent.name() + " to existing group" + ", ID " + l_group.id() );
 
                 // add new group entity to database
@@ -257,6 +263,10 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
         // if there was no available group, create a new group
 
         final CGroupRI l_group = new CGroupRI( p_votingAgent, l_chairAgent, m_groupNum++, m_capacity, new AtomicLong( m_timeout ) );
+        // increase lining counter of ag
+        m_lineHashMap.put( p_votingAgent, p_votingAgent.liningCounter() );
+        p_votingAgent.storeLC();
+
         m_groups.add( l_group );
         System.out.println( "Creating new group with agent " + p_votingAgent.name() + ", ID " + l_group.id() + " " + l_group.hashCode() );
 
@@ -339,7 +349,17 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                             // "re-queue" removed voters
 
                             l_toRemoveAgents.parallelStream().forEach(
-                                    i -> this.removeAndAddAg( i )
+                                    i ->
+                                    {
+                                        try
+                                        {
+                                            this.removeAndAddAg( i );
+                                        }
+                                        catch (SQLException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
                             );
 
                             /*final CopyOnWriteArrayList<String> l_toRemoveList = new CopyOnWriteArrayList();
@@ -437,7 +457,16 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                         // "re-queue" removed voters
 
                         l_toRemoveAgents.parallelStream().forEach(
-                            i -> this.removeAndAddAg( i )
+                            i -> {
+                                try
+                                {
+                                    this.removeAndAddAg( i );
+                                }
+                                catch (SQLException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
                         );
 
                         l_group.endWaitForDiss();
@@ -470,8 +499,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
      * @param p_Ag agent
      */
 
-    public void removeAndAddAg( final CVotingAgentRI p_Ag )
-    {
+    public void removeAndAddAg( final CVotingAgentRI p_Ag ) throws SQLException {
         p_Ag.trigger( CTrigger.from(
             ITrigger.EType.ADDGOAL,
             CLiteral.from(
@@ -479,10 +507,7 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                              )
         );
 
-
         System.out.println( "adding Agent " + p_Ag.name() );
-        // increase lining counter of ag
-        m_lineHashMap.put( p_Ag, p_Ag.liningCounter() );
 
         this.beliefbase().add(
             CLiteral.from(
