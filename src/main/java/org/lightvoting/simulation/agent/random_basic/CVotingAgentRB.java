@@ -436,6 +436,9 @@ public final class CVotingAgentRB extends IBaseAgent<CVotingAgentRB>
                 )
             )
         );
+
+        // put agent to sleep
+        this.sleep( Long.MAX_VALUE );
     }
 
 

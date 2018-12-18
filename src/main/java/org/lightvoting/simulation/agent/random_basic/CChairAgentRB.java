@@ -298,7 +298,7 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
         return ( m_voters.isEmpty() );
     }
 
-    //    /**
+//    /**
 //     * return whether chair reached timeout
 //     * @return boolean value
 //     */
@@ -657,6 +657,9 @@ public final class CChairAgentRB extends IBaseAgent<CChairAgentRB>
                     m_dissMap,
                     m_run,
                     m_sim  );
+
+            // put agent to sleep
+            this.sleep( Long.MAX_VALUE );
         }
 
         // TODO write data to list instead

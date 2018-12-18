@@ -175,52 +175,49 @@ public final class CMain
                 final Set<CVotingAgentRB> l_agents;
                 final CVotingAgentRB.CVotingAgentGenerator l_votingagentgenerator;
 
-                try
-                {
+                try {
                     // TODO separate creation of broker and setting of parameters
-                    if ( s_settingStrs.get( c ).contains( "RANDOM_BASIC" ) && s_randomBasic )
-                    {
-                        s_environmentRB = new CEnvironmentRB( Integer.parseInt( p_args[0] ), l_name, s_capacity );
+                    if (s_settingStrs.get(c).contains("RANDOM_BASIC") && s_randomBasic) {
+                        s_environmentRB = new CEnvironmentRB(Integer.parseInt(p_args[0]), l_name, s_capacity);
 
-                        final FileInputStream l_stream = new FileInputStream( "src/main/resources/org/lightvoting/traveller_rb.asl" );
-                        final FileInputStream l_chairstream = new FileInputStream( "src/main/resources/org/lightvoting/chair_rb.asl" );
+                        final FileInputStream l_stream = new FileInputStream("src/main/resources/org/lightvoting/traveller_rb.asl");
+                        final FileInputStream l_chairstream = new FileInputStream("src/main/resources/org/lightvoting/chair_rb.asl");
 
                         final String l_brokerRB = "src/main/resources/org/lightvoting/broker_rb.asl";
 
                         createBrokerRandomBasic(
-                            l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList, r, s_simID );
+                                l_brokerRB, l_chairstream, s_agNum, new CSendRB(), l_stream, s_environmentRB, s_altnum, l_name, s_joinThr, s_prefList, r, s_simID);
 
                         l_stream.close();
                         l_chairstream.close();
 
-                        IntStream
-                            // define cycle range, i.e. number of cycles to run sequentially
-                            .range(
-                                0, Integer.parseInt( p_args[0] )
-                            )
-                            .forEach( j ->
+                        boolean l_active = true;
+
+                        while ( l_active )
+                        {
+                            try
                             {
-                                System.out.println( "Cycle " + j );
-                                try
+                                s_brokerRandomBasic.call();
+                                s_brokerRandomBasic.agentstream().filter(k -> !k.sleeping()).forEach(k ->
                                 {
-                                    s_brokerRandomBasic.call();
-                                    s_brokerRandomBasic.agentstream().forEach( k ->
+                                    try
                                     {
-                                        try
-                                        {
-                                            k.call();
-                                        }
-                                        catch ( final Exception l_ex )
-                                        {
-                                            l_ex.printStackTrace();
-                                        }
-                                    } );
-                                }
-                                catch ( final Exception l_ex )
-                                {
-                                    l_ex.printStackTrace();
-                                }
-                            } );
+                                        k.call();
+                                    } catch (final Exception l_ex)
+                                    {
+                                        l_ex.printStackTrace();
+                                    }
+                                });
+                            } catch (final Exception l_ex)
+                            {
+                                l_ex.printStackTrace();
+                            }
+                            if ( ( s_brokerRandomBasic.agentstream().count() > 0 ) && ( s_brokerRandomBasic.allSleeping() ) )
+                            {
+                                System.out.println("we are done with this run ");
+                                l_active = false;
+                            }
+                        }
 
                         // reset properties for next configuration
 
