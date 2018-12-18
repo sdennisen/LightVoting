@@ -48,6 +48,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -516,6 +517,16 @@ public class CBrokerAgentRI extends IBaseAgent<CBrokerAgentRI>
                 CRawTerm.from( m_lineHashMap.get( p_Ag ) )
             )
         );
+    }
+
+    public boolean allSleeping()
+    {
+        AtomicBoolean l_sleep = new AtomicBoolean( true );
+        this.agentstream().forEach( i->
+        {
+            if ( !i.sleeping() ) l_sleep.set( false );
+        });
+        return l_sleep.get();
     }
 
     /**

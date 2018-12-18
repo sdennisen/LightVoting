@@ -256,34 +256,39 @@ public final class CMain
                         l_stream.close();
                         l_chairstream.close();
 
-                        IntStream
-                            // define cycle range, i.e. number of cycles to run sequentially
-                            .range(
-                                0, Integer.parseInt( p_args[0] )
-                            )
-                            .forEach( j ->
+                        boolean l_active = true;
+                        long l_counter = Long.parseLong( p_args[0] );
+
+                        while ( l_active && l_counter > 0 )
+                        {
+                            try
                             {
-                                System.out.println( "Cycle " + j );
-                                try
+                                s_brokerRandomIterative.call();
+                                s_brokerRandomIterative.agentstream().filter( k->!k.sleeping() ).forEach( k ->
                                 {
-                                    s_brokerRandomIterative.call();
-                                    s_brokerRandomIterative.agentstream().forEach( k ->
+                                    try
                                     {
-                                        try
-                                        {
-                                            k.call();
-                                        }
-                                        catch ( final Exception l_ex )
-                                        {
-                                            l_ex.printStackTrace();
-                                        }
-                                    } );
-                                }
-                                catch ( final Exception l_ex )
-                                {
-                                    l_ex.printStackTrace();
-                                }
-                            } );
+                                        k.call();
+                                    }
+                                    catch ( final Exception l_ex )
+                                    {
+                                        l_ex.printStackTrace();
+                                    }
+                                } );
+                            }
+                            catch ( final Exception l_ex )
+                            {
+                                l_ex.printStackTrace();
+                            }
+                            if ( ( s_brokerRandomIterative.agentstream().count() > 0 ) && ( s_brokerRandomIterative.allSleeping() ) )
+                            {
+                                System.out.println("we are done with this run ");
+                                l_active = false;
+                            }
+                            l_counter--;
+                        }
+                        if ( l_counter == 0 )
+                            System.out.println( "timed out" );
 
                         // reset properties for next configuration
 
@@ -293,10 +298,10 @@ public final class CMain
                         {
                             if ( k instanceof CVotingAgentRI )
                                 append(
-                                    s_map, ( (CVotingAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                                        s_map, ( (CVotingAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                             if ( k instanceof CChairAgentRI )
                                 append(
-                                    s_map, ( (CChairAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
+                                        s_map, ( (CChairAgentRI) k ).map(), s_settingStrs.get( l_finalC ), l_finalR );
                         } );
                         append( s_map, s_brokerRandomIterative.map(), s_settingStrs.get( l_finalC ), l_finalR );
                         // TODO necessary?
