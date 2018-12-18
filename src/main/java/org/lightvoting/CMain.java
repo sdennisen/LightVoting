@@ -55,7 +55,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * Main, providing runtime of LightVoting.
@@ -394,35 +393,32 @@ public final class CMain
                         l_stream.close();
                         l_chairstream.close();
 
-                        IntStream
-                            // define cycle range, i.e. number of cycles to run sequentially
-                            .range(
-                                0, Integer.parseInt( p_args[0] )
-                            )
-                            .forEach( j ->
-                            {
-                                System.out.println( "Cycle " + j );
-                                try
-                                {
-                                    s_brokerCoordinatedIterative.call();
-                                    s_brokerCoordinatedIterative.agentstream().forEach( k ->
-                                    {
-                                        try
-                                        {
-                                            k.call();
-                                        }
-                                        catch ( final Exception l_ex )
-                                        {
-                                            l_ex.printStackTrace();
-                                        }
-                                    } );
-                                }
-                                catch ( final Exception l_ex )
-                                {
-                                    l_ex.printStackTrace();
-                                }
+                        boolean l_active = true;
+                        long l_counter = Long.parseLong( p_args[0] );
 
-                            } );
+                        while ( l_active && l_counter > 0 )
+                        {
+                            try {
+                                s_brokerCoordinatedIterative.call();
+                                s_brokerCoordinatedIterative.agentstream().filter(k -> !k.sleeping()).forEach(k ->
+                                {
+                                    try {
+                                        k.call();
+                                    } catch (final Exception l_ex) {
+                                        l_ex.printStackTrace();
+                                    }
+                                });
+                            } catch (final Exception l_ex) {
+                                l_ex.printStackTrace();
+                            }
+                            if ((s_brokerCoordinatedIterative.agentstream().count() > 0) && (s_brokerCoordinatedIterative.allSleeping())) {
+                                System.out.println("we are done with this run ");
+                                l_active = false;
+                            }
+                            l_counter--;
+                        }
+                        if ( l_counter == 0 )
+                            System.out.println( "timed out" );
 
                         // reset properties for next configuration
 

@@ -1100,6 +1100,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         {
             System.out.println( this.name() + ": no dissatisfied voter left, we are done " );
             EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
+            this.goToSleep();
             return;
         }
 
@@ -1109,6 +1110,7 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
         {
             System.out.println( this.name() + ": only one voter left, we are done " );
             EDataDB.INSTANCE.setLastElection( l_group.getDB(), true );
+            this.goToSleep();
             return;
         }
 
@@ -1161,6 +1163,15 @@ public final class CChairAgentCI extends IBaseAgent<CChairAgentCI>
 
         //        m_iterative = true;
         //        l_group.makeReady();
+    }
+
+    private void goToSleep()
+    {
+        // put all voters in group to sleep
+        m_voters.stream().forEach( i->i.sleep( Long.MAX_VALUE ) );
+
+        // put chair to sleep
+        this.sleep( Long.MAX_VALUE );
     }
 
     private double getMaxDiss( final ConcurrentHashMap<CVotingAgentCI, Double> p_dissMap )
