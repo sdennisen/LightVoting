@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -421,6 +422,16 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                 )
             );
         }
+    }
+
+    public boolean allSleeping()
+    {
+        AtomicBoolean l_sleep = new AtomicBoolean( true );
+        this.agentstream().forEach( i->
+        {
+            if ( !i.sleeping() ) l_sleep.set( false );
+        });
+        return l_sleep.get();
     }
 
     /**

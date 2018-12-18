@@ -452,13 +452,23 @@ public final class CChairAgentCB extends IBaseAgent<CChairAgentCB>
                     m_sim);
 
             m_dbIDs.add( p_dbGroup );
-        }
 
+           this.goToSleep();
+        }
 
         // TODO write data to list instead
         //    EDataWriter.INSTANCE.writeDataVector( m_run, m_conf, this, p_iteration, l_dissVals );
         //    new CDataWriter().writeDataVector( m_fileName, m_run, m_conf, this, p_iteration, l_dissVals );
 
+    }
+
+    private void goToSleep()
+    {
+        // put all voters in group to sleep
+        m_voters.stream().forEach( i->i.sleep( Long.MAX_VALUE ) );
+
+        // put chair to sleep
+        this.sleep( Long.MAX_VALUE );
     }
 
 //    /**

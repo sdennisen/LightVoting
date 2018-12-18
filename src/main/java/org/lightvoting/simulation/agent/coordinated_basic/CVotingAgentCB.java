@@ -446,6 +446,7 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
                         )
                 )
         );
+
     }
 
  /*   @IAgentActionFilter
