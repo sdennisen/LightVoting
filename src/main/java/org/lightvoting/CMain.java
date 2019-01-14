@@ -145,17 +145,18 @@ public final class CMain
 
         readYaml();
 
-        s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
-                    s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType );
-        s_simID = EDataDB.INSTANCE.addSim( s_configID );
-
-        s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
-
         s_nameShort = "target/results/" + new Date() + s_parameters;
 
         final String l_name = s_nameShort + "_results.h5";
 
-        final String l_path = "runs" + "/" + "run num";
+        s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
+                    s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType, l_name );
+
+        s_simID = EDataDB.INSTANCE.addSim( s_configID );
+
+        s_parameters = "_ags:" + s_agNum + "_alts:" + s_altnum + "_capacity:" + s_capacity + "_comsize:" + s_comsize + "_runs:" + s_runs + "_dis:" + s_dis;
+
+         final String l_path = "runs" + "/" + "run num";
         s_map.put( l_path, s_runs );
 
         for ( int c = 0; c < s_settingStrs.size(); c++ )

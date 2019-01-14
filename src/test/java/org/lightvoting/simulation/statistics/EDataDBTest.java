@@ -54,7 +54,7 @@ public class EDataDBTest extends TestCase
 
         int l_newMax = EDataDB.INSTANCE.addConfig(10, 10, 10, 10,
                 10, "MINISUM_APPROVAL", "RANDOM_BASIC",
-                (float) 3.5, (float) 3.5, "uniform");
+                (float) 3.5, (float) 3.5, "uniform", "testname" );
 
         EDataDB.INSTANCE.closeCon();
 

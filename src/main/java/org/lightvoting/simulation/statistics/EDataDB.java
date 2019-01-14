@@ -112,7 +112,7 @@ public enum EDataDB
             if ((s_stmt_conf == null) || (s_stmt_conf.isClosed()))
                 s_stmt_conf = s_con.prepareStatement("INSERT INTO configuration " +
                         "(runs, agnum, altnum, comsize, capacity, rule, setting, " +
-                        "jointhr, dissthr, prefs) VALUES ( ?, ?, ?, ?, ?, CAST (? AS RULE), CAST (? AS SETTING), ?, ?, CAST (? AS PREFTYPE)) RETURNING id");
+                        "jointhr, dissthr, prefs, prefname) VALUES ( ?, ?, ?, ?, ?, CAST (? AS RULE), CAST (? AS SETTING), ?, ?, CAST (? AS PREFTYPE), ? ) RETURNING id");
             if ((s_stmt_run == null) || (s_stmt_run.isClosed()))
                 s_stmt_run = s_con.prepareStatement("INSERT INTO run (simulation, number) VALUES (?, ?) RETURNING number");
             if ((s_stmt_voter == null) || (s_stmt_voter.isClosed()))
@@ -192,11 +192,12 @@ public enum EDataDB
      * @param p_jointhr join threshold for coordinated grouping
      * @param p_dissthr dissatisfaction threshold for iterative voting
      * @param p_prefs used preference type
+     * @param p_prefName name of preference file
      * @return configuration id
      */
-    public static int addConfig( int p_runs, int p_agnum, int p_altnum, int p_comsize,
-                                 int p_capacity, String p_rule, String p_setting,
-                                 float p_jointhr, float p_dissthr, String p_prefs ) throws SQLException {
+    public static int addConfig(int p_runs, int p_agnum, int p_altnum, int p_comsize,
+                                int p_capacity, String p_rule, String p_setting,
+                                float p_jointhr, float p_dissthr, String p_prefs, String p_prefName ) throws SQLException {
 
         if ( m_open )
         {
@@ -210,6 +211,7 @@ public enum EDataDB
             s_stmt_conf.setFloat(8, p_jointhr);
             s_stmt_conf.setFloat(9, p_dissthr);
             s_stmt_conf.setString(10, p_prefs);
+            s_stmt_conf.setString(11, p_prefName);
 
             try (final ResultSet l_rs = s_stmt_conf.executeQuery();)
             {
