@@ -149,8 +149,10 @@ public final class CMain
 
         final String l_name = s_nameShort + "_results.h5";
 
+        final String l_prefName = s_nameShort + ".yaml";
+
         s_configID = EDataDB.INSTANCE.addConfig( s_runs, s_agNum, s_altnum,
-                    s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType, l_name );
+                    s_comsize, s_capacity, s_rule, s_settingStr, (float) s_joinThr, (float) s_dissthr, s_prefType, l_prefName );
 
         s_simID = EDataDB.INSTANCE.addSim( s_configID );
 
