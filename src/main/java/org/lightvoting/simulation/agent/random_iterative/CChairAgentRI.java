@@ -397,7 +397,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
      */
     @IAgentActionFilter
     @IAgentActionName( name = "store/vote" )
-    public synchronized void storeVote( final String p_votingAgent, final BitVector p_vote )
+    public synchronized void storeVote( final String p_votingAgent, final Object p_vote )
     {
     //    final CGroupRI l_group = this.determineGroup();
 
