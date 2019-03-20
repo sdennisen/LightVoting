@@ -2,14 +2,14 @@
 
 variables:
   runs: '100'
-  setting1: 'RANDOM_BASIC'
-  rule: 'MINISUM_APPROVAL'
+  setting1: 'RANDOM_ITERATIVE'
+  rule: 'MINISUM_RANKSUM'
   ndiss: 'true'
   agnum: '41'
   altnum: '20'
   comsize: '5'
   capacity: '20'
-  dissthr:  '-1'
+  dissthr:  '0.5'
   jointhr: '-1'
   preferences: 'FSquare'
 
