@@ -403,7 +403,7 @@ public final class CChairAgentRI extends IBaseAgent<CChairAgentRI>
 
     //    m_agents.add( l_group.determineAgent( p_agentName ) );
 
-        if ( !this.group().timedout() && !m_votersStr.contains( p_votingAgent ) )
+         if ( !this.group().timedout() && !m_votersStr.contains( p_votingAgent ) )
         {
 
             // for MS-AV and MM-AV, the votes are 01-vectors
