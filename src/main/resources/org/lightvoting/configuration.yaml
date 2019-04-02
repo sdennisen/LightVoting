@@ -10,7 +10,7 @@ variables:
   comsize: '5'
   capacity: '20'
   dissthr:  '-1'
-  jointhr: '5'
+  jointhr: '18'
   preferences: 'FSquare'
 
 
