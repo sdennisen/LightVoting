@@ -234,6 +234,8 @@ public final class CVotingAgentCB extends IBaseAgent<CVotingAgentCB>
             m_bitVote = this.convertPreferencesToBits( m_atomicPrefValues );
         else if ( m_rule.equals( "K_MINISUM_APPROVAL" ) )
             m_bitVote = this.convertPreferencesToBitsKAV( m_atomicPrefValues );
+        else if ( m_rule.equals( "MINIMAX_APPROVAL" ) )
+            m_bitVote = this.convertPreferencesToBitsKAV( m_atomicPrefValues );
         else
             // if ( m_rule.equals( "MINISUM_RANKSUM") )
             m_cLinearOrder = this.convertPreferencestoCLO();

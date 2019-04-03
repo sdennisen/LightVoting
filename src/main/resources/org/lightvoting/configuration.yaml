@@ -1,7 +1,7 @@
 # LightVoting Config
 
 variables:
-  runs: '100'
+  runs: '1'
   setting1: 'RANDOM_BASIC'
   rule: 'MINIMAX_APPROVAL'
   ndiss: 'true'
