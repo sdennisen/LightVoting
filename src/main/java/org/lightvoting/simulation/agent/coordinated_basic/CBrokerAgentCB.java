@@ -236,7 +236,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                 System.out.println( "Result:" + l_group.result() );
                 // use new distance if it is lower than the joint threshold and than the old distance
                 final int l_newDist;
-                if ( m_rule.contains( "MINISUM_APPROVAL"))
+                if ( m_rule.contains( "APPROVAL") )
                     l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
                 else
                     l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
