@@ -40,6 +40,7 @@ import org.lightvoting.simulation.action.message.coordinated_basic.CSendCB;
 import org.lightvoting.simulation.agent.coordinated_basic.CVotingAgentCB.CVotingAgentGenerator;
 import org.lightvoting.simulation.environment.coordinated_basic.CEnvironmentCB;
 import org.lightvoting.simulation.environment.coordinated_basic.CGroupCB;
+import org.lightvoting.simulation.ranksum.CRanksum;
 import org.lightvoting.simulation.statistics.EDataDB;
 
 import javax.annotation.Nonnull;
@@ -239,7 +240,7 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
                 if ( m_rule.contains( "APPROVAL") )
                     l_newDist = this.hammingDistance( p_votingAgent.getBitVote(), l_group.result() );
                 else
-                    l_newDist = this.ranksum( p_votingAgent.getCLOVote(), l_group.result() );
+                    l_newDist = CRanksum.ranksum( p_votingAgent.getCLOVote(), l_group.result(), m_altnum, m_comsize );
                 System.out.println( "Distance: " + l_newDist );
                 if ( l_newDist < m_joinThr && l_newDist < l_dist )
                 {
@@ -297,35 +298,6 @@ public class CBrokerAgentCB extends IBaseAgent<CBrokerAgentCB>
         l_group.setDB( EDataDB.INSTANCE.addGroup( l_chairAgent.name(), p_votingAgent.name(), m_run, m_sim ) );
 
 
-    }
-
-    private int ranksum( final List<Long> p_voteCLO, final BitVector p_result )
-    {
-        System.out.println( "Vote: " + p_voteCLO );
-        System.out.println( "Result: " + p_result );
-
-        int l_sum = 0;
-
-        for ( int i=0; i < m_altnum; i++ )
-        {
-            if ( p_result.get( i ) )
-            {
-                l_sum = l_sum + this.getPos( i, p_voteCLO );
-            }
-        }
-
-        // normalisation: subtract (k*(k+1))/2
-        l_sum = l_sum -( m_comsize * ( m_comsize + 1 ) )/2;
-
-        return l_sum;
-    }
-
-    private int getPos( final int p_i, final List<Long> p_voteCLO )
-    {
-        for ( int j = 0; j < p_voteCLO.size(); j++ )
-            if ( p_voteCLO.get( j ) == p_i )
-                return ( j+1 );
-        return 0;
     }
 
     private int hammingDistance( final BitVector p_bitVote, final BitVector p_result )

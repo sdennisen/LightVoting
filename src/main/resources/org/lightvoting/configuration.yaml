@@ -3,7 +3,7 @@
 variables:
   runs: '100'
   setting1: 'COORDINATED_BASIC'
-  rule: 'MINIMAX_APPROVAL'
+  rule: 'MINISUM_RANKSUM'
   ndiss: 'true'
   agnum: '41'
   altnum: '20'
