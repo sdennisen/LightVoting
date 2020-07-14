@@ -28,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
 
 /**
@@ -68,44 +67,17 @@ public enum EDataDB
 
         if ((s_con == null) || (s_con.isClosed()))
         {
-            try
-            {
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException l_ex) {
-                System.out.println("PostgreSQL JDBC driver not found");
-                l_ex.printStackTrace();
-                return;
-            }
+            File l_file = new File("/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
 
-            try
-            {
-                File l_file = new File("/home/sophie/Developer/LightVoting/src/main/java/org/lightvoting/simulation/statistics/postgres.txt");
+            Scanner l_sc;
+            l_sc = new Scanner(l_file);
+            String l_url = l_sc.nextLine();
+            String l_usr = l_sc.nextLine();
+            String l_pw = l_sc.nextLine();
 
-                Scanner l_sc;
-                l_sc = new Scanner(l_file);
-                String l_url = l_sc.nextLine();
-                String l_usr = l_sc.nextLine();
-                String l_pw = l_sc.nextLine();
+            l_sc.close();
 
-                l_sc.close();
-
-                Properties l_props = new Properties();
-                l_props.setProperty("ssl", "true");
-
-
-                s_con = DriverManager.getConnection(
-                        l_url +
-                                "/" + p_dbName +
-                                "?user=" + l_usr +
-                                "&password=" + l_pw,
-                        l_props);
-
-            } catch (SQLException l_ex)
-            {
-                System.out.println("Connection failed");
-                l_ex.printStackTrace();
-                return;
-            }
+            s_con = DriverManager.getConnection( l_url, l_usr, l_pw );
 
             if ((s_stmt_sim == null) || (s_stmt_sim.isClosed()))
                 s_stmt_sim = s_con.prepareStatement("INSERT INTO simulation (configuration) VALUES (?) RETURNING number");

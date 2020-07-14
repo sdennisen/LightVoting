@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -137,11 +138,21 @@ public final class CMain
         if ( p_args.length > 1 )
         {
             s_dbName = p_args[1];
-            EDataDB.INSTANCE.openCon(s_dbName);
-            System.out.println( "connected to database " + s_dbName );
+            try {
+                EDataDB.INSTANCE.openCon(s_dbName);
+                System.out.println("connected to database " + s_dbName);
+            }
+            catch ( SQLException l_ex ){
+                System.out.println( "Connection to database failed, terminating program" );
+                l_ex.printStackTrace();
+                System.exit(0);
+            }
         }
         else
+        {
             System.out.println( "No database specified for saving results" );
+            System.exit(0);
+        }
 
         readYaml();
 
